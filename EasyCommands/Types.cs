@@ -28,7 +28,8 @@ namespace IngameScript
             PROGRAM,
             TIMER,
             LIGHT,
-            PROJECTOR
+            PROJECTOR,
+            MERGE
         }
 
         public enum CommandParameterType

@@ -436,11 +436,11 @@ namespace IngameScript
             public override bool Execute(MyGridProgram program)
             {
                 program.Echo("Controlling Merge Block");
-                List<IMyShipMergeBlock> projectors = GetSelectorEntities(program);
+                List<IMyShipMergeBlock> mergeBlocks = GetSelectorEntities(program);
 
-                if (projectors.Count == 0)
+                if (mergeBlocks.Count == 0)
                 {
-                    program.Echo("Could not find projectors for selector.  Returning");
+                    program.Echo("Could not find merge blocks for selector.  Returning");
                     return true;
                 }
 
@@ -449,7 +449,7 @@ namespace IngameScript
 
                 if (isActivate)
                 {
-                    handleActivation(program, projectors, activationParameter[0]);
+                    handleActivation(program, mergeBlocks, activationParameter[0]);
                 }
 
                 return true;

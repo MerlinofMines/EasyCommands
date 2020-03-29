@@ -39,10 +39,7 @@ namespace IngameScript
         private String[] velocityWords = {"speed", "velocity", "rate", "pace" };
         private String[] waitWords = { "wait", "hold", "pause" };
         private String[] lockWords = { "lock", "connect", "join" };
-        private String[] unlockWords = { "unlock", "disconnect", "merge" };
-
-
-
+        private String[] unlockWords = { "unlock", "disconnect", "detach" };
 
         private Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
             { "pistons", BlockType.PISTON },
@@ -59,7 +56,8 @@ namespace IngameScript
             { "rotor", BlockType.ROTOR },
             { "program", BlockType.PROGRAM },
             { "timer", BlockType.TIMER },
-            { "projector", BlockType.PROJECTOR }
+            { "projector", BlockType.PROJECTOR },
+            { "merge", BlockType.MERGE }
         };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
@@ -262,6 +260,12 @@ namespace IngameScript
                         case CommandParameterType.DECREMENT:
                             commandParameters.Add(new IncrementCommandParameter(false));
                             break;
+                        case CommandParameterType.LOCK:
+                            commandParameters.Add(new LockCommandParameter(true));
+                            break;
+                        case CommandParameterType.UNLOCK:
+                            commandParameters.Add(new LockCommandParameter(false));
+                            break;
                         default:
                             throw new Exception("Unsupported Command Parameter Type: " + commandParameterType);
                     }
@@ -325,6 +329,8 @@ namespace IngameScript
                         return new TimerBlockCommand(parameters);
                     case BlockType.PROJECTOR:
                         return new ProjectorCommand(parameters);
+                    case BlockType.MERGE:
+                        return new MergeBlockCommand(parameters);
                     default:
                         throw new Exception("Unsupported Block Type Command: " + blockType);
                 }
