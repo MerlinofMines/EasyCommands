@@ -184,7 +184,7 @@ namespace IngameScript
 
         private List<CommandParameter> parseCommandParameters(List<String> tokens)
         {
-            Echo("Command: " + String.Join(" ", tokens));
+            Echo("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
 
@@ -285,7 +285,6 @@ namespace IngameScript
 
                 //Parse Sub Tokens to try to find Block Type
                 List<String> subTokens = parseTokens(token);
-                if (subTokens.Count < 2) continue;
 
                 subTokens.ForEach(subToken => Echo("Sub Token: " + subToken));
                 List<CommandParameter> tokenCommandParameters = parseCommandParameters(subTokens);
@@ -322,11 +321,11 @@ namespace IngameScript
                     case BlockType.ROTOR:
                         return new RotorCommand(parameters);
                     case BlockType.LIGHT:
-                        return new LightCommand(parameters);
+                        return new LightCommand(this, parameters);
                     case BlockType.PROGRAM:
-                        return new ProgramCommand(parameters);
+                        return new ProgramCommand(this, parameters);
                     case BlockType.TIMER:
-                        return new TimerBlockCommand(parameters);
+                        return new TimerBlockCommand(this, parameters);
                     case BlockType.PROJECTOR:
                         return new ProjectorCommand(this, parameters);
                     case BlockType.MERGE:

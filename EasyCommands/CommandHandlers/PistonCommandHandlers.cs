@@ -52,7 +52,6 @@ namespace IngameScript
                     float newSpeed = Math.Abs(piston.Velocity) + deltaValue;
                     float negativeMultiplier = (piston.Velocity > 0) ? 1 : -1;
                     piston.Velocity = newSpeed * negativeMultiplier;});
-            
                 return true;
             }
         }

@@ -377,42 +377,50 @@ namespace IngameScript
             }
         }
 
-        public class LightCommand : EntityCommand<IMyLightingBlock>
+        public class LightCommand : EntityHandlerCommand<IMyLightingBlock>
         {
-            public LightCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public LightCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Lights");
-                return true;
+                return new List<CommandHandler>()
+                {
+                    new ActivationHandler<IMyLightingBlock>(entityProvider)
+                };
             }
         }
 
-        public class ProgramCommand : EntityCommand<IMyProgrammableBlock>
+        public class ProgramCommand : EntityHandlerCommand<IMyProgrammableBlock>
         {
-            public ProgramCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public ProgramCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Program");
-                return true;
+                //TODO: Add More Handlers
+                return new List<CommandHandler>()
+                {
+                    new ActivationHandler<IMyProgrammableBlock>(entityProvider)
+                };
             }
         }
 
-        public class TimerBlockCommand : EntityCommand<IMyProgrammableBlock>
+        public class TimerBlockCommand : EntityHandlerCommand<IMyTimerBlock>
         {
-            public TimerBlockCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public TimerBlockCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Timer");
-                return true;
+                //TODO: Add More Handlers
+                return new List<CommandHandler>()
+                {
+                    new ActivationHandler<IMyTimerBlock>(entityProvider)
+                };
             }
         }
 
