@@ -309,7 +309,7 @@ namespace IngameScript
             Echo("Parsing Command");
             if (parameters.Exists(param => param is WaitCommandParameter))
             {
-                return new WaitCommand(parameters);//TODO: Make this smarter.
+                return new WaitCommand(this, parameters);
             }
 
             CommandParameter blockTypeParameter = parameters.Find(param => param is BlockTypeCommandParameter);

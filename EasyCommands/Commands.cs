@@ -32,21 +32,6 @@ namespace IngameScript
 
             //Returns true if the program has finished execution.
             public abstract bool Execute(MyGridProgram program);
-
-            public bool TryGetParameters<T>(out List<T> matchingParameters) where T : CommandParameter
-            {
-                matchingParameters = new List<T>();
-
-                foreach (CommandParameter param in commandParameters)
-                {
-                    if (param is T)
-                    {
-                        matchingParameters.Add((T)param);
-                    }
-                }
-
-                return matchingParameters.Count > 0;
-            }
         }
 
         public abstract class HandlerCommand : Command
@@ -174,45 +159,25 @@ namespace IngameScript
             }
         }
 
-        public class WaitCommand : Command
+        public class WaitCommand : HandlerCommand
         {
-            private int ticks;
-
-            public WaitCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public WaitCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
-                List<NumericCommandParameter> numericParameter;
-                List<UnitCommandParameter> unitParameter;
-
-                bool isNumeric = TryGetParameters<NumericCommandParameter>(out numericParameter);
-                bool isUnit = TryGetParameters<UnitCommandParameter>(out unitParameter);
-
-                float numeric = (isNumeric) ? numericParameter[0].getValue() : 0;
-                UnitType unitType = (isUnit) ? unitParameter[0].getUnit() : UnitType.SECONDS;//default to seconds
-        
-                if (isNumeric)
-                {
-                    switch (unitType)
-                    {
-                        case UnitType.SECONDS:
-                            ticks = (int)(numeric * 60);
-                            break;
-                        case UnitType.TICKS:
-                            ticks = (int)numeric;
-                            break;
-                        default:
-                            throw new Exception("Unsupported Unit Type: " + unitType);
-                    }
-                }
-                
-                //TODO: parse command parameters to calculate ticks.
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
-                program.Echo("Waiting " + ticks + " ticks");
-                ticks--;
+                commandParameters.RemoveAll(param => param is WaitCommandParameter);
+            }
 
-                return ticks <= 0;
+            public override List<CommandHandler> GetHandlers()
+            {
+                return new List<CommandHandler>
+                {
+                    new WaitForDurationHandler(),
+                    new WaitForDurationUnitHandler()
+                    //TODO: Add Conditional Wait Handlers
+                };
             }
         }
 
