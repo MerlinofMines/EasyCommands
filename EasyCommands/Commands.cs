@@ -55,6 +55,68 @@ namespace IngameScript
             }
         }
 
+        public abstract class HandlerCommand : Command
+        {
+            private CommandHandler commandHandler;
+
+            public HandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            {
+                PreParseCommands(commandParameters);
+
+                foreach (CommandHandler handler in GetHandlers())
+                {
+                    if (handler.CanHandle(commandParameters)) {
+                        commandHandler = handler;
+                        return;
+                    }
+                }
+
+                throw new Exception("Unsupported Command Parameter Combination: " + commandParameters);
+            }
+
+            public override bool Execute(MyGridProgram program)
+            {
+                return commandHandler.Handle(program);
+            }
+
+            public abstract void PreParseCommands(List<CommandParameter> commandParameters);
+
+            public abstract List<CommandHandler> GetHandlers(); 
+        }
+
+        public abstract class EntityHandlerCommand<E> : HandlerCommand where E : class, IMyTerminalBlock
+        {
+            protected IEntityProvider<E> entityProvider;
+
+            public EntityHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            {
+            }
+
+            public override void PreParseCommands(List<CommandParameter> commandParameters)
+            {
+                //TODO: Smarter resolution of which Selector, if more than 1.
+
+                commandParameters.RemoveAll(param => param is BlockTypeCommandParameter); //Ignore these, no one needs them
+
+                Boolean isGroup = (commandParameters.RemoveAll(param => param is GroupCommandParameter) > 0);//Remove all group, set true if at least 1 removed
+
+                int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
+
+                if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
+
+                SelectorCommandParameter selector = (SelectorCommandParameter) commandParameters[selectorIndex];
+                commandParameters.RemoveAt(selectorIndex);
+
+                if (isGroup)
+                {
+                    entityProvider = new SelectorGroupEntityProvider<E>(selector);
+                } else
+                {
+                    entityProvider = new SelectorEntityProvider<E>(selector);
+                }
+            }
+        }
+
         public abstract class EntityCommand <E> : Command where E : class, IMyTerminalBlock
         {
             public EntityCommand(List<CommandParameter> commandParameters) : base(commandParameters)
@@ -67,7 +129,7 @@ namespace IngameScript
                 //TODO: Need Smart Selection by finding the closest Selector to either a Group or a BlockType Parameter.  Other param may be something else.
                 SelectorCommandParameter selectorParameter = (SelectorCommandParameter) commandParameters.Find(parameter => (parameter is SelectorCommandParameter));
 
-                if(isGroup)
+                if (isGroup)
                 {
                     return GetGroupEntities(program, selectorParameter);
                 } else
@@ -84,7 +146,6 @@ namespace IngameScript
                 return entities.FindAll(entity => (entity is IMyTerminalBlock) 
                     && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.getSelector());
             }
-
 
             protected List<E> GetGroupEntities(MyGridProgram program, SelectorCommandParameter selector)
             {
@@ -427,67 +488,48 @@ namespace IngameScript
             }
         }
 
-        public class MergeBlockCommand : EntityCommand<IMyShipMergeBlock>
+        public class MergeBlockCommand : EntityHandlerCommand<IMyShipMergeBlock>
         {
             public MergeBlockCommand(List<CommandParameter> commandParameters) : base(commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Merge Block");
-                List<IMyShipMergeBlock> mergeBlocks = GetSelectorEntities(program);
-
-                if (mergeBlocks.Count == 0)
+                return new List<CommandHandler>
                 {
-                    program.Echo("Could not find merge blocks for selector.  Returning");
-                    return true;
-                }
-
-                List<ActivationCommandParameter> activationParameter;
-                bool isActivate = TryGetParameters<ActivationCommandParameter>(out activationParameter);
-
-                if (isActivate)
-                {
-                    handleActivation(program, mergeBlocks, activationParameter[0]);
-                }
-
-                return true;
+                    new ActivationHandler<IMyShipMergeBlock>(entityProvider)
+                };
             }
         }
 
-        public class ProjectorCommand : EntityCommand<IMyProjector>
+        public class ProjectorCommand : EntityHandlerCommand<IMyProjector>
         {
             public ProjectorCommand(List<CommandParameter> commandParameters) : base(commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                List<IMyProjector> projectors = GetSelectorEntities(program);
-
-                if (projectors.Count == 0)
+                return new List<CommandHandler>
                 {
-                    program.Echo("Could not find projectors for selector.  Returning");
-                    return true;
-                }
+                    new ActivationHandler<IMyProjector>(entityProvider)
+                };
+            }
+        }
 
-                List<ActivationCommandParameter> activationParameter;
+        public class ConnectorCommand : EntityHandlerCommand<IMyShipConnector>
+        {
+            public ConnectorCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            {
+            }
 
-                bool isActivation = TryGetParameters<ActivationCommandParameter>(out activationParameter);
-                bool activation = (isActivation) ? activationParameter[0].isActivate() : false;
-
-                if (isActivation)
+            public override List<CommandHandler> GetHandlers()
+            {
+                return new List<CommandHandler>
                 {
-                    if(activation)
-                    {
-                        projectors.ForEach(proj => proj.ApplyAction("OnOff_On"));
-                    } else
-                    {
-                        projectors.ForEach(proj => proj.ApplyAction("OnOff_Off"));
-                    }
-                }
-                return true;
+                    new ActivationHandler<IMyShipConnector>(entityProvider)
+                };
             }
         }
     }
