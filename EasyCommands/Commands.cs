@@ -59,9 +59,12 @@ namespace IngameScript
         {
             private CommandHandler commandHandler;
 
-            public HandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public HandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(commandParameters)
             {
                 PreParseCommands(commandParameters);
+
+                program.Echo("Post Parsed Command Parameters: ");
+                commandParameters.ForEach(param => program.Echo(""+param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
                 {
@@ -71,7 +74,7 @@ namespace IngameScript
                     }
                 }
 
-                throw new Exception("Unsupported Command Parameter Combination: " + commandParameters);
+                throw new Exception("Unsupported Command Parameter Combination");
             }
 
             public override bool Execute(MyGridProgram program)
@@ -88,7 +91,7 @@ namespace IngameScript
         {
             protected IEntityProvider<E> entityProvider;
 
-            public EntityHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public EntityHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
@@ -232,104 +235,29 @@ namespace IngameScript
             }
         }
 
-        public class PistonCommand : EntityCommand<IMyPistonBase>
+        public class PistonCommand : EntityHandlerCommand<IMyPistonBase>
         {
-            public PistonCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public PistonCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
 
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Pistons");
-
-                List<IMyPistonBase> pistons = GetSelectorEntities(program);
-
-                if (pistons.Count == 0)
+                return new List<CommandHandler>()
                 {
-                    program.Echo("Could not find pistons for selector.  Returning");
-                    return true;
-                }
-
-                List<NumericCommandParameter> numericParameter;
-                List<IncrementCommandParameter> incrementalParameter;
-                List<ActivationCommandParameter> activationParameter;
-
-                bool isVelocity = ParameterExists<VelocityCommandParameter>();
-                bool isRelative = ParameterExists<RelativeCommandParameter>();
-                bool isReverse = ParameterExists<ReverseCommandParameter>();
-                bool isNumeric = TryGetParameters<NumericCommandParameter>(out numericParameter);
-                bool isIncremental = TryGetParameters<IncrementCommandParameter>(out incrementalParameter);
-                bool isActivation = TryGetParameters<ActivationCommandParameter>(out activationParameter);
-
-                bool incremental = (isIncremental) ? incrementalParameter[0].isIncrement() : false;
-                bool activation = (isActivation) ? activationParameter[0].isActivate() : false;
-                float numeric = (isNumeric) ? numericParameter[0].getValue() : 0;
-                float deltaValue = numeric * (incremental ? 1 : -1);
-
-                if (isReverse) //Handle Reverse
-                {
-                    pistons.ForEach(piston => piston.Reverse());
-                }
-                else if (isNumeric && isVelocity) //Handle Velocity Changes
-                {
-                    if (isIncremental && isRelative)
-                    {
-                        pistons.ForEach(piston => piston.Velocity = piston.Velocity + deltaValue);
-                    } else
-                    {
-                        pistons.ForEach(piston => piston.Velocity = numericParameter[0].getValue());
-                    }
-                }
-                else if (isNumeric) //Handle Extension Changes With Specific Value
-                {
-                    float desiredPosition = numeric;
-                    if (isIncremental && isRelative)
-                    {
-                        pistons.ForEach(piston => extendPistonToValue(piston, piston.CurrentPosition + deltaValue));
-                    }
-                    else
-                    {
-                        pistons.ForEach(piston => extendPistonToValue(piston, numeric));
-                    }
-                }
-                else if (isIncremental) //Handle Extension Changes With No Value
-                {
-                    if (incremental)
-                    {
-                        pistons.ForEach(piston => piston.Extend());
-                    } else
-                    {
-                        pistons.ForEach(piston => piston.Retract());
-                    }
-                } else if (isActivation) //Handle Activations
-                {
-                    if (activation)
-                    {
-                        pistons.ForEach(piston => piston.ApplyAction("OnOff_On"));
-                    } else
-                    {
-                        pistons.ForEach(piston => piston.ApplyAction("OnOff_Off"));
-                    }
-                }
-
-                return true;
+                    new PistonReverseHandler(entityProvider),
+                    new PistonRelativeVelocityHandler(entityProvider),
+                    new PistonIncrementalAbsoluteVelocityHandler(entityProvider),
+                    new PistonAbsoluteVelocityHandler(entityProvider),
+                    new PistonRelativePositionHandler(entityProvider),
+                    new PistonIncrementalAbsolutePositionHandler(entityProvider),
+                    new PistonAbsolutePositionHandler(entityProvider),
+                    new PistonIncrementalPositionHandler(entityProvider),
+                    new ActivationHandler<IMyPistonBase>(entityProvider)
+                };
             }
-
-            private void extendPistonToValue(IMyPistonBase piston, float value)
-            {
-                if (piston.CurrentPosition < value)
-                {
-                    piston.SetValue("UpperLimit", value);
-                    piston.Extend();
-                }
-                else
-                {
-                    piston.SetValue("LowerLimit", value);
-                    piston.Retract();
-                }
-            }
-        }
+         }
 
         public class RotorCommand : EntityCommand<IMyMotorStator>
         {
@@ -490,7 +418,7 @@ namespace IngameScript
 
         public class MergeBlockCommand : EntityHandlerCommand<IMyShipMergeBlock>
         {
-            public MergeBlockCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public MergeBlockCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
@@ -505,7 +433,7 @@ namespace IngameScript
 
         public class ProjectorCommand : EntityHandlerCommand<IMyProjector>
         {
-            public ProjectorCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public ProjectorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
@@ -520,7 +448,7 @@ namespace IngameScript
 
         public class ConnectorCommand : EntityHandlerCommand<IMyShipConnector>
         {
-            public ConnectorCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public ConnectorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 

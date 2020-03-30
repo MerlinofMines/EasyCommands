@@ -67,3 +67,7 @@ Distance: meters (defaults to meters)
 Time: seconds/ticks (defaults to seconds)
 Angles: degrees (defaults to degrees).  Radian not supported yet.
 Rotational Rate: rpm (defaults to rpm).  Degrees/Radians per minute not supported yet.  
+
+Velocity Support:
+When changing velocity, direction is ignored.  So if the velocity is currently -2.0 and you say "increase velocity by 2", the resulting velocity will be
+-4.  Not 0.  Why?  Trust me, this is easier to reason about when writing a program.  I think it's even more clear if you use words like "speed" instead of "velocity"

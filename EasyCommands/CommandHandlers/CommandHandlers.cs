@@ -90,27 +90,27 @@ namespace IngameScript
         {
             T parameter = null;
 
+            protected T GetParameter() => parameter;
+
             public override bool CanHandle(List<CommandParameter> commandParameters)
             {
                 if (commandParameters.Count != 1) return false;
                 List<CommandParameter> others = new List<CommandParameter>();
                 bool supports = Supports<T>(commandParameters, out others, out parameter);
 
-                return true;
-            }
-
-            protected T GetParameter()
-            {
-                return parameter;
+                return supports;
             }
         }
 
         public abstract class TwoParameterCommandHandler<T,U> : CommandHandler
-            where T : class, CommandParameter 
+            where T : class, CommandParameter
             where U : class, CommandParameter
         {
             T parameter1 = null;
             U parameter2 = null;
+
+            protected T GetParameter1() => parameter1;
+            protected U GetParameter2() => parameter2;
 
             public override bool CanHandle(List<CommandParameter> commandParameters)
             {
@@ -124,15 +124,71 @@ namespace IngameScript
                 bool supportsU = Supports<U>(others, out others, out parameter2);
                 return supportsU;
             }
+        }
 
-            protected T getParameter1()
+        public abstract class ThreeParameterCommandHandler<T, U, V> : CommandHandler
+            where T : class, CommandParameter
+            where U : class, CommandParameter
+            where V : class, CommandParameter
+        {
+            T parameter1 = null;
+            U parameter2 = null;
+            V parameter3 = null;
+
+            protected T GetParameter1() => parameter1;
+            protected U GetParameter2() => parameter2;
+            protected V GetParameter3() => parameter3;
+
+            public override bool CanHandle(List<CommandParameter> commandParameters)
             {
-                return parameter1;
+                if (commandParameters.Count != 3) return false;
+
+                List<CommandParameter> others = new List<CommandParameter>();
+
+                bool supportsT = Supports<T>(commandParameters, out others, out parameter1);
+                if (!supportsT) return false;
+
+                bool supportsU = Supports<U>(others, out others, out parameter2);
+                if (!supportsU) return false;
+
+                bool supportsV = Supports<V>(others, out others, out parameter3);
+                return supportsV;
             }
+        }
 
-            protected U getParameter2()
+        public abstract class FourParameterCommandHandler<T, U, V, W> : CommandHandler
+            where T : class, CommandParameter
+            where U : class, CommandParameter
+            where V : class, CommandParameter
+            where W : class, CommandParameter
+        {
+            T parameter1 = null;
+            U parameter2 = null;
+            V parameter3 = null;
+            W parameter4 = null;
+
+            protected T GetParameter1() => parameter1;
+            protected U GetParameter2() => parameter2;
+            protected V GetParameter3() => parameter3;
+            protected W GetParameter4() => parameter4;
+
+            public override bool CanHandle(List<CommandParameter> commandParameters)
             {
-                return parameter2;
+                if (commandParameters.Count != 4) return false;
+
+                List<CommandParameter> others = new List<CommandParameter>();
+
+                bool supportsT = Supports<T>(commandParameters, out others, out parameter1);
+                if (!supportsT) return false;
+
+                bool supportsU = Supports<U>(others, out others, out parameter2);
+                if (!supportsU) return false;
+
+                bool supportsV = Supports<V>(others, out others, out parameter3);
+                if (!supportsV) return false;
+
+                bool supportsW = Supports<W>(others, out others, out parameter4);
+                return supportsW;
             }
         }
 
@@ -148,25 +204,45 @@ namespace IngameScript
             }
         }
 
-        public class ActivationHandler<U> : OneParameterEntityCommandHandler<ActivationCommandParameter, U> where U : class, IMyTerminalBlock
+        public abstract class TwoParameterEntityCommandHandler<T, U, V> : TwoParameterCommandHandler<T, U>
+            where T : class, CommandParameter
+            where U : class, CommandParameter
+            where V : class, IMyTerminalBlock
         {
-            public ActivationHandler(IEntityProvider<U> entityProvider) : base(entityProvider)
+            protected IEntityProvider<V> entityProvider;
+
+            public TwoParameterEntityCommandHandler(IEntityProvider<V> entityProvider)
             {
+                this.entityProvider = entityProvider;
             }
+        }
 
-            public override bool Handle(MyGridProgram program)
+        public abstract class ThreeParameterEntityCommandHandler<T, U, V, W> : ThreeParameterCommandHandler<T, U, V>
+            where T : class, CommandParameter
+            where U : class, CommandParameter
+            where V : class, CommandParameter
+            where W : class, IMyTerminalBlock
+        {
+            protected IEntityProvider<W> entityProvider;
+
+            public ThreeParameterEntityCommandHandler(IEntityProvider<W> entityProvider)
             {
-                List<U> entities = entityProvider.GetEntities(program);
+                this.entityProvider = entityProvider;
+            }
+        }
 
-                if (GetParameter().isActivate())
-                {
-                    entities.ForEach(block => block.ApplyAction("OnOff_On"));
-                }
-                else
-                {
-                    entities.ForEach(block => block.ApplyAction("OnOff_Off"));
-                }
-                return true;
+        public abstract class FourParameterEntityCommandHandler<T, U, V, W, X> : FourParameterCommandHandler<T, U, V, W>
+            where T : class, CommandParameter
+            where U : class, CommandParameter
+            where V : class, CommandParameter
+            where W : class, CommandParameter
+            where X : class, IMyTerminalBlock
+        {
+            protected IEntityProvider<X> entityProvider;
+
+            public FourParameterEntityCommandHandler(IEntityProvider<X> entityProvider)
+            {
+                this.entityProvider = entityProvider;
             }
         }
     }

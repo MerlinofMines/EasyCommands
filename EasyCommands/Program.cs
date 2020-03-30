@@ -318,7 +318,7 @@ namespace IngameScript
                 switch (blockType)
                 {
                     case BlockType.PISTON:
-                        return new PistonCommand(parameters);
+                        return new PistonCommand(this, parameters);
                     case BlockType.ROTOR:
                         return new RotorCommand(parameters);
                     case BlockType.LIGHT:
@@ -328,9 +328,9 @@ namespace IngameScript
                     case BlockType.TIMER:
                         return new TimerBlockCommand(parameters);
                     case BlockType.PROJECTOR:
-                        return new ProjectorCommand(parameters);
+                        return new ProjectorCommand(this, parameters);
                     case BlockType.MERGE:
-                        return new MergeBlockCommand(parameters);
+                        return new MergeBlockCommand(this, parameters);
                     default:
                         throw new Exception("Unsupported Block Type Command: " + blockType);
                 }
