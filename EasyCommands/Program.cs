@@ -178,7 +178,6 @@ namespace IngameScript
                                     : new string[] { element })  // Keep the entire item
                 .SelectMany(element => element)
                 .Select(element => element.ToLower())
-                .Except(ignoreWords)
                 .ToList();
         }
 
@@ -190,6 +189,8 @@ namespace IngameScript
 
             foreach (var token in tokens)
             {
+                if (ignoreWords.Contains(token)) continue;
+
                 BlockType blockType;
                 if (blockTypeGroupWords.TryGetValue(token, out blockType))
                 {
@@ -286,6 +287,8 @@ namespace IngameScript
                 //Parse Sub Tokens to try to find Block Type
                 List<String> subTokens = parseTokens(token);
 
+                if (subTokens.Count < 2) continue;
+
                 subTokens.ForEach(subToken => Echo("Sub Token: " + subToken));
                 List<CommandParameter> tokenCommandParameters = parseCommandParameters(subTokens);
 
@@ -319,7 +322,7 @@ namespace IngameScript
                     case BlockType.PISTON:
                         return new PistonCommand(this, parameters);
                     case BlockType.ROTOR:
-                        return new RotorCommand(parameters);
+                        return new RotorCommand(this, parameters);
                     case BlockType.LIGHT:
                         return new LightCommand(this, parameters);
                     case BlockType.PROGRAM:

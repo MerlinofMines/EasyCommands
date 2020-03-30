@@ -29,16 +29,27 @@ namespace IngameScript
 
             public override bool Handle(MyGridProgram program)
             {
-                List<U> entities = entityProvider.GetEntities(program);
-
                 if (GetParameter().isActivate())
                 {
-                    entities.ForEach(block => block.ApplyAction("OnOff_On"));
+                    entityProvider.GetEntities(program).ForEach(block => block.ApplyAction("OnOff_On"));
                 }
                 else
                 {
-                    entities.ForEach(block => block.ApplyAction("OnOff_Off"));
+                    entityProvider.GetEntities(program).ForEach(block => block.ApplyAction("OnOff_Off"));
                 }
+                return true;
+            }
+        }
+
+        public class ReverseHandler<U> : OneParameterEntityCommandHandler<ReverseCommandParameter, U> where U : class, IMyTerminalBlock
+        {
+            public ReverseHandler(IEntityProvider<U> entityProvider) : base(entityProvider)
+            {
+            }
+
+            public override bool Handle(MyGridProgram program)
+            {
+                entityProvider.GetEntities(program).ForEach(entity => entity.ApplyAction("Reverse"));
                 return true;
             }
         }

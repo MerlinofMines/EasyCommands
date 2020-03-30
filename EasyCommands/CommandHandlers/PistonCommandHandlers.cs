@@ -21,20 +21,6 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class PistonReverseHandler : OneParameterEntityCommandHandler<ReverseCommandParameter, IMyPistonBase>
-        {
-            public PistonReverseHandler(IEntityProvider<IMyPistonBase> entityProvider) : base(entityProvider)
-            {
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                program.Echo("Here: " + GetType());
-                entityProvider.GetEntities(program).ForEach(piston => piston.Reverse());
-                return true;
-            }
-        }
-
         public class PistonRelativeVelocityHandler : FourParameterEntityCommandHandler<NumericCommandParameter, RelativeCommandParameter, VelocityCommandParameter, IncrementCommandParameter, IMyPistonBase>
         {
             public PistonRelativeVelocityHandler(IEntityProvider<IMyPistonBase> entityProvider) : base(entityProvider)
@@ -165,6 +151,7 @@ namespace IngameScript
                 return true;
             }
         }
+
         static void extendPistonToValue(IMyPistonBase piston, float value)
         {
             if (piston.CurrentPosition < value)

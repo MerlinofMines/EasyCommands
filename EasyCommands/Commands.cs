@@ -33,12 +33,6 @@ namespace IngameScript
             //Returns true if the program has finished execution.
             public abstract bool Execute(MyGridProgram program);
 
-            public bool ParameterExists<T>() where T: CommandParameter
-            {
-                List<T> list;
-                return TryGetParameters<T>(out list);
-            }
-
             public bool TryGetParameters<T>(out List<T> matchingParameters) where T : CommandParameter
             {
                 matchingParameters = new List<T>();
@@ -246,7 +240,6 @@ namespace IngameScript
             {
                 return new List<CommandHandler>()
                 {
-                    new PistonReverseHandler(entityProvider),
                     new PistonRelativeVelocityHandler(entityProvider),
                     new PistonIncrementalAbsoluteVelocityHandler(entityProvider),
                     new PistonAbsoluteVelocityHandler(entityProvider),
@@ -254,126 +247,32 @@ namespace IngameScript
                     new PistonIncrementalAbsolutePositionHandler(entityProvider),
                     new PistonAbsolutePositionHandler(entityProvider),
                     new PistonIncrementalPositionHandler(entityProvider),
+                    new ReverseHandler<IMyPistonBase>(entityProvider),
                     new ActivationHandler<IMyPistonBase>(entityProvider)
                 };
             }
          }
 
-        public class RotorCommand : EntityCommand<IMyMotorStator>
+        public class RotorCommand : EntityHandlerCommand<IMyMotorStator>
         {
-            public RotorCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            public RotorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override List<CommandHandler> GetHandlers()
             {
-                program.Echo("Controlling Rotors");
-
-                List<IMyMotorStator> rotors = GetSelectorEntities(program);
-
-                if (rotors.Count == 0)
+                return new List<CommandHandler>()
                 {
-                    program.Echo("Could not find rotors for selector.  Returning");
-                    return true;
-                }
-
-                List<NumericCommandParameter> numericParameter;
-                List<IncrementCommandParameter> incrementalParameter;
-                List<ActivationCommandParameter> activationParameter;
-                List<UnitCommandParameter> unitParameter;
-
-                bool isVelocity = ParameterExists<VelocityCommandParameter>();
-                bool isRelative = ParameterExists<RelativeCommandParameter>();
-                bool isReverse = ParameterExists<ReverseCommandParameter>();
-                bool isNumeric = TryGetParameters<NumericCommandParameter>(out numericParameter);
-                bool isIncremental = TryGetParameters<IncrementCommandParameter>(out incrementalParameter);
-                bool isActivation = TryGetParameters<ActivationCommandParameter>(out activationParameter);
-                bool isUnit = TryGetParameters<UnitCommandParameter>(out unitParameter);
-
-                bool incremental = (isIncremental) ? incrementalParameter[0].isIncrement() : false;
-                bool activation = (isActivation) ? activationParameter[0].isActivate() : false;
-                UnitType unitType = (isUnit) ? unitParameter[0].getUnit() : UnitType.DEGREES;
-                float numeric = (isNumeric) ? numericParameter[0].getValue() : 0;
-                float deltaValue = numeric * (incremental ? 1 : -1);
-                //TODO: Handle Radians
-
-                if (isReverse) //Handle Reverse
-                {
-                    rotors.ForEach(rotor => rotor.TargetVelocityRPM = -rotor.TargetVelocityRPM);
-                }
-                else if (isNumeric && isVelocity) //Handle Velocity Changes
-                {
-                    if (isIncremental && isRelative)
-                    {
-                        rotors.ForEach(piston => piston.TargetVelocityRPM += deltaValue);
-                    }
-                    else
-                    {
-                        rotors.ForEach(piston => piston.TargetVelocityRPM = numericParameter[0].getValue());
-                    }
-                }
-                else if (isNumeric) //Handle Extension Changes With Specific Value
-                {
-                    float desiredPosition = numeric;
-                    if (isIncremental && isRelative)
-                    {
-                        rotors.ForEach(piston => rotateToValue(piston, piston.Angle + deltaValue));
-                    }
-                    else
-                    {
-                        rotors.ForEach(piston => rotateToValue(piston, numeric));
-                    }
-                }
-                else if (isIncremental) //Handle Extension Changes With No Value
-                {
-                    if (incremental)
-                    {
-                        rotors.ForEach(piston => piston.TargetVelocityRPM = Math.Abs(piston.TargetVelocityRPM));
-                    }
-                    else
-                    {
-                        rotors.ForEach(piston => piston.TargetVelocityRPM = -Math.Abs(piston.TargetVelocityRPM));
-                    }
-                }
-                else if (isActivation) //Handle Activations
-                {
-                    if (activation)
-                    {
-                        rotors.ForEach(piston => piston.ApplyAction("OnOff_On"));
-                    }
-                    else
-                    {
-                        rotors.ForEach(piston => piston.ApplyAction("OnOff_Off"));
-                    }
-                }
-
-                return true;
-            }
-
-            //TODO: Directions may become important
-            private void rotateToValue(IMyMotorStator rotor, float value)
-            {
-                float newValue = value;
-
-                if (newValue > 360) newValue %= 360;
-
-                if (newValue < -360)
-                {
-                    newValue = -((-newValue) % 360);
-                }
-
-                //TODO: We might find that in some cases, it's faster to go the other way.
-
-                if (rotor.Angle < value) 
-                {
-                    rotor.UpperLimitDeg = newValue;
-                    rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
-                }
-                else
-                {
-                    rotor.LowerLimitDeg = newValue;
-                    rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);
-                }
+                    new RotorRelativeVelocityHandler(entityProvider),
+                    new RotorIncrementalAbsoluteVelocityHandler(entityProvider),
+                    new RotorAbsoluteVelocityHandler(entityProvider),
+                    new RotorRelativePositionHandler(entityProvider),
+                    new RotorIncrementalAbsolutePositionHandler(entityProvider),
+                    new RotorAbsolutePositionHandler(entityProvider),
+                    new RotorIncrementalPositionHandler(entityProvider),
+                    new ReverseHandler<IMyMotorStator>(entityProvider),
+                    new ActivationHandler<IMyMotorStator>(entityProvider)
+                };
             }
         }
 
