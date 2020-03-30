@@ -29,7 +29,8 @@ namespace IngameScript
             TIMER,
             LIGHT,
             PROJECTOR,
-            MERGE
+            MERGE,
+            CONNECTOR
         }
 
         public enum CommandParameterType
@@ -47,6 +48,8 @@ namespace IngameScript
             SELECTOR,
             NUMERIC,
             RELATIVE,
+            CONNECT,
+            DISCONNECT,
             LOCK,
             UNLOCK,
             WAIT

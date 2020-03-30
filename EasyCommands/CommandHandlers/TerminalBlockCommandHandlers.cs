@@ -29,7 +29,7 @@ namespace IngameScript
 
             public override bool Handle(MyGridProgram program)
             {
-                if (GetParameter().isActivate())
+                if (GetParameter().IsActivate())
                 {
                     entityProvider.GetEntities(program).ForEach(block => block.ApplyAction("OnOff_On"));
                 }

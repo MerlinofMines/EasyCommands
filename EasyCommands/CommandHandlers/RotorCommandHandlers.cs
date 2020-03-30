@@ -30,8 +30,8 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
-                bool incremental = GetParameter4().isIncrement();
+                float numeric = Math.Abs(GetParameter1().GetValue());
+                bool incremental = GetParameter4().IsIncrement();
                 float deltaValue = numeric * (incremental ? 1 : -1);
 
                 entityProvider.GetEntities(program).ForEach(rotor =>
@@ -53,7 +53,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
+                float numeric = Math.Abs(GetParameter1().GetValue());
                 entityProvider.GetEntities(program).ForEach(rotor =>
                 {
                     float negativeMultiplier = (rotor.TargetVelocityRPM > 0) ? 1 : -1;
@@ -73,7 +73,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
+                float numeric = Math.Abs(GetParameter1().GetValue());
                 entityProvider.GetEntities(program).ForEach(Rotor =>
                 {
                     float negativeMultiplier = (Rotor.TargetVelocityRPM > 0) ? 1 : -1;
@@ -93,8 +93,8 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter1().getValue();
-                bool incremental = GetParameter2().isIncrement();
+                float numeric = GetParameter1().GetValue();
+                bool incremental = GetParameter2().IsIncrement();
                 float deltaValue = numeric * (incremental ? 1 : -1);
 
                 //TODO: Need Direction Handled (Using IncrementCommandParameter))
@@ -113,7 +113,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter1().getValue();
+                float numeric = GetParameter1().GetValue();
                 //TODO: Need Direction Handled (Using IncrementCommandParameter))
                 entityProvider.GetEntities(program).ForEach(rotor => rotateToValue(rotor, numeric));
                 return true;
@@ -129,7 +129,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter().getValue();
+                float numeric = GetParameter().GetValue();
                 program.Echo("Value: " + numeric);
                 entityProvider.GetEntities(program).ForEach(rotor => rotateToValue(rotor, numeric));
                 return true;
@@ -145,7 +145,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                if (GetParameter().isIncrement())
+                if (GetParameter().IsIncrement())
                 {
                     entityProvider.GetEntities(program).ForEach(piston => piston.TargetVelocityRPM = Math.Abs(piston.TargetVelocityRPM));
                 }

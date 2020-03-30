@@ -30,8 +30,8 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
-                bool incremental = GetParameter4().isIncrement();
+                float numeric = Math.Abs(GetParameter1().GetValue());
+                bool incremental = GetParameter4().IsIncrement();
                 float deltaValue = numeric * (incremental ? 1 : -1);
 
                 entityProvider.GetEntities(program).ForEach(piston => {
@@ -51,7 +51,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
+                float numeric = Math.Abs(GetParameter1().GetValue());
                 entityProvider.GetEntities(program).ForEach(piston => {
                     float negativeMultiplier = (piston.Velocity > 0) ? 1 : -1;
                     piston.Velocity = numeric * negativeMultiplier;
@@ -70,7 +70,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = Math.Abs(GetParameter1().getValue());
+                float numeric = Math.Abs(GetParameter1().GetValue());
                 entityProvider.GetEntities(program).ForEach(piston => {
                     float negativeMultiplier = (piston.Velocity > 0) ? 1 : -1;
                     piston.Velocity = numeric * negativeMultiplier;
@@ -89,8 +89,8 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter1().getValue();
-                bool incremental = GetParameter2().isIncrement();
+                float numeric = GetParameter1().GetValue();
+                bool incremental = GetParameter2().IsIncrement();
                 float deltaValue = numeric * (incremental ? 1 : -1);
 
                 entityProvider.GetEntities(program).ForEach(piston => extendPistonToValue(piston, piston.CurrentPosition + deltaValue));
@@ -108,7 +108,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter1().getValue();
+                float numeric = GetParameter1().GetValue();
                 entityProvider.GetEntities(program).ForEach(piston => extendPistonToValue(piston, numeric));
                 return true;
             }
@@ -123,9 +123,12 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                float numeric = GetParameter().getValue();
+                float numeric = GetParameter().GetValue();
                 program.Echo("Value: " + numeric);
-                entityProvider.GetEntities(program).ForEach(piston => extendPistonToValue(piston, numeric));
+                List<IMyPistonBase> entities = entityProvider.GetEntities(program);
+                program.Echo("Found " + entities.Count + " blocks of type piston");
+
+                entities.ForEach(piston => extendPistonToValue(piston, numeric));
                 return true;
             }
         }
@@ -139,7 +142,7 @@ namespace IngameScript
             public override bool Handle(MyGridProgram program)
             {
                 program.Echo("Here: " + GetType());
-                if (GetParameter().isIncrement())
+                if (GetParameter().IsIncrement())
                 {
                     entityProvider.GetEntities(program).ForEach(piston => piston.Extend());
                 }

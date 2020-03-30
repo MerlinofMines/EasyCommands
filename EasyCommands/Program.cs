@@ -38,8 +38,11 @@ namespace IngameScript
         private String[] delayWords = {"delay", "after" };
         private String[] velocityWords = {"speed", "velocity", "rate", "pace" };
         private String[] waitWords = { "wait", "hold", "pause" };
-        private String[] lockWords = { "lock", "connect", "join" };
-        private String[] unlockWords = { "unlock", "disconnect", "detach" };
+        private String[] connectWords = { "connect", "join", "attach" };
+        private String[] disconnectWords = { "disconnect", "separate", "detach" };
+
+        private String[] lockWords = { "lock", "freeze" };
+        private String[] unlockWords = { "unlock", "unfreeze" };
 
         private Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
             { "pistons", BlockType.PISTON },
@@ -47,7 +50,8 @@ namespace IngameScript
             { "rotors", BlockType.ROTOR },
             { "programs", BlockType.PROGRAM },
             { "timers", BlockType.TIMER },
-            { "projectors", BlockType.PROJECTOR }
+            { "projectors", BlockType.PROJECTOR },
+            { "connectors", BlockType.CONNECTOR }
         };
 
         private Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -57,7 +61,8 @@ namespace IngameScript
             { "program", BlockType.PROGRAM },
             { "timer", BlockType.TIMER },
             { "projector", BlockType.PROJECTOR },
-            { "merge", BlockType.MERGE }
+            { "merge", BlockType.MERGE },
+            { "connector", BlockType.CONNECTOR }
         };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
@@ -92,6 +97,8 @@ namespace IngameScript
             foreach (var word in delayWords) { tokenDictionary.Add(word, CommandParameterType.DELAY); }
             foreach (var word in velocityWords) { tokenDictionary.Add(word, CommandParameterType.VELOCITY); }
             foreach (var word in waitWords) { tokenDictionary.Add(word, CommandParameterType.WAIT); }
+            foreach (var word in connectWords) { tokenDictionary.Add(word, CommandParameterType.CONNECT); }
+            foreach (var word in disconnectWords) { tokenDictionary.Add(word, CommandParameterType.DISCONNECT); }
             foreach (var word in lockWords) { tokenDictionary.Add(word, CommandParameterType.LOCK); }
             foreach (var word in unlockWords) { tokenDictionary.Add(word, CommandParameterType.UNLOCK); }
 
@@ -186,7 +193,7 @@ namespace IngameScript
             Echo("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
-
+            List<SelectorCommandParameter> selectors = new List<SelectorCommandParameter>();
             foreach (var token in tokens)
             {
                 if (ignoreWords.Contains(token)) continue;
@@ -261,6 +268,12 @@ namespace IngameScript
                         case CommandParameterType.DECREMENT:
                             commandParameters.Add(new IncrementCommandParameter(false));
                             break;
+                        case CommandParameterType.CONNECT:
+                            commandParameters.Add(new ConnectCommandParameter(true));
+                            break;
+                        case CommandParameterType.DISCONNECT:
+                            commandParameters.Add(new ConnectCommandParameter(false));
+                            break;
                         case CommandParameterType.LOCK:
                             commandParameters.Add(new LockCommandParameter(true));
                             break;
@@ -279,24 +292,33 @@ namespace IngameScript
                     continue;
                 }
 
+                SelectorCommandParameter selector = new SelectorCommandParameter(token);
                 //If nothing else matches, assume this is the name of the selector
-                commandParameters.Add(new SelectorCommandParameter(token));
+                commandParameters.Add(selector);
+                selectors.Add(selector);
+            }
 
-                if (commandParameters.Exists(command => command is BlockTypeCommandParameter)) continue;
+            //TODO: This may not hold once we have commands with multiple BlockType subcommands (If x is <Condition> then y do <Action>)
+            if (commandParameters.Exists(command => command is BlockTypeCommandParameter)) return commandParameters;
 
-                //Parse Sub Tokens to try to find Block Type
-                List<String> subTokens = parseTokens(token);
+            foreach (SelectorCommandParameter selector in selectors)
+            {
+                //Parse Selectors to try to find Block Type
+                List<String> subTokens = parseTokens(selector.GetSelector());
 
                 if (subTokens.Count < 2) continue;
 
-                subTokens.ForEach(subToken => Echo("Sub Token: " + subToken));
                 List<CommandParameter> tokenCommandParameters = parseCommandParameters(subTokens);
 
-                foreach (CommandParameter subToken in tokenCommandParameters) {
+                foreach (CommandParameter subToken in tokenCommandParameters)
+                {
                     if (subToken is BlockTypeCommandParameter)
                     {
                         commandParameters.Add(subToken);
-                        break;
+                    }
+                    else if (subToken is GroupCommandParameter)
+                    {
+                        commandParameters.Add(subToken);
                     }
                 }
             }
@@ -333,6 +355,8 @@ namespace IngameScript
                         return new ProjectorCommand(this, parameters);
                     case BlockType.MERGE:
                         return new MergeBlockCommand(this, parameters);
+                    case BlockType.CONNECTOR:
+                        return new ConnectorCommand(this, parameters);
                     default:
                         throw new Exception("Unsupported Block Type Command: " + blockType);
                 }

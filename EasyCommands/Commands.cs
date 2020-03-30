@@ -126,16 +126,16 @@ namespace IngameScript
                 program.GridTerminalSystem.GetBlocksOfType<E>(entities);
 
                 return entities.FindAll(entity => (entity is IMyTerminalBlock) 
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.getSelector());
+                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetSelector());
             }
 
             protected List<E> GetGroupEntities(MyGridProgram program, SelectorCommandParameter selector)
             {
-                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.getSelector());
+                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.GetSelector());
 
                 if (group == null)
                 {
-                    program.Echo("Unable to find requested block group: " + selector.getSelector());
+                    program.Echo("Unable to find requested block group: " + selector.GetSelector());
                     throw new Exception();
                 }
 
@@ -146,7 +146,7 @@ namespace IngameScript
 
             protected void handleActivation(MyGridProgram program, List<E> functionalBlocks, ActivationCommandParameter activationParameter)
             {
-                bool activation = activationParameter.isActivate();
+                bool activation = activationParameter.IsActivate();
 
                 if (activation)
                 {
@@ -328,6 +328,8 @@ namespace IngameScript
             {
                 return new List<CommandHandler>
                 {
+                    new ConnectorLockHandler(entityProvider),
+                    new ConnectorConnectHandler(entityProvider),
                     new ActivationHandler<IMyShipConnector>(entityProvider)
                 };
             }

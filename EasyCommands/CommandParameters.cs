@@ -55,7 +55,7 @@ namespace IngameScript
                 this.selector = selector;
             }
 
-            public String getSelector()
+            public String GetSelector()
             {
                 return selector;
             }
@@ -70,7 +70,7 @@ namespace IngameScript
                 this.activate = activate;
             }
 
-            public bool isActivate()
+            public bool IsActivate()
             {
                 return activate;
             }
@@ -90,7 +90,7 @@ namespace IngameScript
                 this.increment = increment;
             }
 
-            public bool isIncrement()
+            public bool IsIncrement()
             {
                 return increment;
             }
@@ -98,16 +98,31 @@ namespace IngameScript
 
         public class LockCommandParameter : CommandParameter
         {
-            bool locked;//false if decrement
+            private bool locked;
 
             public LockCommandParameter(bool locked)
             {
                 this.locked = locked;
             }
 
-            public bool isLock()
+            public bool IsLock()
             {
                 return locked;
+            }
+        }
+
+        public class ConnectCommandParameter : CommandParameter
+        {
+            private bool connect;
+
+            public ConnectCommandParameter(bool connect)
+            {
+                this.connect = connect;
+            }
+
+            public bool IsConnect()
+            {
+                return connect;
             }
         }
 
@@ -140,7 +155,7 @@ namespace IngameScript
                 this.unit = unit;
             }
 
-            public UnitType getUnit()
+            public UnitType GetUnit()
             {
                 return unit;
             }
@@ -155,7 +170,7 @@ namespace IngameScript
                 this.value = value;
             }
 
-            public float getValue()
+            public float GetValue()
             {
                 return value;
             }

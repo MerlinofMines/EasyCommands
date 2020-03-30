@@ -35,13 +35,15 @@ namespace IngameScript
                 this.selector = selector;
             }
 
-            public List<T> GetEntities(MyGridProgram program)
+            public virtual List<T> GetEntities(MyGridProgram program)
             {
                 List<T> entities = new List<T>();
                 program.GridTerminalSystem.GetBlocksOfType<T>(entities);
 
+                program.Echo("I'm Here");
+
                 return entities.FindAll(entity => (entity is IMyTerminalBlock)
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.getSelector());
+                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetSelector());
             }
         }
 
@@ -51,17 +53,23 @@ namespace IngameScript
             {
             }
 
-            new public List<T> GetEntities(MyGridProgram program)
+            public override List<T> GetEntities(MyGridProgram program)
             {
-                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.getSelector());
+                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                program.GridTerminalSystem.GetBlockGroups(blockGroups);
+
+                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.GetSelector());
 
                 if (group == null)
                 {
-                    throw new Exception("Unable to find requested block group: " + selector.getSelector());
+                    throw new Exception("Unable to find requested block group: " + selector.GetSelector());
                 }
 
                 List<T> entities = new List<T>();
                 group.GetBlocksOfType<T>(entities);
+
+                program.Echo("Found " + entities.Count + " blocks in Group Selector");
+
                 return entities;
             }
         }
