@@ -289,6 +289,14 @@ namespace IngameScript
             group.GetBlocksOfType<IMyAirtightDoorBase>(airtightDoors);
             group.GetBlocksOfType<IMyAirVent>(airVents);
 
+            if(airtightDoors.Count == 0)
+            {
+                Echo("Airlock Group " + group.Name + "does not contain any airtight doors.  Ignoring.");
+                return false;
+            }
+
+            List<IMyAirtightDoorBase> unknownDoors = new List<IMyAirtightDoorBase>();
+
             foreach (IMyAirtightDoorBase door in airtightDoors)
             {
                 if (door.CustomName.ToLower().Contains(EXTERNAL_DOOR_TAG)) {
@@ -300,19 +308,17 @@ namespace IngameScript
                 }
                 else
                 {
-                    Echo("Unknown door: " + door.CustomName + ", ignoring");
+                    unknownDoors.Add(door);
                 }
-            }
-
-            if (exteriorAirlockDoors.Count == 0)
-            {
-                Echo("No Exterior Doors found for block group " + blockGroup + ", ignoring.");
-                return false;
             }
 
             if (interiorAirlockDoors.Count == 0)
             {
-                Echo("No Interior Doors found for block group " + blockGroup + ", ignoring.");
+                Echo("No Interior Doors found for block group " + blockGroup + ", assuming all doors in group are exterior.");
+                exteriorAirlockDoors.AddList(unknownDoors);
+            } else  if (exteriorAirlockDoors.Count == 0)
+            {
+                Echo("No Exterior Doors found for block group " + blockGroup + ", ignoring.");
                 return false;
             }
 
