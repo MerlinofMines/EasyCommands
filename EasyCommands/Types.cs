@@ -55,6 +55,18 @@ namespace IngameScript
             WAIT
         } 
 
+        public enum PropertyType
+        {
+            ON_OFF,
+            HEIGHT,
+            CONNECTED,
+            CONNECTABLE,
+            ANGLE,
+            VELOCITY,
+            LOCKED,
+            LOCKABLE
+        }
+
         public enum UnitType
         {
             SECONDS,

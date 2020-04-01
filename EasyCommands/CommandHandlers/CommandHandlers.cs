@@ -28,9 +28,9 @@ namespace IngameScript
 
         public class SelectorEntityProvider<T> : IEntityProvider<T> where T : class, IMyTerminalBlock
         {
-            protected SelectorCommandParameter selector;
+            protected StringCommandParameter selector;
 
-            public SelectorEntityProvider(SelectorCommandParameter selector)
+            public SelectorEntityProvider(StringCommandParameter selector)
             {
                 this.selector = selector;
             }
@@ -43,13 +43,13 @@ namespace IngameScript
                 program.Echo("I'm Here");
 
                 return entities.FindAll(entity => (entity is IMyTerminalBlock)
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetSelector());
+                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetValue());
             }
         }
 
         public class SelectorGroupEntityProvider<T> : SelectorEntityProvider<T> where T : class, IMyTerminalBlock
         {
-            public SelectorGroupEntityProvider(SelectorCommandParameter selector) : base(selector)
+            public SelectorGroupEntityProvider(StringCommandParameter selector) : base(selector)
             {
             }
 
@@ -58,11 +58,11 @@ namespace IngameScript
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 program.GridTerminalSystem.GetBlockGroups(blockGroups);
 
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.GetSelector());
+                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.GetValue());
 
                 if (group == null)
                 {
-                    throw new Exception("Unable to find requested block group: " + selector.GetSelector());
+                    throw new Exception("Unable to find requested block group: " + selector.GetValue());
                 }
 
                 List<T> entities = new List<T>();

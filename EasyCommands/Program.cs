@@ -193,7 +193,7 @@ namespace IngameScript
             Echo("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
-            List<SelectorCommandParameter> selectors = new List<SelectorCommandParameter>();
+            List<StringCommandParameter> selectors = new List<StringCommandParameter>();
             foreach (var token in tokens)
             {
                 if (ignoreWords.Contains(token)) continue;
@@ -292,7 +292,7 @@ namespace IngameScript
                     continue;
                 }
 
-                SelectorCommandParameter selector = new SelectorCommandParameter(token);
+                StringCommandParameter selector = new StringCommandParameter(token);
                 //If nothing else matches, assume this is the name of the selector
                 commandParameters.Add(selector);
                 selectors.Add(selector);
@@ -301,10 +301,10 @@ namespace IngameScript
             //TODO: This may not hold once we have commands with multiple BlockType subcommands (If x is <Condition> then y do <Action>)
             if (commandParameters.Exists(command => command is BlockTypeCommandParameter)) return commandParameters;
 
-            foreach (SelectorCommandParameter selector in selectors)
+            foreach (StringCommandParameter selector in selectors)
             {
                 //Parse Selectors to try to find Block Type
-                List<String> subTokens = parseTokens(selector.GetSelector());
+                List<String> subTokens = parseTokens(selector.GetValue());
 
                 if (subTokens.Count < 2) continue;
 

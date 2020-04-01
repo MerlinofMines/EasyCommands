@@ -82,11 +82,11 @@ namespace IngameScript
 
                 Boolean isGroup = (commandParameters.RemoveAll(param => param is GroupCommandParameter) > 0);//Remove all group, set true if at least 1 removed
 
-                int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
+                int selectorIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
 
                 if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
 
-                SelectorCommandParameter selector = (SelectorCommandParameter) commandParameters[selectorIndex];
+                StringCommandParameter selector = (StringCommandParameter) commandParameters[selectorIndex];
                 commandParameters.RemoveAt(selectorIndex);
 
                 if (isGroup)
@@ -109,7 +109,7 @@ namespace IngameScript
             {
                 bool isGroup = commandParameters.Exists(parameter => (parameter is GroupCommandParameter));
                 //TODO: Need Smart Selection by finding the closest Selector to either a Group or a BlockType Parameter.  Other param may be something else.
-                SelectorCommandParameter selectorParameter = (SelectorCommandParameter) commandParameters.Find(parameter => (parameter is SelectorCommandParameter));
+                StringCommandParameter selectorParameter = (StringCommandParameter) commandParameters.Find(parameter => (parameter is StringCommandParameter));
 
                 if (isGroup)
                 {
@@ -120,22 +120,22 @@ namespace IngameScript
                 }
             }
 
-            protected List<E> GetEntities(MyGridProgram program, SelectorCommandParameter selector)
+            protected List<E> GetEntities(MyGridProgram program, StringCommandParameter selector)
             {
                 List<E> entities = new List<E>();
                 program.GridTerminalSystem.GetBlocksOfType<E>(entities);
 
                 return entities.FindAll(entity => (entity is IMyTerminalBlock) 
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetSelector());
+                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetValue());
             }
 
-            protected List<E> GetGroupEntities(MyGridProgram program, SelectorCommandParameter selector)
+            protected List<E> GetGroupEntities(MyGridProgram program, StringCommandParameter selector)
             {
-                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.GetSelector());
+                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.GetValue());
 
                 if (group == null)
                 {
-                    program.Echo("Unable to find requested block group: " + selector.GetSelector());
+                    program.Echo("Unable to find requested block group: " + selector.GetValue());
                     throw new Exception();
                 }
 

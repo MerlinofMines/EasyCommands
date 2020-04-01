@@ -27,6 +27,42 @@ namespace IngameScript
 
         }
 
+        public abstract class ValueCommandParameter<T> : CommandParameter
+        {
+            private T value;
+
+            public ValueCommandParameter(T value)
+            {
+                this.value = value;
+            }
+
+            public T GetValue()
+            {
+                return value;
+            }
+        }
+
+        public class StringCommandParameter : ValueCommandParameter<String>
+        {
+            public StringCommandParameter(string value) : base(value)
+            {
+            }
+        }
+
+        public class NumericCommandParameter : ValueCommandParameter<float>
+        {
+            public NumericCommandParameter(float value) : base(value)
+            {
+            }
+        }
+
+        public class BooleanCommandParameter : ValueCommandParameter<bool>
+        {
+            public BooleanCommandParameter(bool value) : base(value)
+            {
+            }
+        }
+
         public class GroupCommandParameter : CommandParameter
         {
 
@@ -44,20 +80,6 @@ namespace IngameScript
             public BlockType GetBlockType()
             {
                 return blockType;
-            }
-        }
-
-        public class SelectorCommandParameter : CommandParameter
-        {
-            private String selector; 
-
-            public SelectorCommandParameter(String selector) {
-                this.selector = selector;
-            }
-
-            public String GetSelector()
-            {
-                return selector;
             }
         }
 
@@ -158,21 +180,6 @@ namespace IngameScript
             public UnitType GetUnit()
             {
                 return unit;
-            }
-        }
-
-        public class NumericCommandParameter : CommandParameter
-        {
-            float value;
-
-            public NumericCommandParameter(float value)
-            {
-                this.value = value;
-            }
-
-            public float GetValue()
-            {
-                return value;
             }
         }
     }
