@@ -63,6 +63,34 @@ namespace IngameScript
             }
         }
 
+        public class DirectionCommandParameter : ValueCommandParameter<DirectionType>
+        {
+            public DirectionCommandParameter(DirectionType value) : base(value)
+            {
+            }
+        }
+
+        public class BooleanPropertyCommandParameter : ValueCommandParameter<BooleanPropertyType>
+        {
+            public BooleanPropertyCommandParameter(BooleanPropertyType value) : base(value)
+            {
+            }
+        }
+
+        public class StringPropertyCommandParameter : ValueCommandParameter<StringPropertyType>
+        {
+            public StringPropertyCommandParameter(StringPropertyType value) : base(value)
+            {
+            }
+        }
+
+        public class NumericPropertyCommandParameter : ValueCommandParameter<NumericPropertyType>
+        {
+            public NumericPropertyCommandParameter(NumericPropertyType value) : base(value)
+            {
+            }
+        }
+
         public class GroupCommandParameter : CommandParameter
         {
 
@@ -83,82 +111,12 @@ namespace IngameScript
             }
         }
 
-        public class ActivationCommandParameter : CommandParameter
-        {
-            private bool activate;
-
-            public ActivationCommandParameter(bool activate)
-            {
-                this.activate = activate;
-            }
-
-            public bool IsActivate()
-            {
-                return activate;
-            }
-        }
-
         public class ReverseCommandParameter : CommandParameter
         {
 
         }
 
-        public class IncrementCommandParameter : CommandParameter
-        {
-            bool increment;//false if decrement
-
-            public IncrementCommandParameter(bool increment)
-            {
-                this.increment = increment;
-            }
-
-            public bool IsIncrement()
-            {
-                return increment;
-            }
-        }
-
-        public class LockCommandParameter : CommandParameter
-        {
-            private bool locked;
-
-            public LockCommandParameter(bool locked)
-            {
-                this.locked = locked;
-            }
-
-            public bool IsLock()
-            {
-                return locked;
-            }
-        }
-
-        public class ConnectCommandParameter : CommandParameter
-        {
-            private bool connect;
-
-            public ConnectCommandParameter(bool connect)
-            {
-                this.connect = connect;
-            }
-
-            public bool IsConnect()
-            {
-                return connect;
-            }
-        }
-
         public class RelativeCommandParameter : CommandParameter
-        {
-
-        }
-
-        public class VelocityCommandParameter : CommandParameter
-        {
-
-        }
-
-        public class DelayCommandParameter : CommandParameter
         {
 
         }

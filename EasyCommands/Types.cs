@@ -21,60 +21,11 @@ namespace IngameScript
 {
     partial class Program
     {
-        public enum BlockType
-        {
-            PISTON,
-            ROTOR,
-            PROGRAM,
-            TIMER,
-            LIGHT,
-            PROJECTOR,
-            MERGE,
-            CONNECTOR
-        }
-
-        public enum CommandParameterType
-        {
-            BLOCKTYPE,
-            GROUP,
-            ACTIVATE,
-            DEACTIVATE,
-            REVERSE,
-            UNIT,
-            INCREMENT,
-            DECREMENT,
-            DELAY,
-            VELOCITY,
-            SELECTOR,
-            NUMERIC,
-            RELATIVE,
-            CONNECT,
-            DISCONNECT,
-            LOCK,
-            UNLOCK,
-            WAIT
-        } 
-
-        public enum PropertyType
-        {
-            ON_OFF,
-            HEIGHT,
-            CONNECTED,
-            CONNECTABLE,
-            ANGLE,
-            VELOCITY,
-            LOCKED,
-            LOCKABLE
-        }
-
-        public enum UnitType
-        {
-            SECONDS,
-            TICKS,
-            DEGREES,
-            RADIANS,
-            METERS,
-            RPM
-        }
+        public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER }
+        public enum BooleanPropertyType { ON_OFF, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE }
+        public enum NumericPropertyType { HEIGHT, ANGLE, SPEED }
+        public enum StringPropertyType { NAME, BLUEPRINT }
+        public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
+        public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
     }
 }

@@ -27,16 +27,18 @@ namespace IngameScript
         //Configuration.  Keep all words lowercase
         private String[] ignoreWords = { "the", "and", "less", "than", "greater", "more", "turn", "rotate", "set", "until", "is", "block", "tell", "to", "from" };
         private String[] groupWords = { "blocks", "group" };
-        private String[] activateWords = { "move", "go", "on", "start", "begin"};
-        private String[] deactivateWords = { "stop", "off", "terminate", "exit", "cancel", "end"};
+        private String[] activateWords = { "move", "go", "on", "start", "begin" };
+        private String[] deactivateWords = { "stop", "off", "terminate", "exit", "cancel", "end" };
         private String[] reverseWords = { "reverse", "switch direction", "turn around" };
-        private String[] increaseWords = { "increase", "raise", "extend", "expand", "clockwise", "clock", "forward", "forwards", "up"};
-        private String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "counter", "counterclock", "counterclockwise", "backward", "backwards", "down"};
+        private String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
+        private String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
+        private String[] clockwiseWords = { "clockwise", "clock" };
+        private String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
+
         private String[] relativeWords = { "by" };
         private String[] increaseRelativeWords = { "add" };
         private String[] decreaseRelativeWords = { "subtact" };
-        private String[] delayWords = {"delay", "after" };
-        private String[] velocityWords = {"speed", "velocity", "rate", "pace" };
+        private String[] speedWords = { "speed", "velocity", "rate", "pace" };
         private String[] waitWords = { "wait", "hold", "pause" };
         private String[] connectWords = { "connect", "join", "attach" };
         private String[] disconnectWords = { "disconnect", "separate", "detach" };
@@ -51,7 +53,9 @@ namespace IngameScript
             { "programs", BlockType.PROGRAM },
             { "timers", BlockType.TIMER },
             { "projectors", BlockType.PROJECTOR },
-            { "connectors", BlockType.CONNECTOR }
+            { "connectors", BlockType.CONNECTOR },
+            { "welders", BlockType.WELDER },
+            { "grinders", BlockType.GRINDER }
         };
 
         private Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -62,7 +66,9 @@ namespace IngameScript
             { "timer", BlockType.TIMER },
             { "projector", BlockType.PROJECTOR },
             { "merge", BlockType.MERGE },
-            { "connector", BlockType.CONNECTOR }
+            { "connector", BlockType.CONNECTOR },
+            { "welder", BlockType.WELDER },
+            { "grinder", BlockType.GRINDER }
         };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
@@ -79,30 +85,38 @@ namespace IngameScript
         };
 
         //Internal (Don't touch!)
-        private Dictionary<String, CommandParameterType> tokenDictionary;
+        private Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        List<Command> runningCommands;
+        List<Command> runningCommands = new List<Command>();
 
         public Program()
         {
-            tokenDictionary = new Dictionary<string, CommandParameterType>();
+            foreach (var word in groupWords) { propertyWords.Add(word, new List<CommandParameter>() { new GroupCommandParameter() }); }
+            foreach (var word in activateWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanCommandParameter(true) }); }
+            foreach (var word in deactivateWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanCommandParameter(false) }); }
+            foreach (var word in increaseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.UP) }); }
+            foreach (var word in decreaseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.DOWN) }); }
+            foreach (var word in clockwiseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.CLOCKWISE) }); }
+            foreach (var word in counterclockwiseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE) }); }
+            foreach (var word in reverseWords) { propertyWords.Add(word, new List<CommandParameter>() { new ReverseCommandParameter() }); }
+            foreach (var word in relativeWords) { propertyWords.Add(word, new List<CommandParameter>() { new RelativeCommandParameter() }); }
+            foreach (var word in speedWords) { propertyWords.Add(word, new List<CommandParameter>() { new NumericPropertyCommandParameter(NumericPropertyType.SPEED) }); }
+            foreach (var word in connectWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED) }); }
+            foreach (var word in disconnectWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false) }); }
+            foreach (var word in lockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED) }); }
+            foreach (var word in unlockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false) }); }
+            foreach (var word in waitWords) { propertyWords.Add(word, new List<CommandParameter>() { new WaitCommandParameter()}); }
 
-            foreach (var word in groupWords) {tokenDictionary.Add(word, CommandParameterType.GROUP);}
-            foreach (var word in activateWords) { tokenDictionary.Add(word, CommandParameterType.ACTIVATE); }
-            foreach (var word in deactivateWords) { tokenDictionary.Add(word, CommandParameterType.DEACTIVATE); }
-            foreach (var word in reverseWords) { tokenDictionary.Add(word, CommandParameterType.REVERSE); }
-            foreach (var word in increaseWords) { tokenDictionary.Add(word, CommandParameterType.INCREMENT); }
-            foreach (var word in decreaseWords) { tokenDictionary.Add(word, CommandParameterType.DECREMENT); }
-            foreach (var word in relativeWords) { tokenDictionary.Add(word, CommandParameterType.RELATIVE); }
-            foreach (var word in delayWords) { tokenDictionary.Add(word, CommandParameterType.DELAY); }
-            foreach (var word in velocityWords) { tokenDictionary.Add(word, CommandParameterType.VELOCITY); }
-            foreach (var word in waitWords) { tokenDictionary.Add(word, CommandParameterType.WAIT); }
-            foreach (var word in connectWords) { tokenDictionary.Add(word, CommandParameterType.CONNECT); }
-            foreach (var word in disconnectWords) { tokenDictionary.Add(word, CommandParameterType.DISCONNECT); }
-            foreach (var word in lockWords) { tokenDictionary.Add(word, CommandParameterType.LOCK); }
-            foreach (var word in unlockWords) { tokenDictionary.Add(word, CommandParameterType.UNLOCK); }
-
-            runningCommands = new List<Command>();
+            //Register Block Handlers
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.LIGHT, new BaseBlockHandler<IMyLightingBlock>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.MERGE, new BaseBlockHandler<IMyShipMergeBlock>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.PROJECTOR, new BaseBlockHandler<IMyProjector>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.TIMER, new BaseBlockHandler<IMyTimerBlock>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.CONNECTOR, new ConnectorBlockHandler());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.WELDER, new BaseBlockHandler<IMyShipWelder>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.GRINDER, new BaseBlockHandler<IMyShipGrinder>());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.PISTON, new PistonBlockHandler());
+            BlockHandlerRegistry.RegisterBlockHandler(BlockType.ROTOR, new RotorBlockHandler());
         }
 
         public void Save()
@@ -222,67 +236,20 @@ namespace IngameScript
                 if(increaseRelativeWords.Contains(token))
                 {
                     commandParameters.Add(new RelativeCommandParameter());
-                    commandParameters.Add(new IncrementCommandParameter(true));
+                    commandParameters.Add(new DirectionCommandParameter(DirectionType.UP));
                     continue;
                 }
 
                 if (decreaseRelativeWords.Contains(token))
                 {
                     commandParameters.Add(new RelativeCommandParameter());
-                    commandParameters.Add(new IncrementCommandParameter(false));
+                    commandParameters.Add(new DirectionCommandParameter(DirectionType.DOWN));
                     continue;
                 }
 
-                CommandParameterType commandParameterType;
-                if (tokenDictionary.TryGetValue(token, out commandParameterType))
+                if (propertyWords.ContainsKey(token))
                 {
-                    switch (commandParameterType)
-                    {
-                        case CommandParameterType.GROUP:
-                            commandParameters.Add(new GroupCommandParameter());
-                            break;
-                        case CommandParameterType.REVERSE:
-                            commandParameters.Add(new ReverseCommandParameter());
-                            break;
-                        case CommandParameterType.DELAY:
-                            commandParameters.Add(new DelayCommandParameter());
-                            break;
-                        case CommandParameterType.VELOCITY:
-                            commandParameters.Add(new VelocityCommandParameter());
-                            break;
-                        case CommandParameterType.RELATIVE:
-                            commandParameters.Add(new RelativeCommandParameter());
-                            break;
-                        case CommandParameterType.WAIT:
-                            commandParameters.Add(new WaitCommandParameter());
-                            break;
-                        case CommandParameterType.ACTIVATE:
-                            commandParameters.Add(new ActivationCommandParameter(true));
-                            break;
-                        case CommandParameterType.DEACTIVATE:
-                            commandParameters.Add(new ActivationCommandParameter(false));
-                            break;
-                        case CommandParameterType.INCREMENT:
-                            commandParameters.Add(new IncrementCommandParameter(true));
-                            break;
-                        case CommandParameterType.DECREMENT:
-                            commandParameters.Add(new IncrementCommandParameter(false));
-                            break;
-                        case CommandParameterType.CONNECT:
-                            commandParameters.Add(new ConnectCommandParameter(true));
-                            break;
-                        case CommandParameterType.DISCONNECT:
-                            commandParameters.Add(new ConnectCommandParameter(false));
-                            break;
-                        case CommandParameterType.LOCK:
-                            commandParameters.Add(new LockCommandParameter(true));
-                            break;
-                        case CommandParameterType.UNLOCK:
-                            commandParameters.Add(new LockCommandParameter(false));
-                            break;
-                        default:
-                            throw new Exception("Unsupported Command Parameter Type: " + commandParameterType);
-                    }
+                    commandParameters.AddList(propertyWords[token]);
                     continue;
                 }
 
@@ -342,21 +309,25 @@ namespace IngameScript
                 switch (blockType)
                 {
                     case BlockType.PISTON:
-                        return new PistonCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyPistonBase>(this, parameters);
                     case BlockType.ROTOR:
-                        return new RotorCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyMotorStator>(this, parameters);
                     case BlockType.LIGHT:
-                        return new LightCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyLightingBlock>(this, parameters);
                     case BlockType.PROGRAM:
-                        return new ProgramCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyProgrammableBlock>(this, parameters);
                     case BlockType.TIMER:
-                        return new TimerBlockCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyTimerBlock>(this, parameters);
                     case BlockType.PROJECTOR:
-                        return new ProjectorCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyProjector>(this, parameters);
                     case BlockType.MERGE:
-                        return new MergeBlockCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyShipMergeBlock>(this, parameters);
                     case BlockType.CONNECTOR:
-                        return new ConnectorCommand(this, parameters);
+                        return new BlockHandlerCommand<IMyShipConnector>(this, parameters);
+                    case BlockType.WELDER:
+                        return new BlockHandlerCommand<IMyShipWelder>(this, parameters);
+                    case BlockType.GRINDER:
+                        return new BlockHandlerCommand<IMyShipGrinder>(this, parameters);
                     default:
                         throw new Exception("Unsupported Block Type Command: " + blockType);
                 }
@@ -364,13 +335,5 @@ namespace IngameScript
 
             return new NullCommand(new List<CommandParameter>());
         }
-
-
-
-
-
-
-
-
     }
 }

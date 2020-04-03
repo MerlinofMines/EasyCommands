@@ -21,6 +21,7 @@ namespace IngameScript
 {
     partial class Program
     {
+
         public abstract class Command
         {
             protected List<CommandParameter> commandParameters;
@@ -43,7 +44,7 @@ namespace IngameScript
                 PreParseCommands(commandParameters);
 
                 program.Echo("Post Parsed Command Parameters: ");
-                commandParameters.ForEach(param => program.Echo(""+param.GetType()));
+                commandParameters.ForEach(param => program.Echo("" + param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
                 {
@@ -63,7 +64,7 @@ namespace IngameScript
 
             public abstract void PreParseCommands(List<CommandParameter> commandParameters);
 
-            public abstract List<CommandHandler> GetHandlers(); 
+            public abstract List<CommandHandler> GetHandlers();
         }
 
         public abstract class EntityHandlerCommand<E> : HandlerCommand where E : class, IMyTerminalBlock
@@ -76,17 +77,14 @@ namespace IngameScript
 
             public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
-                //TODO: Smarter resolution of which Selector, if more than 1.
-
-                commandParameters.RemoveAll(param => param is BlockTypeCommandParameter); //Ignore these, no one needs them
-
                 Boolean isGroup = (commandParameters.RemoveAll(param => param is GroupCommandParameter) > 0);//Remove all group, set true if at least 1 removed
 
+                //TODO: Smarter resolution of which Selector, if more than 1.
                 int selectorIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
 
                 if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
 
-                StringCommandParameter selector = (StringCommandParameter) commandParameters[selectorIndex];
+                StringCommandParameter selector = (StringCommandParameter)commandParameters[selectorIndex];
                 commandParameters.RemoveAt(selectorIndex);
 
                 if (isGroup)
@@ -99,7 +97,7 @@ namespace IngameScript
             }
         }
 
-        public abstract class EntityCommand <E> : Command where E : class, IMyTerminalBlock
+        public abstract class EntityCommand<E> : Command where E : class, IMyTerminalBlock
         {
             public EntityCommand(List<CommandParameter> commandParameters) : base(commandParameters)
             {
@@ -109,7 +107,7 @@ namespace IngameScript
             {
                 bool isGroup = commandParameters.Exists(parameter => (parameter is GroupCommandParameter));
                 //TODO: Need Smart Selection by finding the closest Selector to either a Group or a BlockType Parameter.  Other param may be something else.
-                StringCommandParameter selectorParameter = (StringCommandParameter) commandParameters.Find(parameter => (parameter is StringCommandParameter));
+                StringCommandParameter selectorParameter = (StringCommandParameter)commandParameters.Find(parameter => (parameter is StringCommandParameter));
 
                 if (isGroup)
                 {
@@ -125,7 +123,7 @@ namespace IngameScript
                 List<E> entities = new List<E>();
                 program.GridTerminalSystem.GetBlocksOfType<E>(entities);
 
-                return entities.FindAll(entity => (entity is IMyTerminalBlock) 
+                return entities.FindAll(entity => (entity is IMyTerminalBlock)
                     && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetValue());
             }
 
@@ -142,20 +140,6 @@ namespace IngameScript
                 List<E> entities = new List<E>();
                 group.GetBlocksOfType<E>(entities);
                 return entities;
-            }
-
-            protected void handleActivation(MyGridProgram program, List<E> functionalBlocks, ActivationCommandParameter activationParameter)
-            {
-                bool activation = activationParameter.IsActivate();
-
-                if (activation)
-                {
-                    functionalBlocks.ForEach(block => block.ApplyAction("OnOff_On"));
-                }
-                else
-                {
-                    functionalBlocks.ForEach(block => block.ApplyAction("OnOff_Off"));
-                }
             }
         }
 
@@ -194,143 +178,94 @@ namespace IngameScript
             }
         }
 
-        public class PistonCommand : EntityHandlerCommand<IMyPistonBase>
+        public class BlockHandlerCommand<T> : EntityHandlerCommand<T> where T : class, IMyFunctionalBlock
         {
-            public PistonCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
+            private BooleanBlockHandler<T> booleanBlockHandler;
+            private StringBlockHandler<T> stringBlockHandler;
+            private NumericBlockHandler<T> numericBlockHandler;
+
+            public BlockHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
 
+            }
+
+            public override void PreParseCommands(List<CommandParameter> commandParameters)
+            {
+                base.PreParseCommands(commandParameters);
+
+                int blockTypeIndex = commandParameters.FindIndex(param => param is BlockTypeCommandParameter);
+
+                if (blockTypeIndex < 0) throw new Exception("BlockTypeCommandParameter is required for command: " + GetType());
+
+                BlockTypeCommandParameter blockTypeParameter = (BlockTypeCommandParameter) commandParameters[blockTypeIndex];
+                commandParameters.RemoveAt(blockTypeIndex);
+
+                booleanBlockHandler = BlockHandlerRegistry.GetBooleanBlockHandler<T>(blockTypeParameter.GetBlockType());
+                stringBlockHandler = BlockHandlerRegistry.GetStringBlockHandler<T>(blockTypeParameter.GetBlockType());
+                numericBlockHandler = BlockHandlerRegistry.GetNumericBlockHandler<T>(blockTypeParameter.GetBlockType());
+
+                //TODO: Move to proper command parameter pre-processor
+                int boolPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
+                int stringPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
+                int numericPropIndex = commandParameters.FindIndex(param => (param is NumericPropertyCommandParameter));
+                int boolIndex = commandParameters.FindIndex(param => (param is BooleanCommandParameter));
+                int stringIndex = commandParameters.FindIndex(param => (param is StringCommandParameter));
+                int numericIndex = commandParameters.FindIndex(param => (param is NumericCommandParameter));
+                int directionIndex = commandParameters.FindIndex(param => (param is DirectionCommandParameter));
+
+                if (boolPropIndex < 0 && boolIndex >= 0)
+                {
+                    commandParameters.Add(new BooleanPropertyCommandParameter(booleanBlockHandler.GetDefaultBooleanProperty()));
+                }
+
+                if (boolIndex < 0 && boolPropIndex >= 0)
+                {
+                    commandParameters.Add(new BooleanCommandParameter(true));
+                }
+
+                if (stringPropIndex < 0 && stringIndex >= 0)
+                {
+                    commandParameters.Add(new StringPropertyCommandParameter(stringBlockHandler.GetDefaultStringProperty()));
+                }
+
+                if (numericIndex >= 0)
+                {
+                    DirectionType direction;
+                    if (directionIndex >= 0)
+                    {
+                        direction = ((DirectionCommandParameter)commandParameters[directionIndex]).GetValue();
+                    } else
+                    {
+                        direction = numericBlockHandler.GetDefaultDirection();
+                        commandParameters.Add(new DirectionCommandParameter(direction));
+                    }
+
+                    if (numericPropIndex < 0)
+                    {
+                        commandParameters.Add(new NumericPropertyCommandParameter(numericBlockHandler.GetDefaultNumericProperty(direction)));
+                    }
+                }
             }
 
             public override List<CommandHandler> GetHandlers()
             {
-                return new List<CommandHandler>()
-                {
-                    new PistonRelativeVelocityHandler(entityProvider),
-                    new PistonIncrementalAbsoluteVelocityHandler(entityProvider),
-                    new PistonAbsoluteVelocityHandler(entityProvider),
-                    new PistonRelativePositionHandler(entityProvider),
-                    new PistonIncrementalAbsolutePositionHandler(entityProvider),
-                    new PistonAbsolutePositionHandler(entityProvider),
-                    new PistonIncrementalPositionHandler(entityProvider),
-                    new ReverseHandler<IMyPistonBase>(entityProvider),
-                    new ActivationHandler<IMyPistonBase>(entityProvider)
-                };
-            }
-         }
+                return new List<CommandHandler>() {
+                    //Boolean Handlers
+                    new BooleanBlockPropertyCommandHandler<T>(entityProvider, booleanBlockHandler),
 
-        public class RotorCommand : EntityHandlerCommand<IMyMotorStator>
-        {
-            public RotorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
+                    //String Handlers
+                    new StringBlockPropertyCommandHandler<T>(entityProvider, stringBlockHandler),
 
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>()
-                {
-                    new RotorRelativeVelocityHandler(entityProvider),
-                    new RotorIncrementalAbsoluteVelocityHandler(entityProvider),
-                    new RotorAbsoluteVelocityHandler(entityProvider),
-                    new RotorRelativePositionHandler(entityProvider),
-                    new RotorIncrementalAbsolutePositionHandler(entityProvider),
-                    new RotorAbsolutePositionHandler(entityProvider),
-                    new RotorIncrementalPositionHandler(entityProvider),
-                    new ReverseHandler<IMyMotorStator>(entityProvider),
-                    new ActivationHandler<IMyMotorStator>(entityProvider)
-                };
-            }
-        }
+                    //Numeric Handlers
+                    new SetNumericPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new SetNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new IncrementNumericPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new IncrementNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new MoveNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new ReverseBlockPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
+                    new ReverseBlockCommandHandler<T>(entityProvider, numericBlockHandler)
 
-        public class LightCommand : EntityHandlerCommand<IMyLightingBlock>
-        {
-            public LightCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>()
-                {
-                    new ActivationHandler<IMyLightingBlock>(entityProvider)
-                };
-            }
-        }
-
-        public class ProgramCommand : EntityHandlerCommand<IMyProgrammableBlock>
-        {
-            public ProgramCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                //TODO: Add More Handlers
-                return new List<CommandHandler>()
-                {
-                    new ActivationHandler<IMyProgrammableBlock>(entityProvider)
-                };
-            }
-        }
-
-        public class TimerBlockCommand : EntityHandlerCommand<IMyTimerBlock>
-        {
-            public TimerBlockCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                //TODO: Add More Handlers
-                return new List<CommandHandler>()
-                {
-                    new ActivationHandler<IMyTimerBlock>(entityProvider)
-                };
-            }
-        }
-
-        public class MergeBlockCommand : EntityHandlerCommand<IMyShipMergeBlock>
-        {
-            public MergeBlockCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>
-                {
-                    new ActivationHandler<IMyShipMergeBlock>(entityProvider)
-                };
-            }
-        }
-
-        public class ProjectorCommand : EntityHandlerCommand<IMyProjector>
-        {
-            public ProjectorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>
-                {
-                    new ActivationHandler<IMyProjector>(entityProvider)
-                };
-            }
-        }
-
-        public class ConnectorCommand : EntityHandlerCommand<IMyShipConnector>
-        {
-            public ConnectorCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>
-                {
-                    new ConnectorLockHandler(entityProvider),
-                    new ConnectorConnectHandler(entityProvider),
-                    new ActivationHandler<IMyShipConnector>(entityProvider)
+                    //TODO: GPS Handler?
                 };
             }
         }
