@@ -152,15 +152,17 @@ namespace IngameScript
             public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
                 commandParameters.RemoveAll(param => param is WaitCommandParameter);
-            }
+                bool unitExists = commandParameters.Exists(param => param is UnitCommandParameter);
+                bool timeExists = commandParameters.Exists(param => param is NumericCommandParameter);
 
+                if (!timeExists && !unitExists) {commandParameters.Add(new NumericCommandParameter(1f)); commandParameters.Add(new UnitCommandParameter(UnitType.TICKS));}
+            }
             public override List<CommandHandler> GetHandlers()
             {
                 return new List<CommandHandler>
                 {
                     new WaitForDurationHandler(),
                     new WaitForDurationUnitHandler()
-                    //TODO: Add Conditional Wait Handlers
                 };
             }
         }

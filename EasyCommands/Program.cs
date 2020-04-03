@@ -117,6 +117,10 @@ namespace IngameScript
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.GRINDER, new BaseBlockHandler<IMyShipGrinder>());
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.PISTON, new PistonBlockHandler());
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.ROTOR, new RotorBlockHandler());
+
+            //Register Command Parsers
+            CommandParserRegistry.RegisterParser(new BlockHandlerCommandParser());
+            CommandParserRegistry.RegisterParser(new WaitCommandParser());
         }
 
         public void Save()
@@ -186,7 +190,7 @@ namespace IngameScript
             return commandList
                 .Select(command => parseTokens(command))
                 .Select(tokens => parseCommandParameters(tokens))
-                .Select(parameters => parseCommand(parameters))
+                .Select(parameters => CommandParserRegistry.ParseCommand(this, parameters))
                 .ToList();
         }
 
@@ -289,51 +293,7 @@ namespace IngameScript
                     }
                 }
             }
-
             return commandParameters;
-        }
-
-        private Command parseCommand(List<CommandParameter> parameters)
-        {
-            Echo("Parsing Command");
-            if (parameters.Exists(param => param is WaitCommandParameter))
-            {
-                return new WaitCommand(this, parameters);
-            }
-
-            CommandParameter blockTypeParameter = parameters.Find(param => param is BlockTypeCommandParameter);
-            
-            if (blockTypeParameter != null)
-            {
-                BlockType blockType = ((BlockTypeCommandParameter) blockTypeParameter).GetBlockType();
-                switch (blockType)
-                {
-                    case BlockType.PISTON:
-                        return new BlockHandlerCommand<IMyPistonBase>(this, parameters);
-                    case BlockType.ROTOR:
-                        return new BlockHandlerCommand<IMyMotorStator>(this, parameters);
-                    case BlockType.LIGHT:
-                        return new BlockHandlerCommand<IMyLightingBlock>(this, parameters);
-                    case BlockType.PROGRAM:
-                        return new BlockHandlerCommand<IMyProgrammableBlock>(this, parameters);
-                    case BlockType.TIMER:
-                        return new BlockHandlerCommand<IMyTimerBlock>(this, parameters);
-                    case BlockType.PROJECTOR:
-                        return new BlockHandlerCommand<IMyProjector>(this, parameters);
-                    case BlockType.MERGE:
-                        return new BlockHandlerCommand<IMyShipMergeBlock>(this, parameters);
-                    case BlockType.CONNECTOR:
-                        return new BlockHandlerCommand<IMyShipConnector>(this, parameters);
-                    case BlockType.WELDER:
-                        return new BlockHandlerCommand<IMyShipWelder>(this, parameters);
-                    case BlockType.GRINDER:
-                        return new BlockHandlerCommand<IMyShipGrinder>(this, parameters);
-                    default:
-                        throw new Exception("Unsupported Block Type Command: " + blockType);
-                }
-            }
-
-            return new NullCommand(new List<CommandParameter>());
         }
     }
 }
