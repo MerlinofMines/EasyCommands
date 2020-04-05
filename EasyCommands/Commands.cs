@@ -24,11 +24,16 @@ namespace IngameScript
 
         public abstract class Command
         {
-            protected List<CommandParameter> commandParameters;
+            protected bool async = false;
 
-            public Command(List<CommandParameter> commandParameters)
+            public bool IsAsync()
             {
-                this.commandParameters = commandParameters;
+                return async;
+            }
+
+            public void SetAsync(bool async)
+            {
+                this.async = async;
             }
 
             //Returns true if the program has finished execution.
@@ -39,7 +44,7 @@ namespace IngameScript
         {
             private CommandHandler commandHandler;
 
-            public HandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(commandParameters)
+            public HandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters)
             {
                 PreParseCommands(commandParameters);
 
@@ -77,69 +82,6 @@ namespace IngameScript
 
             public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
-                Boolean isGroup = (commandParameters.RemoveAll(param => param is GroupCommandParameter) > 0);//Remove all group, set true if at least 1 removed
-
-                //TODO: Smarter resolution of which Selector, if more than 1.
-                int selectorIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
-
-                if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-
-                StringCommandParameter selector = (StringCommandParameter)commandParameters[selectorIndex];
-                commandParameters.RemoveAt(selectorIndex);
-
-                if (isGroup)
-                {
-                    entityProvider = new SelectorGroupEntityProvider<E>(selector);
-                } else
-                {
-                    entityProvider = new SelectorEntityProvider<E>(selector);
-                }
-            }
-        }
-
-        public abstract class EntityCommand<E> : Command where E : class, IMyTerminalBlock
-        {
-            public EntityCommand(List<CommandParameter> commandParameters) : base(commandParameters)
-            {
-            }
-
-            protected List<E> GetSelectorEntities(MyGridProgram program)
-            {
-                bool isGroup = commandParameters.Exists(parameter => (parameter is GroupCommandParameter));
-                //TODO: Need Smart Selection by finding the closest Selector to either a Group or a BlockType Parameter.  Other param may be something else.
-                StringCommandParameter selectorParameter = (StringCommandParameter)commandParameters.Find(parameter => (parameter is StringCommandParameter));
-
-                if (isGroup)
-                {
-                    return GetGroupEntities(program, selectorParameter);
-                } else
-                {
-                    return GetEntities(program, selectorParameter);
-                }
-            }
-
-            protected List<E> GetEntities(MyGridProgram program, StringCommandParameter selector)
-            {
-                List<E> entities = new List<E>();
-                program.GridTerminalSystem.GetBlocksOfType<E>(entities);
-
-                return entities.FindAll(entity => (entity is IMyTerminalBlock)
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetValue());
-            }
-
-            protected List<E> GetGroupEntities(MyGridProgram program, StringCommandParameter selector)
-            {
-                IMyBlockGroup group = program.GridTerminalSystem.GetBlockGroupWithName(selector.GetValue());
-
-                if (group == null)
-                {
-                    program.Echo("Unable to find requested block group: " + selector.GetValue());
-                    throw new Exception();
-                }
-
-                List<E> entities = new List<E>();
-                group.GetBlocksOfType<E>(entities);
-                return entities;
             }
         }
 
@@ -169,10 +111,6 @@ namespace IngameScript
 
         public class NullCommand : Command
         {
-            public NullCommand(List<CommandParameter> commandParameters) : base(commandParameters)
-            {
-            }
-
             public override bool Execute(MyGridProgram program)
             {
                 program.Echo("Null Program");
@@ -193,18 +131,25 @@ namespace IngameScript
 
             public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
-                base.PreParseCommands(commandParameters);
+                int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
 
-                int blockTypeIndex = commandParameters.FindIndex(param => param is BlockTypeCommandParameter);
+                if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
 
-                if (blockTypeIndex < 0) throw new Exception("BlockTypeCommandParameter is required for command: " + GetType());
+                SelectorCommandParameter selectorParameter = (SelectorCommandParameter)commandParameters[selectorIndex];
+                commandParameters.RemoveAt(selectorIndex);
 
-                BlockTypeCommandParameter blockTypeParameter = (BlockTypeCommandParameter) commandParameters[blockTypeIndex];
-                commandParameters.RemoveAt(blockTypeIndex);
+                if (selectorParameter.isGroup)
+                { 
+                    entityProvider = new SelectorGroupEntityProvider<T>(selectorParameter);
+                }
+                else
+                {
+                    entityProvider = new SelectorEntityProvider<T>(selectorParameter);
+                }
 
-                booleanBlockHandler = BlockHandlerRegistry.GetBooleanBlockHandler<T>(blockTypeParameter.GetBlockType());
-                stringBlockHandler = BlockHandlerRegistry.GetStringBlockHandler<T>(blockTypeParameter.GetBlockType());
-                numericBlockHandler = BlockHandlerRegistry.GetNumericBlockHandler<T>(blockTypeParameter.GetBlockType());
+                booleanBlockHandler = BlockHandlerRegistry.GetBooleanBlockHandler<T>(selectorParameter.blockType);
+                stringBlockHandler = BlockHandlerRegistry.GetStringBlockHandler<T>(selectorParameter.blockType);
+                numericBlockHandler = BlockHandlerRegistry.GetNumericBlockHandler<T>(selectorParameter.blockType);
 
                 //TODO: Move to proper command parameter pre-processor
                 int boolPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
@@ -269,6 +214,59 @@ namespace IngameScript
 
                     //TODO: GPS Handler?
                 };
+            }
+        }
+
+        public class RunAfterConditionCommand : Command
+        {
+            private Condition condition;
+            private Command command;
+
+            public RunAfterConditionCommand(Condition condition, Command command)
+            {
+                this.condition = condition;
+                this.command = command;
+            }
+
+            //If Condition Not Met, run command.  
+            public override bool Execute(MyGridProgram program)
+            {
+                if (!condition.evaluate())
+                {
+                    return false;
+                }
+
+                command.Execute(program);
+                return true;
+            }
+        }
+
+        public class ConditionalCommand : Command
+        {
+            private Condition condition;
+            private Command conditionMetCommand;
+            private Command conditionNotMetCommand;
+
+            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand)
+            {
+                this.condition = condition;
+                this.conditionMetCommand = conditionMetCommand;
+                this.conditionNotMetCommand = conditionNotMetCommand;
+            }
+
+            public override bool Execute(MyGridProgram program)
+            {
+                bool conditionMet = condition.evaluate();
+                bool commandResult = false;
+                if (conditionMet)
+                {
+                    commandResult = conditionMetCommand.Execute(program);
+                } else
+                {
+                    commandResult = conditionNotMetCommand.Execute(program);
+                }
+
+                if (async) { return !conditionMet; } else { return commandResult; }
             }
         }
     }

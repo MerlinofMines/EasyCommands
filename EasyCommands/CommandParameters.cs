@@ -91,10 +91,57 @@ namespace IngameScript
             }
         }
 
-        public class GroupCommandParameter : CommandParameter
-        {
+        public class GroupCommandParameter : CommandParameter { }
 
+        public class IfCommandParameter : BooleanCommandParameter
+        {
+            public IfCommandParameter(bool value) : base(value)
+            {
+            }
         }
+
+        public class ConditionCommandParameter : ValueCommandParameter<Condition>
+        {
+            public ConditionCommandParameter(Condition value) : base(value) {}
+        }
+
+        public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode>
+        {
+            public AggregationModeCommandParameter(AggregationMode value) : base(value)
+            {
+            }
+        }
+
+        public class ComparisonCommandParameter : ValueCommandParameter<ComparisonType>
+        {
+            public ComparisonCommandParameter(ComparisonType value) : base(value)
+            {
+            }
+        }
+
+        public class ActionCommandParameter : ValueCommandParameter<List<CommandParameter>>
+        {
+            public ActionCommandParameter(List<CommandParameter> value) : base(value)
+            {
+            }
+        }
+
+        public class SelectorCommandParameter : CommandParameter
+        {
+            public BlockType blockType;
+            public bool isGroup;
+            public String selector;
+
+            public SelectorCommandParameter(BlockType blockType, bool isGroup, string selector)
+            {
+                this.blockType = blockType;
+                this.isGroup = isGroup;
+                this.selector = selector;
+            }
+        }
+
+
+        public class ElseCommandParameter : CommandParameter { }
 
         public class BlockTypeCommandParameter : CommandParameter
         {

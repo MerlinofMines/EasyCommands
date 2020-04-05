@@ -28,9 +28,9 @@ namespace IngameScript
 
         public class SelectorEntityProvider<T> : IEntityProvider<T> where T : class, IMyTerminalBlock
         {
-            protected StringCommandParameter selector;
+            protected SelectorCommandParameter selector;
 
-            public SelectorEntityProvider(StringCommandParameter selector)
+            public SelectorEntityProvider(SelectorCommandParameter selector)
             {
                 this.selector = selector;
             }
@@ -40,16 +40,14 @@ namespace IngameScript
                 List<T> entities = new List<T>();
                 program.GridTerminalSystem.GetBlocksOfType<T>(entities);
 
-                program.Echo("I'm Here");
-
                 return entities.FindAll(entity => (entity is IMyTerminalBlock)
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.GetValue());
+                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.selector);
             }
         }
 
         public class SelectorGroupEntityProvider<T> : SelectorEntityProvider<T> where T : class, IMyTerminalBlock
         {
-            public SelectorGroupEntityProvider(StringCommandParameter selector) : base(selector)
+            public SelectorGroupEntityProvider(SelectorCommandParameter selector) : base(selector)
             {
             }
 
@@ -58,11 +56,11 @@ namespace IngameScript
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 program.GridTerminalSystem.GetBlockGroups(blockGroups);
 
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.GetValue());
+                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
 
                 if (group == null)
                 {
-                    throw new Exception("Unable to find requested block group: " + selector.GetValue());
+                    throw new Exception("Unable to find requested block group: " + selector.selector);
                 }
 
                 List<T> entities = new List<T>();

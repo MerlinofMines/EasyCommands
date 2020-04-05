@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program : MyGridProgram
+    partial class Program : MyGridProgram 
     {
         //Debug
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
@@ -45,31 +45,6 @@ namespace IngameScript
 
         private String[] lockWords = { "lock", "freeze" };
         private String[] unlockWords = { "unlock", "unfreeze" };
-
-        private Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
-            { "pistons", BlockType.PISTON },
-            { "lights", BlockType.LIGHT },
-            { "rotors", BlockType.ROTOR },
-            { "programs", BlockType.PROGRAM },
-            { "timers", BlockType.TIMER },
-            { "projectors", BlockType.PROJECTOR },
-            { "connectors", BlockType.CONNECTOR },
-            { "welders", BlockType.WELDER },
-            { "grinders", BlockType.GRINDER }
-        };
-
-        private Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
-            { "piston", BlockType.PISTON },
-            { "light", BlockType.LIGHT },
-            { "rotor", BlockType.ROTOR },
-            { "program", BlockType.PROGRAM },
-            { "timer", BlockType.TIMER },
-            { "projector", BlockType.PROJECTOR },
-            { "merge", BlockType.MERGE },
-            { "connector", BlockType.CONNECTOR },
-            { "welder", BlockType.WELDER },
-            { "grinder", BlockType.GRINDER }
-        };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -117,10 +92,6 @@ namespace IngameScript
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.GRINDER, new BaseBlockHandler<IMyShipGrinder>());
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.PISTON, new PistonBlockHandler());
             BlockHandlerRegistry.RegisterBlockHandler(BlockType.ROTOR, new RotorBlockHandler());
-
-            //Register Command Parsers
-            CommandParserRegistry.RegisterParser(new BlockHandlerCommandParser());
-            CommandParserRegistry.RegisterParser(new WaitCommandParser());
         }
 
         public void Save()
@@ -174,15 +145,21 @@ namespace IngameScript
         private bool execute()
         {
             Echo("Executing Commands");
-            if(runningCommands.Count == 0) return true;
+            if (runningCommands.Count == 0) return true;
 
-            if(runningCommands[0].Execute(this))
+            int commandIndex = 0;
+
+            while (commandIndex < runningCommands.Count)
             {
-                runningCommands.RemoveAt(0);
-            }
+                Command nextCommand = runningCommands[commandIndex];
 
+                bool handled = nextCommand.Execute(this);
+                if (handled) { runningCommands.RemoveAt(commandIndex); } else {commandIndex++;}
+                if (!nextCommand.IsAsync()) break;
+            }
             return runningCommands.Count == 0;
         }
+
         private List<Command> parseCommands()
         {
             String[] commandList = Me.CustomData.Split(new[] { "\r\n", "\r", "\n" },StringSplitOptions.RemoveEmptyEntries);
@@ -190,19 +167,7 @@ namespace IngameScript
             return commandList
                 .Select(command => parseTokens(command))
                 .Select(tokens => parseCommandParameters(tokens))
-                .Select(parameters => CommandParserRegistry.ParseCommand(this, parameters))
-                .ToList();
-        }
-
-        //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        private List<String> parseTokens(String commandString)
-        {
-            return commandString.Split('"')
-                .Select((element, index) => index % 2 == 0  // If even index
-                                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)  // Split the item
-                                    : new string[] { element })  // Keep the entire item
-                .SelectMany(element => element)
-                .Select(element => element.ToLower())
+                .Select(parameters => parseCommand(parameters))
                 .ToList();
         }
 
@@ -211,24 +176,11 @@ namespace IngameScript
             Echo("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
-            List<StringCommandParameter> selectors = new List<StringCommandParameter>();
             foreach (var token in tokens)
             {
                 if (ignoreWords.Contains(token)) continue;
 
-                BlockType blockType;
-                if (blockTypeGroupWords.TryGetValue(token, out blockType))
-                {
-                    commandParameters.Add(new GroupCommandParameter());
-                    commandParameters.Add(new BlockTypeCommandParameter(blockType));
-                    continue;
-                }
-
-                if (blockTypeWords.TryGetValue(token, out blockType))
-                {
-                    commandParameters.Add(new BlockTypeCommandParameter(blockType));
-                    continue;
-                }
+                if (new BlockTypeParser().process(token, commandParameters)) continue;
 
                 UnitType unitType;
                 if (unitTypeWords.TryGetValue(token, out unitType))
@@ -263,37 +215,24 @@ namespace IngameScript
                     continue;
                 }
 
-                StringCommandParameter selector = new StringCommandParameter(token);
-                //If nothing else matches, assume this is the name of the selector
-                commandParameters.Add(selector);
-                selectors.Add(selector);
+                //If nothing else matches, must be a string
+                commandParameters.Add(new StringCommandParameter(token));
             }
 
-            //TODO: This may not hold once we have commands with multiple BlockType subcommands (If x is <Condition> then y do <Action>)
-            if (commandParameters.Exists(command => command is BlockTypeCommandParameter)) return commandParameters;
-
-            foreach (StringCommandParameter selector in selectors)
-            {
-                //Parse Selectors to try to find Block Type
-                List<String> subTokens = parseTokens(selector.GetValue());
-
-                if (subTokens.Count < 2) continue;
-
-                List<CommandParameter> tokenCommandParameters = parseCommandParameters(subTokens);
-
-                foreach (CommandParameter subToken in tokenCommandParameters)
-                {
-                    if (subToken is BlockTypeCommandParameter)
-                    {
-                        commandParameters.Add(subToken);
-                    }
-                    else if (subToken is GroupCommandParameter)
-                    {
-                        commandParameters.Add(subToken);
-                    }
-                }
-            }
             return commandParameters;
+        }
+
+        private Command parseCommand(List<CommandParameter> parameters)
+        {
+            Echo("Pre Prossessed Parameters:");
+            parameters.ForEach(param => Echo("Type: " + param.GetType()));
+
+            ParameterProcessorRegistry.process(parameters);
+
+            Echo("Post Prossessed Parameters:");
+            parameters.ForEach(param => Echo("Type: " + param.GetType()));
+
+            return CommandParserRegistry.ParseCommand(this, parameters);
         }
     }
 }

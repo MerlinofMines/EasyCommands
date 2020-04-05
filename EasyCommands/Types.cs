@@ -27,5 +27,6 @@ namespace IngameScript
         public enum StringPropertyType { NAME, BLUEPRINT }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
+        public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS}
     }
 }
