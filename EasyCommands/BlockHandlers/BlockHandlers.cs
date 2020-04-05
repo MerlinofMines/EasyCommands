@@ -46,6 +46,46 @@ namespace IngameScript
                     throw new Exception("Unsupported Block Type");
                 }
             }
+
+            public static List<IMyFunctionalBlock> getBlocks(MyGridProgram program, BlockType blockType, String customName)
+            {
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+
+                switch (blockType)
+                {
+                    case BlockType.PISTON: program.GridTerminalSystem.GetBlocksOfType<IMyPistonBase>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.ROTOR: program.GridTerminalSystem.GetBlocksOfType<IMyMotorStator>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.LIGHT: program.GridTerminalSystem.GetBlocksOfType<IMyInteriorLight>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.MERGE: program.GridTerminalSystem.GetBlocksOfType<IMyShipMergeBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.PROJECTOR: program.GridTerminalSystem.GetBlocksOfType<IMyProjector>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.TIMER: program.GridTerminalSystem.GetBlocksOfType<IMyTimerBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.CONNECTOR: program.GridTerminalSystem.GetBlocksOfType<IMyShipConnector>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.WELDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipWelder>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.GRINDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipGrinder>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    default: throw new Exception("Unsupported Block Type: " + blockType);
+                }
+                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+            }
+
+            public static List<IMyFunctionalBlock> getBlocks(IMyBlockGroup group, BlockType blockType)
+            {
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+
+                switch (blockType)
+                {
+                    case BlockType.PISTON: group.GetBlocksOfType<IMyPistonBase>(blocks); break;
+                    case BlockType.ROTOR: group.GetBlocksOfType<IMyMotorStator>(blocks); break;
+                    case BlockType.LIGHT: group.GetBlocksOfType<IMyInteriorLight>(blocks); break;
+                    case BlockType.MERGE: group.GetBlocksOfType<IMyShipMergeBlock>(blocks); break;
+                    case BlockType.PROJECTOR: group.GetBlocksOfType<IMyProjector>(blocks); break;
+                    case BlockType.TIMER: group.GetBlocksOfType<IMyTimerBlock>(blocks); break;
+                    case BlockType.CONNECTOR: group.GetBlocksOfType<IMyShipConnector>(blocks); break;
+                    case BlockType.WELDER: group.GetBlocksOfType<IMyShipWelder>(blocks); break;
+                    case BlockType.GRINDER: group.GetBlocksOfType<IMyShipGrinder>(blocks); break;
+                    default: throw new Exception("Unsupported Block Type: " + blockType);
+                }
+                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+            }
         }
 
         //Property Getters
@@ -266,6 +306,7 @@ namespace IngameScript
         public class OnOffPropertyGetter<T> : BooleanPropertyGetter<T> where T : class, IMyFunctionalBlock
         {
             public OnOffPropertyGetter() : base(BooleanPropertyType.ON_OFF){}
+
             public override bool GetPropertyValue(T block){return block.Enabled;}
         }
 

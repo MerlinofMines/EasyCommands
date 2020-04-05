@@ -48,11 +48,11 @@ namespace IngameScript
             Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters);
         }
 
-        public class ConditionalComandParser : CommandParser
+        public class ConditionalCommandParser : CommandParser
         {
             public bool CanHandle(List<CommandParameter> commandParameters)
             {
-                return commandParameters.Exists(param => param is ConditionalComandParser);
+                return commandParameters.Exists(param => param is ConditionalCommandParser);
             }
 
             public Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters)
@@ -98,7 +98,7 @@ namespace IngameScript
 
                 foreach (CommandParser parser in actionCommandParsers)
                 {
-                    if(parser.CanHandle(action.GetValue()))
+                    if (parser.CanHandle(action.GetValue()))
                     {
                         return parser.ParseCommand(program, action.GetValue());
                     }
@@ -130,35 +130,7 @@ namespace IngameScript
 
             public Command ParseCommand(MyGridProgram program, List<CommandParameter> parameters)
             {
-                CommandParameter selectorParameter = parameters.Find(param => param is SelectorCommandParameter);
-
-                BlockType blockType = ((SelectorCommandParameter) selectorParameter).blockType;
-
-                switch (blockType)
-                {
-                    case BlockType.PISTON:
-                        return new BlockHandlerCommand<IMyPistonBase>(program, parameters);
-                    case BlockType.ROTOR:
-                        return new BlockHandlerCommand<IMyMotorStator>(program, parameters);
-                    case BlockType.LIGHT:
-                        return new BlockHandlerCommand<IMyLightingBlock>(program, parameters);
-                    case BlockType.PROGRAM:
-                        return new BlockHandlerCommand<IMyProgrammableBlock>(program, parameters);
-                    case BlockType.TIMER:
-                        return new BlockHandlerCommand<IMyTimerBlock>(program, parameters);
-                    case BlockType.PROJECTOR:
-                        return new BlockHandlerCommand<IMyProjector>(program, parameters);
-                    case BlockType.MERGE:
-                        return new BlockHandlerCommand<IMyShipMergeBlock>(program, parameters);
-                    case BlockType.CONNECTOR:
-                        return new BlockHandlerCommand<IMyShipConnector>(program, parameters);
-                    case BlockType.WELDER:
-                        return new BlockHandlerCommand<IMyShipWelder>(program, parameters);
-                    case BlockType.GRINDER:
-                        return new BlockHandlerCommand<IMyShipGrinder>(program, parameters);
-                    default:
-                        throw new Exception("Unsupported Block Type Command: " + blockType);
-                }
+                return new BlockHandlerCommand(program, parameters);
             }
         }
     }

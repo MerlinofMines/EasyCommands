@@ -21,12 +21,12 @@ namespace IngameScript
 {
     partial class Program
     {
-        public interface IEntityProvider<T> where T : class, IMyTerminalBlock
+        public interface IEntityProvider
         {
-            List<T> GetEntities(MyGridProgram program);
+            List<IMyFunctionalBlock> GetEntities(MyGridProgram program);
         }
 
-        public class SelectorEntityProvider<T> : IEntityProvider<T> where T : class, IMyTerminalBlock
+        public class SelectorEntityProvider : IEntityProvider
         {
             protected SelectorCommandParameter selector;
 
@@ -35,40 +35,26 @@ namespace IngameScript
                 this.selector = selector;
             }
 
-            public virtual List<T> GetEntities(MyGridProgram program)
+            public virtual List<IMyFunctionalBlock> GetEntities(MyGridProgram program)
             {
-                List<T> entities = new List<T>();
-                program.GridTerminalSystem.GetBlocksOfType<T>(entities);
-
-                return entities.FindAll(entity => (entity is IMyTerminalBlock)
-                    && ((IMyTerminalBlock)entity).CustomName.ToLower() == selector.selector);
-            }
-        }
-
-        public class SelectorGroupEntityProvider<T> : SelectorEntityProvider<T> where T : class, IMyTerminalBlock
-        {
-            public SelectorGroupEntityProvider(SelectorCommandParameter selector) : base(selector)
-            {
-            }
-
-            public override List<T> GetEntities(MyGridProgram program)
-            {
-                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                program.GridTerminalSystem.GetBlockGroups(blockGroups);
-
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
-
-                if (group == null)
+                if (selector.isGroup)
                 {
-                    throw new Exception("Unable to find requested block group: " + selector.selector);
+                    List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                    program.GridTerminalSystem.GetBlockGroups(blockGroups);
+
+                    IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
+
+                    if (group == null)
+                    {
+                        throw new Exception("Unable to find requested block group: " + selector.selector);
+                    }
+
+                    return BlockHandlerRegistry.getBlocks(group, selector.blockType);
+
+                } else
+                {
+                    return BlockHandlerRegistry.getBlocks(program, selector.blockType, selector.selector);
                 }
-
-                List<T> entities = new List<T>();
-                group.GetBlocksOfType<T>(entities);
-
-                program.Echo("Found " + entities.Count + " blocks in Group Selector");
-
-                return entities;
             }
         }
 
@@ -198,55 +184,51 @@ namespace IngameScript
             }
         }
 
-        public abstract class OneParameterEntityCommandHandler<T, U> : OneParameterCommandHandler<T> 
+        public abstract class OneParameterEntityCommandHandler<T> : OneParameterCommandHandler<T> 
             where T : class, CommandParameter
-            where U : class, IMyTerminalBlock
         {
-            protected IEntityProvider<U> entityProvider;
+            protected IEntityProvider entityProvider;
 
-            public OneParameterEntityCommandHandler(IEntityProvider<U> entityProvider)
+            public OneParameterEntityCommandHandler(IEntityProvider entityProvider)
             {
                 this.entityProvider = entityProvider;
             }
         }
 
-        public abstract class TwoParameterEntityCommandHandler<T, U, V> : TwoParameterCommandHandler<T, U>
+        public abstract class TwoParameterEntityCommandHandler<T, U> : TwoParameterCommandHandler<T, U>
             where T : class, CommandParameter
             where U : class, CommandParameter
-            where V : class, IMyTerminalBlock
         {
-            protected IEntityProvider<V> entityProvider;
+            protected IEntityProvider entityProvider;
 
-            public TwoParameterEntityCommandHandler(IEntityProvider<V> entityProvider)
+            public TwoParameterEntityCommandHandler(IEntityProvider entityProvider)
             {
                 this.entityProvider = entityProvider;
             }
         }
 
-        public abstract class ThreeParameterEntityCommandHandler<T, U, V, W> : ThreeParameterCommandHandler<T, U, V>
+        public abstract class ThreeParameterEntityCommandHandler<T, U, V> : ThreeParameterCommandHandler<T, U, V>
             where T : class, CommandParameter
             where U : class, CommandParameter
             where V : class, CommandParameter
-            where W : class, IMyTerminalBlock
         {
-            protected IEntityProvider<W> entityProvider;
+            protected IEntityProvider entityProvider;
 
-            public ThreeParameterEntityCommandHandler(IEntityProvider<W> entityProvider)
+            public ThreeParameterEntityCommandHandler(IEntityProvider entityProvider)
             {
                 this.entityProvider = entityProvider;
             }
         }
 
-        public abstract class FourParameterEntityCommandHandler<T, U, V, W, X> : FourParameterCommandHandler<T, U, V, W>
+        public abstract class FourParameterEntityCommandHandler<T, U, V, W> : FourParameterCommandHandler<T, U, V, W>
             where T : class, CommandParameter
             where U : class, CommandParameter
             where V : class, CommandParameter
             where W : class, CommandParameter
-            where X : class, IMyTerminalBlock
         {
-            protected IEntityProvider<X> entityProvider;
+            protected IEntityProvider entityProvider;
 
-            public FourParameterEntityCommandHandler(IEntityProvider<X> entityProvider)
+            public FourParameterEntityCommandHandler(IEntityProvider entityProvider)
             {
                 this.entityProvider = entityProvider;
             }

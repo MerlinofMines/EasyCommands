@@ -72,19 +72,6 @@ namespace IngameScript
             public abstract List<CommandHandler> GetHandlers();
         }
 
-        public abstract class EntityHandlerCommand<E> : HandlerCommand where E : class, IMyTerminalBlock
-        {
-            protected IEntityProvider<E> entityProvider;
-
-            public EntityHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
-            {
-            }
-
-            public override void PreParseCommands(List<CommandParameter> commandParameters)
-            {
-            }
-        }
-
         public class WaitCommand : HandlerCommand
         {
             public WaitCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
@@ -118,9 +105,10 @@ namespace IngameScript
             }
         }
 
-        public class BlockHandlerCommand<T> : EntityHandlerCommand<T> where T : class, IMyFunctionalBlock
+        public class BlockHandlerCommand : HandlerCommand
         {
             private BlockHandler blockHandler;
+            private IEntityProvider entityProvider;
 
             public BlockHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
@@ -136,15 +124,7 @@ namespace IngameScript
                 SelectorCommandParameter selectorParameter = (SelectorCommandParameter)commandParameters[selectorIndex];
                 commandParameters.RemoveAt(selectorIndex);
 
-                if (selectorParameter.isGroup)
-                { 
-                    entityProvider = new SelectorGroupEntityProvider<T>(selectorParameter);
-                }
-                else
-                {
-                    entityProvider = new SelectorEntityProvider<T>(selectorParameter);
-                }
-
+                entityProvider = new SelectorEntityProvider(selectorParameter);
                 blockHandler = BlockHandlerRegistry.GetBlockHandler(selectorParameter.blockType);
 
                 //TODO: Move to proper command parameter pre-processor
@@ -194,19 +174,19 @@ namespace IngameScript
             {
                 return new List<CommandHandler>() {
                     //Boolean Handlers
-                    new BooleanBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new BooleanBlockPropertyCommandHandler(entityProvider, blockHandler),
 
                     //String Handlers
-                    new StringBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new StringBlockPropertyCommandHandler(entityProvider, blockHandler),
 
                     //Numeric Handlers
-                    new SetNumericPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new SetNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new IncrementNumericPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new IncrementNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new MoveNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new ReverseBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
-                    new ReverseBlockCommandHandler<T>(entityProvider, blockHandler)
+                    new SetNumericPropertyCommandHandler(entityProvider, blockHandler),
+                    new SetNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
+                    new IncrementNumericPropertyCommandHandler(entityProvider, blockHandler),
+                    new IncrementNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
+                    new MoveNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
+                    new ReverseBlockPropertyCommandHandler(entityProvider, blockHandler),
+                    new ReverseBlockCommandHandler(entityProvider, blockHandler)
 
                     //TODO: GPS Handler?
                 };

@@ -46,13 +46,13 @@ namespace IngameScript
         }
         */
 
-        public class AggregateCondition<T> : Condition where T : class, IMyFunctionalBlock
+        public class AggregateCondition : Condition
         {
             AggregationMode aggregationMode;
-            BlockCondition<T> blockCondition;
-            IEntityProvider<T> entityProvider;
+            BlockCondition blockCondition;
+            IEntityProvider entityProvider;
 
-            public AggregateCondition(AggregationMode aggregationMode, BlockCondition<T> blockCondition, IEntityProvider<T> entityProvider)
+            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, IEntityProvider entityProvider)
             {
                 this.aggregationMode = aggregationMode;
                 this.blockCondition = blockCondition;
@@ -61,7 +61,7 @@ namespace IngameScript
 
             public bool evaluate(MyGridProgram program)
             {
-                List<T> blocks = entityProvider.GetEntities(program);
+                List<IMyFunctionalBlock> blocks = entityProvider.GetEntities(program);
 
                 int matches = blocks.Count(block => blockCondition.evaluate(block));
 
@@ -75,12 +75,12 @@ namespace IngameScript
             }
         }
 
-        public interface BlockCondition<T> where T : class, IMyFunctionalBlock
+        public interface BlockCondition
         {
-            bool evaluate(T block);
+            bool evaluate(IMyFunctionalBlock block);
         }
 
-        public class NumericPropertyBlockCondition<T> : BlockCondition<T> where T : class, IMyFunctionalBlock
+        public class NumericPropertyBlockCondition : BlockCondition
         {
             BlockHandler blockHandler;
             NumericPropertyType property;
@@ -95,7 +95,7 @@ namespace IngameScript
                 this.comparisonValue = comparisonValue;
             }
 
-            public bool evaluate(T block)
+            public bool evaluate(IMyFunctionalBlock block)
             {
                 return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue);
             }
