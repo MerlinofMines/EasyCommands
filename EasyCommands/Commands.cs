@@ -120,7 +120,7 @@ namespace IngameScript
 
         public class BlockHandlerCommand<T> : EntityHandlerCommand<T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
             public BlockHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
@@ -145,7 +145,7 @@ namespace IngameScript
                     entityProvider = new SelectorEntityProvider<T>(selectorParameter);
                 }
 
-                blockHandler = BlockHandlerRegistry.GetBlockHandler<T>(selectorParameter.blockType);
+                blockHandler = BlockHandlerRegistry.GetBlockHandler(selectorParameter.blockType);
 
                 //TODO: Move to proper command parameter pre-processor
                 int boolPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
@@ -210,30 +210,6 @@ namespace IngameScript
 
                     //TODO: GPS Handler?
                 };
-            }
-        }
-
-        public class RunAfterConditionCommand : Command
-        {
-            private Condition condition;
-            private Command command;
-
-            public RunAfterConditionCommand(Condition condition, Command command)
-            {
-                this.condition = condition;
-                this.command = command;
-            }
-
-            //If Condition Not Met, run command.  
-            public override bool Execute(MyGridProgram program)
-            {
-                if (!condition.evaluate())
-                {
-                    return false;
-                }
-
-                command.Execute(program);
-                return true;
             }
         }
 

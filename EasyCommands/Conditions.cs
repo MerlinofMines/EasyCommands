@@ -82,12 +82,12 @@ namespace IngameScript
 
         public class NumericPropertyBlockCondition<T> : BlockCondition<T> where T : class, IMyFunctionalBlock
         {
-            BlockHandler<T> blockHandler;
+            BlockHandler blockHandler;
             NumericPropertyType property;
             Comparator<float> comparator;
             float comparisonValue;
 
-            public NumericPropertyBlockCondition(BlockHandler<T> blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue)
+            public NumericPropertyBlockCondition(BlockHandler blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue)
             {
                 this.blockHandler = blockHandler;
                 this.property = property;

@@ -23,10 +23,6 @@ namespace IngameScript
     {
         public class PistonBlockHandler : BlockHandler<IMyPistonBase>
         {
-            public PistonBlockHandler()
-            {
-            }
-
             public override DirectionType GetDefaultDirection()
             {
                 return DirectionType.UP;
@@ -37,100 +33,114 @@ namespace IngameScript
                 return NumericPropertyType.HEIGHT;
             }
 
-            protected override List<NumericPropertyHandler<IMyPistonBase>> GetNumericPropertyHandlers()
+            protected override List<NumericPropertyGetter<IMyPistonBase>> GetNumericPropertyGetters()
             {
-                return new List<NumericPropertyHandler<IMyPistonBase>>()
+                return new List<NumericPropertyGetter<IMyPistonBase>>()
                 {
-                    new PistonHeightHandler(),
-                    new PistonSpeedHandler()
+                    new PistonHeightGetter(),
+                    new PistonSpeedGetter(),
+                };
+            }
+
+            protected override List<NumericPropertySetter<IMyPistonBase>> GetNumericPropertySetters()
+            {
+                return new List<NumericPropertySetter<IMyPistonBase>>()
+                {
+                    new PistonHeightSetter(),
+                    new PistonSpeedSetter(),
                 };
             }
         }
 
-        public class PistonHeightHandler : NumericPropertyHandler<IMyPistonBase>
+        public class PistonHeightGetter : NumericPropertyGetter<IMyPistonBase>
         {
-            public NumericPropertyType GetHandledPropertyType()
-            {
-                return NumericPropertyType.HEIGHT;
-            }
+            public PistonHeightGetter() : base(NumericPropertyType.HEIGHT){}
 
-            public float GetPropertyValue(IMyPistonBase block)
+            public override float GetPropertyValue(IMyPistonBase block)
             {
                 return block.CurrentPosition;
             }
 
-            public void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
+        }
+
+        public class PistonHeightSetter : NumericPropertySetter<IMyPistonBase>
+        {
+            public PistonHeightSetter() : base(NumericPropertyType.HEIGHT) { }
+
+            public override void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
             {
                 IncrementPropertyValue(block, DirectionType.UP, deltaValue);
             }
 
-            public void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
+            public override void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
             {
                 if (direction == DirectionType.UP) extendPistonToValue(block, block.CurrentPosition + deltaValue);
                 if (direction == DirectionType.DOWN) extendPistonToValue(block, block.CurrentPosition - deltaValue);
             }
 
-            public void MovePropertyValue(IMyPistonBase block, DirectionType direction)
+            public override void MovePropertyValue(IMyPistonBase block, DirectionType direction)
             {
                 if (direction == DirectionType.UP) block.Extend();
                 if (direction == DirectionType.DOWN) block.Retract();
             }
 
-            public void ReversePropertyValue(IMyPistonBase block)
+            public override void ReversePropertyValue(IMyPistonBase block)
             {
                 block.Reverse();
             }
 
-            public void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
+            public override void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
             {
                 extendPistonToValue(block, value);
             }
 
-            public void SetPropertyValue(IMyPistonBase block, float value)
+            public override void SetPropertyValue(IMyPistonBase block, float value)
             {
                 extendPistonToValue(block, value);
             }
         }
 
-        public class PistonSpeedHandler : NumericPropertyHandler<IMyPistonBase>
+        public class PistonSpeedGetter : NumericPropertyGetter<IMyPistonBase>
         {
-            public NumericPropertyType GetHandledPropertyType()
-            {
-                return NumericPropertyType.SPEED;
-            }
+            public PistonSpeedGetter() : base(NumericPropertyType.SPEED){}
 
-            public float GetPropertyValue(IMyPistonBase block)
+            public override float GetPropertyValue(IMyPistonBase block)
             {
                 return block.Velocity;
             }
+        }
 
-            public void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
+        public class PistonSpeedSetter : NumericPropertySetter<IMyPistonBase>
+        {
+            public PistonSpeedSetter() : base(NumericPropertyType.SPEED) { }
+
+            public override void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
             {
                 IncrementPropertyValue(block, DirectionType.UP, deltaValue);
             }
 
-            public void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
+            public override void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
             {
                 if (direction == DirectionType.UP) block.Velocity += deltaValue;
                 if (direction == DirectionType.DOWN) block.Velocity -= deltaValue;
             }
 
-            public void MovePropertyValue(IMyPistonBase block, DirectionType direction)
+            public override void MovePropertyValue(IMyPistonBase block, DirectionType direction)
             {
                 IncrementPropertyValue(block, direction, 1);
             }
 
-            public void ReversePropertyValue(IMyPistonBase block)
+            public override void ReversePropertyValue(IMyPistonBase block)
             {
                 block.Velocity *= -1;
             }
 
-            public void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
+            public override void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
             {
                 block.Velocity = value;
             }
 
-            public void SetPropertyValue(IMyPistonBase block, float value)
+            public override void SetPropertyValue(IMyPistonBase block, float value)
             {
                 block.Velocity = value;
             }

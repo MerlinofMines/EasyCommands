@@ -23,9 +23,9 @@ namespace IngameScript
     {
         public class BooleanBlockPropertyCommandHandler<T> : TwoParameterEntityCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public BooleanBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public BooleanBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -39,9 +39,9 @@ namespace IngameScript
 
         public class StringBlockPropertyCommandHandler<T> : TwoParameterEntityCommandHandler<StringPropertyCommandParameter, StringCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public StringBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public StringBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -55,9 +55,9 @@ namespace IngameScript
 
         public class SetNumericPropertyCommandHandler<T> : TwoParameterEntityCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public SetNumericPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public SetNumericPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -71,9 +71,9 @@ namespace IngameScript
 
         public class SetNumericDirectionPropertyCommandHandler<T> : ThreeParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public SetNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public SetNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -87,9 +87,9 @@ namespace IngameScript
 
         public class IncrementNumericPropertyCommandHandler<T> : ThreeParameterEntityCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public IncrementNumericPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public IncrementNumericPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -103,9 +103,9 @@ namespace IngameScript
 
         public class IncrementNumericDirectionPropertyCommandHandler<T> : FourParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public IncrementNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public IncrementNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -119,9 +119,9 @@ namespace IngameScript
 
         public class MoveNumericDirectionPropertyCommandHandler<T> : TwoParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public MoveNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public MoveNumericDirectionPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -136,9 +136,9 @@ namespace IngameScript
         //TODO: Remove duplication using a command parameter pre-processor
         public class ReverseBlockCommandHandler<T> : OneParameterEntityCommandHandler<ReverseCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public ReverseBlockCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public ReverseBlockCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
@@ -152,9 +152,9 @@ namespace IngameScript
 
         public class ReverseBlockPropertyCommandHandler<T> : TwoParameterEntityCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter, T> where T : class, IMyFunctionalBlock
         {
-            private BlockHandler<T> blockHandler;
+            private BlockHandler blockHandler;
 
-            public ReverseBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler<T> blockHandler) : base(entityProvider)
+            public ReverseBlockPropertyCommandHandler(IEntityProvider<T> entityProvider, BlockHandler blockHandler) : base(entityProvider)
             {
                 this.blockHandler = blockHandler;
             }
