@@ -252,7 +252,7 @@ namespace IngameScript
 
             public override bool Execute(MyGridProgram program)
             {
-                bool conditionMet = condition.evaluate();
+                bool conditionMet = condition.evaluate(program);
                 bool commandResult = false;
                 if (conditionMet)
                 {

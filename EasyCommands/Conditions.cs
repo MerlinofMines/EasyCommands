@@ -23,7 +23,7 @@ namespace IngameScript
     {
         public interface Condition
         {
-            bool evaluate();
+            bool evaluate(MyGridProgram program);
         }
 
         public enum AggregationMode
@@ -51,17 +51,15 @@ namespace IngameScript
             AggregationMode aggregationMode;
             BlockCondition<T> blockCondition;
             IEntityProvider<T> entityProvider;
-            MyGridProgram program;
 
-            public AggregateCondition(AggregationMode aggregationMode, BlockCondition<T> blockCondition, IEntityProvider<T> entityProvider, MyGridProgram program)
+            public AggregateCondition(AggregationMode aggregationMode, BlockCondition<T> blockCondition, IEntityProvider<T> entityProvider)
             {
                 this.aggregationMode = aggregationMode;
                 this.blockCondition = blockCondition;
                 this.entityProvider = entityProvider;
-                this.program = program;
             }
 
-            public bool evaluate()
+            public bool evaluate(MyGridProgram program)
             {
                 List<T> blocks = entityProvider.GetEntities(program);
 

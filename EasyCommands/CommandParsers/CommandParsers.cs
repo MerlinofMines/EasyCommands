@@ -63,48 +63,16 @@ namespace IngameScript
                 Command otherwiseCommand = new NullCommand();
                 Command ifCommand = new NullCommand();
 
-                //Base case, no other otherwise. Return simple command
-                if (otherwiseIndex<0)
-                {
-                    return ParseConditionalCommand(program, commandParameters, new NullCommand());
-                }
+                //Psuedo Algorithm is:
+                //Find ifParameter.  pull off it and Condition. (if not found throw exception, canhandle shouldn't have returned true)
+                //Command actionCommand = ParserRegistry.Parse(commandParameters);
+                //If(commandParameters[0] is OtherwiseParameter pull it off and parse remaining to get otherwiseCommand.
+                //If(IfParameter.swapCommands()) swap (action, other)
 
-                //Convert first otherwise to first otherwiseCommand
-                commandParameters.RemoveAt(otherwiseIndex);
-                otherwiseCommand = CommandParserRegistry.ParseCommand(program, commandParameters.GetRange(otherwiseIndex, commandParameters.Count - otherwiseIndex));
-                commandParameters.RemoveRange(otherwiseIndex, commandParameters.Count - otherwiseIndex);
+                //TODO: Get rid of RememberedCondition.  Easier to track this directly in ConditionalCommand so it can be updated quickly/easily.
 
-                if (otherwiseIndex<conditionalIndex)
-                {
-                    throw new Exception("Otherwise should never be before a conditional");
-                }
+                //return new ConditionalCommand(isReevaluate, actionCommand, otherwiseCommand);
 
-                if (otherwiseIndex>conditionalIndex)
-                {
-                } else
-                {
-
-                }
-
-                return null;
-            }
-
-            //May have more than 1 if clause, but no otherwise clauses
-            private Command ParseConditionalCommand(MyGridProgram program, List<CommandParameter> commandParameters, Command otherwiseCommand)
-            {
-                int lastConditionalIndex = commandParameters.FindLastIndex(param => param is ConditionCommandParameter);
-
-                return null;
-            }
-
-            //Assumes no ifs or elses remain
-            private Command ParseSimpleConditionalCommand(MyGridProgram program, List<CommandParameter> commandParameters, Command otherwiseCommand)
-            {
-                List<CommandParameter> trueCommandParameters = new List<CommandParameter>();
-//                Condition condition = new .parseCondition(commandParameters, out trueCommandParameters);
-                Command actionCommand = CommandParserRegistry.ParseCommand(program, trueCommandParameters);
-
-                //                return new ConditionalCommand(condition, actionCommand, otherwiseCommand);
                 return null;
             }
         }
