@@ -120,9 +120,7 @@ namespace IngameScript
 
         public class BlockHandlerCommand<T> : EntityHandlerCommand<T> where T : class, IMyFunctionalBlock
         {
-            private BooleanBlockHandler<T> booleanBlockHandler;
-            private StringBlockHandler<T> stringBlockHandler;
-            private NumericBlockHandler<T> numericBlockHandler;
+            private BlockHandler<T> blockHandler;
 
             public BlockHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
             {
@@ -147,9 +145,7 @@ namespace IngameScript
                     entityProvider = new SelectorEntityProvider<T>(selectorParameter);
                 }
 
-                booleanBlockHandler = BlockHandlerRegistry.GetBooleanBlockHandler<T>(selectorParameter.blockType);
-                stringBlockHandler = BlockHandlerRegistry.GetStringBlockHandler<T>(selectorParameter.blockType);
-                numericBlockHandler = BlockHandlerRegistry.GetNumericBlockHandler<T>(selectorParameter.blockType);
+                blockHandler = BlockHandlerRegistry.GetBlockHandler<T>(selectorParameter.blockType);
 
                 //TODO: Move to proper command parameter pre-processor
                 int boolPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
@@ -162,7 +158,7 @@ namespace IngameScript
 
                 if (boolPropIndex < 0 && boolIndex >= 0)
                 {
-                    commandParameters.Add(new BooleanPropertyCommandParameter(booleanBlockHandler.GetDefaultBooleanProperty()));
+                    commandParameters.Add(new BooleanPropertyCommandParameter(blockHandler.GetDefaultBooleanProperty()));
                 }
 
                 if (boolIndex < 0 && boolPropIndex >= 0)
@@ -172,7 +168,7 @@ namespace IngameScript
 
                 if (stringPropIndex < 0 && stringIndex >= 0)
                 {
-                    commandParameters.Add(new StringPropertyCommandParameter(stringBlockHandler.GetDefaultStringProperty()));
+                    commandParameters.Add(new StringPropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
                 }
 
                 if (numericIndex >= 0)
@@ -183,13 +179,13 @@ namespace IngameScript
                         direction = ((DirectionCommandParameter)commandParameters[directionIndex]).GetValue();
                     } else
                     {
-                        direction = numericBlockHandler.GetDefaultDirection();
+                        direction = blockHandler.GetDefaultDirection();
                         commandParameters.Add(new DirectionCommandParameter(direction));
                     }
 
                     if (numericPropIndex < 0)
                     {
-                        commandParameters.Add(new NumericPropertyCommandParameter(numericBlockHandler.GetDefaultNumericProperty(direction)));
+                        commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                     }
                 }
             }
@@ -198,19 +194,19 @@ namespace IngameScript
             {
                 return new List<CommandHandler>() {
                     //Boolean Handlers
-                    new BooleanBlockPropertyCommandHandler<T>(entityProvider, booleanBlockHandler),
+                    new BooleanBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
 
                     //String Handlers
-                    new StringBlockPropertyCommandHandler<T>(entityProvider, stringBlockHandler),
+                    new StringBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
 
                     //Numeric Handlers
-                    new SetNumericPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new SetNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new IncrementNumericPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new IncrementNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new MoveNumericDirectionPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new ReverseBlockPropertyCommandHandler<T>(entityProvider, numericBlockHandler),
-                    new ReverseBlockCommandHandler<T>(entityProvider, numericBlockHandler)
+                    new SetNumericPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new SetNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new IncrementNumericPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new IncrementNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new MoveNumericDirectionPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new ReverseBlockPropertyCommandHandler<T>(entityProvider, blockHandler),
+                    new ReverseBlockCommandHandler<T>(entityProvider, blockHandler)
 
                     //TODO: GPS Handler?
                 };

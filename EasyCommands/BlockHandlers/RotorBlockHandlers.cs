@@ -21,7 +21,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class RotorBlockHandler : NumericBaseBlockHandler<IMyMotorStator>
+        public class RotorBlockHandler : BlockHandler<IMyMotorStator>
         {
             public override DirectionType GetDefaultDirection()
             {

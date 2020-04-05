@@ -21,7 +21,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class ConnectorBlockHandler : BaseBlockHandler<IMyShipConnector>
+        public class ConnectorBlockHandler : BlockHandler<IMyShipConnector>
         {
             public override BooleanPropertyType GetDefaultBooleanProperty()
             {

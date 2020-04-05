@@ -81,17 +81,6 @@ namespace IngameScript
             foreach (var word in lockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED) }); }
             foreach (var word in unlockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false) }); }
             foreach (var word in waitWords) { propertyWords.Add(word, new List<CommandParameter>() { new WaitCommandParameter()}); }
-
-            //Register Block Handlers
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.LIGHT, new BaseBlockHandler<IMyLightingBlock>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.MERGE, new BaseBlockHandler<IMyShipMergeBlock>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.PROJECTOR, new BaseBlockHandler<IMyProjector>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.TIMER, new BaseBlockHandler<IMyTimerBlock>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.CONNECTOR, new ConnectorBlockHandler());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.WELDER, new BaseBlockHandler<IMyShipWelder>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.GRINDER, new BaseBlockHandler<IMyShipGrinder>());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.PISTON, new PistonBlockHandler());
-            BlockHandlerRegistry.RegisterBlockHandler(BlockType.ROTOR, new RotorBlockHandler());
         }
 
         public void Save()

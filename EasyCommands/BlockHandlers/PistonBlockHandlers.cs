@@ -21,7 +21,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class PistonBlockHandler : NumericBaseBlockHandler<IMyPistonBase>
+        public class PistonBlockHandler : BlockHandler<IMyPistonBase>
         {
             public PistonBlockHandler()
             {

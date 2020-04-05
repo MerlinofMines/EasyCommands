@@ -21,6 +21,33 @@ namespace IngameScript
 {
     partial class Program
     {
+        public static class BlockHandlerRegistry
+        {
+            static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
+               { BlockType.PISTON, new PistonBlockHandler() },
+               { BlockType.LIGHT, new BlockHandler<IMyLightingBlock>() },
+               { BlockType.MERGE, new BlockHandler<IMyShipMergeBlock>() },
+               { BlockType.PROJECTOR, new BlockHandler<IMyProjector>() },
+               { BlockType.TIMER, new BlockHandler<IMyTimerBlock>() },
+               { BlockType.CONNECTOR, new ConnectorBlockHandler() },
+               { BlockType.WELDER, new BlockHandler<IMyShipWelder>() },
+               { BlockType.GRINDER, new BlockHandler<IMyShipGrinder>() },
+               { BlockType.ROTOR, new RotorBlockHandler() },
+            };
+
+            public static BlockHandler<T> GetBlockHandler<T>(BlockType blockType) where T : class, IMyFunctionalBlock
+            {
+                if (blockHandlers.ContainsKey(blockType))
+                {
+                    return (BlockHandler<T>)blockHandlers[blockType];
+                }
+                else
+                {
+                    throw new Exception("Unsupported Block Type");
+                }
+            }
+        }
+
         public interface BlockPropertyHandler<T, U, V>
         {
             V GetHandledPropertyType();
@@ -47,57 +74,19 @@ namespace IngameScript
             void ReversePropertyValue(T block);
         }
 
-        public interface BooleanBlockHandler
-        {
+        public class BlockHandler { }
 
-        }
-
-        public interface BooleanBlockHandler<T> : BooleanBlockHandler where T : class, IMyFunctionalBlock
-        {
-            BooleanPropertyType GetDefaultBooleanProperty();
-            bool GetBooleanPropertyValue(T block, BooleanPropertyType property);
-            void SetBooleanPropertyValue(T block, BooleanPropertyType property, bool value);
-        }
-
-        public interface StringBlockHandler
-        {
-
-        }
-
-        public interface StringBlockHandler<T> : StringBlockHandler where T: class, IMyFunctionalBlock
-        {
-            StringPropertyType GetDefaultStringProperty();
-            String GetStringPropertyValue(T block, StringPropertyType property);
-            void SetStringPropertyValue(T block, StringPropertyType property, String value);
-        }
-
-        public interface NumericBlockHandler
-        {
-
-        }
-
-        public interface NumericBlockHandler<T> : NumericBlockHandler where T : class, IMyFunctionalBlock
-        {
-            NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
-            DirectionType GetDefaultDirection();
-            float GetNumericPropertyValue(T block, NumericPropertyType property);
-            void SetNumericPropertyValue(T block, NumericPropertyType property, float value);
-            void SetNumericPropertyValue(T block, NumericPropertyType property, DirectionType direction, float value);
-            void IncrementNumericPropertyValue(T block, NumericPropertyType property, float deltaValue);
-            void IncrementNumericPropertyValue(T block, NumericPropertyType property, DirectionType direction, float deltaValue);
-            void MoveNumericPropertyValue(T block, NumericPropertyType property, DirectionType direction);
-            void ReverseNumericPropertyValue(T block, NumericPropertyType property);
-        }
-
-        public class BaseBlockHandler<T> : BooleanBlockHandler<T>, StringBlockHandler<T> where T : class, IMyFunctionalBlock
+        public class BlockHandler<T> : BlockHandler where T : class, IMyFunctionalBlock
         {
             Dictionary<BooleanPropertyType, BooleanPropertyHandler<T>> booleanPropertyHandlers = new Dictionary<BooleanPropertyType, BooleanPropertyHandler<T>>();
             Dictionary<StringPropertyType, StringPropertyHandler<T>> stringPropertyHandlers = new Dictionary<StringPropertyType, StringPropertyHandler<T>>();
+            Dictionary<NumericPropertyType, NumericPropertyHandler<T>> numericPropertyHandlers = new Dictionary<NumericPropertyType, NumericPropertyHandler<T>>();
 
-            public BaseBlockHandler()
+            public BlockHandler()
             {
                 GetBooleanPropertyHandlers().ForEach(handler => booleanPropertyHandlers.Add(handler.GetHandledPropertyType(), handler));
                 GetStringPropertyHandlers().ForEach(handler => stringPropertyHandlers.Add(handler.GetHandledPropertyType(), handler));
+                GetNumericPropertyHandlers().ForEach(handler => numericPropertyHandlers.Add(handler.GetHandledPropertyType(), handler));
             }
 
             protected virtual List<BooleanPropertyHandler<T>> GetBooleanPropertyHandlers()
@@ -112,6 +101,12 @@ namespace IngameScript
                 return new List<StringPropertyHandler<T>>() { };
             }
 
+            protected virtual List<NumericPropertyHandler<T>> GetNumericPropertyHandlers()
+            {
+                return new List<NumericPropertyHandler<T>>() { };
+            }
+
+
             public virtual BooleanPropertyType GetDefaultBooleanProperty()
             {
                 return BooleanPropertyType.ON_OFF;
@@ -120,6 +115,16 @@ namespace IngameScript
             public virtual StringPropertyType GetDefaultStringProperty()
             {
                 return StringPropertyType.NAME;
+            }
+
+            public virtual NumericPropertyType GetDefaultNumericProperty(DirectionType direction)
+            {
+                throw new Exception("This Block Does Not Have A Default Numeric Property");
+            }
+
+            public virtual DirectionType GetDefaultDirection()
+            {
+                throw new Exception("This Block Does Not Have a Default Direction");
             }
 
             public bool GetBooleanPropertyValue(T block, BooleanPropertyType property)
@@ -141,21 +146,6 @@ namespace IngameScript
             {
                 stringPropertyHandlers[property].SetPropertyValue(block, value);
             }
-        }
-
-        public abstract class NumericBaseBlockHandler<T> : BaseBlockHandler<T>, NumericBlockHandler<T> where T : class, IMyFunctionalBlock
-        {
-            Dictionary<NumericPropertyType, NumericPropertyHandler<T>> numericPropertyHandlers = new Dictionary<NumericPropertyType, NumericPropertyHandler<T>>();
-
-            public NumericBaseBlockHandler() : base()
-            {
-                GetNumericPropertyHandlers().ForEach(handler => numericPropertyHandlers.Add(handler.GetHandledPropertyType(), handler));
-            }
-
-            public abstract NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
-            public abstract DirectionType GetDefaultDirection();
-
-            protected abstract List<NumericPropertyHandler<T>> GetNumericPropertyHandlers();
 
             public float GetNumericPropertyValue(T block, NumericPropertyType property)
             {

@@ -164,7 +164,7 @@ namespace IngameScript
             {
                 CommandParameter selectorParameter = parameters.Find(param => param is SelectorCommandParameter);
 
-                BlockType blockType = ((SelectorCommandParameter)selectorParameter).blockType;
+                BlockType blockType = ((SelectorCommandParameter) selectorParameter).blockType;
 
                 switch (blockType)
                 {
