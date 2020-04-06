@@ -46,6 +46,21 @@ namespace IngameScript
         }
         */
 
+        public class NotCondition : Condition
+        {
+            Condition condition;
+
+            public NotCondition(Condition condition)
+            {
+                this.condition = condition;
+            }
+
+            public bool evaluate(MyGridProgram program)
+            {
+                return !condition.evaluate(program);
+            }
+        }
+
         public class AggregateCondition : Condition
         {
             AggregationMode aggregationMode;
@@ -80,14 +95,29 @@ namespace IngameScript
             bool evaluate(IMyFunctionalBlock block);
         }
 
-        public class NumericPropertyBlockCondition : BlockCondition
+        public class NotBlockCondition : BlockCondition
         {
-            BlockHandler blockHandler;
-            NumericPropertyType property;
-            Comparator<float> comparator;
-            float comparisonValue;
+            BlockCondition blockCondition;
 
-            public NumericPropertyBlockCondition(BlockHandler blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue)
+            public NotBlockCondition(BlockCondition blockCondition)
+            {
+                this.blockCondition = blockCondition;
+            }
+
+            public bool evaluate(IMyFunctionalBlock block)
+            {
+                return !blockCondition.evaluate(block);
+            }
+        }
+
+        public abstract class BlockCondition<T,U> : BlockCondition
+        {
+            protected BlockHandler blockHandler;
+            protected T property;
+            protected Comparator<U> comparator;
+            protected U comparisonValue;
+
+            protected BlockCondition(BlockHandler blockHandler, T property, Comparator<U> comparator, U comparisonValue)
             {
                 this.blockHandler = blockHandler;
                 this.property = property;
@@ -95,22 +125,77 @@ namespace IngameScript
                 this.comparisonValue = comparisonValue;
             }
 
-            public bool evaluate(IMyFunctionalBlock block)
+            public abstract bool evaluate(IMyFunctionalBlock block);
+        }
+
+        public class BooleanBlockCondition : BlockCondition<BooleanPropertyType, bool>
+        {
+            public BooleanBlockCondition(BlockHandler blockHandler, BooleanPropertyType property, Comparator<bool> comparator, bool comparisonValue) : base(blockHandler, property, comparator, comparisonValue){}
+            public override bool evaluate(IMyFunctionalBlock block) {return comparator.compare(blockHandler.GetBooleanPropertyValue(block, property), comparisonValue);}
+        }
+
+        public class StringBlockCondition : BlockCondition<StringPropertyType, String>
+        {
+            public StringBlockCondition(BlockHandler blockHandler, StringPropertyType property, Comparator<String> comparator, String comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
+            public override bool evaluate(IMyFunctionalBlock block) { return comparator.compare(blockHandler.GetStringPropertyValue(block, property), comparisonValue); }
+        }
+
+        public class NumericBlockCondition : BlockCondition<NumericPropertyType, float>
+        {
+            public NumericBlockCondition(BlockHandler blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
+            public override bool evaluate(IMyFunctionalBlock block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
+        }
+
+        public abstract class Comparator<T>
+        {
+            protected ComparisonType comparisonType;
+
+            protected Comparator(ComparisonType comparisonType)
             {
-                return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue);
+                this.comparisonType = comparisonType;
+            }
+
+            public abstract bool compare(T a, T b);
+        }
+
+        public class BooleanComparator : Comparator<bool>
+        {
+            public BooleanComparator(ComparisonType comparisonType) : base(comparisonType) { }
+
+            public override bool compare(bool a, bool b)
+            {
+                if (ComparisonType.EQUAL == comparisonType) return a == b;
+                else throw new Exception("Boolean Comparisons Only Support Equality");
             }
         }
 
-        public interface Comparator<T>
+        public class StringComparator : Comparator<String>
         {
-            bool compare(T a, T b);
+            public StringComparator(ComparisonType comparisonType) : base(comparisonType) { }
+
+            public override bool compare(string a, string b)
+            {
+                if (ComparisonType.EQUAL == comparisonType) return a == b;
+                else throw new Exception("Boolean Comparisons Only Support Equality");
+                //TODO: More Comparison Types?? 
+            }
         }
 
-        public class GreaterThanNumericComparator : Comparator<float>
+        public class NumericComparator : Comparator<float>
         {
-            public bool compare(float a, float b)
+            public NumericComparator(ComparisonType comparisonType) : base(comparisonType){}
+
+            public override bool compare(float a, float b)
             {
-                return a > b;
+                switch (comparisonType)
+                {
+                    case ComparisonType.GREATER: return a > b;
+                    case ComparisonType.GREATER_OR_EQUAL: return a >= b;
+                    case ComparisonType.EQUAL: return a == b;
+                    case ComparisonType.LESS_OR_EQUAL: return a <= b;
+                    case ComparisonType.LESS: return a < b;
+                    default: throw new Exception("Unsupported Comparison Type");
+                }
             }
         }
     }

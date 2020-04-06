@@ -25,7 +25,7 @@ namespace IngameScript
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
 
         //Configuration.  Keep all words lowercase
-        private String[] ignoreWords = { "the", "and", "less", "than", "greater", "more", "turn", "rotate", "set", "until", "is", "block", "tell", "to", "from" };
+        private String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of" };
         private String[] groupWords = { "blocks", "group" };
         private String[] activateWords = { "move", "go", "on", "start", "begin" };
         private String[] deactivateWords = { "stop", "off", "terminate", "exit", "cancel", "end" };
@@ -45,6 +45,24 @@ namespace IngameScript
 
         private String[] lockWords = { "lock", "freeze" };
         private String[] unlockWords = { "unlock", "unfreeze" };
+
+        private String[] ifWords = { "if" };
+        private String[] elseWords = { "else", "otherwise" };
+        private String[] unlessWords = { "unless" };
+        private String[] whileWords = { "while" };
+        private String[] untilWords = { "until" };
+        private String[] whenWords = { "when" };
+        private String[] asyncWords = { "async" };
+
+        private String[] lessWords = { "less", "<", "below" };
+        private String[] lessEqualWords = { "<=" };
+        private String[] equalWords = { "equal", "equals", "=", "==" };
+        private String[] greaterEqualWords = { ">=" };
+        private String[] greaterWords = { "greater", ">", "above", "more" };
+
+        private String[] anyWords = { "any" };
+        private String[] allWords = { "all" };
+        private String[] noneWords = { "none" };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -81,16 +99,21 @@ namespace IngameScript
             foreach (var word in lockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED) }); }
             foreach (var word in unlockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false) }); }
             foreach (var word in waitWords) { propertyWords.Add(word, new List<CommandParameter>() { new WaitCommandParameter()}); }
-        }
-
-        public void Save()
-        {
-            // Called when the program needs to save its state. Use
-            // this method to save your state to the Storage field
-            // or some other means. 
-            // 
-            // This method is optional and can be removed if not
-            // needed.
+            foreach (var word in ifWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(false, false, false) }); }
+            foreach (var word in unlessWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, false, false) }); }
+            foreach (var word in whileWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(false, true, false) }); }
+            foreach (var word in untilWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, true, false) }); }
+            foreach (var word in whenWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, true, true) }); }
+            foreach (var word in asyncWords) { propertyWords.Add(word, new List<CommandParameter>() { new AsyncCommandParameter() }); }
+            foreach (var word in elseWords) { propertyWords.Add(word, new List<CommandParameter>() { new ElseCommandParameter() }); }
+            foreach (var word in lessWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.LESS) }); }
+            foreach (var word in lessEqualWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL) }); }
+            foreach (var word in equalWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.EQUAL) }); }
+            foreach (var word in greaterEqualWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL) }); }
+            foreach (var word in greaterWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.GREATER) }); }
+            foreach (var word in anyWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.ANY) }); }
+            foreach (var word in allWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.ALL) }); }
+            foreach (var word in noneWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.NONE) }); }
         }
 
         public void Main(string argument, UpdateType updateSource)
@@ -145,6 +168,7 @@ namespace IngameScript
                 bool handled = nextCommand.Execute(this);
                 if (handled) { runningCommands.RemoveAt(commandIndex); } else {commandIndex++;}
                 if (!nextCommand.IsAsync()) break;
+                Echo("Command is async, continuing to command at index: " + commandIndex);
             }
             return runningCommands.Count == 0;
         }
@@ -213,10 +237,10 @@ namespace IngameScript
 
         private Command parseCommand(List<CommandParameter> parameters)
         {
-            Echo("Pre Prossessed Parameters:");
+            Echo("Pre Processed Parameters:");
             parameters.ForEach(param => Echo("Type: " + param.GetType()));
 
-            ParameterProcessorRegistry.process(parameters);
+            ParameterProcessorRegistry.process(this, parameters);
 
             Echo("Post Prossessed Parameters:");
             parameters.ForEach(param => Echo("Type: " + param.GetType()));

@@ -25,8 +25,8 @@ namespace IngameScript
         {
             private static List<CommandParser> CommandParsers = new List<CommandParser>()
             {
-//                new AsyncCommandParser(),
-//                new ConditionalComandParser(),
+                new AsyncCommandParser(),
+                new ConditionalCommandParser(),
                 new ActionCommandParser(),
             };
 
@@ -48,32 +48,61 @@ namespace IngameScript
             Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters);
         }
 
-        public class ConditionalCommandParser : CommandParser
+        public class AsyncCommandParser : CommandParser
         {
             public bool CanHandle(List<CommandParameter> commandParameters)
             {
-                return commandParameters.Exists(param => param is ConditionalCommandParser);
+                return commandParameters[0] is AsyncCommandParameter;
             }
 
             public Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters)
             {
-                int conditionalIndex = commandParameters.FindIndex(param => param is ConditionCommandParameter);
-                int otherwiseIndex = commandParameters.FindIndex(param => param is ElseCommandParameter);
+                commandParameters.RemoveAt(0);
+                Command subCommand = CommandParserRegistry.ParseCommand(program, commandParameters);
+                subCommand.SetAsync(true);
+                return subCommand;
+            }
+        }
 
+        public class ConditionalCommandParser : CommandParser
+        {
+            public bool CanHandle(List<CommandParameter> commandParameters)
+            {
+                return commandParameters.Exists(param => param is IfCommandParameter);
+            }
+
+            public Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            {
+                int ifIndex = commandParameters.FindIndex(param => param is IfCommandParameter);
+                if (!(commandParameters[ifIndex+1] is ConditionCommandParameter)) throw new Exception("Ifs Must Be Followed By A Condition");
+                IfCommandParameter ifParameter = (IfCommandParameter)commandParameters[ifIndex];
+                ConditionCommandParameter conditionParameter = (ConditionCommandParameter)commandParameters[ifIndex + 1];
+                commandParameters.RemoveRange(ifIndex, 2);
+                Command actionCommand = CommandParserRegistry.ParseCommand(program, commandParameters);
+                Condition condition = conditionParameter.GetValue();
+
+                //Handle Otherwise
                 Command otherwiseCommand = new NullCommand();
-                Command ifCommand = new NullCommand();
+                int otherwiseIndex = commandParameters.FindIndex(param => param is ElseCommandParameter);
+                if (otherwiseIndex>=0)
+                {
+                    commandParameters.RemoveAt(otherwiseIndex);
+                    otherwiseCommand = CommandParserRegistry.ParseCommand(program, commandParameters);
+                }
 
-                //Psuedo Algorithm is:
-                //Find ifParameter.  pull off it and Condition. (if not found throw exception, canhandle shouldn't have returned true)
-                //Command actionCommand = ParserRegistry.Parse(commandParameters);
-                //If(commandParameters[0] is OtherwiseParameter pull it off and parse remaining to get otherwiseCommand.
-                //If(IfParameter.swapCommands()) swap (action, other)
+                if (ifParameter.swapCommands)
+                {
+                    Command temp = actionCommand;
+                    actionCommand = otherwiseCommand;
+                    otherwiseCommand = temp;
+                }
 
-                //TODO: Get rid of RememberedCondition.  Easier to track this directly in ConditionalCommand so it can be updated quickly/easily.
+                if (ifParameter.inverseCondition)
+                {
+                    condition = new NotCondition(condition);
+                }
 
-                //return new ConditionalCommand(isReevaluate, actionCommand, otherwiseCommand);
-
-                return null;
+                return new ConditionalCommand(condition, actionCommand, otherwiseCommand, ifParameter.alwaysEvaluate);
             }
         }
 

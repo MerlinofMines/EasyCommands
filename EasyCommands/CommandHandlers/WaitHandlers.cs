@@ -30,7 +30,11 @@ namespace IngameScript
                 program.Echo("Waited for " + ticks + " ticks");
                 ticks++;
 
-                return ticks > getTicks(GetParameter().GetValue(), UnitType.SECONDS); //Default to seconds
+                if (ticks > getTicks(GetParameter().GetValue(), UnitType.SECONDS)) {
+                    ticks = 0;
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -43,7 +47,12 @@ namespace IngameScript
                 program.Echo("Waited for " + ticks + " ticks");
                 ticks++;
 
-                return ticks > getTicks(GetParameter1().GetValue(), GetParameter2().GetUnit()); //Default to seconds
+                if (ticks > getTicks(GetParameter1().GetValue(), GetParameter2().GetUnit()))
+                {
+                    ticks = 0;
+                    return true;
+                }
+                return false;
             }
         }
 

@@ -196,20 +196,32 @@ namespace IngameScript
         public class ConditionalCommand : Command
         {
             private Condition condition;
+            public bool alwaysEvaluate = false;
+            private bool evaluated = false;
+            private bool evaluatedValue = false;
             private Command conditionMetCommand;
             private Command conditionNotMetCommand;
 
-            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand)
+            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate)
             {
                 this.condition = condition;
                 this.conditionMetCommand = conditionMetCommand;
                 this.conditionNotMetCommand = conditionNotMetCommand;
+                this.alwaysEvaluate = alwaysEvaluate;
+                if (alwaysEvaluate) updateAlwaysEvaluate();
             }
 
             public override bool Execute(MyGridProgram program)
             {
-                bool conditionMet = condition.evaluate(program);
+                program.Echo("Executing Conditional Command");
+                program.Echo("Async: " + async);
+                program.Echo("Condition: " + condition.ToString());
+                program.Echo("Action Command: " + conditionMetCommand.ToString());
+                program.Echo("Other Command: " + conditionNotMetCommand.ToString());
+                program.Echo("Always Evaluate: " + alwaysEvaluate);
+                bool conditionMet = EvaluateCondition(program);
                 bool commandResult = false;
+
                 if (conditionMet)
                 {
                     commandResult = conditionMetCommand.Execute(program);
@@ -218,7 +230,26 @@ namespace IngameScript
                     commandResult = conditionNotMetCommand.Execute(program);
                 }
 
-                if (async) { return !conditionMet; } else { return commandResult; }
+//                throw new Exception("Stop!");
+                if (alwaysEvaluate) { return !conditionMet; } else { return commandResult; }
+            }
+
+            private void updateAlwaysEvaluate()
+            {
+                alwaysEvaluate = true;
+                if (conditionMetCommand is ConditionalCommand) ((ConditionalCommand)conditionMetCommand).updateAlwaysEvaluate();
+                if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).updateAlwaysEvaluate();
+            }
+
+            private bool EvaluateCondition(MyGridProgram program)
+            {
+                if (alwaysEvaluate || !evaluated)
+                {
+                    program.Echo("Evaluating Value");
+                    evaluatedValue = condition.evaluate(program); evaluated = true;
+                }
+                program.Echo("Evaluated Value: " + evaluatedValue);
+                return evaluatedValue;
             }
         }
     }

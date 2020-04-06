@@ -30,18 +30,26 @@ namespace IngameScript
                   new ActionProcessor(),
             };
 
-            public static void process(List<CommandParameter> commandParameters)
+            public static void process(MyGridProgram program, List<CommandParameter> commandParameters)
             {
+                program.Echo("Start Parameter Processor ");
                 foreach (ParameterProcessor parser in parameterProcessors)
                 {
-                    parser.process(commandParameters);
+                    program.Echo("Pre Processed Parameters:");
+                    commandParameters.ForEach(param => program.Echo("Type: " + param.GetType()));
+
+                    parser.process(program, commandParameters);
+
+                    program.Echo("Post Processed Parameters:");
+                    commandParameters.ForEach(param => program.Echo("Type: " + param.GetType()));
                 }
+                program.Echo("End Parameter Processor ");
             }
         }
 
         public interface ParameterProcessor
         {
-            void process(List<CommandParameter> commandParameters);
+            void process(MyGridProgram program, List<CommandParameter> commandParameters);
         }
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
@@ -58,27 +66,31 @@ namespace IngameScript
 
         public class SelectorProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
             {
+                program.Echo("Start Selector Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
                     if (commandParameters[index] is GroupCommandParameter || commandParameters[index] is StringCommandParameter || commandParameters[index] is BlockTypeCommandParameter)
                     {
-                        convertNextSelector(commandParameters, index);
+                        program.Echo("Found Possible Selector at Index: " + index);
+                        index+=convertNextSelector(commandParameters, index);
+                    } else {
+                        index++;
                     }
-                    index++;
                 }
+                program.Echo("End Selector Processor");
             }
 
-            private void convertNextSelector(List<CommandParameter> commandParameters, int index)
+            private int convertNextSelector(List<CommandParameter> commandParameters, int index)
             {
                 bool isGroup = false;
                 String selector = null;
                 BlockTypeCommandParameter blockType = null;
                 int paramCount = 0;
 
-                while (index + paramCount <commandParameters.Count)
+                while (index + paramCount < commandParameters.Count)
                 {
                     CommandParameter param = commandParameters[index + paramCount];
 
@@ -99,21 +111,23 @@ namespace IngameScript
                         if (new BlockTypeParser().process(token, p)) break;
                     }
 
-                    if (p.Count == 0) return; //Apparently not a Selector
+                    if (p.Count == 0) return paramCount; //Apparently not a Selector
 
                     blockType = ((BlockTypeCommandParameter)p[0]);
                     if (p.Count > 1) isGroup = true;
                 }
 
                 commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Add(new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector));
+                commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector));
+                return 1;
             }
         }
 
         public class ActionProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
             {
+                program.Echo("Start Action Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
@@ -123,6 +137,7 @@ namespace IngameScript
                     }
                     index++;
                 }
+                program.Echo("End Action Processor");
             }
 
             private void convertNextActionParameter(List<CommandParameter> commandParameters, int index)
@@ -163,58 +178,100 @@ namespace IngameScript
 
         public class ConditionProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
             {
+                program.Echo("Start Condition Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
-                    if (commandParameters[index] is ConditionalCommand)
+                    if (commandParameters[index] is IfCommandParameter)
                     {
                         index++;
-                        convertNextConditionParameter(commandParameters, index);
+                        convertNextConditionParameter(program, commandParameters, index);
                     }
                     index++;
                 }
+                program.Echo("End Condition Processor");
             }
 
-            public void convertNextConditionParameter(List<CommandParameter> commandParameters, int index)
+            public void convertNextConditionParameter(MyGridProgram program, List<CommandParameter> commandParameters, int index)
             {
-                /*
+                program.Echo("Attempting to parse Condition at index " + index);
                 SelectorCommandParameter selector = null;//required
-                ComparisonCommandParameter comparisonValue = null;//requred
-                CommandParameter comparator = null;//Can be defaulted
-                CommandParameter property = null;//Can be defaulted
+                ComparisonCommandParameter comparator = null;//Can be defaulted
+                PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
+                PropertyCommandParameter property = null;//Can be defaulted
                 AggregationModeCommandParameter aggregation = null;
-                */
+                bool inverseAggregation = false;
+                bool inverseBlockCondition = false;
 
-                //TODO: Resolve the above.
+                int paramCount = 0;
+                while (index + paramCount < commandParameters.Count)
+                {
+                    CommandParameter param = commandParameters[index + paramCount];
 
-                //SelectorCommandParameter
-                //BlockType -> BlockHandler
-                //Selector -> EntityProvider
+                    if (param is SelectorCommandParameter && selector == null) selector = (SelectorCommandParameter) param;
+                    else if (param is ComparisonCommandParameter && comparator == null) comparator = (ComparisonCommandParameter)param;
+                    else if (param is AggregationModeCommandParameter && aggregation == null) aggregation = (AggregationModeCommandParameter)param;
+                    else if (param is PropertyCommandParameter && property == null) property = (PropertyCommandParameter) param;
+                    else if (param is PrimitiveCommandParameter && value == null) value = ((PrimitiveCommandParameter)param);
+                    else if (param is NotCommandParameter)
+                    {
+                        if (aggregation!=null || selector!=null) {
+                            inverseBlockCondition = !inverseBlockCondition;
+                        } else {
+                            inverseAggregation = !inverseAggregation;
+                        }
+                    }
+                    else break;
+                    paramCount++;
+                }
 
-                //AggregationMode (default to all)
-                //Comparator
+                if (selector == null) throw new Exception("All conditions must have a selector");
+                if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
 
+                program.Echo("Finished parsing condition params.  Count: " + paramCount);
+                AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.GetValue();
+                ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.GetValue();
+                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
+                IEntityProvider provider = new SelectorEntityProvider(selector);
 
-                //AggregationMode aggregationMode; (can be inferred)
-                //BlockCondition<T> blockCondition;
-                // NumericBlockHandler<T> blockHandler; (blockType).
-                // NumericPropertyType property; (optional, can be inferred from BlockType).
-                // Comparator comparator; (optional)
-                // float comparisonValue; (required.  Need to know if Numeric, String, or Bool)
-                //IEntityProvider<T> entityProvider; (String selector) (group optional) 
-            }
+                BlockCondition blockCondition;
+                if (value is BooleanCommandParameter || property is BooleanPropertyCommandParameter)
+                {
+                    program.Echo("Boolean Command");
+                    BooleanPropertyType boolProperty = handler.GetDefaultBooleanProperty();
+                    if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).GetValue();
+                    bool boolValue = true;  if (value != null) boolValue = ((BooleanCommandParameter)value).GetValue();
+                    blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
+                } else if (value is StringCommandParameter || property is StringPropertyCommandParameter)
+                {
+                    program.Echo("String Command");
+                    StringPropertyType stringProperty = handler.GetDefaultStringProperty();
+                    if (property != null) stringProperty = ((StringPropertyCommandParameter)property).GetValue();
+                    if (value == null) throw new Exception("String Comparison Value Cannot Be Left Blank");
+                    String stringValue = ((StringCommandParameter)value).GetValue();
+                    blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
+                } else if (value is NumericCommandParameter || property is NumericPropertyCommandParameter)
+                {
+                    program.Echo("Numeric Command");
+                    NumericPropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
+                    if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).GetValue();
+                    if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
+                    float numericValue = ((NumericCommandParameter)value).GetValue();
+                    blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
+                } else
+                {
+                    throw new Exception("Unsupported Condition Parameters");
+                }
 
-            private Condition CreateCondition(SelectorCommandParameter selector, ComparisonCommandParameter comparison, CommandParameter property, CommandParameter comparisonValue, AggregationModeCommandParameter aggregationMode)
-            {
-                return null;
-            }
+                if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
+                Condition condition = new AggregateCondition(aggregationMode, blockCondition, new SelectorEntityProvider(selector));
+                if (inverseAggregation) condition = new NotCondition(condition);
 
-            private Condition CreateBlockCondition<T>(SelectorCommandParameter selector, ComparisonCommandParameter comparison, CommandParameter property, CommandParameter comparisonValue, AggregationModeCommandParameter aggregationMode)
-                where T : class, IMyFunctionalBlock
-            {
-                return null;
+                program.Echo("Removing Range: " + index + ", Params: " + paramCount);
+                commandParameters.RemoveRange(index, paramCount);
+                commandParameters.Insert(index, new ConditionCommandParameter(condition));
             }
         }
     }

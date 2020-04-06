@@ -22,10 +22,9 @@ namespace IngameScript
     partial class Program
     {
 
-        public interface CommandParameter
-        {
-
-        }
+        public interface CommandParameter {}
+        public interface PropertyCommandParameter {}
+        public interface PrimitiveCommandParameter {}
 
         public abstract class ValueCommandParameter<T> : CommandParameter
         {
@@ -42,21 +41,21 @@ namespace IngameScript
             }
         }
 
-        public class StringCommandParameter : ValueCommandParameter<String>
+        public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter
         {
             public StringCommandParameter(string value) : base(value)
             {
             }
         }
 
-        public class NumericCommandParameter : ValueCommandParameter<float>
+        public class NumericCommandParameter : ValueCommandParameter<float>, PrimitiveCommandParameter
         {
             public NumericCommandParameter(float value) : base(value)
             {
             }
         }
 
-        public class BooleanCommandParameter : ValueCommandParameter<bool>
+        public class BooleanCommandParameter : ValueCommandParameter<bool>, PrimitiveCommandParameter
         {
             public BooleanCommandParameter(bool value) : base(value)
             {
@@ -70,21 +69,21 @@ namespace IngameScript
             }
         }
 
-        public class BooleanPropertyCommandParameter : ValueCommandParameter<BooleanPropertyType>
+        public class BooleanPropertyCommandParameter : ValueCommandParameter<BooleanPropertyType>, PropertyCommandParameter
         {
             public BooleanPropertyCommandParameter(BooleanPropertyType value) : base(value)
             {
             }
         }
 
-        public class StringPropertyCommandParameter : ValueCommandParameter<StringPropertyType>
+        public class StringPropertyCommandParameter : ValueCommandParameter<StringPropertyType>, PropertyCommandParameter
         {
             public StringPropertyCommandParameter(StringPropertyType value) : base(value)
             {
             }
         }
 
-        public class NumericPropertyCommandParameter : ValueCommandParameter<NumericPropertyType>
+        public class NumericPropertyCommandParameter : ValueCommandParameter<NumericPropertyType>, PropertyCommandParameter
         {
             public NumericPropertyCommandParameter(NumericPropertyType value) : base(value)
             {
@@ -93,10 +92,19 @@ namespace IngameScript
 
         public class GroupCommandParameter : CommandParameter { }
 
-        public class IfCommandParameter : BooleanCommandParameter
+        public class AsyncCommandParameter : CommandParameter { }
+
+        public class IfCommandParameter : CommandParameter 
         {
-            public IfCommandParameter(bool value) : base(value)
+            public bool inverseCondition;
+            public bool alwaysEvaluate;
+            public bool swapCommands;
+
+            public IfCommandParameter(bool inverseCondition, bool alwaysEvaluate, bool swapCommands)
             {
+                this.inverseCondition = inverseCondition;
+                this.alwaysEvaluate = alwaysEvaluate;
+                this.swapCommands = swapCommands;
             }
         }
 
@@ -104,6 +112,8 @@ namespace IngameScript
         {
             public ConditionCommandParameter(Condition value) : base(value) {}
         }
+
+        public class NotCommandParameter : CommandParameter { }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode>
         {
