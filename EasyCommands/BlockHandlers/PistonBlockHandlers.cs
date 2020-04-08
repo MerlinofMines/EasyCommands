@@ -38,7 +38,7 @@ namespace IngameScript
                 return new List<NumericPropertyGetter<IMyPistonBase>>()
                 {
                     new PistonHeightGetter(),
-                    new PistonSpeedGetter(),
+                    new PistonVelocityGetter(),
                 };
             }
 
@@ -47,7 +47,7 @@ namespace IngameScript
                 return new List<NumericPropertySetter<IMyPistonBase>>()
                 {
                     new PistonHeightSetter(),
-                    new PistonSpeedSetter(),
+                    new PistonVelocitySetter(),
                 };
             }
         }
@@ -100,9 +100,9 @@ namespace IngameScript
             }
         }
 
-        public class PistonSpeedGetter : NumericPropertyGetter<IMyPistonBase>
+        public class PistonVelocityGetter : NumericPropertyGetter<IMyPistonBase>
         {
-            public PistonSpeedGetter() : base(NumericPropertyType.SPEED){}
+            public PistonVelocityGetter() : base(NumericPropertyType.VELOCITY){}
 
             public override float GetPropertyValue(IMyPistonBase block)
             {
@@ -110,9 +110,9 @@ namespace IngameScript
             }
         }
 
-        public class PistonSpeedSetter : NumericPropertySetter<IMyPistonBase>
+        public class PistonVelocitySetter : NumericPropertySetter<IMyPistonBase>
         {
-            public PistonSpeedSetter() : base(NumericPropertyType.SPEED) { }
+            public PistonVelocitySetter() : base(NumericPropertyType.VELOCITY) { }
 
             public override void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
             {

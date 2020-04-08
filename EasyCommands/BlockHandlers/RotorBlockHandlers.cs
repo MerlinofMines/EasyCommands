@@ -110,7 +110,7 @@ namespace IngameScript
 
         public class RotorSpeedGetter : NumericPropertyGetter<IMyMotorStator>
         {
-            public RotorSpeedGetter() : base(NumericPropertyType.SPEED){}
+            public RotorSpeedGetter() : base(NumericPropertyType.VELOCITY){}
 
             public override float GetPropertyValue(IMyMotorStator block)
             {
@@ -120,7 +120,7 @@ namespace IngameScript
 
         public class RotorSpeedSetter : NumericPropertySetter<IMyMotorStator>
         {
-            public RotorSpeedSetter() : base(NumericPropertyType.SPEED) { }
+            public RotorSpeedSetter() : base(NumericPropertyType.VELOCITY) { }
 
             public override void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
             {

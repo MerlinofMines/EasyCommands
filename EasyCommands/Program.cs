@@ -84,36 +84,41 @@ namespace IngameScript
 
         public Program()
         {
-            foreach (var word in groupWords) { propertyWords.Add(word, new List<CommandParameter>() { new GroupCommandParameter() }); }
-            foreach (var word in activateWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanCommandParameter(true) }); }
-            foreach (var word in deactivateWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanCommandParameter(false) }); }
-            foreach (var word in increaseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.UP) }); }
-            foreach (var word in decreaseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.DOWN) }); }
-            foreach (var word in clockwiseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.CLOCKWISE) }); }
-            foreach (var word in counterclockwiseWords) { propertyWords.Add(word, new List<CommandParameter>() { new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE) }); }
-            foreach (var word in reverseWords) { propertyWords.Add(word, new List<CommandParameter>() { new ReverseCommandParameter() }); }
-            foreach (var word in relativeWords) { propertyWords.Add(word, new List<CommandParameter>() { new RelativeCommandParameter() }); }
-            foreach (var word in speedWords) { propertyWords.Add(word, new List<CommandParameter>() { new NumericPropertyCommandParameter(NumericPropertyType.SPEED) }); }
-            foreach (var word in connectWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED) }); }
-            foreach (var word in disconnectWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false) }); }
-            foreach (var word in lockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED) }); }
-            foreach (var word in unlockWords) { propertyWords.Add(word, new List<CommandParameter>() { new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false) }); }
-            foreach (var word in waitWords) { propertyWords.Add(word, new List<CommandParameter>() { new WaitCommandParameter()}); }
-            foreach (var word in ifWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(false, false, false) }); }
-            foreach (var word in unlessWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, false, false) }); }
-            foreach (var word in whileWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(false, true, false) }); }
-            foreach (var word in untilWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, true, false) }); }
-            foreach (var word in whenWords) { propertyWords.Add(word, new List<CommandParameter>() { new IfCommandParameter(true, true, true) }); }
-            foreach (var word in asyncWords) { propertyWords.Add(word, new List<CommandParameter>() { new AsyncCommandParameter() }); }
-            foreach (var word in elseWords) { propertyWords.Add(word, new List<CommandParameter>() { new ElseCommandParameter() }); }
-            foreach (var word in lessWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.LESS) }); }
-            foreach (var word in lessEqualWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL) }); }
-            foreach (var word in equalWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.EQUAL) }); }
-            foreach (var word in greaterEqualWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL) }); }
-            foreach (var word in greaterWords) { propertyWords.Add(word, new List<CommandParameter>() { new ComparisonCommandParameter(ComparisonType.GREATER) }); }
-            foreach (var word in anyWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.ANY) }); }
-            foreach (var word in allWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.ALL) }); }
-            foreach (var word in noneWords) { propertyWords.Add(word, new List<CommandParameter>() { new AggregationModeCommandParameter(AggregationMode.NONE) }); }
+            addWords(groupWords, new GroupCommandParameter());
+            addWords(activateWords, new BooleanCommandParameter(true));
+            addWords(deactivateWords, new BooleanCommandParameter(false));
+            addWords(increaseWords, new DirectionCommandParameter(DirectionType.UP));
+            addWords(decreaseWords, new DirectionCommandParameter(DirectionType.DOWN));
+            addWords(clockwiseWords, new DirectionCommandParameter(DirectionType.CLOCKWISE));
+            addWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
+            addWords(reverseWords, new ReverseCommandParameter());
+            addWords(relativeWords, new RelativeCommandParameter());
+            addWords(speedWords, new NumericPropertyCommandParameter(NumericPropertyType.VELOCITY));
+            addWords(connectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED));
+            addWords(disconnectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false));
+            addWords(lockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED));
+            addWords(unlockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false));
+            addWords(waitWords, new WaitCommandParameter());
+            addWords(ifWords, new IfCommandParameter(false, false, false));
+            addWords(unlessWords, new IfCommandParameter(true, false, false));
+            addWords(whileWords, new IfCommandParameter(false, true, false));
+            addWords(untilWords, new IfCommandParameter(true, true, false));
+            addWords(whenWords, new IfCommandParameter(true, true, true));
+            addWords(asyncWords, new AsyncCommandParameter());
+            addWords(elseWords, new ElseCommandParameter());
+            addWords(lessWords, new ComparisonCommandParameter(ComparisonType.LESS));
+            addWords(lessEqualWords, new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
+            addWords(equalWords, new ComparisonCommandParameter(ComparisonType.EQUAL));
+            addWords(greaterEqualWords, new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL));
+            addWords(greaterWords, new ComparisonCommandParameter(ComparisonType.GREATER));
+            addWords(anyWords, new AggregationModeCommandParameter(AggregationMode.ANY));
+            addWords(allWords, new AggregationModeCommandParameter(AggregationMode.ALL));
+            addWords(noneWords, new AggregationModeCommandParameter(AggregationMode.NONE));
+        }
+
+        public void addWords(String[] words, params CommandParameter[] commands)
+        {
+            foreach (String word in words) propertyWords.Add(word, commands.ToList<CommandParameter>());
         }
 
         public void Main(string argument, UpdateType updateSource)

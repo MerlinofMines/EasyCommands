@@ -23,7 +23,7 @@ namespace IngameScript
     {
         public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER }
         public enum BooleanPropertyType { ON_OFF, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE }
-        public enum NumericPropertyType { HEIGHT, ANGLE, SPEED }
+        public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY }
         public enum StringPropertyType { NAME, BLUEPRINT }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
