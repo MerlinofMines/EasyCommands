@@ -85,12 +85,12 @@ namespace IngameScript
                 bool timeExists = commandParameters.Exists(param => param is NumericCommandParameter);
 
                 if (!timeExists && !unitExists) {commandParameters.Add(new NumericCommandParameter(1f)); commandParameters.Add(new UnitCommandParameter(UnitType.TICKS));}
+                else if (!unitExists) { commandParameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
             }
             public override List<CommandHandler> GetHandlers()
             {
                 return new List<CommandHandler>
                 {
-                    new WaitForDurationHandler(),
                     new WaitForDurationUnitHandler()
                 };
             }
@@ -128,13 +128,14 @@ namespace IngameScript
                 blockHandler = BlockHandlerRegistry.GetBlockHandler(selectorParameter.blockType);
 
                 //TODO: Move to proper command parameter pre-processor
-                int boolPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
-                int stringPropIndex = commandParameters.FindIndex(param => (param is BooleanPropertyCommandParameter));
-                int numericPropIndex = commandParameters.FindIndex(param => (param is NumericPropertyCommandParameter));
-                int boolIndex = commandParameters.FindIndex(param => (param is BooleanCommandParameter));
-                int stringIndex = commandParameters.FindIndex(param => (param is StringCommandParameter));
-                int numericIndex = commandParameters.FindIndex(param => (param is NumericCommandParameter));
-                int directionIndex = commandParameters.FindIndex(param => (param is DirectionCommandParameter));
+                int boolPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
+                int stringPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
+                int numericPropIndex = commandParameters.FindIndex(param => param is NumericPropertyCommandParameter);
+                int boolIndex = commandParameters.FindIndex(param => param is BooleanCommandParameter);
+                int stringIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
+                int numericIndex = commandParameters.FindIndex(param => param is NumericCommandParameter);
+                int directionIndex = commandParameters.FindIndex(param => param is DirectionCommandParameter);
+                int reverseIndex = commandParameters.FindIndex(param => param is ReverseCommandParameter);
 
                 if (boolPropIndex < 0 && boolIndex >= 0)
                 {
@@ -168,25 +169,29 @@ namespace IngameScript
                         commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                     }
                 }
+
+                if (reverseIndex >=0 && numericPropIndex < 0)
+                {
+                    commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
+                }
             }
 
             public override List<CommandHandler> GetHandlers()
             {
                 return new List<CommandHandler>() {
                     //Boolean Handlers
-                    new BooleanBlockPropertyCommandHandler(entityProvider, blockHandler),
+                    new TwoParamBlockCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>(entityProvider, blockHandler, (b,e,p,s)=>{  b.SetBooleanPropertyValue(e, p.GetValue(), s.GetValue()); }),
 
                     //String Handlers
-                    new StringBlockPropertyCommandHandler(entityProvider, blockHandler),
+                    new TwoParamBlockCommandHandler<StringPropertyCommandParameter, StringCommandParameter>(entityProvider, blockHandler, (bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.GetValue(), bo.GetValue()); }),
 
                     //Numeric Handlers
-                    new SetNumericPropertyCommandHandler(entityProvider, blockHandler),
-                    new SetNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
-                    new IncrementNumericPropertyCommandHandler(entityProvider, blockHandler),
-                    new IncrementNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
-                    new MoveNumericDirectionPropertyCommandHandler(entityProvider, blockHandler),
-                    new ReverseBlockPropertyCommandHandler(entityProvider, blockHandler),
-                    new ReverseBlockCommandHandler(entityProvider, blockHandler)
+                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.GetValue(), n.GetValue()); }),
+                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter>(entityProvider, blockHandler, (b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.GetValue(), d.GetValue()); }),
+                    new TwoParamBlockCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter>(entityProvider, blockHandler, (b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.GetValue()); }),
+                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.GetValue(), d.GetValue(), n.GetValue()); }),
+                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.GetValue(), n.GetValue()); }),
+                    new FourParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.GetValue(), d.GetValue(), n.GetValue()); }),
 
                     //TODO: GPS Handler?
                 };

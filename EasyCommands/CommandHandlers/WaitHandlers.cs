@@ -21,23 +21,6 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class WaitForDurationHandler : OneParameterCommandHandler<NumericCommandParameter>
-        {
-            int ticks = 0;
-
-            public override bool Handle(MyGridProgram program)
-            {
-                program.Echo("Waited for " + ticks + " ticks");
-                ticks++;
-
-                if (ticks > getTicks(GetParameter().GetValue(), UnitType.SECONDS)) {
-                    ticks = 0;
-                    return true;
-                }
-                return false;
-            }
-        }
-
         public class WaitForDurationUnitHandler : TwoParameterCommandHandler<NumericCommandParameter, UnitCommandParameter>
         {
             int ticks = 0;
@@ -47,7 +30,7 @@ namespace IngameScript
                 program.Echo("Waited for " + ticks + " ticks");
                 ticks++;
 
-                if (ticks > getTicks(GetParameter1().GetValue(), GetParameter2().GetUnit()))
+                if (ticks > getTicks(parameter1.GetValue(), parameter2.GetUnit()))
                 {
                     ticks = 0;
                     return true;

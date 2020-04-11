@@ -21,147 +21,92 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class BooleanBlockPropertyCommandHandler : TwoParameterEntityCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>
-        {
-            private BlockHandler blockHandler;
+        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, IMyFunctionalBlock e, T t);
+        public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, IMyFunctionalBlock e, T t, U u) where T : class, CommandParameter where U : class, CommandParameter;
+        public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, IMyFunctionalBlock e, T t, U u, V v) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter;
+        public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, IMyFunctionalBlock e, T t, U u, V v, W w) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter;
 
-            public BooleanBlockPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
+        public class OneParamBlockCommandHandler<T> : OneParameterCommandHandler<T> where T : class, CommandParameter
+        {
+            private OneParameterBlockDelegate<T> action;
+            protected IEntityProvider entityProvider;
+            protected BlockHandler blockHandler;
+
+            public OneParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, OneParameterBlockDelegate<T> action) {
+                this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
+                this.action = action;
             }
 
             public override bool Handle(MyGridProgram program)
             {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.SetBooleanPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue()));
+                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter));
                 return true;
             }
         }
 
-        public class StringBlockPropertyCommandHandler : TwoParameterEntityCommandHandler<StringPropertyCommandParameter, StringCommandParameter>
+        public class TwoParamBlockCommandHandler<T,U> : TwoParameterCommandHandler<T,U> where T : class, CommandParameter where U : class, CommandParameter
         {
-            private BlockHandler blockHandler;
+            private TwoParameterBlockDelegate<T,U> action;
+            protected IEntityProvider entityProvider;
+            protected BlockHandler blockHandler;
 
-            public StringBlockPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
+            public TwoParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, TwoParameterBlockDelegate<T,U> action)
             {
+                this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
+                this.action = action;
+            }
+
+            public override bool CanHandle(List<CommandParameter> commandParameters)
+            {
+                List<CommandParameter> others;
+                return Supports<T, U>(commandParameters, out others, out parameter1, out parameter2);
             }
 
             public override bool Handle(MyGridProgram program)
             {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.SetStringPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue()));
+                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2));
                 return true;
             }
         }
 
-        public class SetNumericPropertyCommandHandler : TwoParameterEntityCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter>
+        public class ThreeParamBlockCommandHandler<T, U, V> : ThreeParameterCommandHandler<T, U, V> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter
         {
-            private BlockHandler blockHandler;
+            private ThreeParameterBlockDelegate<T, U, V> action;
+            protected IEntityProvider entityProvider;
+            protected BlockHandler blockHandler;
 
-            public SetNumericPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
+            public ThreeParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, ThreeParameterBlockDelegate<T, U, V> action)
             {
+                this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
+                this.action = action;
             }
 
             public override bool Handle(MyGridProgram program)
             {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.SetNumericPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue()));
+                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3));
                 return true;
             }
         }
 
-        public class SetNumericDirectionPropertyCommandHandler : ThreeParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>
+        public class FourParamBlockCommandHandler<T, U, V, W> : FourParameterCommandHandler<T, U, V, W> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter
         {
-            private BlockHandler blockHandler;
+            private FourParameterBlockDelegate<T, U, V, W> action;
+            protected IEntityProvider entityProvider;
+            protected BlockHandler blockHandler;
 
-            public SetNumericDirectionPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
+            public FourParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, FourParameterBlockDelegate<T, U, V, W> action)
             {
+                this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
+                this.action = action;
             }
 
             public override bool Handle(MyGridProgram program)
             {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.SetNumericPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue(), GetParameter3().GetValue()));
-                return true;
-            }
-        }
-
-        public class IncrementNumericPropertyCommandHandler : ThreeParameterEntityCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>
-        {
-            private BlockHandler blockHandler;
-
-            public IncrementNumericPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
-                this.blockHandler = blockHandler;
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.IncrementNumericPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue()));
-                return true;
-            }
-        }
-
-        public class IncrementNumericDirectionPropertyCommandHandler : FourParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>
-        {
-            private BlockHandler blockHandler;
-
-            public IncrementNumericDirectionPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
-                this.blockHandler = blockHandler;
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.IncrementNumericPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue(), GetParameter3().GetValue()));
-                return true;
-            }
-        }
-
-        public class MoveNumericDirectionPropertyCommandHandler : TwoParameterEntityCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter>
-        {
-            private BlockHandler blockHandler;
-
-            public MoveNumericDirectionPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
-                this.blockHandler = blockHandler;
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.MoveNumericPropertyValue(entity, GetParameter1().GetValue(), GetParameter2().GetValue()));
-                return true;
-            }
-        }
-
-        //TODO: Remove duplication using a command parameter pre-processor
-        public class ReverseBlockCommandHandler : OneParameterEntityCommandHandler<ReverseCommandParameter>
-        {
-            private BlockHandler blockHandler;
-
-            public ReverseBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
-                this.blockHandler = blockHandler;
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.ReverseNumericPropertyValue(entity, blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
-                return true;
-            }
-        }
-
-        public class ReverseBlockPropertyCommandHandler : TwoParameterEntityCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter>
-        {
-            private BlockHandler blockHandler;
-
-            public ReverseBlockPropertyCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler) : base(entityProvider)
-            {
-                this.blockHandler = blockHandler;
-            }
-
-            public override bool Handle(MyGridProgram program)
-            {
-                entityProvider.GetEntities(program).ForEach(entity => blockHandler.ReverseNumericPropertyValue(entity, GetParameter2().GetValue()));
+                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3, parameter4));
                 return true;
             }
         }
