@@ -41,8 +41,8 @@ namespace IngameScript
                     new ConnectorConnectedSetter(),
                     new ConnectorLockedSetter(),
                 };
-    }
-}
+            }
+        }
 
         public class ConnectorConnectedGetter : BooleanPropertyGetter<IMyShipConnector>
         {

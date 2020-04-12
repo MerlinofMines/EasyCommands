@@ -25,7 +25,7 @@ namespace IngameScript
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
 
         //Configuration.  Keep all words lowercase
-        private String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of" };
+        private String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of","either" };
         private String[] groupWords = { "blocks", "group" };
         private String[] activateWords = { "move", "go", "on", "start", "begin" };
         private String[] deactivateWords = { "stop", "off", "terminate", "exit", "cancel", "end" };
@@ -63,6 +63,12 @@ namespace IngameScript
         private String[] anyWords = { "any" };
         private String[] allWords = { "all" };
         private String[] noneWords = { "none" };
+
+        private String[] andWords = { "and", "&", "&&", "but", "yet" };
+        private String[] orWords = { "or", "|", "||" };
+        private String[] notWords = { "not", "!", "isn't", "isnt" };
+        private String[] openParenthesisWords = { "("};
+        private String[] closeParenthesisWords = { ")" };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -114,6 +120,11 @@ namespace IngameScript
             addWords(anyWords, new AggregationModeCommandParameter(AggregationMode.ANY));
             addWords(allWords, new AggregationModeCommandParameter(AggregationMode.ALL));
             addWords(noneWords, new AggregationModeCommandParameter(AggregationMode.NONE));
+            addWords(andWords, new AndCommandParameter());
+            addWords(orWords, new OrCommandParameter());
+            addWords(notWords, new NotCommandParameter());
+            addWords(openParenthesisWords, new OpenParenthesisCommandParameter());
+            addWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
         }
 
         public void addWords(String[] words, params CommandParameter[] commands)

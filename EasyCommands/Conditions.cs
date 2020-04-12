@@ -33,19 +33,6 @@ namespace IngameScript
             NONE
         }
 
-        /*
-        public class RememberedCondition : Condition
-        {
-            public bool rememberedValue;
-            public bool remembered = false;
-            public Condition condition;
-            public RememberedCondition(Condition condition){this.condition = condition;}
-            public bool evaluate() {
-                if (!remembered) { rememberedValue = condition.evaluate(); remembered = true;} return rememberedValue;
-            }
-        }
-        */
-
         public class NotCondition : Condition
         {
             Condition condition;
@@ -58,6 +45,38 @@ namespace IngameScript
             public bool evaluate(MyGridProgram program)
             {
                 return !condition.evaluate(program);
+            }
+        }
+
+        public class AndCondition : Condition
+        {
+            Condition conditionA, conditionB;
+
+            public AndCondition(Condition conditionA, Condition conditionB)
+            {
+                this.conditionA = conditionA;
+                this.conditionB = conditionB;
+            }
+
+            public bool evaluate(MyGridProgram program)
+            {
+                return conditionA.evaluate(program) && conditionB.evaluate(program);
+            }
+        }
+
+        public class OrCondition : Condition
+        {
+            Condition conditionA, conditionB;
+
+            public OrCondition(Condition conditionA, Condition conditionB)
+            {
+                this.conditionA = conditionA;
+                this.conditionB = conditionB;
+            }
+
+            public bool evaluate(MyGridProgram program)
+            {
+                return conditionA.evaluate(program) || conditionB.evaluate(program);
             }
         }
 

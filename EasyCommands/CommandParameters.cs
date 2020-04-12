@@ -114,6 +114,10 @@ namespace IngameScript
         }
 
         public class NotCommandParameter : CommandParameter { }
+        public class AndCommandParameter : CommandParameter { }
+        public class OrCommandParameter : CommandParameter { }
+        public class OpenParenthesisCommandParameter : CommandParameter { }
+        public class CloseParenthesisCommandParameter : CommandParameter { }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode>
         {

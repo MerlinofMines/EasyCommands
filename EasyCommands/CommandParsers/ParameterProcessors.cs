@@ -197,6 +197,12 @@ namespace IngameScript
             public void convertNextConditionParameter(MyGridProgram program, List<CommandParameter> commandParameters, int index)
             {
                 program.Echo("Attempting to parse Condition at index " + index);
+                parseNextConditionTokens(program, commandParameters, index);
+                resolveNextCondition(program, commandParameters, index);
+            }
+
+            public void parseNextConditionTokens(MyGridProgram program, List<CommandParameter> commandParameters, int index) {
+                program.Echo("Attempting to parse Condition Tokens at index " + index);
                 SelectorCommandParameter selector = null;//required
                 ComparisonCommandParameter comparator = null;//Can be defaulted
                 PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
@@ -204,6 +210,13 @@ namespace IngameScript
                 AggregationModeCommandParameter aggregation = null;
                 bool inverseAggregation = false;
                 bool inverseBlockCondition = false;
+
+                if (commandParameters[index] is NotCommandParameter || commandParameters[index] is OpenParenthesisCommandParameter)
+                {
+                    program.Echo("Token is " + commandParameters[index].GetType() + ", continuing");
+                    parseNextConditionTokens(program, commandParameters, index+1);
+                    return;
+                }
 
                 int paramCount = 0;
                 while (index + paramCount < commandParameters.Count)
@@ -272,6 +285,70 @@ namespace IngameScript
                 program.Echo("Removing Range: " + index + ", Params: " + paramCount);
                 commandParameters.RemoveRange(index, paramCount);
                 commandParameters.Insert(index, new ConditionCommandParameter(condition));
+
+                if (commandParameters.Count == index+1) return;
+
+                //TODO: There's definitely bugs with this..
+                int newIndex = index + 1;
+                while (commandParameters[newIndex] is CloseParenthesisCommandParameter) { newIndex++; }
+                if (commandParameters.Count == newIndex + 1) return;
+                if (commandParameters[newIndex] is AndCommandParameter || commandParameters[newIndex] is OrCommandParameter)
+                {
+                    program.Echo("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");
+                    parseNextConditionTokens(program, commandParameters, newIndex + 1);
+                }
+                program.Echo("Finished Processing Condition Tokens at index: " + index);
+            }
+
+            public void resolveNextCondition(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            {
+                program.Echo("Attempting to resolve Condition at index " + index);
+                if (commandParameters[index] is NotCommandParameter) // Handle Nots first
+                {
+                    commandParameters.RemoveAt(index); // Remove Not
+                    Condition notCondition = new NotCondition(getNextCondition(program, commandParameters, index));
+                    commandParameters.RemoveAt(index);
+                    commandParameters.Insert(index, new ConditionCommandParameter(notCondition));
+                }
+                else if (commandParameters[index] is OpenParenthesisCommandParameter) { //Handle Parenthesis Next
+                    resolveNextCondition(program, commandParameters, index + 1);
+                    if (!(commandParameters[index + 2] is CloseParenthesisCommandParameter)) throw new Exception("Mismatched Parenthesis!");
+                    commandParameters.RemoveAt(index); //Remove Open Parenthesis
+                    commandParameters.RemoveAt(index + 1); //Remove Close Parenthesis
+                }
+
+                if (!(commandParameters[index] is ConditionCommandParameter)) throw new Exception("Invalid Token Inside Condition: " + commandParameters[index].GetType());
+                Condition conditionA = ((ConditionCommandParameter)commandParameters[index]).GetValue();
+                while (commandParameters.Count > index+2) //Look for And/Or + more conditions
+                {
+                    if (commandParameters[index + 1] is AndCommandParameter) {//Handle Ands before Ors
+                        program.Echo("Found And Parameter at index: " + (index + 1));
+                        AndCondition andCondition = new AndCondition(conditionA, getNextCondition(program, commandParameters, index+2));
+                        commandParameters.RemoveRange(index,3);
+                        commandParameters.Insert(index, new ConditionCommandParameter(andCondition));
+                    }
+                    else if (commandParameters[index + 1] is OrCommandParameter)
+                    {
+                        program.Echo("Found Or Parameter at index: " + (index + 1));
+                        resolveNextCondition(program, commandParameters, index + 2);
+                        OrCondition orCondition = new OrCondition(conditionA, getNextCondition(program, commandParameters, index+2));
+                        commandParameters.RemoveRange(index,3);
+                        commandParameters.Insert(index, new ConditionCommandParameter(orCondition));
+                    } else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            private Condition getNextCondition(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            {
+                if (!(commandParameters[index] is ConditionCommandParameter)) ///Resolve if not a simple condition (more parentheses, for example)
+                {
+                    program.Echo("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
+                    resolveNextCondition(program, commandParameters, index);
+                }
+                return ((ConditionCommandParameter)commandParameters[index]).GetValue();
             }
         }
     }
