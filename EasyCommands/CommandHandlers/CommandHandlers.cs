@@ -62,6 +62,7 @@ namespace IngameScript
         {
             public abstract bool CanHandle(List<CommandParameter> commandParameters);
             public abstract bool Handle(MyGridProgram program);
+            public virtual void Reset() { }
 
             public bool Supports<T>(List<CommandParameter> commandParameters, out List<CommandParameter> others, out T t) where T : class, CommandParameter
             {

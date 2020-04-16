@@ -36,6 +36,8 @@ namespace IngameScript
                 this.async = async;
             }
 
+            public virtual void Reset() { }
+
             //Returns true if the program has finished execution.
             public abstract bool Execute(MyGridProgram program);
         }
@@ -65,6 +67,11 @@ namespace IngameScript
             public override bool Execute(MyGridProgram program)
             {
                 return commandHandler.Handle(program);
+            }
+
+            public override void Reset()
+            {
+                commandHandler.Reset();
             }
 
             public abstract void PreParseCommands(List<CommandParameter> commandParameters);
@@ -204,6 +211,7 @@ namespace IngameScript
             public bool alwaysEvaluate = false;
             private bool evaluated = false;
             private bool evaluatedValue = false;
+            private bool isExecuting = false;
             private Command conditionMetCommand;
             private Command conditionNotMetCommand;
 
@@ -235,8 +243,24 @@ namespace IngameScript
                     commandResult = conditionNotMetCommand.Execute(program);
                 }
 
-//                throw new Exception("Stop!");
+                isExecuting = !commandResult;
+
+                if (isExecuting) return false; //Keep executing subcommand
+
+                //Finished Executing.  Reset Commands
+                conditionMetCommand.Reset();
+                conditionNotMetCommand.Reset();
+
+                //throw new Exception("Stop!");
                 if (alwaysEvaluate) { return !conditionMet; } else { return commandResult; }
+            }
+
+            public override void Reset()
+            {
+                conditionMetCommand.Reset();
+                conditionNotMetCommand.Reset();
+                evaluated = false;
+                isExecuting = false;
             }
 
             private void updateAlwaysEvaluate()
@@ -248,13 +272,51 @@ namespace IngameScript
 
             private bool EvaluateCondition(MyGridProgram program)
             {
-                if (alwaysEvaluate || !evaluated)
+                if ((!isExecuting && alwaysEvaluate) || !evaluated)
                 {
                     program.Echo("Evaluating Value");
                     evaluatedValue = condition.evaluate(program); evaluated = true;
                 }
                 program.Echo("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
+            }
+        }
+
+        public class MultiActionCommand : Command
+        {
+            List<Command> commandsToExecute;
+            List<Command> currentCommands;
+
+            public MultiActionCommand(List<Command> commandsToExecute)
+            {
+                this.commandsToExecute = commandsToExecute;
+                this.currentCommands = new List<Command>(commandsToExecute);
+            }
+
+            public override bool Execute(MyGridProgram program)
+            {
+                //TODO: More work needed
+                program.Echo("Executing All Commands.  Commands left: " + currentCommands.Count);
+                if (currentCommands.Count == 0) return true;
+
+                int commandIndex = 0;
+
+                while (commandIndex < currentCommands.Count)
+                {
+                    Command nextCommand = currentCommands[commandIndex];
+
+                    bool handled = nextCommand.Execute(program);
+                    if (handled) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
+                    if (!nextCommand.IsAsync()) break;
+                    program.Echo("Command is async, continuing to command at index: " + commandIndex);
+                }
+                return currentCommands.Count == 0;
+            }
+
+            public override void Reset()
+            {
+                currentCommands = new List<Command>(commandsToExecute);
+                foreach (Command command in currentCommands) { command.Reset(); }
             }
         }
     }

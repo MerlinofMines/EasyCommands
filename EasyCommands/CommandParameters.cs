@@ -113,6 +113,11 @@ namespace IngameScript
             public ConditionCommandParameter(Condition value) : base(value) {}
         }
 
+        public class CommandReferenceParameter : ValueCommandParameter<Command>
+        {
+            public CommandReferenceParameter(Command value) : base(value) {}
+        }
+
         public class NotCommandParameter : CommandParameter { }
         public class AndCommandParameter : CommandParameter { }
         public class OrCommandParameter : CommandParameter { }

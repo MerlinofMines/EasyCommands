@@ -29,13 +29,12 @@ namespace IngameScript
             {
                 program.Echo("Waited for " + ticks + " ticks");
                 ticks++;
+                return ticks > getTicks(parameter1.GetValue(), parameter2.GetUnit());
+            }
 
-                if (ticks > getTicks(parameter1.GetValue(), parameter2.GetUnit()))
-                {
-                    ticks = 0;
-                    return true;
-                }
-                return false;
+            public override void Reset()
+            {
+                ticks = 0;
             }
         }
 
