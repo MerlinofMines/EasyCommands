@@ -79,6 +79,15 @@ namespace IngameScript
             public abstract List<CommandHandler> GetHandlers();
         }
 
+        public class RestartCommand : Command
+        {
+            public override bool Execute(MyGridProgram program)
+            {
+                RUNNING_COMMANDS.Reset();//This is black magic.
+                return false;//Also black magic.  must be false otherwise 1st command gets skipped!
+            }
+        }
+
         public class WaitCommand : HandlerCommand
         {
             public WaitCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)

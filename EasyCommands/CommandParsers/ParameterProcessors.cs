@@ -172,7 +172,8 @@ namespace IngameScript
                     parameter is ReverseCommandParameter ||
                     parameter is RelativeCommandParameter ||
                     parameter is WaitCommandParameter ||
-                    parameter is UnitCommandParameter;
+                    parameter is UnitCommandParameter ||
+                    parameter is RestartCommandParameter;
             }
         }
 

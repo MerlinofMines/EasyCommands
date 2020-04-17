@@ -70,6 +70,8 @@ namespace IngameScript
         private String[] openParenthesisWords = { "("};
         private String[] closeParenthesisWords = { ")" };
 
+        private String[] restartWords = { "restart", "reset", "reboot" };
+
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -86,7 +88,7 @@ namespace IngameScript
         //Internal (Don't touch!)
         private Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        List<Command> runningCommands = new List<Command>();
+        static MultiActionCommand RUNNING_COMMANDS;
 
         public Program()
         {
@@ -125,6 +127,7 @@ namespace IngameScript
             addWords(notWords, new NotCommandParameter());
             addWords(openParenthesisWords, new OpenParenthesisCommandParameter());
             addWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
+            addWords(restartWords, new RestartCommandParameter());
         }
 
         public void addWords(String[] words, params CommandParameter[] commands)
@@ -136,62 +139,70 @@ namespace IngameScript
         {
             if (String.IsNullOrEmpty(argument))
             {
-                if (execute())
+                if (Execute())
                 {
                     Echo("Execution Complete");
                     Runtime.UpdateFrequency = UpdateFrequency.None;
-                } else
+                }
+                else
                 {
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
                 }
-            } else if (argument.ToLower() == "restart") //Clear existing commands and start fresh
+            }
+            else if (argument.ToLower() == "restart") //Restart execution of existing commands
             {
                 Echo("Restarting Commands");
-                runningCommands = new List<Command>();
-                addCommands();
+                Restart();
             }
-            else if (argument.ToLower() == "start") //Add more commands to end of running list.  Useful to say "execute me 3 times, please")
+            else if (argument.ToLower() == "start") //Parse custom data and run
             {
                 Echo("Starting Commands");
-                addCommands();
+                Start();
+            }
+            else if (argument.ToLower() == "parse") // Parse Custom Data only.  Useful for debugging.
+            {
+                Echo("Parsing Custom Data");
+                ParseCommands();
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                Restart();
+            } else if (argument.ToLower() == "stop") //Stop execution
+            {
+                Echo("Stopping Command Execution");
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                RUNNING_COMMANDS = null;
             }
         }
 
-        private void addCommands()
+        private void Restart()
+        {
+            if (RUNNING_COMMANDS == null)
+            {
+                Start();
+            } else
+            {
+                RUNNING_COMMANDS.Reset();
+            }
+        }
+
+        private void Start()
         {
             Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-            List<Command> commands = parseCommands();
+            List<Command> commands = ParseCommands();
 
             foreach (var command in commands) {
                 Echo("Resolved Command: " + command.GetType());
             }
-
-            runningCommands.AddList(commands);
-
+            RUNNING_COMMANDS = new MultiActionCommand(commands);
         }
 
-        private bool execute()
+        private bool Execute()
         {
-            Echo("Executing Commands");
-            if (runningCommands.Count == 0) return true;
-
-            int commandIndex = 0;
-
-            while (commandIndex < runningCommands.Count)
-            {
-                Command nextCommand = runningCommands[commandIndex];
-
-                bool handled = nextCommand.Execute(this);
-                if (handled) { runningCommands.RemoveAt(commandIndex); } else {commandIndex++;}
-                if (!nextCommand.IsAsync()) break;
-                Echo("Command is async, continuing to command at index: " + commandIndex);
-            }
-            return runningCommands.Count == 0;
+            return RUNNING_COMMANDS.Execute(this);
         }
 
-        private List<Command> parseCommands()
+        private List<Command> ParseCommands()
         {
-            String[] commandList = Me.CustomData.Split(new[] { "\r\n", "\r", "\n" },StringSplitOptions.RemoveEmptyEntries);
+            String[] commandList = Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             return commandList
                 .Select(command => parseTokens(command))

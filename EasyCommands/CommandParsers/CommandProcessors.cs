@@ -214,7 +214,8 @@ namespace IngameScript
                     ActionCommandParameter action = (ActionCommandParameter)commandParameters[i];
 
                     Command command;
-                    if (action.GetValue().Exists(p => p is WaitCommandParameter)) command = new WaitCommand(program, action.GetValue());
+                    if (action.GetValue().Exists(p => p is RestartCommandParameter)) command = new RestartCommand();
+                    else if (action.GetValue().Exists(p => p is WaitCommandParameter)) command = new WaitCommand(program, action.GetValue());
                     else if (action.GetValue().Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(program, action.GetValue());
                     else throw new Exception("Unknown Action Type. ");
 
