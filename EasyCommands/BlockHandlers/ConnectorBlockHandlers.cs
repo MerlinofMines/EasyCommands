@@ -23,67 +23,25 @@ namespace IngameScript
     {
         public class ConnectorBlockHandler : BlockHandler<IMyShipConnector>
         {
-            protected override List<BooleanPropertyGetter<IMyShipConnector>> GetBooleanPropertyGetters()
+            public ConnectorBlockHandler() : base()
             {
-                return new List<BooleanPropertyGetter<IMyShipConnector>>()
-                {
-                    new OnOffPropertyGetter<IMyShipConnector>(),
-                    new ConnectorConnectedGetter(),
-                    new ConnectorLockedGetter(),
-                };
+                booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, Connected);
+                booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, Connected);
+
+                booleanPropertySetters.Add(BooleanPropertyType.LOCKED, Connect);
+                booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, Connect);
             }
 
-            protected override List<BooleanPropertySetter<IMyShipConnector>> GetBooleanPropertySetters()
+            static bool Connected(IMyShipConnector connector)
             {
-                return new List<BooleanPropertySetter<IMyShipConnector>>()
-                {
-                    new OnOffPropertySetter<IMyShipConnector>(),
-                    new ConnectorConnectedSetter(),
-                    new ConnectorLockedSetter(),
-                };
+                return connector.Status == MyShipConnectorStatus.Connected;
             }
+
+            static void Connect(IMyShipConnector connector, bool value)
+            {
+                if (value) { connector.Connect(); } else { connector.Disconnect(); }
+            }
+            //TODO: Add Connectable Handler
         }
-
-        public class ConnectorConnectedGetter : BooleanPropertyGetter<IMyShipConnector>
-        {
-            public ConnectorConnectedGetter() : base(BooleanPropertyType.CONNECTED){}
-
-            public override bool GetPropertyValue(IMyShipConnector block)
-            {
-                return block.Status == MyShipConnectorStatus.Connected;
-            }
-        }
-
-        public class ConnectorConnectedSetter : BooleanPropertySetter<IMyShipConnector>
-        {
-            public ConnectorConnectedSetter() : base(BooleanPropertyType.CONNECTED){}
-
-            public override void SetPropertyValue(IMyShipConnector block, bool value)
-            {
-                if (value) { block.Connect(); } else { block.Disconnect(); }
-            }
-        }
-
-        public class ConnectorLockedGetter : BooleanPropertyGetter<IMyShipConnector>
-        {
-            public ConnectorLockedGetter() : base(BooleanPropertyType.LOCKED){}
-
-            public override bool GetPropertyValue(IMyShipConnector block)
-            {
-                return block.Status == MyShipConnectorStatus.Connected;
-            }
-        }
-
-        public class ConnectorLockedSetter : BooleanPropertySetter<IMyShipConnector>
-        {
-            public ConnectorLockedSetter() : base(BooleanPropertyType.LOCKED) { }
-
-            public override void SetPropertyValue(IMyShipConnector block, bool value)
-            {
-                if (value) { block.Connect(); } else { block.Disconnect(); }
-            }
-        }
-
-        //TODO: Add Connectable Handler
     }
 }

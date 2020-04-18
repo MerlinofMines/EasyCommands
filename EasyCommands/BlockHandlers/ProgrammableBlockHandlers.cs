@@ -23,41 +23,10 @@ namespace IngameScript
     {
         public class ProgramBlockHandler : BlockHandler<IMyProgrammableBlock>
         {
-            protected override List<BooleanPropertyGetter<IMyProgrammableBlock>> GetBooleanPropertyGetters()
+            public ProgramBlockHandler() : base()
             {
-                return new List<BooleanPropertyGetter<IMyProgrammableBlock>>()
-                {
-                    new OnOffPropertyGetter<IMyProgrammableBlock>(),
-                    new ProgramRunningGetter()
-                };
-            }
-
-            protected override List<StringPropertySetter<IMyProgrammableBlock>> GetStringPropertySetters()
-            {
-                return new List<StringPropertySetter<IMyProgrammableBlock>>()
-                {
-                    new ProgramRunSetter(),
-                };
-            }
-        }
-
-        public class ProgramRunningGetter : BooleanPropertyGetter<IMyProgrammableBlock>
-        {
-            public ProgramRunningGetter() : base(BooleanPropertyType.RUNNING) { }
-
-            public override bool GetPropertyValue(IMyProgrammableBlock block)
-            {
-                return !block.DetailedInfo.EndsWith("Execution Complete\n");
-            }
-        }
-
-        public class ProgramRunSetter : StringPropertySetter<IMyProgrammableBlock>
-        {
-            public ProgramRunSetter() : base(StringPropertyType.RUN) {}
-
-            public override void SetPropertyValue(IMyProgrammableBlock block, string value)
-            {
-                block.TryRun(value);
+                booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, block => !block.DetailedInfo.EndsWith("Execution Complete\n"));
+                stringPropertySetters.Add(StringPropertyType.RUN, (block, value) => block.TryRun(value));
             }
         }
     }

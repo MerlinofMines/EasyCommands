@@ -92,234 +92,134 @@ namespace IngameScript
         }
 
         //Property Getters
-        public interface PropertyGetter<T, U>{T GetPropertyValue(IMyFunctionalBlock block);U GetHandledPropertyType();}
-        public interface BooleanPropertyGetter : PropertyGetter<bool, BooleanPropertyType>{}
-        public interface StringPropertyGetter : PropertyGetter<String, StringPropertyType>{}
-        public interface NumericPropertyGetter : PropertyGetter<float, NumericPropertyType>{}
-
-        public abstract class BooleanPropertyGetter<T> : BooleanPropertyGetter where T : class, IMyFunctionalBlock
-        {
-            private BooleanPropertyType handledType;
-            public BooleanPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract bool GetPropertyValue(T block);
-            public bool GetPropertyValue(IMyFunctionalBlock block) { return GetPropertyValue((T)block); }
-            public BooleanPropertyGetter(BooleanPropertyType handledType) { this.handledType = handledType;}
-        }
-
-        public abstract class StringPropertyGetter<T> : StringPropertyGetter where T : class, IMyFunctionalBlock
-        {
-            private StringPropertyType handledType;
-            public  StringPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract String GetPropertyValue(T block);
-            public String GetPropertyValue(IMyFunctionalBlock block) { return GetPropertyValue((T)block);}
-            public StringPropertyGetter(StringPropertyType handledType) { this.handledType = handledType; }
-        }
-
-        public abstract class NumericPropertyGetter<T> : NumericPropertyGetter where T : class, IMyFunctionalBlock
-        {
-            private NumericPropertyType handledType;
-            public  NumericPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract float GetPropertyValue(T block);
-            public float GetPropertyValue(IMyFunctionalBlock block) { return GetPropertyValue((T)block); }
-            public NumericPropertyGetter(NumericPropertyType handledType) { this.handledType = handledType; }
-        }
+        public delegate String StringPropertyGetter<T>(T block);
+        public delegate bool BooleanPropertyGetter<T>(T block);
+        public delegate float NumericPropertyGetter<T>(T block);
 
         //Property Setters
-        public interface PropertySetter<T, U>{void SetPropertyValue(IMyFunctionalBlock block, T value);U GetHandledPropertyType();}
-        public interface BooleanPropertySetter : PropertySetter<bool, BooleanPropertyType> { }
-        public interface StringPropertySetter : PropertySetter<String, StringPropertyType> { }
-        public interface NumericPropertySetter : PropertySetter<float, NumericPropertyType> {
-            void SetPropertyValue(IMyFunctionalBlock block, DirectionType DirectionType, float value);
-            void IncrementPropertyValue(IMyFunctionalBlock block, float deltaValue);
-            void IncrementPropertyValue(IMyFunctionalBlock block, DirectionType direction, float deltaValue);
-            void MovePropertyValue(IMyFunctionalBlock block, DirectionType direction);
-            void ReversePropertyValue(IMyFunctionalBlock block);
+        public delegate void StringPropertySetter<T>(T block, String value);
+        public delegate void BooleanPropertySetter<T>(T block, bool value);
+        public interface NumericPropertySetter<T> {
+            void SetPropertyValue(T block, float value);
+            void SetPropertyValue(T block, DirectionType DirectionType, float value);
+            void IncrementPropertyValue(T block, float deltaValue);
+            void IncrementPropertyValue(T block, DirectionType direction, float deltaValue);
+            void MovePropertyValue(T block, DirectionType direction);
+            void ReversePropertyValue(T block);
         }
 
-        public abstract class BooleanPropertySetter<T> : BooleanPropertySetter where T : class, IMyFunctionalBlock
-        {
-            private BooleanPropertyType handledType;
-            public BooleanPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract void SetPropertyValue(T block, bool value);
-            public void SetPropertyValue(IMyFunctionalBlock block, bool value) { SetPropertyValue((T)block, value); }
-            public BooleanPropertySetter(BooleanPropertyType handledType) { this.handledType = handledType; }
-        }
-
-        public abstract class StringPropertySetter<T> : StringPropertySetter where T : class, IMyFunctionalBlock
-        {
-            private StringPropertyType handledType;
-            public StringPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract void SetPropertyValue(T block, String value);
-            public void SetPropertyValue(IMyFunctionalBlock block, String value) { SetPropertyValue((T)block, value); }
-            public StringPropertySetter(StringPropertyType handledType) { this.handledType = handledType; }
-        }
-
-        public abstract class NumericPropertySetter<T> : NumericPropertySetter where T : class, IMyFunctionalBlock
-        {
-
-            private NumericPropertyType handledType;
-            public NumericPropertyType GetHandledPropertyType() { return handledType; }
-            public abstract void SetPropertyValue(T block, DirectionType DirectionType, float value);
-            public abstract void IncrementPropertyValue(T block, float deltaValue);
-            public abstract void IncrementPropertyValue(T block, DirectionType direction, float deltaValue);
-            public abstract void MovePropertyValue(T block, DirectionType direction);
-            public abstract void ReversePropertyValue(T block);
-            public abstract void SetPropertyValue(T block, float value);
-            public void SetPropertyValue(IMyFunctionalBlock block, float value) { SetPropertyValue((T)block, value); }
-            public void SetPropertyValue(IMyFunctionalBlock block, DirectionType direction, float value) { SetPropertyValue((T)block, direction, value);}
-            public void IncrementPropertyValue(IMyFunctionalBlock block, float deltaValue){ IncrementPropertyValue((T)block, deltaValue); }
-            public void IncrementPropertyValue(IMyFunctionalBlock block, DirectionType direction, float deltaValue){ IncrementPropertyValue((T)block, direction, deltaValue);}
-            public void MovePropertyValue(IMyFunctionalBlock block, DirectionType direction){MovePropertyValue((T)block, direction);}
-            public void ReversePropertyValue(IMyFunctionalBlock block){ReversePropertyValue((T)block);}
-            public NumericPropertySetter(NumericPropertyType handledType) { this.handledType = handledType; }
-        }
-
-        public abstract class BlockHandler {
-            protected Dictionary<BooleanPropertyType, BooleanPropertyGetter> booleanPropertyGetters = new Dictionary<BooleanPropertyType, BooleanPropertyGetter>();
-            protected Dictionary<StringPropertyType, StringPropertyGetter> stringPropertyGetters = new Dictionary<StringPropertyType, StringPropertyGetter>();
-            protected Dictionary<NumericPropertyType, NumericPropertyGetter> numericPropertyGetters = new Dictionary<NumericPropertyType, NumericPropertyGetter>();
-
-            protected Dictionary<BooleanPropertyType, BooleanPropertySetter> booleanPropertySetters = new Dictionary<BooleanPropertyType, BooleanPropertySetter>();
-            protected Dictionary<StringPropertyType, StringPropertySetter> stringPropertySetters = new Dictionary<StringPropertyType, StringPropertySetter>();
-            protected Dictionary<NumericPropertyType, NumericPropertySetter> numericPropertySetters = new Dictionary<NumericPropertyType, NumericPropertySetter>();
-
-            public virtual BooleanPropertyType GetDefaultBooleanProperty()
-            {
-                return BooleanPropertyType.ON_OFF;
-            }
-
-            public virtual StringPropertyType GetDefaultStringProperty()
-            {
-                return StringPropertyType.NAME;
-            }
-
-            public virtual NumericPropertyType GetDefaultNumericProperty(DirectionType direction)
-            {
-                throw new Exception("This Block Does Not Have A Default Numeric Property");
-            }
-
-            public virtual DirectionType GetDefaultDirection()
-            {
-                throw new Exception("This Block Does Not Have a Default Direction");
-            }
-
-            public bool GetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property)
-            {
-                return booleanPropertyGetters[property].GetPropertyValue(block);
-            }
-            public string GetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property)
-            {
-                return stringPropertyGetters[property].GetPropertyValue(block);
-            }
-            public float GetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
-            {
-                return numericPropertyGetters[property].GetPropertyValue(block);
-            }
-
-            public void SetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property, bool value)
-            {
-                booleanPropertySetters[property].SetPropertyValue(block, value);
-            }
-
-            public void SetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property, String value)
-            {
-                stringPropertySetters[property].SetPropertyValue(block, value);
-            }
-
-            public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float value)
-            {
-                numericPropertySetters[property].SetPropertyValue(block, value);
-            }
-
-            public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float value)
-            {
-                numericPropertySetters[property].SetPropertyValue(block, direction, value);
-            }
-
-            public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float deltaValue)
-            {
-                numericPropertySetters[property].IncrementPropertyValue(block, deltaValue);
-            }
-
-            public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float deltaValue)
-            {
-                numericPropertySetters[property].IncrementPropertyValue(block, direction, deltaValue);
-            }
-
-            public void MoveNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction)
-            {
-                numericPropertySetters[property].MovePropertyValue(block, direction);
-            }
-
-            public void ReverseNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
-            {
-                numericPropertySetters[property].ReversePropertyValue(block);
-            }
+        public interface BlockHandler {
+            BooleanPropertyType GetDefaultBooleanProperty();
+            StringPropertyType GetDefaultStringProperty();
+            NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
+            DirectionType GetDefaultDirection();
+            bool GetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property);
+            string GetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property);
+            float GetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property);
+            void SetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property, bool value);
+            void SetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property, String value);
+            void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float value);
+            void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float value);
+            void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float deltaValue);
+            void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float deltaValue);
+            void MoveNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction);
+            void ReverseNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property);
         }
 
         public class BlockHandler<T> : BlockHandler where T : class, IMyFunctionalBlock
         {
+            protected Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>> booleanPropertyGetters = new Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>>();
+            protected Dictionary<StringPropertyType, StringPropertyGetter<T>> stringPropertyGetters = new Dictionary<StringPropertyType, StringPropertyGetter<T>>();
+            protected Dictionary<NumericPropertyType, NumericPropertyGetter<T>> numericPropertyGetters = new Dictionary<NumericPropertyType, NumericPropertyGetter<T>>();
+
+            protected Dictionary<BooleanPropertyType, BooleanPropertySetter<T>> booleanPropertySetters = new Dictionary<BooleanPropertyType, BooleanPropertySetter<T>>();
+            protected Dictionary<StringPropertyType, StringPropertySetter<T>> stringPropertySetters = new Dictionary<StringPropertyType, StringPropertySetter<T>>();
+            protected Dictionary<NumericPropertyType, NumericPropertySetter<T>> numericPropertySetters = new Dictionary<NumericPropertyType, NumericPropertySetter<T>>();
+
+            protected BooleanPropertyType defaultBooleanProperty = BooleanPropertyType.ON_OFF;
+            protected StringPropertyType defaultStringProperty = StringPropertyType.NAME;
+            protected Dictionary<DirectionType, NumericPropertyType> defaultNumericProperties = new Dictionary<DirectionType, NumericPropertyType>();
+            protected DirectionType? defaultDirection = null;
 
             public BlockHandler()
             {
-                GetBooleanPropertyGetters().ForEach(handler => booleanPropertyGetters.Add(handler.GetHandledPropertyType(), handler));
-                GetStringPropertyGetters().ForEach(handler => stringPropertyGetters.Add(handler.GetHandledPropertyType(), handler));
-                GetNumericPropertyGetters().ForEach(handler => numericPropertyGetters.Add(handler.GetHandledPropertyType(), handler));
-
-                GetBooleanPropertySetters().ForEach(handler => booleanPropertySetters.Add(handler.GetHandledPropertyType(), handler));
-                GetStringPropertySetters().ForEach(handler => stringPropertySetters.Add(handler.GetHandledPropertyType(), handler));
-                GetNumericPropertySetters().ForEach(handler => numericPropertySetters.Add(handler.GetHandledPropertyType(), handler));
+                booleanPropertyGetters.Add(BooleanPropertyType.ON_OFF, (block) => block.Enabled);
+                booleanPropertySetters.Add(BooleanPropertyType.ON_OFF, (block, enabled) => block.Enabled = enabled); 
             }
 
-            protected virtual List<BooleanPropertyGetter<T>> GetBooleanPropertyGetters()
+            public BooleanPropertyType GetDefaultBooleanProperty()
             {
-                return new List<BooleanPropertyGetter<T>>() {
-                        new OnOffPropertyGetter<T>()
-                };
+                return defaultBooleanProperty;
             }
 
-            protected virtual List<StringPropertyGetter<T>> GetStringPropertyGetters()
+            public StringPropertyType GetDefaultStringProperty()
             {
-                return new List<StringPropertyGetter<T>>() { };
+                return defaultStringProperty;
             }
 
-            protected virtual List<NumericPropertyGetter<T>> GetNumericPropertyGetters()
+            public NumericPropertyType GetDefaultNumericProperty(DirectionType direction)
             {
-                return new List<NumericPropertyGetter<T>>() { };
+                if(!defaultNumericProperties.ContainsKey(direction))throw new Exception("This Block Does Not Have A Default Numeric Property");
+                return defaultNumericProperties[direction];
             }
 
-            protected virtual List<BooleanPropertySetter<T>> GetBooleanPropertySetters()
+            public DirectionType GetDefaultDirection()
             {
-                return new List<BooleanPropertySetter<T>>() {
-                        new OnOffPropertySetter<T>()
-                };
+                if (!defaultDirection.HasValue)throw new Exception("This Block Does Not Have a Default Direction");
+                return defaultDirection.Value;
             }
 
-            protected virtual List<StringPropertySetter<T>> GetStringPropertySetters()
+            public bool GetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property)
             {
-                return new List<StringPropertySetter<T>>() { };
+                return booleanPropertyGetters[property]((T)block);
+            }
+            public string GetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property)
+            {
+                return stringPropertyGetters[property]((T)block);
+            }
+            public float GetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
+            {
+                return numericPropertyGetters[property]((T)block);
             }
 
-            protected virtual List<NumericPropertySetter<T>> GetNumericPropertySetters()
+            public void SetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property, bool value)
             {
-                return new List<NumericPropertySetter<T>>() { };
+                booleanPropertySetters[property]((T)block, value);
             }
-        }
 
-        public class OnOffPropertyGetter<T> : BooleanPropertyGetter<T> where T : class, IMyFunctionalBlock
-        {
-            public OnOffPropertyGetter() : base(BooleanPropertyType.ON_OFF){}
-
-            public override bool GetPropertyValue(T block){return block.Enabled;}
-        }
-
-        public class OnOffPropertySetter<T> : BooleanPropertySetter<T> where T : class, IMyFunctionalBlock
-        {
-            public OnOffPropertySetter() : base(BooleanPropertyType.ON_OFF){}
-
-            public override void SetPropertyValue(T block, bool enabled)
+            public void SetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property, String value)
             {
-                block.Enabled = enabled;
+                stringPropertySetters[property]((T)block, value);
+            }
+
+            public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float value)
+            {
+                numericPropertySetters[property].SetPropertyValue((T)block, value);
+            }
+
+            public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float value)
+            {
+                numericPropertySetters[property].SetPropertyValue((T)block, direction, value);
+            }
+
+            public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float deltaValue)
+            {
+                numericPropertySetters[property].IncrementPropertyValue((T)block, deltaValue);
+            }
+
+            public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float deltaValue)
+            {
+                numericPropertySetters[property].IncrementPropertyValue((T)block, direction, deltaValue);
+            }
+
+            public void MoveNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction)
+            {
+                numericPropertySetters[property].MovePropertyValue((T)block, direction);
+            }
+
+            public void ReverseNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
+            {
+                numericPropertySetters[property].ReversePropertyValue((T)block);
             }
         }
     }

@@ -23,132 +23,87 @@ namespace IngameScript
     {
         public class RotorBlockHandler : BlockHandler<IMyMotorStator>
         {
-            public override DirectionType GetDefaultDirection()
+            public RotorBlockHandler()
             {
-                return DirectionType.CLOCKWISE;
-            }
+                defaultDirection = DirectionType.CLOCKWISE;
+                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.CLOCKWISE, NumericPropertyType.ANGLE);
+                defaultNumericProperties.Add(DirectionType.COUNTERCLOCKWISE, NumericPropertyType.ANGLE);
 
-            public override NumericPropertyType GetDefaultNumericProperty(DirectionType direction)
-            {
-                switch(direction)
-                {
-                    case DirectionType.UP:
-                    case DirectionType.DOWN:
-                        return NumericPropertyType.HEIGHT;
-                    default:
-                        return NumericPropertyType.ANGLE;
-                }
-            }
+                numericPropertyGetters.Add(NumericPropertyType.ANGLE, block => block.Angle);
+                numericPropertyGetters.Add(NumericPropertyType.VELOCITY, block => block.TargetVelocityRPM);
 
-            protected override List<NumericPropertyGetter<IMyMotorStator>> GetNumericPropertyGetters()
-            {
-                return new List<NumericPropertyGetter<IMyMotorStator>>()
-                {
-                    new RotorAngleGetter(),
-                    new RotorSpeedGetter(),
-                };
-            }
-
-            protected override List<NumericPropertySetter<IMyMotorStator>> GetNumericPropertySetters()
-            {
-                return new List<NumericPropertySetter<IMyMotorStator>>()
-                {
-                    new RotorAngleSetter(),
-                    new RotorSpeedSetter(),
-                };
+                numericPropertySetters.Add(NumericPropertyType.ANGLE, new RotorAngleSetter());
+                numericPropertySetters.Add(NumericPropertyType.VELOCITY, new RotorVelocitySetter());
             }
         }
-
-        public class RotorAngleGetter : NumericPropertyGetter<IMyMotorStator>
-        {
-            public RotorAngleGetter() : base(NumericPropertyType.ANGLE){}
-
-            public override float GetPropertyValue(IMyMotorStator block)
-            {
-                return block.Angle;
-            }
-        }
-
 
         public class RotorAngleSetter : NumericPropertySetter<IMyMotorStator>
         {
-            public RotorAngleSetter() : base(NumericPropertyType.ANGLE) { }
-
-            public override void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
+            public void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
             {
                 IncrementPropertyValue(block, DirectionType.CLOCKWISE, deltaValue);
             }
 
-            public override void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
+            public void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
             {
                 if (direction == DirectionType.CLOCKWISE) rotateToValue(block, block.Angle + deltaValue);
                 if (direction == DirectionType.COUNTERCLOCKWISE) rotateToValue(block, block.Angle - deltaValue);
             }
 
-            public override void MovePropertyValue(IMyMotorStator block, DirectionType direction)
+            public void MovePropertyValue(IMyMotorStator block, DirectionType direction)
             {
                 if (direction == DirectionType.CLOCKWISE) block.TargetVelocityRPM = Math.Abs(block.TargetVelocityRPM);
                 if (direction == DirectionType.COUNTERCLOCKWISE) block.TargetVelocityRPM = -Math.Abs(block.TargetVelocityRPM);
             }
 
-            public override void ReversePropertyValue(IMyMotorStator block)
+            public void ReversePropertyValue(IMyMotorStator block)
             {
                 block.TargetVelocityRPM *= -1;
             }
 
-            public override void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
+            public void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
             {
                 //TODO: Add Direction Support
                 rotateToValue(block, value);
             }
 
-            public override void SetPropertyValue(IMyMotorStator block, float value)
+            public void SetPropertyValue(IMyMotorStator block, float value)
             {
                 rotateToValue(block, value);
             }
         }
 
-        public class RotorSpeedGetter : NumericPropertyGetter<IMyMotorStator>
+        public class RotorVelocitySetter : NumericPropertySetter<IMyMotorStator>
         {
-            public RotorSpeedGetter() : base(NumericPropertyType.VELOCITY){}
-
-            public override float GetPropertyValue(IMyMotorStator block)
-            {
-                return block.TargetVelocityRPM;
-            }
-        }
-
-        public class RotorSpeedSetter : NumericPropertySetter<IMyMotorStator>
-        {
-            public RotorSpeedSetter() : base(NumericPropertyType.VELOCITY) { }
-
-            public override void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
+            public void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
             {
                 IncrementPropertyValue(block, DirectionType.UP, deltaValue);
             }
 
-            public override void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
+            public void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
             {
                 if (direction == DirectionType.UP) block.TargetVelocityRPM += deltaValue;
                 if (direction == DirectionType.DOWN) block.TargetVelocityRPM -= deltaValue;
             }
 
-            public override void MovePropertyValue(IMyMotorStator block, DirectionType direction)
+            public void MovePropertyValue(IMyMotorStator block, DirectionType direction)
             {
                 IncrementPropertyValue(block, direction, 1);
             }
 
-            public override void ReversePropertyValue(IMyMotorStator block)
+            public void ReversePropertyValue(IMyMotorStator block)
             {
                 block.TargetVelocityRPM *= -1;
             }
 
-            public override void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
+            public void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
             {
                 block.TargetVelocityRPM = value;
             }
 
-            public override void SetPropertyValue(IMyMotorStator block, float value)
+            public void SetPropertyValue(IMyMotorStator block, float value)
             {
                 block.TargetVelocityRPM = value;
             }
