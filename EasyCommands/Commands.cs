@@ -145,7 +145,7 @@ namespace IngameScript
 
                 //TODO: Move to proper command parameter pre-processor
                 int boolPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
-                int stringPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
+                int stringPropIndex = commandParameters.FindIndex(param => param is StringPropertyCommandParameter);
                 int numericPropIndex = commandParameters.FindIndex(param => param is NumericPropertyCommandParameter);
                 int boolIndex = commandParameters.FindIndex(param => param is BooleanCommandParameter);
                 int stringIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
@@ -166,6 +166,11 @@ namespace IngameScript
                 if (stringPropIndex < 0 && stringIndex >= 0)
                 {
                     commandParameters.Add(new StringPropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
+                }
+
+                if (stringPropIndex >= 0 && stringIndex < 0)//TODO: Block Default String Value per Property?
+                {
+                    commandParameters.Add(new StringCommandParameter(""));
                 }
 
                 if (numericIndex >= 0)
@@ -304,7 +309,6 @@ namespace IngameScript
 
             public override bool Execute(MyGridProgram program)
             {
-                //TODO: More work needed
                 program.Echo("Executing All Commands.  Commands left: " + currentCommands.Count);
                 if (currentCommands.Count == 0) return true;
 

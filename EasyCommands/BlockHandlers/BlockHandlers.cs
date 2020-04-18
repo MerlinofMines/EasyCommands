@@ -33,6 +33,7 @@ namespace IngameScript
                { BlockType.WELDER, new BlockHandler<IMyShipWelder>() },
                { BlockType.GRINDER, new BlockHandler<IMyShipGrinder>() },
                { BlockType.ROTOR, new RotorBlockHandler() },
+               { BlockType.PROGRAM, new ProgramBlockHandler() },
             };
 
             public static BlockHandler GetBlockHandler(BlockType blockType)
@@ -62,6 +63,7 @@ namespace IngameScript
                     case BlockType.CONNECTOR: program.GridTerminalSystem.GetBlocksOfType<IMyShipConnector>(blocks, block => block.CustomName.ToLower() == customName); break;
                     case BlockType.WELDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipWelder>(blocks, block => block.CustomName.ToLower() == customName); break;
                     case BlockType.GRINDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipGrinder>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.PROGRAM: program.GridTerminalSystem.GetBlocksOfType<IMyProgrammableBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
                     default: throw new Exception("Unsupported Block Type: " + blockType);
                 }
                 return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
@@ -82,6 +84,7 @@ namespace IngameScript
                     case BlockType.CONNECTOR: group.GetBlocksOfType<IMyShipConnector>(blocks); break;
                     case BlockType.WELDER: group.GetBlocksOfType<IMyShipWelder>(blocks); break;
                     case BlockType.GRINDER: group.GetBlocksOfType<IMyShipGrinder>(blocks); break;
+                    case BlockType.PROGRAM: group.GetBlocksOfType<IMyProgrammableBlock>(blocks); break;
                     default: throw new Exception("Unsupported Block Type: " + blockType);
                 }
                 return blocks.Select(block => (IMyFunctionalBlock)block).ToList();

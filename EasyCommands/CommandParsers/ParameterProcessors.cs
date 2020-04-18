@@ -26,6 +26,7 @@ namespace IngameScript
             private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
             {
                   new SelectorProcessor(),
+                  new RunArgumentProcessor(),
                   new ConditionProcessor(),
                   new ActionProcessor(),
             };
@@ -75,7 +76,7 @@ namespace IngameScript
                     if (commandParameters[index] is GroupCommandParameter || commandParameters[index] is StringCommandParameter || commandParameters[index] is BlockTypeCommandParameter)
                     {
                         program.Echo("Found Possible Selector at Index: " + index);
-                        index+=convertNextSelector(commandParameters, index);
+                        index+=convertNextSelector(program, commandParameters, index);
                     } else {
                         index++;
                     }
@@ -83,7 +84,7 @@ namespace IngameScript
                 program.Echo("End Selector Processor");
             }
 
-            private int convertNextSelector(List<CommandParameter> commandParameters, int index)
+            private int convertNextSelector(MyGridProgram program, List<CommandParameter> commandParameters, int index)
             {
                 bool isGroup = false;
                 String selector = null;
@@ -117,9 +118,39 @@ namespace IngameScript
                     if (p.Count > 1) isGroup = true;
                 }
 
+                program.Echo("Converted String at index: " + index + " to SelectorCommandParamter");
                 commandParameters.RemoveRange(index, paramCount);
                 commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector));
                 return 1;
+            }
+        }
+
+        public class RunArgumentProcessor : ParameterProcessor
+        {
+            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            {
+                program.Echo("Start Run Argument Processor");
+                int i = 0;
+                while (i < commandParameters.Count)
+                {
+                    if (commandParameters[i] is StringCommandParameter)
+                    {
+                        List<String> values = parseTokens(((StringCommandParameter)commandParameters[i]).GetValue());
+                        program.Echo("Tested Tokens: " + String.Join(" | ", values));
+                        if (RUN_WORDS.Contains(values[0]))
+                        {
+                            program.Echo("Found Run Keyword!");
+                            commandParameters.RemoveAt(i);
+                            values.RemoveAt(0);
+                            program.Echo("Arguments: (" + String.Join(" ", values) + ")");
+                            commandParameters.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
+                            commandParameters.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
+                            i++;
+                        }
+                    }
+                    i++;
+                }
+                program.Echo("End Action Processor");
             }
         }
 
@@ -278,6 +309,9 @@ namespace IngameScript
                 {
                     throw new Exception("Unsupported Condition Parameters");
                 }
+
+                program.Echo("Inverse Block Condition: " + inverseBlockCondition);
+                program.Echo("Inverse Aggregation: " + inverseAggregation);
 
                 if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
                 Condition condition = new AggregateCondition(aggregationMode, blockCondition, new SelectorEntityProvider(selector));

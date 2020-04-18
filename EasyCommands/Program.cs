@@ -72,6 +72,9 @@ namespace IngameScript
 
         private String[] restartWords = { "restart", "reset", "reboot" };
 
+        public static String[] RUN_WORDS = { "run", "execute" };
+        private String[] runningWords = { "running", "executing" };
+
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -128,6 +131,8 @@ namespace IngameScript
             addWords(openParenthesisWords, new OpenParenthesisCommandParameter());
             addWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
             addWords(restartWords, new RestartCommandParameter());
+            addWords(RUN_WORDS, new StringPropertyCommandParameter(StringPropertyType.RUN));
+            addWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
         }
 
         public void addWords(String[] words, params CommandParameter[] commands)
@@ -142,6 +147,7 @@ namespace IngameScript
                 if (Execute())
                 {
                     Echo("Execution Complete");
+                    RUNNING_COMMANDS.Reset();
                     Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
                 else
@@ -153,19 +159,22 @@ namespace IngameScript
             {
                 Echo("Restarting Commands");
                 Restart();
+                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             }
             else if (argument.ToLower() == "start") //Parse custom data and run
             {
                 Echo("Starting Commands");
                 Start();
+                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             }
             else if (argument.ToLower() == "parse") // Parse Custom Data only.  Useful for debugging.
             {
                 Echo("Parsing Custom Data");
                 ParseCommands();
                 Runtime.UpdateFrequency = UpdateFrequency.None;
-                Restart();
-            } else if (argument.ToLower() == "stop") //Stop execution
+                RUNNING_COMMANDS = null;
+            }
+            else if (argument.ToLower() == "stop") //Stop execution
             {
                 Echo("Stopping Command Execution");
                 Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -186,17 +195,13 @@ namespace IngameScript
 
         private void Start()
         {
-            Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             List<Command> commands = ParseCommands();
-
-            foreach (var command in commands) {
-                Echo("Resolved Command: " + command.GetType());
-            }
             RUNNING_COMMANDS = new MultiActionCommand(commands);
         }
 
         private bool Execute()
         {
+            if (RUNNING_COMMANDS == null) Start();
             return RUNNING_COMMANDS.Execute(this);
         }
 
