@@ -40,8 +40,8 @@ namespace IngameScript
         private String[] decreaseRelativeWords = { "subtact" };
         private String[] speedWords = { "speed", "velocity", "rate", "pace" };
         private String[] waitWords = { "wait", "hold", "pause" };
-        private String[] connectWords = { "connect", "join", "attach" };
-        private String[] disconnectWords = { "disconnect", "separate", "detach" };
+        private String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
+        private String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached" };
 
         private String[] lockWords = { "lock", "freeze" };
         private String[] unlockWords = { "unlock", "unfreeze" };

@@ -26,7 +26,7 @@ namespace IngameScript
             static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
                { BlockType.PISTON, new PistonBlockHandler() },
                { BlockType.LIGHT, new BlockHandler<IMyLightingBlock>() },
-               { BlockType.MERGE, new BlockHandler<IMyShipMergeBlock>() },
+               { BlockType.MERGE, new MergeBlockHandler() },
                { BlockType.PROJECTOR, new BlockHandler<IMyProjector>() },
                { BlockType.TIMER, new BlockHandler<IMyTimerBlock>() },
                { BlockType.CONNECTOR, new ConnectorBlockHandler() },
