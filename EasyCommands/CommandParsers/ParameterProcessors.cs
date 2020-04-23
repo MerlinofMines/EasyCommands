@@ -31,26 +31,26 @@ namespace IngameScript
                   new ActionProcessor(),
             };
 
-            public static void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            public static void process(List<CommandParameter> commandParameters)
             {
-                program.Echo("Start Parameter Processor ");
+                Print("Start Parameter Processor ");
                 foreach (ParameterProcessor parser in parameterProcessors)
                 {
-                    program.Echo("Pre Processed Parameters:");
-                    commandParameters.ForEach(param => program.Echo("Type: " + param.GetType()));
+                    Print("Pre Processed Parameters:");
+                    commandParameters.ForEach(param => Print("Type: " + param.GetType()));
 
-                    parser.process(program, commandParameters);
+                    parser.process(commandParameters);
 
-                    program.Echo("Post Processed Parameters:");
-                    commandParameters.ForEach(param => program.Echo("Type: " + param.GetType()));
+                    Print("Post Processed Parameters:");
+                    commandParameters.ForEach(param => Print("Type: " + param.GetType()));
                 }
-                program.Echo("End Parameter Processor ");
+                Print("End Parameter Processor ");
             }
         }
 
         public interface ParameterProcessor
         {
-            void process(MyGridProgram program, List<CommandParameter> commandParameters);
+            void process(List<CommandParameter> commandParameters);
         }
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
@@ -67,24 +67,24 @@ namespace IngameScript
 
         public class SelectorProcessor : ParameterProcessor
         {
-            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            public void process(List<CommandParameter> commandParameters)
             {
-                program.Echo("Start Selector Processor");
+                Print("Start Selector Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
                     if (commandParameters[index] is GroupCommandParameter || commandParameters[index] is StringCommandParameter || commandParameters[index] is BlockTypeCommandParameter)
                     {
-                        program.Echo("Found Possible Selector at Index: " + index);
-                        index+=convertNextSelector(program, commandParameters, index);
+                        Print("Found Possible Selector at Index: " + index);
+                        index+=convertNextSelector(commandParameters, index);
                     } else {
                         index++;
                     }
                 }
-                program.Echo("End Selector Processor");
+                Print("End Selector Processor");
             }
 
-            private int convertNextSelector(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            private int convertNextSelector(List<CommandParameter> commandParameters, int index)
             {
                 bool isGroup = false;
                 String selector = null;
@@ -118,7 +118,7 @@ namespace IngameScript
                     if (p.Count > 1) isGroup = true;
                 }
 
-                program.Echo("Converted String at index: " + index + " to SelectorCommandParamter");
+                Print("Converted String at index: " + index + " to SelectorCommandParamter");
                 commandParameters.RemoveRange(index, paramCount);
                 commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector));
                 return 1;
@@ -127,22 +127,22 @@ namespace IngameScript
 
         public class RunArgumentProcessor : ParameterProcessor
         {
-            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            public void process(List<CommandParameter> commandParameters)
             {
-                program.Echo("Start Run Argument Processor");
+                Print("Start Run Argument Processor");
                 int i = 0;
                 while (i < commandParameters.Count)
                 {
                     if (commandParameters[i] is StringCommandParameter)
                     {
                         List<String> values = parseTokens(((StringCommandParameter)commandParameters[i]).GetValue());
-                        program.Echo("Tested Tokens: " + String.Join(" | ", values));
+                        Print("Tested Tokens: " + String.Join(" | ", values));
                         if (RUN_WORDS.Contains(values[0]))
                         {
-                            program.Echo("Found Run Keyword!");
+                            Print("Found Run Keyword!");
                             commandParameters.RemoveAt(i);
                             values.RemoveAt(0);
-                            program.Echo("Arguments: (" + String.Join(" ", values) + ")");
+                            Print("Arguments: (" + String.Join(" ", values) + ")");
                             commandParameters.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
                             commandParameters.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
                             i++;
@@ -150,15 +150,15 @@ namespace IngameScript
                     }
                     i++;
                 }
-                program.Echo("End Action Processor");
+                Print("End Action Processor");
             }
         }
 
         public class ActionProcessor : ParameterProcessor
         {
-            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            public void process(List<CommandParameter> commandParameters)
             {
-                program.Echo("Start Action Processor");
+                Print("Start Action Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
@@ -168,7 +168,7 @@ namespace IngameScript
                     }
                     index++;
                 }
-                program.Echo("End Action Processor");
+                Print("End Action Processor");
             }
 
             private void convertNextActionParameter(List<CommandParameter> commandParameters, int index)
@@ -210,31 +210,31 @@ namespace IngameScript
 
         public class ConditionProcessor : ParameterProcessor
         {
-            public void process(MyGridProgram program, List<CommandParameter> commandParameters)
+            public void process(List<CommandParameter> commandParameters)
             {
-                program.Echo("Start Condition Processor");
+                Print("Start Condition Processor");
                 int index = 0;
                 while (index < commandParameters.Count)
                 {
                     if (commandParameters[index] is IfCommandParameter)
                     {
                         index++;
-                        convertNextConditionParameter(program, commandParameters, index);
+                        convertNextConditionParameter(commandParameters, index);
                     }
                     index++;
                 }
-                program.Echo("End Condition Processor");
+                Print("End Condition Processor");
             }
 
-            public void convertNextConditionParameter(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            public void convertNextConditionParameter(List<CommandParameter> commandParameters, int index)
             {
-                program.Echo("Attempting to parse Condition at index " + index);
-                parseNextConditionTokens(program, commandParameters, index);
-                resolveNextCondition(program, commandParameters, index);
+                Print("Attempting to parse Condition at index " + index);
+                parseNextConditionTokens(commandParameters, index);
+                resolveNextCondition(commandParameters, index);
             }
 
-            public void parseNextConditionTokens(MyGridProgram program, List<CommandParameter> commandParameters, int index) {
-                program.Echo("Attempting to parse Condition Tokens at index " + index);
+            public void parseNextConditionTokens(List<CommandParameter> commandParameters, int index) {
+                Print("Attempting to parse Condition Tokens at index " + index);
                 SelectorCommandParameter selector = null;//required
                 ComparisonCommandParameter comparator = null;//Can be defaulted
                 PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
@@ -245,8 +245,8 @@ namespace IngameScript
 
                 if (commandParameters[index] is NotCommandParameter || commandParameters[index] is OpenParenthesisCommandParameter)
                 {
-                    program.Echo("Token is " + commandParameters[index].GetType() + ", continuing");
-                    parseNextConditionTokens(program, commandParameters, index+1);
+                    Print("Token is " + commandParameters[index].GetType() + ", continuing");
+                    parseNextConditionTokens(commandParameters, index+1);
                     return;
                 }
 
@@ -275,7 +275,7 @@ namespace IngameScript
                 if (selector == null) throw new Exception("All conditions must have a selector");
                 if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
 
-                program.Echo("Finished parsing condition params.  Count: " + paramCount);
+                Print("Finished parsing condition params.  Count: " + paramCount);
                 AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.GetValue();
                 ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.GetValue();
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
@@ -284,14 +284,14 @@ namespace IngameScript
                 BlockCondition blockCondition;
                 if (value is BooleanCommandParameter || property is BooleanPropertyCommandParameter)
                 {
-                    program.Echo("Boolean Command");
+                    Print("Boolean Command");
                     BooleanPropertyType boolProperty = handler.GetDefaultBooleanProperty();
                     if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).GetValue();
                     bool boolValue = true;  if (value != null) boolValue = ((BooleanCommandParameter)value).GetValue();
                     blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
                 } else if (value is StringCommandParameter || property is StringPropertyCommandParameter)
                 {
-                    program.Echo("String Command");
+                    Print("String Command");
                     StringPropertyType stringProperty = handler.GetDefaultStringProperty();
                     if (property != null) stringProperty = ((StringPropertyCommandParameter)property).GetValue();
                     if (value == null) throw new Exception("String Comparison Value Cannot Be Left Blank");
@@ -299,7 +299,7 @@ namespace IngameScript
                     blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
                 } else if (value is NumericCommandParameter || property is NumericPropertyCommandParameter)
                 {
-                    program.Echo("Numeric Command");
+                    Print("Numeric Command");
                     NumericPropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
                     if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).GetValue();
                     if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
@@ -310,14 +310,14 @@ namespace IngameScript
                     throw new Exception("Unsupported Condition Parameters");
                 }
 
-                program.Echo("Inverse Block Condition: " + inverseBlockCondition);
-                program.Echo("Inverse Aggregation: " + inverseAggregation);
+                Print("Inverse Block Condition: " + inverseBlockCondition);
+                Print("Inverse Aggregation: " + inverseAggregation);
 
                 if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
                 Condition condition = new AggregateCondition(aggregationMode, blockCondition, new SelectorEntityProvider(selector));
                 if (inverseAggregation) condition = new NotCondition(condition);
 
-                program.Echo("Removing Range: " + index + ", Params: " + paramCount);
+                Print("Removing Range: " + index + ", Params: " + paramCount);
                 commandParameters.RemoveRange(index, paramCount);
                 commandParameters.Insert(index, new ConditionCommandParameter(condition));
 
@@ -329,24 +329,24 @@ namespace IngameScript
                 if (commandParameters.Count == newIndex + 1) return;
                 if (commandParameters[newIndex] is AndCommandParameter || commandParameters[newIndex] is OrCommandParameter)
                 {
-                    program.Echo("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");
-                    parseNextConditionTokens(program, commandParameters, newIndex + 1);
+                    Print("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");
+                    parseNextConditionTokens(commandParameters, newIndex + 1);
                 }
-                program.Echo("Finished Processing Condition Tokens at index: " + index);
+                Print("Finished Processing Condition Tokens at index: " + index);
             }
 
-            public void resolveNextCondition(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            public void resolveNextCondition(List<CommandParameter> commandParameters, int index)
             {
-                program.Echo("Attempting to resolve Condition at index " + index);
+                Print("Attempting to resolve Condition at index " + index);
                 if (commandParameters[index] is NotCommandParameter) // Handle Nots first
                 {
                     commandParameters.RemoveAt(index); // Remove Not
-                    Condition notCondition = new NotCondition(getNextCondition(program, commandParameters, index));
+                    Condition notCondition = new NotCondition(getNextCondition(commandParameters, index));
                     commandParameters.RemoveAt(index);
                     commandParameters.Insert(index, new ConditionCommandParameter(notCondition));
                 }
                 else if (commandParameters[index] is OpenParenthesisCommandParameter) { //Handle Parenthesis Next
-                    resolveNextCondition(program, commandParameters, index + 1);
+                    resolveNextCondition(commandParameters, index + 1);
                     if (!(commandParameters[index + 2] is CloseParenthesisCommandParameter)) throw new Exception("Mismatched Parenthesis!");
                     commandParameters.RemoveAt(index); //Remove Open Parenthesis
                     commandParameters.RemoveAt(index + 1); //Remove Close Parenthesis
@@ -357,16 +357,16 @@ namespace IngameScript
                 while (commandParameters.Count > index+2) //Look for And/Or + more conditions
                 {
                     if (commandParameters[index + 1] is AndCommandParameter) {//Handle Ands before Ors
-                        program.Echo("Found And Parameter at index: " + (index + 1));
-                        AndCondition andCondition = new AndCondition(conditionA, getNextCondition(program, commandParameters, index+2));
+                        Print("Found And Parameter at index: " + (index + 1));
+                        AndCondition andCondition = new AndCondition(conditionA, getNextCondition(commandParameters, index+2));
                         commandParameters.RemoveRange(index,3);
                         commandParameters.Insert(index, new ConditionCommandParameter(andCondition));
                     }
                     else if (commandParameters[index + 1] is OrCommandParameter)
                     {
-                        program.Echo("Found Or Parameter at index: " + (index + 1));
-                        resolveNextCondition(program, commandParameters, index + 2);
-                        OrCondition orCondition = new OrCondition(conditionA, getNextCondition(program, commandParameters, index+2));
+                        Print("Found Or Parameter at index: " + (index + 1));
+                        resolveNextCondition(commandParameters, index + 2);
+                        OrCondition orCondition = new OrCondition(conditionA, getNextCondition(commandParameters, index+2));
                         commandParameters.RemoveRange(index,3);
                         commandParameters.Insert(index, new ConditionCommandParameter(orCondition));
                     } else
@@ -376,12 +376,12 @@ namespace IngameScript
                 }
             }
 
-            private Condition getNextCondition(MyGridProgram program, List<CommandParameter> commandParameters, int index)
+            private Condition getNextCondition(List<CommandParameter> commandParameters, int index)
             {
                 if (!(commandParameters[index] is ConditionCommandParameter)) ///Resolve if not a simple condition (more parentheses, for example)
                 {
-                    program.Echo("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
-                    resolveNextCondition(program, commandParameters, index);
+                    Print("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
+                    resolveNextCondition(commandParameters, index);
                 }
                 return ((ConditionCommandParameter)commandParameters[index]).GetValue();
             }

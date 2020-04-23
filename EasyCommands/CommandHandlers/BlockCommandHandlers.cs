@@ -38,9 +38,9 @@ namespace IngameScript
                 this.action = action;
             }
 
-            public override bool Handle(MyGridProgram program)
+            public override bool Handle()
             {
-                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter));
+                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter));
                 return true;
             }
         }
@@ -64,9 +64,9 @@ namespace IngameScript
                 return Supports<T, U>(commandParameters, out others, out parameter1, out parameter2);
             }
 
-            public override bool Handle(MyGridProgram program)
+            public override bool Handle()
             {
-                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2));
+                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2));
                 return true;
             }
         }
@@ -84,9 +84,9 @@ namespace IngameScript
                 this.action = action;
             }
 
-            public override bool Handle(MyGridProgram program)
+            public override bool Handle()
             {
-                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3));
+                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3));
                 return true;
             }
         }
@@ -104,9 +104,9 @@ namespace IngameScript
                 this.action = action;
             }
 
-            public override bool Handle(MyGridProgram program)
+            public override bool Handle()
             {
-                entityProvider.GetEntities(program).ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3, parameter4));
+                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3, parameter4));
                 return true;
             }
         }

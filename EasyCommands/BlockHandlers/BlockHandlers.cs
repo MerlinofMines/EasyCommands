@@ -48,22 +48,22 @@ namespace IngameScript
                 }
             }
 
-            public static List<IMyFunctionalBlock> getBlocks(MyGridProgram program, BlockType blockType, String customName)
+            public static List<IMyFunctionalBlock> getBlocks(BlockType blockType, String customName)
             {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
 
                 switch (blockType)
                 {
-                    case BlockType.PISTON: program.GridTerminalSystem.GetBlocksOfType<IMyPistonBase>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.ROTOR: program.GridTerminalSystem.GetBlocksOfType<IMyMotorStator>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.LIGHT: program.GridTerminalSystem.GetBlocksOfType<IMyInteriorLight>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.MERGE: program.GridTerminalSystem.GetBlocksOfType<IMyShipMergeBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.PROJECTOR: program.GridTerminalSystem.GetBlocksOfType<IMyProjector>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.TIMER: program.GridTerminalSystem.GetBlocksOfType<IMyTimerBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.CONNECTOR: program.GridTerminalSystem.GetBlocksOfType<IMyShipConnector>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.WELDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipWelder>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.GRINDER: program.GridTerminalSystem.GetBlocksOfType<IMyShipGrinder>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.PROGRAM: program.GridTerminalSystem.GetBlocksOfType<IMyProgrammableBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.PISTON: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyPistonBase>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.ROTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyMotorStator>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.LIGHT: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyInteriorLight>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.MERGE: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipMergeBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.PROJECTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyProjector>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.TIMER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyTimerBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.CONNECTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipConnector>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.WELDER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipWelder>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.GRINDER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipGrinder>(blocks, block => block.CustomName.ToLower() == customName); break;
+                    case BlockType.PROGRAM: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyProgrammableBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
                     default: throw new Exception("Unsupported Block Type: " + blockType);
                 }
                 return blocks.Select(block => (IMyFunctionalBlock)block).ToList();

@@ -23,7 +23,7 @@ namespace IngameScript
     {
         public interface Condition
         {
-            bool evaluate(MyGridProgram program);
+            bool Evaluate();
         }
 
         public enum AggregationMode
@@ -42,9 +42,9 @@ namespace IngameScript
                 this.condition = condition;
             }
 
-            public bool evaluate(MyGridProgram program)
+            public bool Evaluate()
             {
-                return !condition.evaluate(program);
+                return !condition.Evaluate();
             }
         }
 
@@ -58,9 +58,9 @@ namespace IngameScript
                 this.conditionB = conditionB;
             }
 
-            public bool evaluate(MyGridProgram program)
+            public bool Evaluate()
             {
-                return conditionA.evaluate(program) && conditionB.evaluate(program);
+                return conditionA.Evaluate() && conditionB.Evaluate();
             }
         }
 
@@ -74,9 +74,9 @@ namespace IngameScript
                 this.conditionB = conditionB;
             }
 
-            public bool evaluate(MyGridProgram program)
+            public bool Evaluate()
             {
-                return conditionA.evaluate(program) || conditionB.evaluate(program);
+                return conditionA.Evaluate() || conditionB.Evaluate();
             }
         }
 
@@ -93,9 +93,9 @@ namespace IngameScript
                 this.entityProvider = entityProvider;
             }
 
-            public bool evaluate(MyGridProgram program)
+            public bool Evaluate()
             {
-                List<IMyFunctionalBlock> blocks = entityProvider.GetEntities(program);
+                List<IMyFunctionalBlock> blocks = entityProvider.GetEntities();
 
                 int matches = blocks.Count(block => blockCondition.evaluate(block));
 

@@ -25,9 +25,9 @@ namespace IngameScript
         {
             int ticks = 0;
 
-            public override bool Handle(MyGridProgram program)
+            public override bool Handle()
             {
-                program.Echo("Waited for " + ticks + " ticks");
+                Print("Waited for " + ticks + " ticks");
                 ticks++;
                 return ticks > getTicks(parameter1.GetValue(), parameter2.GetUnit());
             }

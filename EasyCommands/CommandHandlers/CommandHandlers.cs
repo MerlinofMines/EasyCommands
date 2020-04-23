@@ -23,7 +23,7 @@ namespace IngameScript
     {
         public interface IEntityProvider
         {
-            List<IMyFunctionalBlock> GetEntities(MyGridProgram program);
+            List<IMyFunctionalBlock> GetEntities();
         }
 
         public class SelectorEntityProvider : IEntityProvider
@@ -35,12 +35,12 @@ namespace IngameScript
                 this.selector = selector;
             }
 
-            public virtual List<IMyFunctionalBlock> GetEntities(MyGridProgram program)
+            public virtual List<IMyFunctionalBlock> GetEntities()
             {
                 if (selector.isGroup)
                 {
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                    program.GridTerminalSystem.GetBlockGroups(blockGroups);
+                    PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
 
                     IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
 
@@ -53,7 +53,7 @@ namespace IngameScript
 
                 } else
                 {
-                    return BlockHandlerRegistry.getBlocks(program, selector.blockType, selector.selector);
+                    return BlockHandlerRegistry.getBlocks(selector.blockType, selector.selector);
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace IngameScript
         public abstract class CommandHandler
         {
             public abstract bool CanHandle(List<CommandParameter> commandParameters);
-            public abstract bool Handle(MyGridProgram program);
+            public abstract bool Handle();
             public virtual void Reset() { }
 
             public bool Supports<T>(List<CommandParameter> commandParameters, out List<CommandParameter> others, out T t) where T : class, CommandParameter

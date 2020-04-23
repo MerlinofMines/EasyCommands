@@ -39,19 +39,19 @@ namespace IngameScript
             public virtual void Reset() { }
 
             //Returns true if the program has finished execution.
-            public abstract bool Execute(MyGridProgram program);
+            public abstract bool Execute();
         }
 
         public abstract class HandlerCommand : Command
         {
             private CommandHandler commandHandler;
 
-            public HandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public HandlerCommand(List<CommandParameter> commandParameters)
             {
                 PreParseCommands(commandParameters);
 
-                program.Echo("Post Parsed Command Parameters: ");
-                commandParameters.ForEach(param => program.Echo("" + param.GetType()));
+                Print("Post Parsed Command Parameters: ");
+                commandParameters.ForEach(param => Print("" + param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
                 {
@@ -64,9 +64,9 @@ namespace IngameScript
                 throw new Exception("Unsupported Command Parameter Combination");
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override bool Execute()
             {
-                return commandHandler.Handle(program);
+                return commandHandler.Handle();
             }
 
             public override void Reset()
@@ -81,7 +81,7 @@ namespace IngameScript
 
         public class RestartCommand : Command
         {
-            public override bool Execute(MyGridProgram program)
+            public override bool Execute()
             {
                 RUNNING_COMMANDS.Reset();//This is black magic.
                 return false;//Also black magic.  must be false otherwise 1st command gets skipped!
@@ -90,7 +90,7 @@ namespace IngameScript
 
         public class WaitCommand : HandlerCommand
         {
-            public WaitCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
+            public WaitCommand(List<CommandParameter> commandParameters) : base(commandParameters)
             {
             }
 
@@ -114,9 +114,9 @@ namespace IngameScript
 
         public class NullCommand : Command
         {
-            public override bool Execute(MyGridProgram program)
+            public override bool Execute()
             {
-                program.Echo("Null Program");
+                Print("Null Program");
                 return true;
             }
         }
@@ -126,7 +126,7 @@ namespace IngameScript
             private BlockHandler blockHandler;
             private IEntityProvider entityProvider;
 
-            public BlockHandlerCommand(MyGridProgram program, List<CommandParameter> commandParameters) : base(program, commandParameters)
+            public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
             {
 
             }
@@ -238,23 +238,23 @@ namespace IngameScript
                 if (alwaysEvaluate) updateAlwaysEvaluate();
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override bool Execute()
             {
-                program.Echo("Executing Conditional Command");
-                program.Echo("Async: " + async);
-                program.Echo("Condition: " + condition.ToString());
-                program.Echo("Action Command: " + conditionMetCommand.ToString());
-                program.Echo("Other Command: " + conditionNotMetCommand.ToString());
-                program.Echo("Always Evaluate: " + alwaysEvaluate);
-                bool conditionMet = EvaluateCondition(program);
+                Print("Executing Conditional Command");
+                Print("Async: " + async);
+                Print("Condition: " + condition.ToString());
+                Print("Action Command: " + conditionMetCommand.ToString());
+                Print("Other Command: " + conditionNotMetCommand.ToString());
+                Print("Always Evaluate: " + alwaysEvaluate);
+                bool conditionMet = EvaluateCondition();
                 bool commandResult = false;
 
                 if (conditionMet)
                 {
-                    commandResult = conditionMetCommand.Execute(program);
+                    commandResult = conditionMetCommand.Execute();
                 } else
                 {
-                    commandResult = conditionNotMetCommand.Execute(program);
+                    commandResult = conditionNotMetCommand.Execute();
                 }
 
                 isExecuting = !commandResult;
@@ -284,14 +284,14 @@ namespace IngameScript
                 if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).updateAlwaysEvaluate();
             }
 
-            private bool EvaluateCondition(MyGridProgram program)
+            private bool EvaluateCondition()
             {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated)
                 {
-                    program.Echo("Evaluating Value");
-                    evaluatedValue = condition.evaluate(program); evaluated = true;
+                    Print("Evaluating Value");
+                    evaluatedValue = condition.Evaluate(); evaluated = true;
                 }
-                program.Echo("Evaluated Value: " + evaluatedValue);
+                Print("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
             }
         }
@@ -307,9 +307,9 @@ namespace IngameScript
                 this.currentCommands = new List<Command>(commandsToExecute);
             }
 
-            public override bool Execute(MyGridProgram program)
+            public override bool Execute()
             {
-                program.Echo("Executing All Commands.  Commands left: " + currentCommands.Count);
+                Print("Executing All Commands.  Commands left: " + currentCommands.Count);
                 if (currentCommands.Count == 0) return true;
 
                 int commandIndex = 0;
@@ -318,10 +318,10 @@ namespace IngameScript
                 {
                     Command nextCommand = currentCommands[commandIndex];
 
-                    bool handled = nextCommand.Execute(program);
+                    bool handled = nextCommand.Execute();
                     if (handled) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
                     if (!nextCommand.IsAsync()) break;
-                    program.Echo("Command is async, continuing to command at index: " + commandIndex);
+                    Print("Command is async, continuing to command at index: " + commandIndex);
                 }
                 return currentCommands.Count == 0;
             }

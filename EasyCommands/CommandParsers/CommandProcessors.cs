@@ -32,15 +32,15 @@ namespace IngameScript
                 new AndCommandProcessor(),
             };
 
-            public static Command ParseCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public static Command ParseCommand(List<CommandParameter> commandParameters)
             {
-                program.Echo("Parsing Command");
+                Print("Parsing Command");
 
                 bool processing = true;
                 while (processing)
                 {
                     //Keep Processing through until all return false
-                    processing = CommandParsers.Exists(p => { program.Echo("Executing " + p.GetType()); bool processed = p.ProcessCommand(program, commandParameters); program.Echo("Result: " + processed); return processed; });
+                    processing = CommandParsers.Exists(p => { Print("Executing " + p.GetType()); bool processed = p.ProcessCommand(commandParameters); Print("Result: " + processed); return processed; });
                 }
 
                 if (commandParameters.Count != 1 || !(commandParameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
@@ -50,12 +50,12 @@ namespace IngameScript
 
         public interface CommandProcessor
         {
-            bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters);
+            bool ProcessCommand(List<CommandParameter> commandParameters);
         }
 
         public class AsyncCommandProcessor : CommandProcessor
         {
-            public bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public bool ProcessCommand(List<CommandParameter> commandParameters)
             {
                 bool processed = false;
                 for(int i = 0; i < commandParameters.Count-1; i++)
@@ -73,7 +73,7 @@ namespace IngameScript
 
         public class ConditionalCommandProcessor : CommandProcessor
         {
-            public bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public bool ProcessCommand(List<CommandParameter> commandParameters)
             {
                 bool processed = false;
 
@@ -89,7 +89,7 @@ namespace IngameScript
                     //First, swap silly misordered statements (command) if (condition)
                     if (commandParameters[i + 1] is IfCommandParameter && commandParameters[i + 2] is ConditionCommandParameter && commandParameters[i] is CommandReferenceParameter)
                     {
-                        program.Echo("Swapping! " + i);
+                        Print("Swapping! " + i);
                         CommandParameter temp = commandParameters[i];
                         commandParameters.RemoveAt(i);
                         commandParameters.Insert(i + 2, temp);
@@ -137,7 +137,7 @@ namespace IngameScript
 
         public class AndCommandProcessor : CommandProcessor
         {
-            public bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public bool ProcessCommand(List<CommandParameter> commandParameters)
             {
                 bool processed = false;
 
@@ -175,7 +175,7 @@ namespace IngameScript
 
         public class ParenthesisCommandProcessor : CommandProcessor
         {
-            public bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public bool ProcessCommand(List<CommandParameter> commandParameters)
             {
                 bool processed = false;
 
@@ -190,9 +190,9 @@ namespace IngameScript
                     if (openParenthesis.Count == 0) throw new Exception("Missing Open Parenthesis!");
                     int startIndex = openParenthesis.Pop();
 
-                    program.Echo("Processing Parentheses!  StartIndex: " + startIndex + ", end Index: " + i);
+                    Print("Processing Parentheses!  StartIndex: " + startIndex + ", end Index: " + i);
 
-                    Command command = CommandParserRegistry.ParseCommand(program, commandParameters.GetRange(startIndex + 1, (i - 1) - startIndex));
+                    Command command = CommandParserRegistry.ParseCommand(commandParameters.GetRange(startIndex + 1, (i - 1) - startIndex));
                     commandParameters.RemoveRange(startIndex, i + 1 - startIndex);
                     commandParameters.Insert(startIndex, new CommandReferenceParameter(command));
                     i = startIndex + 1;
@@ -204,7 +204,7 @@ namespace IngameScript
 
         public class ActionCommandProcessor : CommandProcessor
         {
-            public bool ProcessCommand(MyGridProgram program, List<CommandParameter> commandParameters)
+            public bool ProcessCommand(List<CommandParameter> commandParameters)
             {
                 bool processed = false;
 
@@ -215,8 +215,8 @@ namespace IngameScript
 
                     Command command;
                     if (action.GetValue().Exists(p => p is RestartCommandParameter)) command = new RestartCommand();
-                    else if (action.GetValue().Exists(p => p is WaitCommandParameter)) command = new WaitCommand(program, action.GetValue());
-                    else if (action.GetValue().Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(program, action.GetValue());
+                    else if (action.GetValue().Exists(p => p is WaitCommandParameter)) command = new WaitCommand(action.GetValue());
+                    else if (action.GetValue().Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(action.GetValue());
                     else throw new Exception("Unknown Action Type. ");
 
                     commandParameters.RemoveAt(i);

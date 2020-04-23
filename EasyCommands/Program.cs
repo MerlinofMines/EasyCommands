@@ -96,8 +96,16 @@ namespace IngameScript
 
         static MultiActionCommand RUNNING_COMMANDS;
 
+        static MyGridProgram PROGRAM;
+
+        static void Print(String str)
+        {
+            PROGRAM.Echo(str);
+        }
+
         public Program()
         {
+            PROGRAM = this;
             addWords(groupWords, new GroupCommandParameter());
             addWords(activateWords, new BooleanCommandParameter(true));
             addWords(deactivateWords, new BooleanCommandParameter(false));
@@ -151,7 +159,7 @@ namespace IngameScript
             {
                 if (Execute())
                 {
-                    Echo("Execution Complete");
+                    Print("Execution Complete");
                     RUNNING_COMMANDS.Reset();
                     Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
@@ -162,26 +170,26 @@ namespace IngameScript
             }
             else if (argument.ToLower() == "restart") //Restart execution of existing commands
             {
-                Echo("Restarting Commands");
+                Print("Restarting Commands");
                 Restart();
                 Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             }
             else if (argument.ToLower() == "start") //Parse custom data and run
             {
-                Echo("Starting Commands");
+                Print("Starting Commands");
                 Start();
                 Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             }
             else if (argument.ToLower() == "parse") // Parse Custom Data only.  Useful for debugging.
             {
-                Echo("Parsing Custom Data");
+                Print("Parsing Custom Data");
                 ParseCommands();
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 RUNNING_COMMANDS = null;
             }
             else if (argument.ToLower() == "stop") //Stop execution
             {
-                Echo("Stopping Command Execution");
+                Print("Stopping Command Execution");
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 RUNNING_COMMANDS = null;
             }
@@ -207,7 +215,7 @@ namespace IngameScript
         private bool Execute()
         {
             if (RUNNING_COMMANDS == null) Start();
-            return RUNNING_COMMANDS.Execute(this);
+            return RUNNING_COMMANDS.Execute();
         }
 
         private List<Command> ParseCommands()
@@ -223,7 +231,7 @@ namespace IngameScript
 
         private List<CommandParameter> parseCommandParameters(List<String> tokens)
         {
-            Echo("Command: " + String.Join(" | ", tokens));
+            Print("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens)
@@ -274,15 +282,15 @@ namespace IngameScript
 
         private Command parseCommand(List<CommandParameter> parameters)
         {
-            Echo("Pre Processed Parameters:");
-            parameters.ForEach(param => Echo("Type: " + param.GetType()));
+            Print("Pre Processed Parameters:");
+            parameters.ForEach(param => Print("Type: " + param.GetType()));
 
-            ParameterProcessorRegistry.process(this, parameters);
+            ParameterProcessorRegistry.process(parameters);
 
-            Echo("Post Prossessed Parameters:");
-            parameters.ForEach(param => Echo("Type: " + param.GetType()));
+            Print("Post Prossessed Parameters:");
+            parameters.ForEach(param => Print("Type: " + param.GetType()));
 
-            return CommandParserRegistry.ParseCommand(this, parameters);
+            return CommandParserRegistry.ParseCommand(parameters);
         }
     }
 }
