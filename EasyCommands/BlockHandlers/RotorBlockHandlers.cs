@@ -31,7 +31,7 @@ namespace IngameScript
                 defaultNumericProperties.Add(DirectionType.CLOCKWISE, NumericPropertyType.ANGLE);
                 defaultNumericProperties.Add(DirectionType.COUNTERCLOCKWISE, NumericPropertyType.ANGLE);
 
-                numericPropertyGetters.Add(NumericPropertyType.ANGLE, block => block.Angle);
+                numericPropertyGetters.Add(NumericPropertyType.ANGLE, block => (float)(block.Angle * (180 / Math.PI)));
                 numericPropertyGetters.Add(NumericPropertyType.VELOCITY, block => block.TargetVelocityRPM);
 
                 numericPropertySetters.Add(NumericPropertyType.ANGLE, new RotorAngleSetter());
@@ -122,8 +122,7 @@ namespace IngameScript
             }
 
             //TODO: We might find that in some cases, it's faster to go the other way.
-
-            if (rotor.Angle < value)
+            if (rotor.Angle * (180 / Math.PI) < value)
             {
                 rotor.UpperLimitDeg = newValue;
                 rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
