@@ -75,6 +75,9 @@ namespace IngameScript
         public static String[] RUN_WORDS = { "run", "execute" };
         private String[] runningWords = { "running", "executing" };
 
+        private String[] completeWords = { "done", "complete", "finished", "built" };
+        private string[] progressWords = { "progress", "completion"};
+
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -133,6 +136,8 @@ namespace IngameScript
             addWords(restartWords, new RestartCommandParameter());
             addWords(RUN_WORDS, new StringPropertyCommandParameter(StringPropertyType.RUN));
             addWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
+            addWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
+            addWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
         }
 
         public void addWords(String[] words, params CommandParameter[] commands)

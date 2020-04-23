@@ -27,7 +27,7 @@ namespace IngameScript
                { BlockType.PISTON, new PistonBlockHandler() },
                { BlockType.LIGHT, new BlockHandler<IMyLightingBlock>() },
                { BlockType.MERGE, new MergeBlockHandler() },
-               { BlockType.PROJECTOR, new BlockHandler<IMyProjector>() },
+               { BlockType.PROJECTOR, new ProjectorBlockHandler() },
                { BlockType.TIMER, new BlockHandler<IMyTimerBlock>() },
                { BlockType.CONNECTOR, new ConnectorBlockHandler() },
                { BlockType.WELDER, new BlockHandler<IMyShipWelder>() },
