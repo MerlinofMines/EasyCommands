@@ -28,23 +28,16 @@ namespace IngameScript
 
         public abstract class ValueCommandParameter<T> : CommandParameter
         {
-            private T value;
-
-            public ValueCommandParameter(T value)
-            {
-                this.value = value;
-            }
-
-            public T GetValue()
-            {
-                return value;
-            }
+            public T Value;
+            public ValueCommandParameter(T value) {this.Value = value;}
         }
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter
         {
-            public StringCommandParameter(string value) : base(value)
+            public List<CommandParameter> SubTokens = new List<CommandParameter>();
+            public StringCommandParameter(string value, params CommandParameter[] SubTokens) : base(value)
             {
+                this.SubTokens = SubTokens.ToList();
             }
         }
 

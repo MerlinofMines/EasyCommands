@@ -44,7 +44,7 @@ namespace IngameScript
                 }
 
                 if (commandParameters.Count != 1 || !(commandParameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
-                return ((CommandReferenceParameter)commandParameters[0]).GetValue();
+                return ((CommandReferenceParameter)commandParameters[0]).Value;
             }
         }
 
@@ -61,7 +61,7 @@ namespace IngameScript
                 for(int i = 0; i < commandParameters.Count-1; i++)
                 {
                     if (!(commandParameters[i] is AsyncCommandParameter && commandParameters[i + 1] is CommandReferenceParameter)) continue;
-                    Command subCommand = ((CommandReferenceParameter)commandParameters[i + 1]).GetValue();
+                    Command subCommand = ((CommandReferenceParameter)commandParameters[i + 1]).Value;
                     subCommand.SetAsync(true);
                     commandParameters.RemoveRange(i, 2);
                     commandParameters.Insert(i, new CommandReferenceParameter(subCommand));
@@ -105,14 +105,14 @@ namespace IngameScript
                     if (i > commandParameters.Count - 3 && commandParameters[i + 3] is ElseCommandParameter) { //Command Contains an Else Block!
                         if (!(commandParameters[i + 4] is CommandReferenceParameter)) continue; //Not ready to parse Otherwise yet!
                         if (i > commandParameters.Count - 5 && commandParameters[i + 5] is AndCommandParameter) continue; //Not ready to parse Otherwise yet, there are more commands to parse!
-                        otherwiseCommand = ((CommandReferenceParameter)commandParameters[i+4]).GetValue();
+                        otherwiseCommand = ((CommandReferenceParameter)commandParameters[i+4]).Value;
                         commandParameters.RemoveRange(i + 4, 2); //Remove Otherwise and Otherwise Command now that we have stored
                     }
 
                     //Time to Parse!
                     IfCommandParameter ifParameter = (IfCommandParameter)commandParameters[i];
-                    Condition condition = ((ConditionCommandParameter)commandParameters[i + 1]).GetValue();
-                    Command actionCommand = ((CommandReferenceParameter)commandParameters[i + 2]).GetValue();
+                    Condition condition = ((ConditionCommandParameter)commandParameters[i + 1]).Value;
+                    Command actionCommand = ((CommandReferenceParameter)commandParameters[i + 2]).Value;
 
                     if (ifParameter.swapCommands)
                     {
@@ -146,7 +146,7 @@ namespace IngameScript
                     if (!(commandParameters[i] is CommandReferenceParameter && commandParameters[i + 1] is AndCommandParameter && commandParameters[i + 2] is CommandReferenceParameter)) continue;
 
                     List<Command> multiActionCommands = new List<Command>();
-                    multiActionCommands.Add(((CommandReferenceParameter)commandParameters[i]).GetValue());
+                    multiActionCommands.Add(((CommandReferenceParameter)commandParameters[i]).Value);
 
                     bool ignore = false;
                     int newIndex = i;
@@ -154,7 +154,7 @@ namespace IngameScript
                     {
                         if (commandParameters[newIndex + 2] is CommandReferenceParameter)
                         {
-                            multiActionCommands.Add(((CommandReferenceParameter)commandParameters[newIndex + 2]).GetValue());
+                            multiActionCommands.Add(((CommandReferenceParameter)commandParameters[newIndex + 2]).Value);
                             newIndex += 2;
                         }
                         else
@@ -214,10 +214,10 @@ namespace IngameScript
                     ActionCommandParameter action = (ActionCommandParameter)commandParameters[i];
 
                     Command command;
-                    if (action.GetValue().Exists(p => p is RestartCommandParameter)) command = new RestartCommand();
-                    else if (action.GetValue().Exists(p => p is LoopCommandParameter)) command = new LoopCommand(action.GetValue());
-                    else if (action.GetValue().Exists(p => p is WaitCommandParameter)) command = new WaitCommand(action.GetValue());
-                    else if (action.GetValue().Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(action.GetValue());
+                    if (action.Value.Exists(p => p is RestartCommandParameter)) command = new RestartCommand();
+                    else if (action.Value.Exists(p => p is LoopCommandParameter)) command = new LoopCommand(action.Value);
+                    else if (action.Value.Exists(p => p is WaitCommandParameter)) command = new WaitCommand(action.Value);
+                    else if (action.Value.Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(action.Value);
                     else throw new Exception("Unknown Action Type. ");
 
                     commandParameters.RemoveAt(i);

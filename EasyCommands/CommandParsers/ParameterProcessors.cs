@@ -87,7 +87,7 @@ namespace IngameScript
             private int convertNextSelector(List<CommandParameter> commandParameters, int index)
             {
                 bool isGroup = false;
-                String selector = null;
+                StringCommandParameter selector = null;
                 BlockTypeCommandParameter blockType = null;
                 int paramCount = 0;
 
@@ -96,7 +96,7 @@ namespace IngameScript
                     CommandParameter param = commandParameters[index + paramCount];
 
                     if (param is GroupCommandParameter) isGroup = true;
-                    else if (param is StringCommandParameter && selector == null) selector = ((StringCommandParameter)param).GetValue();
+                    else if (param is StringCommandParameter && selector == null) selector = ((StringCommandParameter)param);
                     else if (param is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)param);
                     else break;
                     paramCount++;
@@ -105,22 +105,15 @@ namespace IngameScript
                 if (selector == null) throw new Exception("All selectors must have a string identifier");
 
                 if (blockType == null) {
-                    List<String> tokens = parseTokens(selector);
-                    List<CommandParameter> p = new List<CommandParameter>();
-                    foreach (String token in tokens)
-                    {
-                        if (new BlockTypeParser().process(token, p)) break;
-                    }
-
-                    if (p.Count == 0) return paramCount; //Apparently not a Selector
-
-                    blockType = ((BlockTypeCommandParameter)p[0]);
-                    if (p.Count > 1) isGroup = true;
+                    int blockTypeIndex = selector.SubTokens.FindLastIndex(p => p is BlockTypeCommandParameter);//Use Last Block Type
+                    if (blockTypeIndex<0) return paramCount; //Apparently not a Selector
+                    if (selector.SubTokens.Exists(p => p is GroupCommandParameter)) isGroup = true;
+                    blockType = ((BlockTypeCommandParameter)selector.SubTokens[blockTypeIndex]);
                 }
 
                 Print("Converted String at index: " + index + " to SelectorCommandParamter");
                 commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector));
+                commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector.Value));
                 return 1;
             }
         }
@@ -130,27 +123,25 @@ namespace IngameScript
             public void process(List<CommandParameter> commandParameters)
             {
                 Print("Start Run Argument Processor");
-                int i = 0;
-                while (i < commandParameters.Count)
+                for (int i = 0; i < commandParameters.Count; i++)
                 {
                     if (commandParameters[i] is StringCommandParameter)
                     {
-                        List<String> values = parseTokens(((StringCommandParameter)commandParameters[i]).GetValue());
-                        Print("Tested Tokens: " + String.Join(" | ", values));
-                        if (RUN_WORDS.Contains(values[0]))
-                        {
-                            Print("Found Run Keyword!");
-                            commandParameters.RemoveAt(i);
-                            values.RemoveAt(0);
-                            Print("Arguments: (" + String.Join(" ", values) + ")");
-                            commandParameters.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
-                            commandParameters.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
-                            i++;
-                        }
+                        StringCommandParameter param = (StringCommandParameter)commandParameters[i];
+                        if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is StringPropertyCommandParameter)) continue;
+                        if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) continue;
+
+                        Print("Found Run Keyword!");
+                        List<String> values = parseTokens(param.Value);
+                        commandParameters.RemoveAt(i);
+                        values.RemoveAt(0);
+                        Print("Arguments: (" + String.Join(" ", values) + ")");
+                        commandParameters.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
+                        commandParameters.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
+                        i++;
                     }
-                    i++;
                 }
-                Print("End Action Processor");
+                Print("End Run Argument Processor");
             }
         }
 
@@ -277,8 +268,8 @@ namespace IngameScript
                 if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
 
                 Print("Finished parsing condition params.  Count: " + paramCount);
-                AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.GetValue();
-                ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.GetValue();
+                AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.Value;
+                ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.Value;
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
                 IEntityProvider provider = new SelectorEntityProvider(selector);
 
@@ -287,24 +278,24 @@ namespace IngameScript
                 {
                     Print("Boolean Command");
                     BooleanPropertyType boolProperty = handler.GetDefaultBooleanProperty();
-                    if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).GetValue();
-                    bool boolValue = true;  if (value != null) boolValue = ((BooleanCommandParameter)value).GetValue();
+                    if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).Value;
+                    bool boolValue = true;  if (value != null) boolValue = ((BooleanCommandParameter)value).Value;
                     blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
                 } else if (value is StringCommandParameter || property is StringPropertyCommandParameter)
                 {
                     Print("String Command");
                     StringPropertyType stringProperty = handler.GetDefaultStringProperty();
-                    if (property != null) stringProperty = ((StringPropertyCommandParameter)property).GetValue();
+                    if (property != null) stringProperty = ((StringPropertyCommandParameter)property).Value;
                     if (value == null) throw new Exception("String Comparison Value Cannot Be Left Blank");
-                    String stringValue = ((StringCommandParameter)value).GetValue();
+                    String stringValue = ((StringCommandParameter)value).Value;
                     blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
                 } else if (value is NumericCommandParameter || property is NumericPropertyCommandParameter)
                 {
                     Print("Numeric Command");
                     NumericPropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
-                    if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).GetValue();
+                    if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).Value;
                     if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
-                    float numericValue = ((NumericCommandParameter)value).GetValue();
+                    float numericValue = ((NumericCommandParameter)value).Value;
                     blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
                 } else
                 {
@@ -354,7 +345,7 @@ namespace IngameScript
                 }
 
                 if (!(commandParameters[index] is ConditionCommandParameter)) throw new Exception("Invalid Token Inside Condition: " + commandParameters[index].GetType());
-                Condition conditionA = ((ConditionCommandParameter)commandParameters[index]).GetValue();
+                Condition conditionA = ((ConditionCommandParameter)commandParameters[index]).Value;
                 while (commandParameters.Count > index+2) //Look for And/Or + more conditions
                 {
                     if (commandParameters[index + 1] is AndCommandParameter) {//Handle Ands before Ors
@@ -384,7 +375,7 @@ namespace IngameScript
                     Print("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
                     resolveNextCondition(commandParameters, index);
                 }
-                return ((ConditionCommandParameter)commandParameters[index]).GetValue();
+                return ((ConditionCommandParameter)commandParameters[index]).Value;
             }
         }
     }

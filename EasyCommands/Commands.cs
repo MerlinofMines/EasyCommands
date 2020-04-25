@@ -85,7 +85,7 @@ namespace IngameScript
             {
                 RUNNING_COMMANDS.Clear();//Clear any existing commands
                 RUNNING_COMMANDS.Loop(1);//Repeat Running Commands 1 iteration ("restart")
-                return true;
+                return false;
             }
         }
 
@@ -112,7 +112,7 @@ namespace IngameScript
         {
             public override bool Handle()
             {
-                RUNNING_COMMANDS.Loop((int)parameter.GetValue());
+                RUNNING_COMMANDS.Loop((int)parameter.Value);
                 return true;
             }
         }
@@ -207,7 +207,7 @@ namespace IngameScript
                     DirectionType direction;
                     if (directionIndex >= 0)
                     {
-                        direction = ((DirectionCommandParameter)commandParameters[directionIndex]).GetValue();
+                        direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
                     } else
                     {
                         direction = blockHandler.GetDefaultDirection();
@@ -230,18 +230,18 @@ namespace IngameScript
             {
                 return new List<CommandHandler>() {
                     //Boolean Handlers
-                    new TwoParamBlockCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>(entityProvider, blockHandler, (b,e,p,s)=>{  b.SetBooleanPropertyValue(e, p.GetValue(), s.GetValue()); }),
+                    new TwoParamBlockCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>(entityProvider, blockHandler, (b,e,p,s)=>{  b.SetBooleanPropertyValue(e, p.Value, s.Value); }),
 
                     //String Handlers
-                    new TwoParamBlockCommandHandler<StringPropertyCommandParameter, StringCommandParameter>(entityProvider, blockHandler, (bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.GetValue(), bo.GetValue()); }),
+                    new TwoParamBlockCommandHandler<StringPropertyCommandParameter, StringCommandParameter>(entityProvider, blockHandler, (bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.Value); }),
 
                     //Numeric Handlers
-                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.GetValue(), n.GetValue()); }),
-                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter>(entityProvider, blockHandler, (b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.GetValue(), d.GetValue()); }),
-                    new TwoParamBlockCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter>(entityProvider, blockHandler, (b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.GetValue()); }),
-                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.GetValue(), d.GetValue(), n.GetValue()); }),
-                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.GetValue(), n.GetValue()); }),
-                    new FourParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.GetValue(), d.GetValue(), n.GetValue()); }),
+                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
+                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter>(entityProvider, blockHandler, (b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
+                    new TwoParamBlockCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter>(entityProvider, blockHandler, (b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
+                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
+                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
+                    new FourParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
 
                     //TODO: GPS Handler?
                 };
