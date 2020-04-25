@@ -83,8 +83,37 @@ namespace IngameScript
         {
             public override bool Execute()
             {
-                RUNNING_COMMANDS.Reset();//This is black magic.
-                return false;//Also black magic.  must be false otherwise 1st command gets skipped!
+                RUNNING_COMMANDS.Clear();//Clear any existing commands
+                RUNNING_COMMANDS.Loop(1);//Repeat Running Commands 1 iteration ("restart")
+                return true;
+            }
+        }
+
+        public class LoopCommand : HandlerCommand
+        {
+            public LoopCommand(List<CommandParameter> commandParameters) : base(commandParameters)
+            {
+            }
+
+            public override List<CommandHandler> GetHandlers()
+            {
+                return new List<CommandHandler>() { new LoopCommandHandler() };
+            }
+
+            public override void PreParseCommands(List<CommandParameter> commandParameters)
+            {
+                int numericIndex = commandParameters.FindIndex(p => p is NumericCommandParameter);
+                if (numericIndex < 0) commandParameters.Add(new NumericCommandParameter(1));
+                commandParameters.RemoveAll(p => p is LoopCommandParameter);
+            }
+        }
+
+        public class LoopCommandHandler : OneParameterCommandHandler<NumericCommandParameter>
+        {
+            public override bool Handle()
+            {
+                RUNNING_COMMANDS.Loop((int)parameter.GetValue());
+                return true;
             }
         }
 
@@ -300,6 +329,7 @@ namespace IngameScript
         {
             List<Command> commandsToExecute;
             List<Command> currentCommands;
+            int loopCount = 0;
 
             public MultiActionCommand(List<Command> commandsToExecute)
             {
@@ -310,6 +340,7 @@ namespace IngameScript
             public override bool Execute()
             {
                 Print("Executing All Commands.  Commands left: " + currentCommands.Count);
+                Print("Loops Left: " + loopCount);
                 if (currentCommands.Count == 0) return true;
 
                 int commandIndex = 0;
@@ -323,13 +354,29 @@ namespace IngameScript
                     if (!nextCommand.IsAsync()) break;
                     Print("Command is async, continuing to command at index: " + commandIndex);
                 }
-                return currentCommands.Count == 0;
+
+                if (currentCommands.Count > 0) return false;
+                if (loopCount == 0) return true;
+
+                Reset();
+                loopCount--;
+                return false;
             }
 
             public override void Reset()
             {
                 currentCommands = new List<Command>(commandsToExecute);
                 foreach (Command command in currentCommands) { command.Reset(); }
+            }
+
+            public void Clear()
+            {
+                currentCommands.Clear();
+            }
+
+            public void Loop(int times)
+            {
+                loopCount+=times;
             }
         }
     }

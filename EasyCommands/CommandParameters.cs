@@ -93,6 +93,7 @@ namespace IngameScript
         public class GroupCommandParameter : CommandParameter { }
         public class AsyncCommandParameter : CommandParameter { }
         public class RestartCommandParameter : CommandParameter { }
+        public class LoopCommandParameter : CommandParameter { }
 
         public class IfCommandParameter : CommandParameter 
         {

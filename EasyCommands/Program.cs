@@ -76,7 +76,9 @@ namespace IngameScript
         private String[] runningWords = { "running", "executing" };
 
         private String[] completeWords = { "done", "complete", "finished", "built" };
-        private string[] progressWords = { "progress", "completion"};
+        private String[] progressWords = { "progress", "completion"};
+
+        private String[] loopWords = { "loop", "iterate", "repeat", "rerun", "replay" };
 
         private Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -95,8 +97,9 @@ namespace IngameScript
         private Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
         static MultiActionCommand RUNNING_COMMANDS;
-
         static MyGridProgram PROGRAM;
+
+        static bool isRunning = false;
 
         static void Print(String str)
         {
@@ -146,6 +149,7 @@ namespace IngameScript
             addWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
             addWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
             addWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
+            addWords(loopWords, new LoopCommandParameter());
         }
 
         public void addWords(String[] words, params CommandParameter[] commands)
@@ -153,14 +157,22 @@ namespace IngameScript
             foreach (String word in words) propertyWords.Add(word, commands.ToList<CommandParameter>());
         }
 
+        private void validateParsed()
+        {
+            if (RUNNING_COMMANDS == null) Start();
+        }
+
         public void Main(string argument, UpdateType updateSource)
         {
             if (String.IsNullOrEmpty(argument))
             {
+                validateParsed();
+                if (!isRunning) RUNNING_COMMANDS.Reset();
+                isRunning = true;
                 if (Execute())
                 {
                     Print("Execution Complete");
-                    RUNNING_COMMANDS.Reset();
+                    isRunning = false;
                     Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
                 else
@@ -170,39 +182,45 @@ namespace IngameScript
             }
             else if (argument.ToLower() == "restart") //Restart execution of existing commands
             {
+                validateParsed();
                 Print("Restarting Commands");
-                Restart();
+                RUNNING_COMMANDS.Reset();
                 Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                isRunning = true;
+            }
+            else if (argument.ToLower() == "loop") //Loop execution of existing commands.  TODO: "Loop 3"
+            {
+                Print("Looping Commands");
+                validateParsed();
+                if (!isRunning) {
+                    RUNNING_COMMANDS.Reset();
+                }
+                else {
+                    RUNNING_COMMANDS.Loop(1);
+                }
+                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                isRunning = true;
             }
             else if (argument.ToLower() == "start") //Parse custom data and run
             {
                 Print("Starting Commands");
                 Start();
+                isRunning = true;
                 Runtime.UpdateFrequency = UPDATE_FREQUENCY;
             }
             else if (argument.ToLower() == "parse") // Parse Custom Data only.  Useful for debugging.
             {
                 Print("Parsing Custom Data");
                 ParseCommands();
+                isRunning = false;
                 Runtime.UpdateFrequency = UpdateFrequency.None;
-                RUNNING_COMMANDS = null;
             }
             else if (argument.ToLower() == "stop") //Stop execution
             {
                 Print("Stopping Command Execution");
                 Runtime.UpdateFrequency = UpdateFrequency.None;
+                isRunning = false;
                 RUNNING_COMMANDS = null;
-            }
-        }
-
-        private void Restart()
-        {
-            if (RUNNING_COMMANDS == null)
-            {
-                Start();
-            } else
-            {
-                RUNNING_COMMANDS.Reset();
             }
         }
 
