@@ -79,41 +79,42 @@ namespace IngameScript
             public abstract List<CommandHandler> GetHandlers();
         }
 
-        public class RestartCommand : Command
+        public class ControlCommand : Command
         {
+            List<CommandParameter> parameters;
+            ControlType controlType;
+            public ControlCommand(List<CommandParameter> parameters)
+            {
+                int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
+                if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
+                controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
+                parameters.RemoveAt(controlIndex);
+                this.parameters = parameters;
+            }
+
             public override bool Execute()
             {
-                RUNNING_COMMANDS.Clear();//Clear any existing commands
-                RUNNING_COMMANDS.Loop(1);//Repeat Running Commands 1 iteration ("restart")
-                return false;
-            }
-        }
-
-        public class LoopCommand : HandlerCommand
-        {
-            public LoopCommand(List<CommandParameter> commandParameters) : base(commandParameters)
-            {
-            }
-
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>() { new LoopCommandHandler() };
-            }
-
-            public override void PreParseCommands(List<CommandParameter> commandParameters)
-            {
-                int numericIndex = commandParameters.FindIndex(p => p is NumericCommandParameter);
-                if (numericIndex < 0) commandParameters.Add(new NumericCommandParameter(1));
-                commandParameters.RemoveAll(p => p is LoopCommandParameter);
-            }
-        }
-
-        public class LoopCommandHandler : OneParameterCommandHandler<NumericCommandParameter>
-        {
-            public override bool Handle()
-            {
-                RUNNING_COMMANDS.Loop((int)parameter.Value);
-                return true;
+                switch (controlType) {
+                    case ControlType.STOP:
+                        Print("Stopping Command Execution");
+                        RUNNING_COMMANDS = null; return true;
+                    case ControlType.PARSE:
+                        RUNNING_COMMANDS = null; return true;
+                    case ControlType.START:
+                        RUNNING_COMMANDS = null; return false;
+                    case ControlType.RESTART:
+                        RUNNING_COMMANDS.Reset(); return false;
+                    case ControlType.PAUSE:
+                        Print("Pausing Command Execution");
+                        return true;
+                    case ControlType.RESUME:
+                        return false;
+                    case ControlType.LOOP:
+                        int numericIndex = parameters.FindIndex(p => p is NumericCommandParameter);
+                        float loopAmount = (numericIndex < 0) ? 1 : ((NumericCommandParameter)parameters[numericIndex]).Value;
+                        RUNNING_COMMANDS.Loop((int)loopAmount); return false;
+                    default: throw new Exception("Unsupported Control Type");
+                }
             }
         }
 
@@ -141,14 +142,7 @@ namespace IngameScript
             }
         }
 
-        public class NullCommand : Command
-        {
-            public override bool Execute()
-            {
-                Print("Null Program");
-                return true;
-            }
-        }
+        public class NullCommand : Command {public override bool Execute() {return true;}}
 
         public class BlockHandlerCommand : HandlerCommand
         {
@@ -328,20 +322,24 @@ namespace IngameScript
         public class MultiActionCommand : Command
         {
             List<Command> commandsToExecute;
-            List<Command> currentCommands;
+            List<Command> currentCommands = null;
             int loopCount = 0;
 
             public MultiActionCommand(List<Command> commandsToExecute)
             {
                 this.commandsToExecute = commandsToExecute;
-                this.currentCommands = new List<Command>(commandsToExecute);
             }
 
             public override bool Execute()
             {
+                if(currentCommands == null)
+                {
+                    currentCommands = new List<Command>(commandsToExecute);
+                    loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
+                }
+
                 Print("Executing All Commands.  Commands left: " + currentCommands.Count);
                 Print("Loops Left: " + loopCount);
-                if (currentCommands.Count == 0) return true;
 
                 int commandIndex = 0;
 
@@ -359,14 +357,13 @@ namespace IngameScript
                 if (loopCount == 0) return true;
 
                 Reset();
-                loopCount--;
                 return false;
             }
 
             public override void Reset()
             {
-                currentCommands = new List<Command>(commandsToExecute);
-                foreach (Command command in currentCommands) { command.Reset(); }
+                currentCommands = null;
+                foreach (Command command in commandsToExecute) { command.Reset(); }
             }
 
             public void Clear()

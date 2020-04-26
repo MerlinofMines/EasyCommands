@@ -27,100 +27,52 @@ namespace IngameScript
         static MultiActionCommand RUNNING_COMMANDS;
         static MyGridProgram PROGRAM;
 
-        static bool isRunning = false;
+        static bool RUNNING = false;
 
-        public Program()
-        {
-            PROGRAM = this;
-            initParsers();
+        public Program() {PROGRAM = this; initParsers();}
+
+        static void Print(String str) { PROGRAM.Echo(str); }
+
+        public void Main(string argument, UpdateType updateSource) {
+            ParseCommands();
+            if (String.IsNullOrEmpty(argument)) {
+                if (!RUNNING) RUNNING_COMMANDS.Reset();
+                ExecuteCommand(RUNNING_COMMANDS);
+            } else {
+                ExecuteCommand(ParseCommand(argument));
+            }
         }
 
-        static void Print(String str)
+        void ExecuteCommand(Command command)
         {
-            PROGRAM.Echo(str);
+            RUNNING = true;
+            if (command.Execute()) {
+                RUNNING = false;
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                Print("Execution Complete");
+            } else {
+                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+            }
         }
 
-        void validateParsed()
-        {
+        void ParseCommands() {
             if (RUNNING_COMMANDS == null) {
-                RUNNING_COMMANDS = new MultiActionCommand(ParseCommands());
-            }
-        }
-
-        public void Main(string argument, UpdateType updateSource)
-        {
-            if (String.IsNullOrEmpty(argument))
-            {
-                validateParsed();
-                if (!isRunning) RUNNING_COMMANDS.Reset();
-                isRunning = true;
-                if (RUNNING_COMMANDS.Execute())
-                {
-                    Print("Execution Complete");
-                    isRunning = false;
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                }
-                else
-                {
-                    Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-                }
-            }
-            else if (argument.ToLower() == "restart") //Restart execution of existing commands
-            {
-                validateParsed();
-                Print("Restarting Commands");
-                RUNNING_COMMANDS.Reset();
-                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-                isRunning = true;
-            }
-            else if (argument.ToLower() == "loop") //Loop execution of existing commands.  TODO: "Loop 3"
-            {
-                Print("Looping Commands");
-                validateParsed();
-                if (!isRunning) {
-                    RUNNING_COMMANDS.Reset();
-                }
-                else {
-                    RUNNING_COMMANDS.Loop(1);
-                }
-                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-                isRunning = true;
-            }
-            else if (argument.ToLower() == "start") //Parse custom data and run
-            {
-                Print("Starting Commands");
-                validateParsed();
-                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-            }
-            else if (argument.ToLower() == "parse") // Parse Custom Data only.  Useful for debugging.
-            {
                 Print("Parsing Custom Data");
-                ParseCommands();
-                isRunning = false;
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-            }
-            else if (argument.ToLower() == "stop") //Stop execution
-            {
-                Print("Stopping Command Execution");
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                isRunning = false;
-                RUNNING_COMMANDS = null;
+                String[] commandStrings = Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                List<Command> commands = commandStrings
+                    .Select(command => ParseCommand(command))
+                    .ToList();
+
+                RUNNING_COMMANDS = new MultiActionCommand(commands);
             }
         }
 
-        private List<Command> ParseCommands()
-        {
-            String[] commandList = Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            return commandList
-                .Select(command => parseTokens(command))
-                .Select(tokens => parseCommandParameters(tokens))
-                .Select(parameters => parseCommand(parameters))
-                .ToList();
+        private Command ParseCommand(String commandLine) {
+            return ParseCommand(parseCommandParameters(parseTokens(commandLine)));
         }
 
-        private Command parseCommand(List<CommandParameter> parameters)
-        {
+        private Command ParseCommand(List<CommandParameter> parameters) {
             Print("Pre Processed Parameters:");
             parameters.ForEach(param => Print("Type: " + param.GetType()));
 

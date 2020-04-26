@@ -195,8 +195,7 @@ namespace IngameScript
                     parameter is RelativeCommandParameter ||
                     parameter is WaitCommandParameter ||
                     parameter is UnitCommandParameter ||
-                    parameter is RestartCommandParameter ||
-                    parameter is LoopCommandParameter;
+                    parameter is ControlCommandParameter;
             }
         }
 

@@ -24,8 +24,8 @@ namespace IngameScript
         //Configuration.  Keep all words lowercase
         String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either" };
         String[] groupWords = { "blocks", "group" };
-        String[] activateWords = { "move", "go", "on", "start", "begin" };
-        String[] deactivateWords = { "stop", "off", "terminate", "exit", "cancel", "end" };
+        String[] activateWords = { "move", "go", "on", "begin" };
+        String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
         String[] reverseWords = { "reverse", "switch direction", "turn around" };
         String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
         String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
@@ -36,7 +36,7 @@ namespace IngameScript
         String[] increaseRelativeWords = { "add" };
         String[] decreaseRelativeWords = { "subtact" };
         String[] speedWords = { "speed", "velocity", "rate", "pace" };
-        String[] waitWords = { "wait", "hold", "pause" };
+        String[] waitWords = { "wait", "hold" };
         String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
         String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached" };
 
@@ -67,15 +67,11 @@ namespace IngameScript
         String[] openParenthesisWords = { "(" };
         String[] closeParenthesisWords = { ")" };
 
-        String[] restartWords = { "restart", "reset", "reboot" };
-
         String[] runWords = { "run", "execute" };
         String[] runningWords = { "running", "executing" };
 
         String[] completeWords = { "done", "complete", "finished", "built" };
         String[] progressWords = { "progress", "completion" };
-
-        String[] loopWords = { "loop", "iterate", "repeat", "rerun", "replay" };
 
         Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -113,6 +109,23 @@ namespace IngameScript
             { "connector", BlockType.CONNECTOR },
             { "welder", BlockType.WELDER },
             { "grinder", BlockType.GRINDER }
+        };
+
+        Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
+        {
+            { "start", ControlType.START },
+            { "restart", ControlType.RESTART },
+            { "reset", ControlType.RESTART },
+            { "reboot", ControlType.RESTART },
+            { "loop", ControlType.LOOP },
+            { "iterate", ControlType.LOOP },
+            { "repeat", ControlType.LOOP },
+            { "rerun", ControlType.LOOP },
+            { "replay", ControlType.LOOP },
+            { "stop", ControlType.STOP },
+            { "parse", ControlType.PARSE },
+            { "pause", ControlType.PAUSE },
+            { "resume", ControlType.RESUME },
         };
 
         //Internal (Don't touch!)
@@ -157,12 +170,10 @@ namespace IngameScript
             addWords(notWords, new NotCommandParameter());
             addWords(openParenthesisWords, new OpenParenthesisCommandParameter());
             addWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
-            addWords(restartWords, new RestartCommandParameter());
             addWords(runWords, new StringPropertyCommandParameter(StringPropertyType.RUN));
             addWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
             addWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
             addWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
-            addWords(loopWords, new LoopCommandParameter());
         }
 
         void addWords(String[] words, params CommandParameter[] commands)
@@ -182,6 +193,13 @@ namespace IngameScript
                 if (propertyWords.ContainsKey(token))
                 {
                     commandParameters.AddList(propertyWords[token]);
+                    continue;
+                }
+
+                ControlType controlType;
+                if (controlTypeWords.TryGetValue(token, out controlType))
+                {
+                    commandParameters.Add(new ControlCommandParameter(controlType));
                     continue;
                 }
 
