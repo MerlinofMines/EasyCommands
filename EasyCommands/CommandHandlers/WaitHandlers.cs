@@ -27,9 +27,9 @@ namespace IngameScript
 
             public override bool Handle()
             {
-                Print("Waited for " + ticks + " ticks");
                 ticks++;
-                return ticks > getTicks(parameter1.Value, parameter2.GetUnit());
+                Print("Waited for " + ticks + " ticks");
+                return ticks >= getTicks(parameter1.Value, parameter2.GetUnit());
             }
 
             public override void Reset()

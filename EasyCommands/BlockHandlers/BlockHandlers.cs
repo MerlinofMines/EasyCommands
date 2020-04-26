@@ -184,41 +184,49 @@ namespace IngameScript
 
             public void SetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property, bool value)
             {
+                Print("Setting " + block.CustomName + " " + property + " to " + value);
                 booleanPropertySetters[property]((T)block, value);
             }
 
             public void SetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property, String value)
             {
+                Print("Setting " + block.CustomName + " " + property + " to " + value);
                 stringPropertySetters[property]((T)block, value);
             }
 
             public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float value)
             {
+                Print("Setting " + block.CustomName + " " + property + " to " + value);
                 numericPropertySetters[property].SetPropertyValue((T)block, value);
             }
 
             public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float value)
             {
+                Print("Setting " + block.CustomName + " " + property + " to " + value + "in " + direction + "direction");
                 numericPropertySetters[property].SetPropertyValue((T)block, direction, value);
             }
 
             public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float deltaValue)
             {
+                Print("Incrementing " + block.CustomName + " " + property + " by " + deltaValue);
                 numericPropertySetters[property].IncrementPropertyValue((T)block, deltaValue);
             }
 
             public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float deltaValue)
             {
+                Print("Incrementing " + block.CustomName + " " + property + " by " + deltaValue + "in " + direction + "direction");
                 numericPropertySetters[property].IncrementPropertyValue((T)block, direction, deltaValue);
             }
 
             public void MoveNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction)
             {
+                Print("Moving " + block.CustomName + " " + property + "in " + direction + "direction");
                 numericPropertySetters[property].MovePropertyValue((T)block, direction);
             }
 
             public void ReverseNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
             {
+                Print("Reversing " + block.CustomName + " " + property);
                 numericPropertySetters[property].ReversePropertyValue((T)block);
             }
         }

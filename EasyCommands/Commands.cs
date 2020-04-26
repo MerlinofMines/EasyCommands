@@ -50,8 +50,8 @@ namespace IngameScript
             {
                 PreParseCommands(commandParameters);
 
-                Print("Post Parsed Command Parameters: ");
-                commandParameters.ForEach(param => Print("" + param.GetType()));
+                Debug("Post Parsed Command Parameters: ");
+                commandParameters.ForEach(param => Debug("" + param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
                 {
@@ -266,9 +266,9 @@ namespace IngameScript
                 Print("Executing Conditional Command");
                 Print("Async: " + async);
                 Print("Condition: " + condition.ToString());
-                Print("Action Command: " + conditionMetCommand.ToString());
-                Print("Other Command: " + conditionNotMetCommand.ToString());
-                Print("Always Evaluate: " + alwaysEvaluate);
+                Debug("Action Command: " + conditionMetCommand.ToString());
+                Debug("Other Command: " + conditionNotMetCommand.ToString());
+                Debug("Always Evaluate: " + alwaysEvaluate);
                 bool conditionMet = EvaluateCondition();
                 bool commandResult = false;
 
@@ -311,7 +311,7 @@ namespace IngameScript
             {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated)
                 {
-                    Print("Evaluating Value");
+                    Debug("Evaluating Value");
                     evaluatedValue = condition.Evaluate(); evaluated = true;
                 }
                 Print("Evaluated Value: " + evaluatedValue);
@@ -338,7 +338,7 @@ namespace IngameScript
                     loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
                 }
 
-                Print("Executing All Commands.  Commands left: " + currentCommands.Count);
+                Print("Commands left: " + currentCommands.Count);
                 Print("Loops Left: " + loopCount);
 
                 int commandIndex = 0;

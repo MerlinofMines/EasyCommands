@@ -46,6 +46,10 @@ namespace IngameScript
             {
                 return !condition.Evaluate();
             }
+            public override String ToString()
+            {
+                return "Not ( " + condition + " ) ";
+            }
         }
 
         public class AndCondition : Condition
@@ -62,6 +66,11 @@ namespace IngameScript
             {
                 return conditionA.Evaluate() && conditionB.Evaluate();
             }
+
+            public override String ToString()
+            {
+                return "And ( " + conditionA + " , " + conditionB + " ) ";
+            }
         }
 
         public class OrCondition : Condition
@@ -77,6 +86,10 @@ namespace IngameScript
             public bool Evaluate()
             {
                 return conditionA.Evaluate() || conditionB.Evaluate();
+            }
+            public override String ToString()
+            {
+                return "Or ( " + conditionA + " , " + conditionB + " ) ";
             }
         }
 
@@ -107,6 +120,10 @@ namespace IngameScript
                     default: throw new Exception("Unsupported Aggregation Mode: " + aggregationMode);
                 }
             }
+            public override String ToString()
+            {
+                return aggregationMode + " of " + entityProvider + " are " + blockCondition;
+            }
         }
 
         public interface BlockCondition
@@ -127,6 +144,10 @@ namespace IngameScript
             {
                 return !blockCondition.evaluate(block);
             }
+            public override String ToString()
+            {
+                return "not " + blockCondition;
+            }
         }
 
         public abstract class BlockCondition<T,U> : BlockCondition
@@ -143,8 +164,11 @@ namespace IngameScript
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
             }
-
             public abstract bool evaluate(IMyFunctionalBlock block);
+            public override String ToString()
+            {
+                return property + " " + comparator + " " + comparisonValue;
+            }
         }
 
         public class BooleanBlockCondition : BlockCondition<BooleanPropertyType, bool>
@@ -173,8 +197,11 @@ namespace IngameScript
             {
                 this.comparisonType = comparisonType;
             }
-
             public abstract bool compare(T a, T b);
+            public override String ToString()
+            {
+                return comparisonType.ToString();
+            }
         }
 
         public class BooleanComparator : Comparator<bool>

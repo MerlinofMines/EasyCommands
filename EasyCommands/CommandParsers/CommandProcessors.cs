@@ -34,13 +34,13 @@ namespace IngameScript
 
             public static Command ParseCommand(List<CommandParameter> commandParameters)
             {
-                Print("Parsing Command");
+                Debug("Parsing Command");
 
                 bool processing = true;
                 while (processing)
                 {
                     //Keep Processing through until all return false
-                    processing = CommandParsers.Exists(p => { Print("Executing " + p.GetType()); bool processed = p.ProcessCommand(commandParameters); Print("Result: " + processed); return processed; });
+                    processing = CommandParsers.Exists(p => { Debug("Executing " + p.GetType()); bool processed = p.ProcessCommand(commandParameters); Debug("Result: " + processed); return processed; });
                 }
 
                 if (commandParameters.Count != 1 || !(commandParameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
@@ -89,7 +89,7 @@ namespace IngameScript
                     //First, swap silly misordered statements (command) if (condition)
                     if (commandParameters[i + 1] is IfCommandParameter && commandParameters[i + 2] is ConditionCommandParameter && commandParameters[i] is CommandReferenceParameter)
                     {
-                        Print("Swapping! " + i);
+                        Debug("Swapping! " + i);
                         CommandParameter temp = commandParameters[i];
                         commandParameters.RemoveAt(i);
                         commandParameters.Insert(i + 2, temp);
@@ -190,7 +190,7 @@ namespace IngameScript
                     if (openParenthesis.Count == 0) throw new Exception("Missing Open Parenthesis!");
                     int startIndex = openParenthesis.Pop();
 
-                    Print("Processing Parentheses!  StartIndex: " + startIndex + ", end Index: " + i);
+                    Debug("Processing Parentheses!  StartIndex: " + startIndex + ", end Index: " + i);
 
                     Command command = CommandParserRegistry.ParseCommand(commandParameters.GetRange(startIndex + 1, (i - 1) - startIndex));
                     commandParameters.RemoveRange(startIndex, i + 1 - startIndex);

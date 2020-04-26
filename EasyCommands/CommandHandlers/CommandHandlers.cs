@@ -56,6 +56,10 @@ namespace IngameScript
                     return BlockHandlerRegistry.getBlocks(selector.blockType, selector.selector);
                 }
             }
+            public override String ToString()
+            {
+                return selector.blockType + (selector.isGroup ? " in group named " : " named " + selector.selector);
+            }
         }
 
         public abstract class CommandHandler

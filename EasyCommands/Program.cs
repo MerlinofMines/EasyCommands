@@ -22,6 +22,7 @@ namespace IngameScript
     partial class Program : MyGridProgram 
     {
         //Debug
+        private static bool DEBUG_LOG = false;
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
 
         static MultiActionCommand RUNNING_COMMANDS;
@@ -32,6 +33,7 @@ namespace IngameScript
         public Program() {PROGRAM = this; initParsers();}
 
         static void Print(String str) { PROGRAM.Echo(str); }
+        static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
 
         public void Main(string argument, UpdateType updateSource) {
             ParseCommands();
@@ -73,13 +75,13 @@ namespace IngameScript
         }
 
         private Command ParseCommand(List<CommandParameter> parameters) {
-            Print("Pre Processed Parameters:");
-            parameters.ForEach(param => Print("Type: " + param.GetType()));
+            Debug("Pre Processed Parameters:");
+            parameters.ForEach(param => Debug("Type: " + param.GetType()));
 
             ParameterProcessorRegistry.process(parameters);
 
-            Print("Post Prossessed Parameters:");
-            parameters.ForEach(param => Print("Type: " + param.GetType()));
+            Debug("Post Prossessed Parameters:");
+            parameters.ForEach(param => Debug("Type: " + param.GetType()));
 
             return CommandParserRegistry.ParseCommand(parameters);
         }
