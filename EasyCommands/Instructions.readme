@@ -5,6 +5,6 @@ Having trouble?  You can change the UPDATE_FREQUENCY below to slow down executio
 You can also enable (way) more verbose logging by setting DEBUG_LOG = true
 
 A full list of supported capabilities can be found at
-https://merlinofmines.github.io/SpaceEngineersScripts/EasyCommands/ 
+http://spaceengineers.merlinofmines.com/EasyCommands/
 
 Check it out and happy scripting!
