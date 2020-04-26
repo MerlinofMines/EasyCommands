@@ -22,8 +22,8 @@ namespace IngameScript
     partial class Program : MyGridProgram 
     {
         //Debug
-        private static bool DEBUG_LOG = false;
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
+        private static bool DEBUG_LOG = false;
 
         static MultiActionCommand RUNNING_COMMANDS;
         static MyGridProgram PROGRAM;
