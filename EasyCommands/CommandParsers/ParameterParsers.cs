@@ -22,58 +22,59 @@ namespace IngameScript
     partial class Program
     {
         //Configuration.  Keep all words lowercase
-        String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either" };
-        String[] groupWords = { "blocks", "group" };
-        String[] activateWords = { "move", "go", "on", "begin" };
-        String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
-        String[] reverseWords = { "reverse", "switch direction", "turn around" };
-        String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
-        String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
-        String[] clockwiseWords = { "clockwise", "clock" };
-        String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
+        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either" };
+        static String[] groupWords = { "blocks", "group" };
+        static String[] activateWords = { "move", "go", "on", "begin" };
+        static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
+        static String[] reverseWords = { "reverse", "switch direction", "turn around" };
+        static String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
+        static String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
+        static String[] clockwiseWords = { "clockwise", "clock" };
+        static String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
 
-        String[] relativeWords = { "by" };
-        String[] increaseRelativeWords = { "add" };
-        String[] decreaseRelativeWords = { "subtact" };
-        String[] speedWords = { "speed", "velocity", "rate", "pace" };
-        String[] waitWords = { "wait", "hold" };
-        String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
-        String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached" };
+        static String[] relativeWords = { "by" };
+        static String[] increaseRelativeWords = { "add" };
+        static String[] decreaseRelativeWords = { "subtact" };
+        static String[] speedWords = { "speed", "velocity", "rate", "pace" };
+        static String[] waitWords = { "wait", "hold" };
+        static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
+        static String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached" };
 
-        String[] lockWords = { "lock", "freeze" };
-        String[] unlockWords = { "unlock", "unfreeze" };
+        static String[] lockWords = { "lock", "freeze" };
+        static String[] unlockWords = { "unlock", "unfreeze" };
 
-        String[] ifWords = { "if" };
-        String[] elseWords = { "else", "otherwise" };
-        String[] unlessWords = { "unless" };
-        String[] whileWords = { "while" };
-        String[] untilWords = { "until" };
-        String[] whenWords = { "when" };
-        String[] asyncWords = { "async" };
+        static String[] ifWords = { "if" };
+        static String[] elseWords = { "else", "otherwise" };
+        static String[] unlessWords = { "unless" };
+        static String[] whileWords = { "while" };
+        static String[] untilWords = { "until" };
+        static String[] whenWords = { "when" };
+        static String[] asyncWords = { "async" };
 
-        String[] lessWords = { "less", "<", "below" };
-        String[] lessEqualWords = { "<=" };
-        String[] equalWords = { "equal", "equals", "=", "==" };
-        String[] greaterEqualWords = { ">=" };
-        String[] greaterWords = { "greater", ">", "above", "more" };
+        static String[] lessWords = { "less", "<", "below" };
+        static String[] lessEqualWords = { "<=" };
+        static String[] equalWords = { "equal", "equals", "=", "==" };
+        static String[] greaterEqualWords = { ">=" };
+        static String[] greaterWords = { "greater", ">", "above", "more" };
 
-        String[] anyWords = { "any" };
-        String[] allWords = { "all" };
-        String[] noneWords = { "none" };
+        static String[] anyWords = { "any" };
+        static String[] allWords = { "all" };
+        static String[] noneWords = { "none" };
 
-        String[] andWords = { "and", "&", "&&", "but", "yet" };
-        String[] orWords = { "or", "|", "||" };
-        String[] notWords = { "not", "!", "isn't", "isnt" };
-        String[] openParenthesisWords = { "(" };
-        String[] closeParenthesisWords = { ")" };
+        static String[] andWords = { "and", "&", "&&", "but", "yet" };
+        static String[] orWords = { "or", "|", "||" };
+        static String[] notWords = { "not", "!", "isn't", "isnt" };
+        static String[] openParenthesisWords = { "(" };
+        static String[] closeParenthesisWords = { ")" };
 
-        String[] runWords = { "run", "execute" };
-        String[] runningWords = { "running", "executing" };
+        static String[] runWords = { "run", "execute" };
+        static String[] runningWords = { "running", "executing" };
+        static String[] stoppedWords = { "stopped", "terminated" };
+        static String[] pausedWords = { "paused", "halted" };
+        static String[] completeWords = { "done", "complete", "finished", "built" };
+        static String[] progressWords = { "progress", "completion" };
 
-        String[] completeWords = { "done", "complete", "finished", "built" };
-        String[] progressWords = { "progress", "completion" };
-
-        Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
+        static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
             { "seconds", UnitType.SECONDS },
@@ -86,7 +87,7 @@ namespace IngameScript
             { "rpm", UnitType.RPM }
         };
 
-        Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
+        static Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
             { "pistons", BlockType.PISTON },
             { "lights", BlockType.LIGHT },
             { "rotors", BlockType.ROTOR },
@@ -98,7 +99,7 @@ namespace IngameScript
             { "grinders", BlockType.GRINDER }
         };
 
-        Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
+        static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
             { "piston", BlockType.PISTON },
             { "light", BlockType.LIGHT },
             { "rotor", BlockType.ROTOR },
@@ -111,7 +112,7 @@ namespace IngameScript
             { "grinder", BlockType.GRINDER }
         };
 
-        Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
+        static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
         {
             { "start", ControlType.START },
             { "restart", ControlType.RESTART },
@@ -129,59 +130,61 @@ namespace IngameScript
         };
 
         //Internal (Don't touch!)
-        private Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
+        private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
         public void initParsers()
         {
-            addWords(groupWords, new GroupCommandParameter());
-            addWords(activateWords, new BooleanCommandParameter(true));
-            addWords(deactivateWords, new BooleanCommandParameter(false));
-            addWords(increaseWords, new DirectionCommandParameter(DirectionType.UP));
-            addWords(increaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
-            addWords(decreaseWords, new DirectionCommandParameter(DirectionType.DOWN));
-            addWords(decreaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
-            addWords(clockwiseWords, new DirectionCommandParameter(DirectionType.CLOCKWISE));
-            addWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
-            addWords(reverseWords, new ReverseCommandParameter());
-            addWords(relativeWords, new RelativeCommandParameter());
-            addWords(speedWords, new NumericPropertyCommandParameter(NumericPropertyType.VELOCITY));
-            addWords(connectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED));
-            addWords(disconnectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false));
-            addWords(lockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED));
-            addWords(unlockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false));
-            addWords(waitWords, new WaitCommandParameter());
-            addWords(ifWords, new IfCommandParameter(false, false, false));
-            addWords(unlessWords, new IfCommandParameter(true, false, false));
-            addWords(whileWords, new IfCommandParameter(false, true, false));
-            addWords(untilWords, new IfCommandParameter(true, true, false));
-            addWords(whenWords, new IfCommandParameter(true, true, true));
-            addWords(asyncWords, new AsyncCommandParameter());
-            addWords(elseWords, new ElseCommandParameter());
-            addWords(lessWords, new ComparisonCommandParameter(ComparisonType.LESS));
-            addWords(lessEqualWords, new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
-            addWords(equalWords, new ComparisonCommandParameter(ComparisonType.EQUAL));
-            addWords(greaterEqualWords, new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL));
-            addWords(greaterWords, new ComparisonCommandParameter(ComparisonType.GREATER));
-            addWords(anyWords, new AggregationModeCommandParameter(AggregationMode.ANY));
-            addWords(allWords, new AggregationModeCommandParameter(AggregationMode.ALL));
-            addWords(noneWords, new AggregationModeCommandParameter(AggregationMode.NONE));
-            addWords(andWords, new AndCommandParameter());
-            addWords(orWords, new OrCommandParameter());
-            addWords(notWords, new NotCommandParameter());
-            addWords(openParenthesisWords, new OpenParenthesisCommandParameter());
-            addWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
-            addWords(runWords, new StringPropertyCommandParameter(StringPropertyType.RUN));
-            addWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
-            addWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
-            addWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
+            AddWords(groupWords, new GroupCommandParameter());
+            AddWords(activateWords, new BooleanCommandParameter(true));
+            AddWords(deactivateWords, new BooleanCommandParameter(false));
+            AddWords(increaseWords, new DirectionCommandParameter(DirectionType.UP));
+            AddWords(increaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(decreaseWords, new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(decreaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(clockwiseWords, new DirectionCommandParameter(DirectionType.CLOCKWISE));
+            AddWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
+            AddWords(reverseWords, new ReverseCommandParameter());
+            AddWords(relativeWords, new RelativeCommandParameter());
+            AddWords(speedWords, new NumericPropertyCommandParameter(NumericPropertyType.VELOCITY));
+            AddWords(connectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED));
+            AddWords(disconnectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false));
+            AddWords(lockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED));
+            AddWords(unlockWords, new BooleanPropertyCommandParameter(BooleanPropertyType.LOCKED), new BooleanCommandParameter(false));
+            AddWords(waitWords, new WaitCommandParameter());
+            AddWords(ifWords, new IfCommandParameter(false, false, false));
+            AddWords(unlessWords, new IfCommandParameter(true, false, false));
+            AddWords(whileWords, new IfCommandParameter(false, true, false));
+            AddWords(untilWords, new IfCommandParameter(true, true, false));
+            AddWords(whenWords, new IfCommandParameter(true, true, true));
+            AddWords(asyncWords, new AsyncCommandParameter());
+            AddWords(elseWords, new ElseCommandParameter());
+            AddWords(lessWords, new ComparisonCommandParameter(ComparisonType.LESS));
+            AddWords(lessEqualWords, new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
+            AddWords(equalWords, new ComparisonCommandParameter(ComparisonType.EQUAL));
+            AddWords(greaterEqualWords, new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL));
+            AddWords(greaterWords, new ComparisonCommandParameter(ComparisonType.GREATER));
+            AddWords(anyWords, new AggregationModeCommandParameter(AggregationMode.ANY));
+            AddWords(allWords, new AggregationModeCommandParameter(AggregationMode.ALL));
+            AddWords(noneWords, new AggregationModeCommandParameter(AggregationMode.NONE));
+            AddWords(andWords, new AndCommandParameter());
+            AddWords(orWords, new OrCommandParameter());
+            AddWords(notWords, new NotCommandParameter());
+            AddWords(openParenthesisWords, new OpenParenthesisCommandParameter());
+            AddWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
+            AddWords(runWords, new StringPropertyCommandParameter(StringPropertyType.RUN));
+            AddWords(runningWords, new BooleanPropertyCommandParameter(BooleanPropertyType.RUNNING));
+            AddWords(stoppedWords, new BooleanPropertyCommandParameter(BooleanPropertyType.STOPPED));
+            AddWords(pausedWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PAUSED));
+            AddWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
+            AddWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
         }
 
-        void addWords(String[] words, params CommandParameter[] commands)
+        static void AddWords(String[] words, params CommandParameter[] commands)
         {
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }
 
-        List<CommandParameter> parseCommandParameters(List<String> tokens)
+        static List<CommandParameter> ParseCommandParameters(List<String> tokens)
         {
             Print("Command: " + String.Join(" | ", tokens));
 
@@ -231,9 +234,9 @@ namespace IngameScript
                 }
 
                 //If nothing else matches, must be a string
-                List<String> subTokens = parseTokens(token);
+                List<String> subTokens = ParseTokens(token);
 
-                if (subTokens.Count > 1) commandParameters.Add(new StringCommandParameter(token, parseCommandParameters(subTokens).ToArray()));
+                if (subTokens.Count > 1) commandParameters.Add(new StringCommandParameter(token, ParseCommandParameters(subTokens).ToArray()));
                 else commandParameters.Add(new StringCommandParameter(token));
             }
             return commandParameters;

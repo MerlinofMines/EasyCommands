@@ -50,7 +50,7 @@ namespace IngameScript
             {
                 PreParseCommands(commandParameters);
 
-                Debug("Post Parsed Command Parameters: ");
+                Debug("Command Handler Post Parsed Command Parameters: ");
                 commandParameters.ForEach(param => Debug("" + param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
@@ -96,25 +96,24 @@ namespace IngameScript
             {
                 switch (controlType) {
                     case ControlType.STOP:
-                        Print("Stopping Command Execution");
-                        RUNNING_COMMANDS = null; return true;
+                        RUNNING_COMMANDS = null; state = ProgramState.STOPPED; break;
                     case ControlType.PARSE:
-                        RUNNING_COMMANDS = null; return true;
+                        RUNNING_COMMANDS = null; ParseCommands(); state = ProgramState.STOPPED; break;
                     case ControlType.START:
-                        RUNNING_COMMANDS = null; return false;
+                        RUNNING_COMMANDS = null; state = ProgramState.RUNNING; break;
                     case ControlType.RESTART:
-                        RUNNING_COMMANDS.Reset(); return false;
+                        RUNNING_COMMANDS.Reset(); RUNNING_COMMANDS.Loop(1); state = ProgramState.RUNNING; break;
                     case ControlType.PAUSE:
-                        Print("Pausing Command Execution");
-                        return true;
+                        state = ProgramState.PAUSED; break;
                     case ControlType.RESUME:
-                        return false;
+                        state = ProgramState.RUNNING; break;
                     case ControlType.LOOP:
                         int numericIndex = parameters.FindIndex(p => p is NumericCommandParameter);
                         float loopAmount = (numericIndex < 0) ? 1 : ((NumericCommandParameter)parameters[numericIndex]).Value;
-                        RUNNING_COMMANDS.Loop((int)loopAmount); return false;
+                        RUNNING_COMMANDS.Loop((int)loopAmount); state = ProgramState.RUNNING; break;
                     default: throw new Exception("Unsupported Control Type");
                 }
+                return true;
             }
         }
 
@@ -332,7 +331,7 @@ namespace IngameScript
 
             public override bool Execute()
             {
-                if(currentCommands == null)
+                if (currentCommands == null)
                 {
                     currentCommands = new List<Command>(commandsToExecute);
                     loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
@@ -343,17 +342,17 @@ namespace IngameScript
 
                 int commandIndex = 0;
 
-                while (commandIndex < currentCommands.Count)
+                while (currentCommands != null && commandIndex < currentCommands.Count)
                 {
                     Command nextCommand = currentCommands[commandIndex];
 
                     bool handled = nextCommand.Execute();
-                    if (handled) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
+                    if (handled && currentCommands != null) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
                     if (!nextCommand.IsAsync()) break;
                     Print("Command is async, continuing to command at index: " + commandIndex);
                 }
 
-                if (currentCommands.Count > 0) return false;
+                if (currentCommands != null && currentCommands.Count > 0) return false;
                 if (loopCount == 0) return true;
 
                 Reset();

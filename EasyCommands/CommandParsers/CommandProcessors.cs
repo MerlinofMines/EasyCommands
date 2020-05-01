@@ -77,6 +77,9 @@ namespace IngameScript
             {
                 bool processed = false;
 
+                Debug("Pre Processed Parameters:");
+                commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
+
                 for (int i = 0; i < commandParameters.Count-2; i++)
                 {
                     //check for if + condition.  Then look for action (before if or after condition).  If present, keep going
@@ -89,7 +92,6 @@ namespace IngameScript
                     //First, swap silly misordered statements (command) if (condition)
                     if (commandParameters[i + 1] is IfCommandParameter && commandParameters[i + 2] is ConditionCommandParameter && commandParameters[i] is CommandReferenceParameter)
                     {
-                        Debug("Swapping! " + i);
                         CommandParameter temp = commandParameters[i];
                         commandParameters.RemoveAt(i);
                         commandParameters.Insert(i + 2, temp);
@@ -102,11 +104,12 @@ namespace IngameScript
 
                     //Valid condition, sans Else
                     Command otherwiseCommand = new NullCommand();
-                    if (i > commandParameters.Count - 3 && commandParameters[i + 3] is ElseCommandParameter) { //Command Contains an Else Block!
+                    if (i + 3 < commandParameters.Count && commandParameters[i + 3] is ElseCommandParameter) { //Command Contains an Else Block!
                         if (!(commandParameters[i + 4] is CommandReferenceParameter)) continue; //Not ready to parse Otherwise yet!
-                        if (i > commandParameters.Count - 5 && commandParameters[i + 5] is AndCommandParameter) continue; //Not ready to parse Otherwise yet, there are more commands to parse!
+
+                        if (i + 5 < commandParameters.Count && commandParameters[i + 5] is AndCommandParameter) continue; //Not ready to parse Otherwise yet, there are more commands to parse!
                         otherwiseCommand = ((CommandReferenceParameter)commandParameters[i+4]).Value;
-                        commandParameters.RemoveRange(i + 4, 2); //Remove Otherwise and Otherwise Command now that we have stored
+                        commandParameters.RemoveRange(i + 3, 2); //Remove Otherwise and Otherwise Command now that we have stored
                     }
 
                     //Time to Parse!

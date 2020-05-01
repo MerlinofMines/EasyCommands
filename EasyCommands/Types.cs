@@ -22,12 +22,13 @@ namespace IngameScript
     partial class Program
     {
         public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER }
-        public enum BooleanPropertyType { ON_OFF, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE, RUNNING, COMPLETE }
+        public enum BooleanPropertyType { ON_OFF, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE, RUNNING, PAUSED, STOPPED, COMPLETE }
         public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, PROGRESS }
         public enum StringPropertyType { NAME, RUN }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
         public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS}
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
+        public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
     }
 }

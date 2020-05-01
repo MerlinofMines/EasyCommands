@@ -25,8 +25,12 @@ namespace IngameScript
         {
             public ProgramBlockHandler() : base()
             {
-                booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, block => !block.DetailedInfo.EndsWith("Execution Complete\n"));
+                booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, block => block.DetailedInfo.EndsWith("Running\n"));
+                booleanPropertyGetters.Add(BooleanPropertyType.STOPPED, block => block.DetailedInfo.EndsWith("Stopped\n"));
+                booleanPropertyGetters.Add(BooleanPropertyType.PAUSED, block => block.DetailedInfo.EndsWith("Paused\n"));
+                booleanPropertyGetters.Add(BooleanPropertyType.COMPLETE, block => block.DetailedInfo.EndsWith("Complete\n"));
                 stringPropertySetters.Add(StringPropertyType.RUN, (block, value) => block.TryRun(value));
+                defaultStringProperty = StringPropertyType.RUN;
             }
         }
     }

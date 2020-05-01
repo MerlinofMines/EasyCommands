@@ -39,7 +39,7 @@ namespace IngameScript
                     Debug("Pre Processed Parameters:");
                     commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
 
-                    parser.process(commandParameters);
+                    parser.Process(commandParameters);
 
                     Debug("Post Processed Parameters:");
                     commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
@@ -50,11 +50,11 @@ namespace IngameScript
 
         public interface ParameterProcessor
         {
-            void process(List<CommandParameter> commandParameters);
+            void Process(List<CommandParameter> commandParameters);
         }
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        public static List<String> parseTokens(String commandString)
+        public static List<String> ParseTokens(String commandString)
         {
             return commandString.Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
@@ -67,7 +67,7 @@ namespace IngameScript
 
         public class SelectorProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void Process(List<CommandParameter> commandParameters)
             {
                 Debug("Start Selector Processor");
                 int index = 0;
@@ -120,7 +120,7 @@ namespace IngameScript
 
         public class RunArgumentProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void Process(List<CommandParameter> commandParameters)
             {
                 Debug("Start Run Argument Processor");
                 for (int i = 0; i < commandParameters.Count; i++)
@@ -132,7 +132,7 @@ namespace IngameScript
                         if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) continue;
 
                         Debug("Found Run Keyword!");
-                        List<String> values = parseTokens(param.Value);
+                        List<String> values = ParseTokens(param.Value);
                         commandParameters.RemoveAt(i);
                         values.RemoveAt(0);
                         Debug("Arguments: (" + String.Join(" ", values) + ")");
@@ -147,7 +147,7 @@ namespace IngameScript
 
         public class ActionProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void Process(List<CommandParameter> commandParameters)
             {
                 Debug("Start Action Processor");
                 int index = 0;
@@ -201,7 +201,7 @@ namespace IngameScript
 
         public class ConditionProcessor : ParameterProcessor
         {
-            public void process(List<CommandParameter> commandParameters)
+            public void Process(List<CommandParameter> commandParameters)
             {
                 Debug("Start Condition Processor");
                 int index = 0;
