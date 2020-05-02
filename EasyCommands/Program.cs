@@ -23,7 +23,7 @@ namespace IngameScript
     {
         //Debug
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
-        private static bool DEBUG_LOG = true;
+        private static bool DEBUG_LOG = false;
 
         static MultiActionCommand RUNNING_COMMANDS;
         static MyGridProgram PROGRAM;
