@@ -53,18 +53,6 @@ namespace IngameScript
             void Process(List<CommandParameter> commandParameters);
         }
 
-        //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        public static List<String> ParseTokens(String commandString)
-        {
-            return commandString.Split('"')
-                .Select((element, index) => index % 2 == 0  // If even index
-                                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)  // Split the item
-                                    : new string[] { element })  // Keep the entire item
-                .SelectMany(element => element)
-                .Select(element => element.ToLower())
-                .ToList();
-        }
-
         public class SelectorProcessor : ParameterProcessor
         {
             public void Process(List<CommandParameter> commandParameters)
@@ -132,7 +120,7 @@ namespace IngameScript
                         if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) continue;
 
                         Debug("Found Run Keyword!");
-                        List<String> values = ParseTokens(param.Value);
+                        List<Token> values = ParseTokens(param.Value);
                         commandParameters.RemoveAt(i);
                         values.RemoveAt(0);
                         Debug("Arguments: (" + String.Join(" ", values) + ")");

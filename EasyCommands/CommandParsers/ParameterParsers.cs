@@ -35,6 +35,8 @@ namespace IngameScript
         static String[] relativeWords = { "by" };
         static String[] increaseRelativeWords = { "add" };
         static String[] decreaseRelativeWords = { "subtact" };
+        static String[] heightWords = { "height", "length" };
+        static String[] angleWords = { "angle" };
         static String[] speedWords = { "speed", "velocity", "rate", "pace" };
         static String[] waitWords = { "wait", "hold" };
         static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
@@ -145,6 +147,8 @@ namespace IngameScript
             AddWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
             AddWords(reverseWords, new ReverseCommandParameter());
             AddWords(relativeWords, new RelativeCommandParameter());
+            AddWords(heightWords, new NumericPropertyCommandParameter(NumericPropertyType.HEIGHT));
+            AddWords(angleWords, new NumericPropertyCommandParameter(NumericPropertyType.ANGLE));
             AddWords(speedWords, new NumericPropertyCommandParameter(NumericPropertyType.VELOCITY));
             AddWords(connectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED));
             AddWords(disconnectWords, new BooleanPropertyCommandParameter(BooleanPropertyType.CONNECTED), new BooleanCommandParameter(false));
@@ -184,62 +188,93 @@ namespace IngameScript
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }
 
-        static List<CommandParameter> ParseCommandParameters(List<String> tokens)
+        static List<CommandParameter> ParseCommandParameters(List<Token> tokens)
         {
             Print("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens)
             {
-                if (ignoreWords.Contains(token)) continue;
+                String t = token.token;
 
-                if (propertyWords.ContainsKey(token))
+                if (token.isString) {
+                    List<Token> subTokens = ParseTokens(t);
+                    List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
+                    commandParameters.Add(new StringCommandParameter(t, subtokenParams.ToArray()));
+                    continue;
+                }
+
+                if (ignoreWords.Contains(t)) continue;
+
+                if (propertyWords.ContainsKey(t))
                 {
-                    commandParameters.AddList(propertyWords[token]);
+                    commandParameters.AddList(propertyWords[t]);
                     continue;
                 }
 
                 ControlType controlType;
-                if (controlTypeWords.TryGetValue(token, out controlType))
+                if (controlTypeWords.TryGetValue(t, out controlType))
                 {
                     commandParameters.Add(new ControlCommandParameter(controlType));
                     continue;
                 }
 
                 BlockType blockType;
-                if (blockTypeGroupWords.TryGetValue(token, out blockType))
+                if (blockTypeGroupWords.TryGetValue(t, out blockType))
                 {
                     commandParameters.Add(new BlockTypeCommandParameter(blockType));
                     commandParameters.Add(new GroupCommandParameter());
                     continue;
                 }
-                else if (blockTypeWords.TryGetValue(token, out blockType))
+                else if (blockTypeWords.TryGetValue(t, out blockType))
                 {
                     commandParameters.Add(new BlockTypeCommandParameter(blockType));
                     continue;
                 }
 
                 UnitType unitType;
-                if (unitTypeWords.TryGetValue(token, out unitType))
+                if (unitTypeWords.TryGetValue(t, out unitType))
                 {
                     commandParameters.Add(new UnitCommandParameter(unitType));
                     continue;
                 }
 
                 double numericValue;
-                if (Double.TryParse(token, out numericValue))
+                if (Double.TryParse(t, out numericValue))
                 {
                     commandParameters.Add(new NumericCommandParameter((float)numericValue));
                     continue;
                 }
 
                 //If nothing else matches, must be a string
-                List<String> subTokens = ParseTokens(token);
-
-                if (subTokens.Count > 1) commandParameters.Add(new StringCommandParameter(token, ParseCommandParameters(subTokens).ToArray()));
-                else commandParameters.Add(new StringCommandParameter(token));
+                commandParameters.Add(new StringCommandParameter(t));
             }
             return commandParameters;
+        }
+
+        //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
+        public static List<Token> ParseTokens(String commandString)
+        {
+            return commandString.Split('"')
+                .Select((element, index) => index % 2 == 0  // If even index
+                                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false))  // Split the item
+                                    : new Token[] { new Token(element, true) })  // Keep the entire item
+                .SelectMany(element => element)
+                .ToList();
+        }
+
+        public class Token
+        {
+            public String token;
+            public bool isString;
+
+            public Token(string token, bool isString)
+            {
+                this.isString = isString;
+                this.token = token.ToLower();
+            }
+
+            public override string ToString() { return token; }
         }
     }
 }
