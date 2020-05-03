@@ -213,6 +213,12 @@ namespace IngameScript
                     }
                 }
 
+                if (directionIndex >= 0 && numericPropIndex <= 0)
+                {
+                    DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
+                    commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
+                }
+
                 if (reverseIndex >=0 && numericPropIndex < 0)
                 {
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));

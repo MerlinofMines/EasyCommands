@@ -49,11 +49,11 @@ namespace IngameScript
                         throw new Exception("Unable to find requested block group: " + selector.selector);
                     }
 
-                    return BlockHandlerRegistry.getBlocks(group, selector.blockType);
+                    return BlockHandlerRegistry.GetBlocks(group, selector.blockType);
 
                 } else
                 {
-                    return BlockHandlerRegistry.getBlocks(selector.blockType, selector.selector);
+                    return BlockHandlerRegistry.GetBlocks(selector.blockType, selector.selector);
                 }
             }
             public override String ToString()

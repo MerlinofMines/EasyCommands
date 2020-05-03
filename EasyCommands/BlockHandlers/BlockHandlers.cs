@@ -34,6 +34,7 @@ namespace IngameScript
                { BlockType.GRINDER, new BlockHandler<IMyShipGrinder>() },
                { BlockType.ROTOR, new RotorBlockHandler() },
                { BlockType.PROGRAM, new ProgramBlockHandler() },
+               { BlockType.DOOR, new DoorBlockHandler() },
             };
 
             public static BlockHandler GetBlockHandler(BlockType blockType)
@@ -48,46 +49,14 @@ namespace IngameScript
                 }
             }
 
-            public static List<IMyFunctionalBlock> getBlocks(BlockType blockType, String customName)
+            public static List<IMyFunctionalBlock> GetBlocks(BlockType blockType, String customName)
             {
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-
-                switch (blockType)
-                {
-                    case BlockType.PISTON: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyPistonBase>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.ROTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyMotorStator>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.LIGHT: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyInteriorLight>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.MERGE: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipMergeBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.PROJECTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyProjector>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.TIMER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyTimerBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.CONNECTOR: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipConnector>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.WELDER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipWelder>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.GRINDER: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyShipGrinder>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    case BlockType.PROGRAM: PROGRAM.GridTerminalSystem.GetBlocksOfType<IMyProgrammableBlock>(blocks, block => block.CustomName.ToLower() == customName); break;
-                    default: throw new Exception("Unsupported Block Type: " + blockType);
-                }
-                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+                return blockHandlers[blockType].GetBlocks(customName);
             }
 
-            public static List<IMyFunctionalBlock> getBlocks(IMyBlockGroup group, BlockType blockType)
+            public static List<IMyFunctionalBlock> GetBlocks(IMyBlockGroup group, BlockType blockType)
             {
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-
-                switch (blockType)
-                {
-                    case BlockType.PISTON: group.GetBlocksOfType<IMyPistonBase>(blocks); break;
-                    case BlockType.ROTOR: group.GetBlocksOfType<IMyMotorStator>(blocks); break;
-                    case BlockType.LIGHT: group.GetBlocksOfType<IMyInteriorLight>(blocks); break;
-                    case BlockType.MERGE: group.GetBlocksOfType<IMyShipMergeBlock>(blocks); break;
-                    case BlockType.PROJECTOR: group.GetBlocksOfType<IMyProjector>(blocks); break;
-                    case BlockType.TIMER: group.GetBlocksOfType<IMyTimerBlock>(blocks); break;
-                    case BlockType.CONNECTOR: group.GetBlocksOfType<IMyShipConnector>(blocks); break;
-                    case BlockType.WELDER: group.GetBlocksOfType<IMyShipWelder>(blocks); break;
-                    case BlockType.GRINDER: group.GetBlocksOfType<IMyShipGrinder>(blocks); break;
-                    case BlockType.PROGRAM: group.GetBlocksOfType<IMyProgrammableBlock>(blocks); break;
-                    default: throw new Exception("Unsupported Block Type: " + blockType);
-                }
-                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+                return blockHandlers[blockType].GetBlocks(group);
             }
         }
 
@@ -99,13 +68,21 @@ namespace IngameScript
         //Property Setters
         public delegate void StringPropertySetter<T>(T block, String value);
         public delegate void BooleanPropertySetter<T>(T block, bool value);
-        public interface NumericPropertySetter<T> {
-            void SetPropertyValue(T block, float value);
-            void SetPropertyValue(T block, DirectionType DirectionType, float value);
-            void IncrementPropertyValue(T block, float deltaValue);
-            void IncrementPropertyValue(T block, DirectionType direction, float deltaValue);
-            void MovePropertyValue(T block, DirectionType direction);
-            void ReversePropertyValue(T block);
+        public delegate void SetPropertyValue<T>(T block, float value);
+        public delegate void SetPropertyValueDirection<T>(T block, DirectionType DirectionType, float value);
+        public delegate void IncrementPropertyValue<T>(T block, float deltaValue);
+        public delegate void IncrementPropertyValueDirection<T>(T block, DirectionType direction, float deltaValue);
+        public delegate void MovePropertyValue<T>(T block, DirectionType direction);
+        public delegate void ReversePropertyValue<T>(T block);
+
+        public class NumericPropertySetter<T>
+        {
+            public SetPropertyValue<T> Set;
+            public SetPropertyValueDirection<T> SetDirection;
+            public IncrementPropertyValue<T> Increment;
+            public IncrementPropertyValueDirection<T> IncrementDirection;
+            public MovePropertyValue<T> Move;
+            public ReversePropertyValue<T> Reverse;
         }
 
         public interface BlockHandler {
@@ -113,6 +90,8 @@ namespace IngameScript
             StringPropertyType GetDefaultStringProperty();
             NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
             DirectionType GetDefaultDirection();
+            List<IMyFunctionalBlock> GetBlocks(String name);
+            List<IMyFunctionalBlock> GetBlocks(IMyBlockGroup group);
             bool GetBooleanPropertyValue(IMyFunctionalBlock block, BooleanPropertyType property);
             string GetStringPropertyValue(IMyFunctionalBlock block, StringPropertyType property);
             float GetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property);
@@ -146,6 +125,21 @@ namespace IngameScript
                 booleanPropertyGetters.Add(BooleanPropertyType.ON_OFF, (block) => block.Enabled);
                 booleanPropertySetters.Add(BooleanPropertyType.ON_OFF, (block, enabled) => block.Enabled = enabled); 
             }
+
+            public List<IMyFunctionalBlock> GetBlocks(String name)
+            {
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.ToLower().Equals(name));
+                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+            }
+
+            public List<IMyFunctionalBlock> GetBlocks(IMyBlockGroup group)
+            {
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                group.GetBlocksOfType<T>(blocks);
+                return blocks.Select(block => (IMyFunctionalBlock)block).ToList();
+            }
+
 
             public BooleanPropertyType GetDefaultBooleanProperty()
             {
@@ -197,37 +191,37 @@ namespace IngameScript
             public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float value)
             {
                 Print("Setting " + block.CustomName + " " + property + " to " + value);
-                numericPropertySetters[property].SetPropertyValue((T)block, value);
+                numericPropertySetters[property].Set((T)block, value);
             }
 
             public void SetNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float value)
             {
                 Print("Setting " + block.CustomName + " " + property + " to " + value + "in " + direction + "direction");
-                numericPropertySetters[property].SetPropertyValue((T)block, direction, value);
+                numericPropertySetters[property].SetDirection((T)block, direction, value);
             }
 
             public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, float deltaValue)
             {
                 Print("Incrementing " + block.CustomName + " " + property + " by " + deltaValue);
-                numericPropertySetters[property].IncrementPropertyValue((T)block, deltaValue);
+                numericPropertySetters[property].Increment((T)block, deltaValue);
             }
 
             public void IncrementNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction, float deltaValue)
             {
                 Print("Incrementing " + block.CustomName + " " + property + " by " + deltaValue + "in " + direction + "direction");
-                numericPropertySetters[property].IncrementPropertyValue((T)block, direction, deltaValue);
+                numericPropertySetters[property].IncrementDirection((T)block, direction, deltaValue);
             }
 
             public void MoveNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property, DirectionType direction)
             {
                 Print("Moving " + block.CustomName + " " + property + "in " + direction + "direction");
-                numericPropertySetters[property].MovePropertyValue((T)block, direction);
+                numericPropertySetters[property].Move((T)block, direction);
             }
 
             public void ReverseNumericPropertyValue(IMyFunctionalBlock block, NumericPropertyType property)
             {
                 Print("Reversing " + block.CustomName + " " + property);
-                numericPropertySetters[property].ReversePropertyValue((T)block);
+                numericPropertySetters[property].Reverse((T)block);
             }
         }
     }

@@ -41,71 +41,43 @@ namespace IngameScript
 
         public class RotorAngleSetter : NumericPropertySetter<IMyMotorStator>
         {
-            public void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
+            public RotorAngleSetter()
             {
-                IncrementPropertyValue(block, DirectionType.CLOCKWISE, deltaValue);
-            }
-
-            public void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
-            {
-                if (direction == DirectionType.CLOCKWISE) rotateToValue(block, block.Angle + deltaValue);
-                if (direction == DirectionType.COUNTERCLOCKWISE) rotateToValue(block, block.Angle - deltaValue);
-            }
-
-            public void MovePropertyValue(IMyMotorStator block, DirectionType direction)
-            {
-                if (direction == DirectionType.CLOCKWISE) block.TargetVelocityRPM = Math.Abs(block.TargetVelocityRPM);
-                if (direction == DirectionType.COUNTERCLOCKWISE) block.TargetVelocityRPM = -Math.Abs(block.TargetVelocityRPM);
-            }
-
-            public void ReversePropertyValue(IMyMotorStator block)
-            {
-                block.TargetVelocityRPM *= -1;
-            }
-
-            public void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
-            {
-                //TODO: Add Direction Support
-                rotateToValue(block, value);
-            }
-
-            public void SetPropertyValue(IMyMotorStator block, float value)
-            {
-                rotateToValue(block, value);
+                Set = rotateToValue;
+                SetDirection = (b, d, v) => rotateToValue(b, v);
+                IncrementDirection = (b, d, v) =>
+                {
+                    if (d == DirectionType.CLOCKWISE) rotateToValue(b, b.Angle + v);
+                    if (d == DirectionType.COUNTERCLOCKWISE) rotateToValue(b, b.Angle - v);
+                };
+                Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
+                Move = (b, d) =>
+                {
+                    if (d == DirectionType.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
+                    if (d == DirectionType.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
+                };
+                Reverse = (b) => b.TargetVelocityRPM *= -1;
             }
         }
 
         public class RotorVelocitySetter : NumericPropertySetter<IMyMotorStator>
         {
-            public void IncrementPropertyValue(IMyMotorStator block, float deltaValue)
+            public RotorVelocitySetter()
             {
-                IncrementPropertyValue(block, DirectionType.UP, deltaValue);
-            }
-
-            public void IncrementPropertyValue(IMyMotorStator block, DirectionType direction, float deltaValue)
-            {
-                if (direction == DirectionType.UP) block.TargetVelocityRPM += deltaValue;
-                if (direction == DirectionType.DOWN) block.TargetVelocityRPM -= deltaValue;
-            }
-
-            public void MovePropertyValue(IMyMotorStator block, DirectionType direction)
-            {
-                IncrementPropertyValue(block, direction, 1);
-            }
-
-            public void ReversePropertyValue(IMyMotorStator block)
-            {
-                block.TargetVelocityRPM *= -1;
-            }
-
-            public void SetPropertyValue(IMyMotorStator block, DirectionType DirectionType, float value)
-            {
-                block.TargetVelocityRPM = value;
-            }
-
-            public void SetPropertyValue(IMyMotorStator block, float value)
-            {
-                block.TargetVelocityRPM = value;
+                Set = (b, v) => b.TargetVelocityRPM = v;
+                SetDirection = (b, d, v) => b.TargetVelocityRPM = v;
+                IncrementDirection = (b, d, v) =>
+                {
+                    if (d == DirectionType.UP) b.TargetVelocityRPM += v;
+                    if (d == DirectionType.DOWN) b.TargetVelocityRPM -= v;
+                };
+                Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
+                Move = (b, d) =>
+                {
+                    if (d == DirectionType.UP) Increment(b, 1);
+                    if (d == DirectionType.DOWN) Increment(b, -1);
+                };
+                Reverse = (b) => b.TargetVelocityRPM *= -1;
             }
         }
 

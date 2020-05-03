@@ -22,7 +22,7 @@ namespace IngameScript
     partial class Program
     {
         //Configuration.  Keep all words lowercase
-        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either" };
+        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are" };
         static String[] groupWords = { "blocks", "group" };
         static String[] activateWords = { "move", "go", "on", "begin" };
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
@@ -76,6 +76,9 @@ namespace IngameScript
         static String[] completeWords = { "done", "complete", "finished", "built" };
         static String[] progressWords = { "progress", "completion" };
 
+        static String[] openWords = { "open", "opened"};
+        static String[] closeWords = { "close", "closed", "shut" };
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -98,7 +101,11 @@ namespace IngameScript
             { "projectors", BlockType.PROJECTOR },
             { "connectors", BlockType.CONNECTOR },
             { "welders", BlockType.WELDER },
-            { "grinders", BlockType.GRINDER }
+            { "grinders", BlockType.GRINDER },
+            { "doors", BlockType.DOOR },
+            { "hangers", BlockType.DOOR },
+            { "bays", BlockType.DOOR },
+            { "gates", BlockType.DOOR },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -111,7 +118,11 @@ namespace IngameScript
             { "merge", BlockType.MERGE },
             { "connector", BlockType.CONNECTOR },
             { "welder", BlockType.WELDER },
-            { "grinder", BlockType.GRINDER }
+            { "grinder", BlockType.GRINDER },
+            { "door", BlockType.DOOR },
+            { "hanger", BlockType.DOOR },
+            { "bay", BlockType.DOOR },
+            { "gate", BlockType.DOOR },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -134,7 +145,7 @@ namespace IngameScript
         //Internal (Don't touch!)
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        public void initParsers()
+        public static void initParsers()
         {
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
@@ -181,6 +192,8 @@ namespace IngameScript
             AddWords(pausedWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PAUSED));
             AddWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
             AddWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
+            AddWords(openWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(true));
+            AddWords(closeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(false));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands)

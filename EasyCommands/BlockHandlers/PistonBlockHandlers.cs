@@ -39,70 +39,43 @@ namespace IngameScript
 
         public class PistonHeightSetter : NumericPropertySetter<IMyPistonBase>
         {
-            public void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
+            public PistonHeightSetter()
             {
-                IncrementPropertyValue(block, DirectionType.UP, deltaValue);
-            }
-
-            public void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
-            {
-                if (direction == DirectionType.UP) extendPistonToValue(block, block.CurrentPosition + deltaValue);
-                if (direction == DirectionType.DOWN) extendPistonToValue(block, block.CurrentPosition - deltaValue);
-            }
-
-            public void MovePropertyValue(IMyPistonBase block, DirectionType direction)
-            {
-                if (direction == DirectionType.UP) block.Extend();
-                if (direction == DirectionType.DOWN) block.Retract();
-            }
-
-            public void ReversePropertyValue(IMyPistonBase block)
-            {
-                block.Reverse();
-            }
-
-            public void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
-            {
-                extendPistonToValue(block, value);
-            }
-
-            public void SetPropertyValue(IMyPistonBase block, float value)
-            {
-                extendPistonToValue(block, value);
+                Set = extendPistonToValue;
+                SetDirection = (b, d, v) => extendPistonToValue(b, v);
+                IncrementDirection = (b, d, v) =>
+                {
+                    if (d == DirectionType.UP) extendPistonToValue(b, b.CurrentPosition + v);
+                    if (d == DirectionType.DOWN) extendPistonToValue(b, b.CurrentPosition - v);
+                };
+                Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
+                Move = (b, d) =>
+                {
+                    if (d == DirectionType.UP) b.Extend();
+                    if (d == DirectionType.DOWN) b.Retract();
+                };
+                Reverse = (b) => b.Reverse();
             }
         }
 
         public class PistonVelocitySetter : NumericPropertySetter<IMyPistonBase>
         {
-            public void IncrementPropertyValue(IMyPistonBase block, float deltaValue)
+            public PistonVelocitySetter()
             {
-                IncrementPropertyValue(block, DirectionType.UP, deltaValue);
-            }
-
-            public void IncrementPropertyValue(IMyPistonBase block, DirectionType direction, float deltaValue)
-            {
-                if (direction == DirectionType.UP) block.Velocity += deltaValue;
-                if (direction == DirectionType.DOWN) block.Velocity -= deltaValue;
-            }
-
-            public void MovePropertyValue(IMyPistonBase block, DirectionType direction)
-            {
-                IncrementPropertyValue(block, direction, 1);
-            }
-
-            public void ReversePropertyValue(IMyPistonBase block)
-            {
-                block.Velocity *= -1;
-            }
-
-            public void SetPropertyValue(IMyPistonBase block, DirectionType DirectionType, float value)
-            {
-                block.Velocity = value;
-            }
-
-            public void SetPropertyValue(IMyPistonBase block, float value)
-            {
-                block.Velocity = value;
+                Set = (b, v) => b.Velocity = v;
+                SetDirection = (b, d, v) => b.Velocity = v;
+                IncrementDirection = (b, d, v) =>
+                {
+                    if (d == DirectionType.UP) b.Velocity += v;
+                    if (d == DirectionType.DOWN) b.Velocity -= v;
+                };
+                Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
+                Move = (b, d) =>
+                {
+                    if (d == DirectionType.UP) Increment(b, 1);
+                    if (d == DirectionType.DOWN) Increment(b, -1);
+                };
+                Reverse = (b) => b.Velocity *= -1;
             }
         }
 
