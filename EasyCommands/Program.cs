@@ -78,14 +78,50 @@ namespace IngameScript
         static void ParseCommands() {
             if (RUNNING_COMMANDS == null) {
                 Print("Parsing Custom Data");
-                String[] commandStrings = PROGRAM.Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                List<Command> commands = commandStrings
-                    .Select(command => ParseCommand(command))
+                List<CommandLine> commandStrings = PROGRAM.Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(str => new CommandLine(str))
                     .ToList();
 
-                RUNNING_COMMANDS = new MultiActionCommand(commands);
+                Command parsedCommand = ParseCommand(commandStrings, 0, true);
+
+                if (parsedCommand is MultiActionCommand) RUNNING_COMMANDS = (MultiActionCommand)parsedCommand;
+                else RUNNING_COMMANDS = new MultiActionCommand(new List<Command> { parsedCommand });
             }
+        }
+
+        static Command ParseCommand(List<CommandLine> commandStrings, int index, bool parseSiblings) {
+            Print("Debug Command at index: " + index);
+            List<Command> resolvedCommands = new List<Command>();
+            while (index < commandStrings.Count - 1)//Parse Sibling & Child Commands, if any
+            {
+                CommandLine current = commandStrings[index];
+                CommandLine next = commandStrings[index + 1];
+                if (current.Depth > next.Depth) break;//End, break
+                if (current.Depth < next.Depth) {//I'm a parent of next line
+                    Debug("Parsing Sub Command @ Index: " + (index + 1));
+                    current.CommandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, true)));
+                    continue;
+                }
+                if (next.CommandParameters[0] is ElseCommandParameter) {//Handle Otherwise
+                    Debug("Handling Otherwise @ index: " + index);
+                    current.CommandParameters.Add(next.CommandParameters[0]);
+                    next.CommandParameters.RemoveAt(0);
+                    current.CommandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, false)));
+                    continue;
+                }
+
+                if (!parseSiblings) break;//Only parsing myself
+                Debug("Parsing Sibling Command @ Index: " + index);
+                resolvedCommands.Add(ParseCommand(current.CommandParameters));
+                commandStrings.RemoveAt(index);
+            }
+
+            //Parse Last one, which has become current
+            Debug("Parsing Final Command @ Index: " + index);
+            resolvedCommands.Add(ParseCommand(commandStrings[index].CommandParameters));
+            commandStrings.RemoveAt(index);
+
+            if (resolvedCommands.Count > 1) return new MultiActionCommand(resolvedCommands); else return resolvedCommands[0];
         }
 
         private static Command ParseCommand(String commandLine) {
@@ -102,6 +138,17 @@ namespace IngameScript
             parameters.ForEach(param => Debug("Type: " + param.GetType()));
 
             return CommandParserRegistry.ParseCommand(parameters);
+        }
+
+        class CommandLine {
+            public int Depth;
+            public List<CommandParameter> CommandParameters;
+
+            public CommandLine(String commandString)
+            {
+                Depth = commandString.TakeWhile(Char.IsWhiteSpace).Count();
+                CommandParameters = ParseCommandParameters(ParseTokens(commandString));
+            }
         }
     }
 }

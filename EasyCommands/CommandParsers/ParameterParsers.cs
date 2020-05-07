@@ -268,7 +268,7 @@ namespace IngameScript
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
         public static List<Token> ParseTokens(String commandString)
         {
-            return commandString.Split('"')
+            return commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
                                     ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false))  // Split the item
                                     : new Token[] { new Token(element, true) })  // Keep the entire item
