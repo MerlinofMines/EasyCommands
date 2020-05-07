@@ -24,19 +24,15 @@ namespace IngameScript
 
         public abstract class Command
         {
-            protected bool async = false;
-
-            public bool IsAsync()
-            {
-                return async;
-            }
-
-            public void SetAsync(bool async)
-            {
-                this.async = async;
-            }
-
+            public bool Async = false;
             public virtual void Reset() { }
+            protected virtual Command Clone() { return this; }
+            public Command Copy()
+            {
+                Command copy = Clone();
+                if (Async) copy.Async = true;
+                return copy;
+            }
 
             //Returns true if the program has finished execution.
             public abstract bool Execute();
@@ -45,17 +41,21 @@ namespace IngameScript
         public abstract class HandlerCommand : Command
         {
             private CommandHandler commandHandler;
+            protected List<CommandParameter> commandParameters;
 
-            public HandlerCommand(List<CommandParameter> commandParameters)
+            public HandlerCommand(List<CommandParameter> parameters)
             {
-                PreParseCommands(commandParameters);
+                commandParameters = parameters;
+                parameters = new List<CommandParameter>(parameters);
+
+                PreParseCommands(parameters);
 
                 Debug("Command Handler Post Parsed Command Parameters: ");
-                commandParameters.ForEach(param => Debug("" + param.GetType()));
+                parameters.ForEach(param => Debug("" + param.GetType()));
 
                 foreach (CommandHandler handler in GetHandlers())
                 {
-                    if (handler.CanHandle(commandParameters)) {
+                    if (handler.CanHandle(parameters)) {
                         commandHandler = handler;
                         return;
                     }
@@ -69,12 +69,9 @@ namespace IngameScript
                 return commandHandler.Handle();
             }
 
-            public override void Reset()
-            {
-                commandHandler.Reset();
-            }
+            public override void Reset() { commandHandler.Reset();}
 
-            public abstract void PreParseCommands(List<CommandParameter> commandParameters);
+            public abstract void PreParseCommands(List<CommandParameter> parameters);
 
             public abstract List<CommandHandler> GetHandlers();
         }
@@ -88,7 +85,6 @@ namespace IngameScript
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
                 controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
-                parameters.RemoveAt(controlIndex);
                 this.parameters = parameters;
             }
 
@@ -115,6 +111,7 @@ namespace IngameScript
                 }
                 return true;
             }
+            protected override Command Clone() { return new ControlCommand(parameters); }
         }
 
         public class WaitCommand : HandlerCommand
@@ -123,22 +120,16 @@ namespace IngameScript
             {
             }
 
-            public override void PreParseCommands(List<CommandParameter> commandParameters)
-            {
-                commandParameters.RemoveAll(param => param is WaitCommandParameter);
-                bool unitExists = commandParameters.Exists(param => param is UnitCommandParameter);
-                bool timeExists = commandParameters.Exists(param => param is NumericCommandParameter);
+            public override void PreParseCommands(List<CommandParameter> parameters) {
+                parameters.RemoveAll(param => param is WaitCommandParameter);
+                bool unitExists = parameters.Exists(param => param is UnitCommandParameter);
+                bool timeExists = parameters.Exists(param => param is NumericCommandParameter);
 
-                if (!timeExists && !unitExists) {commandParameters.Add(new NumericCommandParameter(1f)); commandParameters.Add(new UnitCommandParameter(UnitType.TICKS));}
-                else if (!unitExists) { commandParameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
+                if (!timeExists && !unitExists) {parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS));}
+                else if (!unitExists) { parameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
             }
-            public override List<CommandHandler> GetHandlers()
-            {
-                return new List<CommandHandler>
-                {
-                    new WaitForDurationUnitHandler()
-                };
-            }
+            public override List<CommandHandler> GetHandlers() {return new List<CommandHandler> {new WaitForDurationUnitHandler()};}
+            protected override Command Clone() { return new WaitCommand(commandParameters); }
         }
 
         public class NullCommand : Command {public override bool Execute() {return true;}}
@@ -148,10 +139,7 @@ namespace IngameScript
             private BlockHandler blockHandler;
             private IEntityProvider entityProvider;
 
-            public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters)
-            {
-
-            }
+            public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters) { }
 
             public override void PreParseCommands(List<CommandParameter> commandParameters)
             {
@@ -245,6 +233,7 @@ namespace IngameScript
                     //TODO: GPS Handler?
                 };
             }
+            protected override Command Clone() { return new BlockHandlerCommand(commandParameters); }
         }
 
         public class ConditionalCommand : Command
@@ -263,13 +252,13 @@ namespace IngameScript
                 this.conditionMetCommand = conditionMetCommand;
                 this.conditionNotMetCommand = conditionNotMetCommand;
                 this.alwaysEvaluate = alwaysEvaluate;
-                if (alwaysEvaluate) updateAlwaysEvaluate();
+                if (alwaysEvaluate) UpdateAlwaysEvaluate();
             }
 
             public override bool Execute()
             {
                 Print("Executing Conditional Command");
-                Print("Async: " + async);
+                Print("Async: " + Async);
                 Print("Condition: " + condition.ToString());
                 Debug("Action Command: " + conditionMetCommand.ToString());
                 Debug("Other Command: " + conditionNotMetCommand.ToString());
@@ -304,12 +293,13 @@ namespace IngameScript
                 evaluated = false;
                 isExecuting = false;
             }
+            protected override Command Clone() { return new ConditionalCommand(condition, conditionMetCommand.Copy(), conditionNotMetCommand.Copy(), alwaysEvaluate); }
 
-            private void updateAlwaysEvaluate()
+            private void UpdateAlwaysEvaluate()
             {
                 alwaysEvaluate = true;
-                if (conditionMetCommand is ConditionalCommand) ((ConditionalCommand)conditionMetCommand).updateAlwaysEvaluate();
-                if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).updateAlwaysEvaluate();
+                if (conditionMetCommand is ConditionalCommand) ((ConditionalCommand)conditionMetCommand).UpdateAlwaysEvaluate();
+                if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).UpdateAlwaysEvaluate();
             }
 
             private bool EvaluateCondition()
@@ -339,7 +329,7 @@ namespace IngameScript
             {
                 if (currentCommands == null)
                 {
-                    currentCommands = new List<Command>(commandsToExecute);
+                    currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
                     loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
                 }
 
@@ -354,7 +344,7 @@ namespace IngameScript
 
                     bool handled = nextCommand.Execute();
                     if (handled && currentCommands != null) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
-                    if (!nextCommand.IsAsync()) break;
+                    if (!nextCommand.Async) break;
                     Print("Command is async, continuing to command at index: " + commandIndex);
                 }
 
@@ -364,22 +354,9 @@ namespace IngameScript
                 Reset();
                 return false;
             }
-
-            public override void Reset()
-            {
-                currentCommands = null;
-                foreach (Command command in commandsToExecute) { command.Reset(); }
-            }
-
-            public void Clear()
-            {
-                currentCommands.Clear();
-            }
-
-            public void Loop(int times)
-            {
-                loopCount+=times;
-            }
+            public override void Reset() { currentCommands = null; }
+            protected override Command Clone() { return new MultiActionCommand(commandsToExecute); }
+            public void Loop(int times) { loopCount+=times; }
         }
     }
 }

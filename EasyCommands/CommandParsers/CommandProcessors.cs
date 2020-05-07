@@ -62,7 +62,7 @@ namespace IngameScript
                 {
                     if (!(commandParameters[i] is AsyncCommandParameter && commandParameters[i + 1] is CommandReferenceParameter)) continue;
                     Command subCommand = ((CommandReferenceParameter)commandParameters[i + 1]).Value;
-                    subCommand.SetAsync(true);
+                    subCommand.Async = true;
                     commandParameters.RemoveRange(i, 2);
                     commandParameters.Insert(i, new CommandReferenceParameter(subCommand));
                     processed = true;
