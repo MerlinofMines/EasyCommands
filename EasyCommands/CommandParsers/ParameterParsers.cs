@@ -79,6 +79,9 @@ namespace IngameScript
         static String[] openWords = { "open", "opened"};
         static String[] closeWords = { "close", "closed", "shut" };
 
+        static String[] gosubKeywords = { "call", "gosub" };
+        static String[] gotoKeywords = { "goto" };
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -194,6 +197,8 @@ namespace IngameScript
             AddWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
             AddWords(openWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(true));
             AddWords(closeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(false));
+            AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
+            AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands)

@@ -26,6 +26,7 @@ namespace IngameScript
             private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
             {
                   new SelectorProcessor(),
+                  new FunctionProcessor(),
                   new RunArgumentProcessor(),
                   new ConditionProcessor(),
                   new ActionProcessor(),
@@ -106,6 +107,23 @@ namespace IngameScript
             }
         }
 
+        public class FunctionProcessor : ParameterProcessor
+        {
+            public void Process(List<CommandParameter> parameters)
+            {
+                Debug("Start Function Argument Processor");
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    if (parameters[i] is StringCommandParameter)
+                    {
+                        Debug("Found Function Call");
+                        StringCommandParameter param = (StringCommandParameter)parameters[i];
+                        if (FUNCTIONS.ContainsKey(param.Value)) { parameters.Insert(i, new FunctionCommandParameter(FunctionType.GOTO)); i++; }
+                    }
+                }
+                Debug("End Function Argument Processor");
+            }
+        }
         public class RunArgumentProcessor : ParameterProcessor
         {
             public void Process(List<CommandParameter> commandParameters)
@@ -183,7 +201,8 @@ namespace IngameScript
                     parameter is RelativeCommandParameter ||
                     parameter is WaitCommandParameter ||
                     parameter is UnitCommandParameter ||
-                    parameter is ControlCommandParameter;
+                    parameter is ControlCommandParameter ||
+                    parameter is FunctionCommandParameter;
             }
         }
 

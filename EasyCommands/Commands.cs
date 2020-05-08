@@ -76,6 +76,42 @@ namespace IngameScript
             public abstract List<CommandHandler> GetHandlers();
         }
 
+        public class FunctionCommand : Command {
+            MultiActionCommand function;
+            String functionName;
+            List<CommandParameter> parameters;
+            FunctionType type;
+
+            public FunctionCommand(List<CommandParameter> parameters)
+            {
+                this.parameters = parameters;
+                int typeIndex = parameters.FindIndex(p => p is FunctionCommandParameter);
+                if (typeIndex < 0) throw new Exception("Function Type is required for Function Command");
+                int functionindex = parameters.FindIndex(p => p is StringCommandParameter);
+                if (functionindex < 0) throw new Exception("Function name required for Function Command");
+                functionName = ((StringCommandParameter)parameters[functionindex]).Value;
+                type = ((FunctionCommandParameter)parameters[typeIndex]).Value;
+            }
+
+            public override bool Execute() {
+                if (function == null) function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
+                STATE = ProgramState.RUNNING;
+                switch (type)
+                {
+                    case FunctionType.GOSUB:
+                        return function.Execute();
+                    case FunctionType.GOTO:
+                        RUNNING_COMMANDS = function;
+                        RUNNING_FUNCTION = functionName;
+                        return true;
+                    default:
+                        throw new Exception("Unsupported Function Type: " + type);
+                }
+            }
+            protected override Command Clone() { return new FunctionCommand(parameters); }
+        }
+
+
         public class ControlCommand : Command
         {
             List<CommandParameter> parameters;
@@ -92,21 +128,21 @@ namespace IngameScript
             {
                 switch (controlType) {
                     case ControlType.STOP:
-                        RUNNING_COMMANDS = null; state = ProgramState.STOPPED; break;
+                        RUNNING_COMMANDS = null; STATE = ProgramState.STOPPED; break;
                     case ControlType.PARSE:
-                        RUNNING_COMMANDS = null; ParseCommands(); state = ProgramState.STOPPED; break;
+                        RUNNING_COMMANDS = null; ParseCommands(); STATE = ProgramState.STOPPED; break;
                     case ControlType.START:
-                        RUNNING_COMMANDS = null; state = ProgramState.RUNNING; break;
+                        RUNNING_COMMANDS = null; STATE = ProgramState.RUNNING; break;
                     case ControlType.RESTART:
-                        RUNNING_COMMANDS.Reset(); RUNNING_COMMANDS.Loop(1); state = ProgramState.RUNNING; break;
+                        RUNNING_COMMANDS.Reset(); RUNNING_COMMANDS.Loop(1); STATE = ProgramState.RUNNING; break;
                     case ControlType.PAUSE:
-                        state = ProgramState.PAUSED; break;
+                        STATE = ProgramState.PAUSED; break;
                     case ControlType.RESUME:
-                        state = ProgramState.RUNNING; break;
+                        STATE = ProgramState.RUNNING; break;
                     case ControlType.LOOP:
                         int numericIndex = parameters.FindIndex(p => p is NumericCommandParameter);
                         float loopAmount = (numericIndex < 0) ? 1 : ((NumericCommandParameter)parameters[numericIndex]).Value;
-                        RUNNING_COMMANDS.Loop((int)loopAmount); state = ProgramState.RUNNING; break;
+                        RUNNING_COMMANDS.Loop((int)loopAmount); STATE = ProgramState.RUNNING; break;
                     default: throw new Exception("Unsupported Control Type");
                 }
                 return true;

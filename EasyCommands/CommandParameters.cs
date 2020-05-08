@@ -93,6 +93,13 @@ namespace IngameScript
             }
         }
 
+        public class FunctionCommandParameter : ValueCommandParameter<FunctionType>
+        {
+            public FunctionCommandParameter(FunctionType value) : base(value)
+            {
+            }
+        }
+
         public class IfCommandParameter : CommandParameter 
         {
             public bool inverseCondition;
