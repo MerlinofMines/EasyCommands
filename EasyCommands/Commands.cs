@@ -103,7 +103,7 @@ namespace IngameScript
                     case FunctionType.GOTO:
                         RUNNING_COMMANDS = function;
                         RUNNING_FUNCTION = functionName;
-                        return true;
+                        return false;
                     default:
                         throw new Exception("Unsupported Function Type: " + type);
                 }
