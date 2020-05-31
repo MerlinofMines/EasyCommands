@@ -34,55 +34,41 @@ namespace IngameScript
 
             public static void process(List<CommandParameter> commandParameters)
             {
-                Debug("Start Parameter Processor ");
                 foreach (ParameterProcessor parser in parameterProcessors)
                 {
+                    Debug("Start Parameter Processor: " + parser.GetType());
                     Debug("Pre Processed Parameters:");
                     commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
-
                     parser.Process(commandParameters);
-
+                    Debug("End Parameter Processor: " + parser.GetType());
                     Debug("Post Processed Parameters:");
                     commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
                 }
-                Debug("End Parameter Processor ");
             }
         }
 
-        public interface ParameterProcessor
+        public abstract class ParameterProcessor
         {
-            void Process(List<CommandParameter> commandParameters);
+            protected abstract bool ShouldProcess(CommandParameter p);
+            protected abstract void ConvertNext(List<CommandParameter> p, ref int i);
+            public void Process(List<CommandParameter> p) { for (int i = 0; i < p.Count; i++) { if (ShouldProcess(p[i])) ConvertNext(p, ref i); } }
         }
 
         public class SelectorProcessor : ParameterProcessor
         {
-            public void Process(List<CommandParameter> commandParameters)
-            {
-                Debug("Start Selector Processor");
-                int index = 0;
-                while (index < commandParameters.Count)
-                {
-                    if (commandParameters[index] is GroupCommandParameter || commandParameters[index] is StringCommandParameter || commandParameters[index] is BlockTypeCommandParameter)
-                    {
-                        Debug("Found Possible Selector at Index: " + index);
-                        index+=convertNextSelector(commandParameters, index);
-                    } else {
-                        index++;
-                    }
-                }
-                Debug("End Selector Processor");
+            protected override bool ShouldProcess(CommandParameter p) {
+                return p is GroupCommandParameter || p is StringCommandParameter || p is BlockTypeCommandParameter;
             }
-
-            private int convertNextSelector(List<CommandParameter> commandParameters, int index)
+            protected override void ConvertNext(List<CommandParameter> p, ref int i)
             {
                 bool isGroup = false;
                 StringCommandParameter selector = null;
                 BlockTypeCommandParameter blockType = null;
                 int paramCount = 0;
 
-                while (index + paramCount < commandParameters.Count)
+                while (i + paramCount < p.Count)
                 {
-                    CommandParameter param = commandParameters[index + paramCount];
+                    CommandParameter param = p[i + paramCount];
 
                     if (param is GroupCommandParameter) isGroup = true;
                     else if (param is StringCommandParameter && selector == null) selector = ((StringCommandParameter)param);
@@ -93,142 +79,84 @@ namespace IngameScript
 
                 if (selector == null) throw new Exception("All selectors must have a string identifier");
 
-                if (blockType == null) {
-                    int blockTypeIndex = selector.SubTokens.FindLastIndex(p => p is BlockTypeCommandParameter);//Use Last Block Type
-                    if (blockTypeIndex<0) return paramCount; //Apparently not a Selector
-                    if (selector.SubTokens.Exists(p => p is GroupCommandParameter)) isGroup = true;
+                if (blockType == null)
+                {
+                    int blockTypeIndex = selector.SubTokens.FindLastIndex(s => s is BlockTypeCommandParameter);//Use Last Block Type
+                    if (blockTypeIndex < 0) return; //Apparently not a Selector
+                    if (selector.SubTokens.Exists(s => s is GroupCommandParameter)) isGroup = true;
                     blockType = ((BlockTypeCommandParameter)selector.SubTokens[blockTypeIndex]);
                 }
 
-                Debug("Converted String at index: " + index + " to SelectorCommandParamter");
-                commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Insert(index, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector.Value));
-                return 1;
+                Debug("Converted String at index: " + i + " to SelectorCommandParamter");
+                p.RemoveRange(i, paramCount);
+                p.Insert(i, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector.Value));
             }
         }
 
         public class FunctionProcessor : ParameterProcessor
         {
-            public void Process(List<CommandParameter> parameters)
-            {
-                Debug("Start Function Argument Processor");
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    if (parameters[i] is StringCommandParameter)
-                    {
-                        Debug("Found Function Call");
-                        StringCommandParameter param = (StringCommandParameter)parameters[i];
-                        if (FUNCTIONS.ContainsKey(param.Value)) { parameters.Insert(i, new FunctionCommandParameter(FunctionType.GOTO)); i++; }
-                    }
-                }
-                Debug("End Function Argument Processor");
+            protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
+            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
+                StringCommandParameter param = (StringCommandParameter)p[i];
+                if (FUNCTIONS.ContainsKey(param.Value)) { p.Insert(i, new FunctionCommandParameter(FunctionType.GOTO)); i++; }
             }
         }
         public class RunArgumentProcessor : ParameterProcessor
         {
-            public void Process(List<CommandParameter> commandParameters)
-            {
-                Debug("Start Run Argument Processor");
-                for (int i = 0; i < commandParameters.Count; i++)
-                {
-                    if (commandParameters[i] is StringCommandParameter)
-                    {
-                        StringCommandParameter param = (StringCommandParameter)commandParameters[i];
-                        if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is StringPropertyCommandParameter)) continue;
-                        if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) continue;
-
-                        Debug("Found Run Keyword!");
-                        List<Token> values = ParseTokens(param.Value);
-                        commandParameters.RemoveAt(i);
-                        values.RemoveAt(0);
-                        Debug("Arguments: (" + String.Join(" ", values) + ")");
-                        commandParameters.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
-                        commandParameters.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
-                        i++;
-                    }
-                }
-                Debug("End Run Argument Processor");
+            protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
+            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
+                StringCommandParameter param = (StringCommandParameter)p[i];
+                if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is StringPropertyCommandParameter)) return;
+                if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) return;
+                Debug("Found Run Keyword!");
+                List<Token> values = ParseTokens(param.Value);
+                p.RemoveAt(i);
+                values.RemoveAt(0);
+                Debug("Arguments: (" + String.Join(" ", values) + ")");
+                p.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
+                p.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
             }
         }
 
         public class ActionProcessor : ParameterProcessor
         {
-            public void Process(List<CommandParameter> commandParameters)
-            {
-                Debug("Start Action Processor");
-                int index = 0;
-                while (index < commandParameters.Count)
-                {
-                    if (isPartOfAction(commandParameters[index]))
-                    {
-                        convertNextActionParameter(commandParameters, index);
-                    }
-                    index++;
-                }
-                Debug("End Action Processor");
+            protected override bool ShouldProcess(CommandParameter p) {
+                return p is SelectorCommandParameter ||
+                    p is DirectionCommandParameter ||
+                    p is NumericCommandParameter ||
+                    p is StringCommandParameter ||
+                    p is BooleanCommandParameter ||
+                    p is NumericPropertyCommandParameter ||
+                    p is BooleanPropertyCommandParameter ||
+                    p is StringPropertyCommandParameter ||
+                    p is ReverseCommandParameter ||
+                    p is RelativeCommandParameter ||
+                    p is WaitCommandParameter ||
+                    p is UnitCommandParameter ||
+                    p is ControlCommandParameter ||
+                    p is FunctionCommandParameter;
             }
-
-            private void convertNextActionParameter(List<CommandParameter> commandParameters, int index)
-            {
+            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 int paramCount = 0;
-                while (index + paramCount < commandParameters.Count)
-                {
-                    CommandParameter param = commandParameters[index + paramCount];
-
-                    if (!isPartOfAction(param)) break;
+                while (i + paramCount < p.Count) {
+                    if (!ShouldProcess(p[i + paramCount])) break;
                     paramCount++;
                 }
-
-                List<CommandParameter> actionParameters = commandParameters.GetRange(index, paramCount);
-
+                List<CommandParameter> actionParameters = p.GetRange(i, paramCount);
                 ActionCommandParameter actionParameter = new ActionCommandParameter(actionParameters);
-
-                commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Insert(index, actionParameter);
-            }
-
-            private bool isPartOfAction(CommandParameter parameter)
-            {
-                return parameter is SelectorCommandParameter ||
-                    parameter is DirectionCommandParameter ||
-                    parameter is NumericCommandParameter ||
-                    parameter is StringCommandParameter ||
-                    parameter is BooleanCommandParameter ||
-                    parameter is NumericPropertyCommandParameter ||
-                    parameter is BooleanPropertyCommandParameter ||
-                    parameter is StringPropertyCommandParameter ||
-                    parameter is ReverseCommandParameter ||
-                    parameter is RelativeCommandParameter ||
-                    parameter is WaitCommandParameter ||
-                    parameter is UnitCommandParameter ||
-                    parameter is ControlCommandParameter ||
-                    parameter is FunctionCommandParameter;
+                p.RemoveRange(i, paramCount);
+                p.Insert(i, actionParameter);
             }
         }
 
         public class ConditionProcessor : ParameterProcessor
         {
-            public void Process(List<CommandParameter> commandParameters)
+            protected override bool ShouldProcess(CommandParameter p) { return p is IfCommandParameter; }
+            protected override void ConvertNext(List<CommandParameter> p, ref int i)
             {
-                Debug("Start Condition Processor");
-                int index = 0;
-                while (index < commandParameters.Count)
-                {
-                    if (commandParameters[index] is IfCommandParameter)
-                    {
-                        index++;
-                        convertNextConditionParameter(commandParameters, index);
-                    }
-                    index++;
-                }
-                Debug("End Condition Processor");
-            }
-
-            public void convertNextConditionParameter(List<CommandParameter> commandParameters, int index)
-            {
-                Debug("Attempting to parse Condition at index " + index);
-                parseNextConditionTokens(commandParameters, index);
-                resolveNextCondition(commandParameters, index);
+                Debug("Attempting to parse Condition at index " + i);
+                parseNextConditionTokens(p, i+1);
+                resolveNextCondition(p, i+1);
             }
 
             public void parseNextConditionTokens(List<CommandParameter> commandParameters, int index) {
