@@ -144,13 +144,6 @@ namespace IngameScript
             }
         }
 
-        public class ActionCommandParameter : ValueCommandParameter<List<CommandParameter>>
-        {
-            public ActionCommandParameter(List<CommandParameter> value) : base(value)
-            {
-            }
-        }
-
         public class SelectorCommandParameter : CommandParameter
         {
             public BlockType blockType;

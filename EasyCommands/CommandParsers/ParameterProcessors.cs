@@ -142,10 +142,16 @@ namespace IngameScript
                     if (!ShouldProcess(p[i + paramCount])) break;
                     paramCount++;
                 }
-                List<CommandParameter> actionParameters = p.GetRange(i, paramCount);
-                ActionCommandParameter actionParameter = new ActionCommandParameter(actionParameters);
+                List<CommandParameter> action = p.GetRange(i, paramCount);
+
+                Command command;
+                if (action.Exists(a => a is FunctionCommandParameter)) command = new FunctionCommand(action);
+                else if (action.Exists(a => a is ControlCommandParameter)) command = new ControlCommand(action);
+                else if (action.Exists(a => a is WaitCommandParameter)) command = new WaitCommand(action);
+                else if (action.Exists(a => a is SelectorCommandParameter)) command = new BlockHandlerCommand(action);
+                else throw new Exception("Unknown Command Reference Type.");
                 p.RemoveRange(i, paramCount);
-                p.Insert(i, actionParameter);
+                p.Insert(i, new CommandReferenceParameter(command));
             }
         }
 

@@ -23,9 +23,7 @@ namespace IngameScript
     {
         public static class CommandParserRegistry
         {
-            private static List<CommandProcessor> CommandParsers = new List<CommandProcessor>()
-            {
-                new ActionCommandProcessor(), //Todo, remove this.  Just parse Action straight to CommandReference?
+            private static List<CommandProcessor> CommandParsers = new List<CommandProcessor>() {
                 new AsyncCommandProcessor(),
                 new ParenthesisCommandProcessor(),
                 new ConditionalCommandProcessor(),
@@ -199,32 +197,6 @@ namespace IngameScript
                     commandParameters.RemoveRange(startIndex, i + 1 - startIndex);
                     commandParameters.Insert(startIndex, new CommandReferenceParameter(command));
                     i = startIndex + 1;
-                    processed = true;
-                }
-                return processed;
-            }
-        }
-
-        public class ActionCommandProcessor : CommandProcessor
-        {
-            public bool ProcessCommand(List<CommandParameter> commandParameters)
-            {
-                bool processed = false;
-
-                for(int i = 0; i < commandParameters.Count; i++)
-                {
-                    if (!(commandParameters[i] is ActionCommandParameter)) continue;
-                    ActionCommandParameter action = (ActionCommandParameter)commandParameters[i];
-
-                    Command command;
-                    if (action.Value.Exists(p => p is FunctionCommandParameter)) command = new FunctionCommand(action.Value);
-                    else if (action.Value.Exists(p => p is ControlCommandParameter)) command = new ControlCommand(action.Value);
-                    else if (action.Value.Exists(p => p is WaitCommandParameter)) command = new WaitCommand(action.Value);
-                    else if (action.Value.Exists(p => p is SelectorCommandParameter)) command = new BlockHandlerCommand(action.Value);
-                    else throw new Exception("Unknown Action Type. ");
-
-                    commandParameters.RemoveAt(i);
-                    commandParameters.Insert(i, new CommandReferenceParameter(command));
                     processed = true;
                 }
                 return processed;
