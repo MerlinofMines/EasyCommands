@@ -29,6 +29,7 @@ namespace IngameScript
         static Dictionary<String, MultiActionCommand> FUNCTIONS = new Dictionary<string, MultiActionCommand>();
         static String DEFAULT_FUNCTION;
         static String RUNNING_FUNCTION;
+        static String CUSTOM_DATA;
         static MyGridProgram PROGRAM;
 
         static ProgramState STATE = ProgramState.STOPPED;
@@ -83,9 +84,10 @@ namespace IngameScript
         }
 
         static void ParseCommands() {
-            if (RUNNING_COMMANDS == null) {
+            if (RUNNING_COMMANDS == null || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
                 Print("Parsing Custom Data");
-                List<String> commandStrings = PROGRAM.Me.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                CUSTOM_DATA = PROGRAM.Me.CustomData;
+                List<String> commandStrings = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
                     .ToList();
 
                 ParseFunctions(commandStrings);
