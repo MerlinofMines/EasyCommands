@@ -134,7 +134,9 @@ namespace IngameScript
                     p is WaitCommandParameter ||
                     p is UnitCommandParameter ||
                     p is ControlCommandParameter ||
-                    p is FunctionCommandParameter;
+                    p is FunctionCommandParameter ||
+                    p is ListenCommandParameter ||
+                    p is SendCommandParameter;
             }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 int paramCount = 0;
@@ -146,6 +148,8 @@ namespace IngameScript
 
                 Command command;
                 if (action.Exists(a => a is FunctionCommandParameter)) command = new FunctionCommand(action);
+                else if (action.Exists(a => a is ListenCommandParameter)) command = new ListenCommand(action);
+                else if (action.Exists(a => a is SendCommandParameter)) command = new SendCommand(action);
                 else if (action.Exists(a => a is ControlCommandParameter)) command = new ControlCommand(action);
                 else if (action.Exists(a => a is WaitCommandParameter)) command = new WaitCommand(action);
                 else if (action.Exists(a => a is SelectorCommandParameter)) command = new BlockHandlerCommand(action);

@@ -69,7 +69,7 @@ namespace IngameScript
                 return commandHandler.Handle();
             }
 
-            public override void Reset() { commandHandler.Reset();}
+            public override void Reset() { commandHandler.Reset(); }
 
             public abstract void PreParseCommands(List<CommandParameter> parameters);
 
@@ -161,11 +161,33 @@ namespace IngameScript
                 bool unitExists = parameters.Exists(param => param is UnitCommandParameter);
                 bool timeExists = parameters.Exists(param => param is NumericCommandParameter);
 
-                if (!timeExists && !unitExists) {parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS));}
+                if (!timeExists && !unitExists) { parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS)); }
                 else if (!unitExists) { parameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
             }
-            public override List<CommandHandler> GetHandlers() {return new List<CommandHandler> {new WaitForDurationUnitHandler()};}
+            public override List<CommandHandler> GetHandlers() { return new List<CommandHandler> { new WaitForDurationUnitHandler() }; }
             protected override Command Clone() { return new WaitCommand(commandParameters); }
+        }
+
+        public class ListenCommand : Command {
+            String tag;
+            public ListenCommand(List<CommandParameter> commandParameters) {
+                int tagIndex = commandParameters.FindIndex(p => p is StringCommandParameter);
+                if (tagIndex < 0) throw new Exception("Tag is required");
+                tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
+            }
+            public override bool Execute() {PROGRAM.IGC.RegisterBroadcastListener(tag);return true;}
+        }
+
+        public class SendCommand : Command {
+            String message, tag;
+            public SendCommand(List<CommandParameter> commandParameters) {
+                int messageIndex = commandParameters.FindIndex(p => p is StringCommandParameter);
+                int tagIndex = commandParameters.FindLastIndex(p => p is StringCommandParameter);
+                if (messageIndex == tagIndex) throw new Exception("Both Message and Tag must be present");
+                message = ((StringCommandParameter)commandParameters[messageIndex]).Value;
+                tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
+            }
+            public override bool Execute() {PROGRAM.IGC.SendBroadcastMessage(tag, message);return true;}
         }
 
         public class NullCommand : Command {public override bool Execute() {return true;}}

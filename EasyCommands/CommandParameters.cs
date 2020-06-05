@@ -176,20 +176,11 @@ namespace IngameScript
             }
         }
 
-        public class ReverseCommandParameter : CommandParameter
-        {
-
-        }
-
-        public class RelativeCommandParameter : CommandParameter
-        {
-
-        }
-
-        public class WaitCommandParameter : CommandParameter
-        {
-
-        }
+        public class ReverseCommandParameter : CommandParameter{}
+        public class RelativeCommandParameter : CommandParameter{}
+        public class WaitCommandParameter : CommandParameter{}
+        public class SendCommandParameter : CommandParameter{}
+        public class ListenCommandParameter : CommandParameter{}
 
         public class UnitCommandParameter : CommandParameter
         {

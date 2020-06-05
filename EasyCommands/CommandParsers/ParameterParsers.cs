@@ -82,6 +82,9 @@ namespace IngameScript
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
 
+        static String[] listenKeywords = { "listen", "channel" };
+        static String[] sendKeywords = { "send", "broadcast" };
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -199,6 +202,8 @@ namespace IngameScript
             AddWords(closeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(false));
             AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
             AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
+            AddWords(listenKeywords, new ListenCommandParameter());
+            AddWords(sendKeywords, new SendCommandParameter());
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands)

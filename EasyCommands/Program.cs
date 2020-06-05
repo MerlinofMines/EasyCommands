@@ -38,20 +38,22 @@ namespace IngameScript
         static void Print(String str) { PROGRAM.Echo(str); }
         static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
 
-        public void Main(string argument, UpdateType updateSource) {
+        public void Main(string argument) {
             ParseCommands();
             Echo("Functions: " + FUNCTIONS.Count);
             Echo("Running Function: " + RUNNING_FUNCTION);
-            if (String.IsNullOrEmpty(argument)) {
+
+            List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+            IGC.GetBroadcastListeners(listeners);
+            List<MyIGCMessage> messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
+            if (messages.Count>0) {try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); }}
+            else if (String.IsNullOrEmpty(argument)) {
                 if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
                     RUNNING_COMMANDS.Reset();
                     STATE = ProgramState.RUNNING;
                 }
                 if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
-            }
-            else {
-                ParseCommand(argument).Execute();
-            }
+            } else { ParseCommand(argument).Execute(); }
             UpdateState();
         }
 
