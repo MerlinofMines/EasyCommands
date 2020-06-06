@@ -17,10 +17,8 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program : MyGridProgram 
-    {
+namespace IngameScript {
+    partial class Program : MyGridProgram {
         //Debug
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
         private static bool DEBUG_LOG = false;
@@ -34,7 +32,7 @@ namespace IngameScript
 
         static ProgramState STATE = ProgramState.STOPPED;
 
-        public Program() {PROGRAM = this; initParsers();}
+        public Program() { PROGRAM = this; initParsers(); }
 
         static void Print(String str) { PROGRAM.Echo(str); }
         static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
@@ -47,8 +45,7 @@ namespace IngameScript
             List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
             IGC.GetBroadcastListeners(listeners);
             List<MyIGCMessage> messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
-            if (messages.Count>0) {try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); }}
-            else if (String.IsNullOrEmpty(argument)) {
+            if (messages.Count > 0) { try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); } } else if (String.IsNullOrEmpty(argument)) {
                 if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
                     RUNNING_COMMANDS.Reset();
                     STATE = ProgramState.RUNNING;
@@ -58,10 +55,8 @@ namespace IngameScript
             UpdateState();
         }
 
-        void UpdateState()
-        {
-            switch(STATE)
-            {
+        void UpdateState() {
+            switch (STATE) {
                 case ProgramState.RUNNING:
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
                     Print("Running");
@@ -95,11 +90,10 @@ namespace IngameScript
             }
         }
 
-        static void ParseFunctions(List<String> commandStrings)
-        {
+        static void ParseFunctions(List<String> commandStrings) {
             FUNCTIONS.Clear();
             List<int> functionIndices = new List<int>();
-            if (!commandStrings[0].StartsWith(":")) { commandStrings.Insert(0,":main"); }
+            if (!commandStrings[0].StartsWith(":")) { commandStrings.Insert(0, ":main"); }
 
             for (int i = commandStrings.Count - 1; i >= 0; i--) {
                 Print("Command String: " + commandStrings[i]);
@@ -108,7 +102,7 @@ namespace IngameScript
             Debug("Function Indices: ");
             Debug(String.Join(" | ", functionIndices));
 
-            foreach(int i in functionIndices) {
+            foreach (int i in functionIndices) {
                 String functionString = commandStrings[i].Remove(0, 1).Trim().ToLower();
                 Print("Function String: " + functionString);
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true);
@@ -175,8 +169,7 @@ namespace IngameScript
             public int Depth;
             public List<CommandParameter> CommandParameters;
 
-            public CommandLine(String commandString)
-            {
+            public CommandLine(String commandString) {
                 Depth = commandString.TakeWhile(Char.IsWhiteSpace).Count();
                 CommandParameters = ParseCommandParameters(ParseTokens(commandString));
             }

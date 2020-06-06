@@ -17,14 +17,10 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class MergeBlockHandler : BlockHandler<IMyShipMergeBlock>
-        {
-            public MergeBlockHandler() : base()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class MergeBlockHandler : BlockHandler<IMyShipMergeBlock> {
+            public MergeBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, block => block.IsConnected);
                 booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, block => block.IsConnected);
             }

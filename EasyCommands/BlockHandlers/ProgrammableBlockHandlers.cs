@@ -17,14 +17,10 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class ProgramBlockHandler : BlockHandler<IMyProgrammableBlock>
-        {
-            public ProgramBlockHandler() : base()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class ProgramBlockHandler : BlockHandler<IMyProgrammableBlock> {
+            public ProgramBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, block => block.DetailedInfo.EndsWith("Running\n"));
                 booleanPropertyGetters.Add(BooleanPropertyType.STOPPED, block => block.DetailedInfo.EndsWith("Stopped\n"));
                 booleanPropertyGetters.Add(BooleanPropertyType.PAUSED, block => block.DetailedInfo.EndsWith("Paused\n"));

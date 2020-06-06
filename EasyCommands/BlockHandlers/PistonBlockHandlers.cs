@@ -17,14 +17,10 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class PistonBlockHandler : BlockHandler<IMyPistonBase>
-        {
-            public PistonBlockHandler() : base()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class PistonBlockHandler : BlockHandler<IMyPistonBase> {
+            public PistonBlockHandler() : base() {
                 defaultDirection = DirectionType.UP;
                 defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
                 defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
@@ -37,20 +33,16 @@ namespace IngameScript
             }
         }
 
-        public class PistonHeightSetter : NumericPropertySetter<IMyPistonBase>
-        {
-            public PistonHeightSetter()
-            {
+        public class PistonHeightSetter : NumericPropertySetter<IMyPistonBase> {
+            public PistonHeightSetter() {
                 Set = extendPistonToValue;
                 SetDirection = (b, d, v) => extendPistonToValue(b, v);
-                IncrementDirection = (b, d, v) =>
-                {
+                IncrementDirection = (b, d, v) => {
                     if (d == DirectionType.UP) extendPistonToValue(b, b.CurrentPosition + v);
                     if (d == DirectionType.DOWN) extendPistonToValue(b, b.CurrentPosition - v);
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
-                Move = (b, d) =>
-                {
+                Move = (b, d) => {
                     if (d == DirectionType.UP) b.Extend();
                     if (d == DirectionType.DOWN) b.Retract();
                 };
@@ -58,20 +50,16 @@ namespace IngameScript
             }
         }
 
-        public class PistonVelocitySetter : NumericPropertySetter<IMyPistonBase>
-        {
-            public PistonVelocitySetter()
-            {
+        public class PistonVelocitySetter : NumericPropertySetter<IMyPistonBase> {
+            public PistonVelocitySetter() {
                 Set = (b, v) => b.Velocity = v;
                 SetDirection = (b, d, v) => b.Velocity = v;
-                IncrementDirection = (b, d, v) =>
-                {
+                IncrementDirection = (b, d, v) => {
                     if (d == DirectionType.UP) b.Velocity += v;
                     if (d == DirectionType.DOWN) b.Velocity -= v;
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
-                Move = (b, d) =>
-                {
+                Move = (b, d) => {
                     if (d == DirectionType.UP) Increment(b, 1);
                     if (d == DirectionType.DOWN) Increment(b, -1);
                 };
@@ -79,15 +67,11 @@ namespace IngameScript
             }
         }
 
-        static void extendPistonToValue(IMyPistonBase piston, float value)
-        {
-            if (piston.CurrentPosition < value)
-            {
+        static void extendPistonToValue(IMyPistonBase piston, float value) {
+            if (piston.CurrentPosition < value) {
                 piston.SetValue("UpperLimit", value);
                 piston.Extend();
-            }
-            else
-            {
+            } else {
                 piston.SetValue("LowerLimit", value);
                 piston.Retract();
             }

@@ -17,31 +17,24 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class WaitForDurationUnitHandler : TwoParameterCommandHandler<NumericCommandParameter, UnitCommandParameter>
-        {
+namespace IngameScript {
+    partial class Program {
+        public class WaitForDurationUnitHandler : TwoParameterCommandHandler<NumericCommandParameter, UnitCommandParameter> {
             int ticks = 0;
 
-            public override bool Handle()
-            {
+            public override bool Handle() {
                 ticks++;
                 Print("Waited for " + ticks + " ticks");
                 return ticks >= getTicks(parameter1.Value, parameter2.GetUnit());
             }
 
-            public override void Reset()
-            {
+            public override void Reset() {
                 ticks = 0;
             }
         }
 
-        static int getTicks(float numeric, UnitType unitType)
-        {
-            switch(unitType)
-            {
+        static int getTicks(float numeric, UnitType unitType) {
+            switch (unitType) {
                 case UnitType.SECONDS:
                     return (int)(numeric * 60);//Assume 60 ticks / second
                 case UnitType.TICKS:

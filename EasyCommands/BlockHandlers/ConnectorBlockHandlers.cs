@@ -17,14 +17,10 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class ConnectorBlockHandler : BlockHandler<IMyShipConnector>
-        {
-            public ConnectorBlockHandler() : base()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class ConnectorBlockHandler : BlockHandler<IMyShipConnector> {
+            public ConnectorBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, Connected);
                 booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, Connected);
 
@@ -32,13 +28,11 @@ namespace IngameScript
                 booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, Connect);
             }
 
-            static bool Connected(IMyShipConnector connector)
-            {
+            static bool Connected(IMyShipConnector connector) {
                 return connector.Status == MyShipConnectorStatus.Connected;
             }
 
-            static void Connect(IMyShipConnector connector, bool value)
-            {
+            static void Connect(IMyShipConnector connector, bool value) {
                 if (value) { connector.Connect(); } else { connector.Disconnect(); }
             }
             //TODO: Add Connectable Handler

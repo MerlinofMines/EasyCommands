@@ -17,18 +17,14 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
+namespace IngameScript {
+    partial class Program {
 
-        public abstract class Command
-        {
+        public abstract class Command {
             public bool Async = false;
             public virtual void Reset() { }
             protected virtual Command Clone() { return this; }
-            public Command Copy()
-            {
+            public Command Copy() {
                 Command copy = Clone();
                 if (Async) copy.Async = true;
                 return copy;
@@ -38,13 +34,11 @@ namespace IngameScript
             public abstract bool Execute();
         }
 
-        public abstract class HandlerCommand : Command
-        {
+        public abstract class HandlerCommand : Command {
             private CommandHandler commandHandler;
             protected List<CommandParameter> commandParameters;
 
-            public HandlerCommand(List<CommandParameter> parameters)
-            {
+            public HandlerCommand(List<CommandParameter> parameters) {
                 commandParameters = parameters;
                 parameters = new List<CommandParameter>(parameters);
 
@@ -53,8 +47,7 @@ namespace IngameScript
                 Debug("Command Handler Post Parsed Command Parameters: ");
                 parameters.ForEach(param => Debug("" + param.GetType()));
 
-                foreach (CommandHandler handler in GetHandlers())
-                {
+                foreach (CommandHandler handler in GetHandlers()) {
                     if (handler.CanHandle(parameters)) {
                         commandHandler = handler;
                         return;
@@ -64,8 +57,7 @@ namespace IngameScript
                 throw new Exception("Unsupported Command Parameter Combination");
             }
 
-            public override bool Execute()
-            {
+            public override bool Execute() {
                 return commandHandler.Handle();
             }
 
@@ -82,8 +74,7 @@ namespace IngameScript
             List<CommandParameter> parameters;
             FunctionType type;
 
-            public FunctionCommand(List<CommandParameter> parameters)
-            {
+            public FunctionCommand(List<CommandParameter> parameters) {
                 this.parameters = parameters;
                 int typeIndex = parameters.FindIndex(p => p is FunctionCommandParameter);
                 if (typeIndex < 0) throw new Exception("Function Type is required for Function Command");
@@ -96,8 +87,7 @@ namespace IngameScript
             public override bool Execute() {
                 if (function == null) function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
                 STATE = ProgramState.RUNNING;
-                switch (type)
-                {
+                switch (type) {
                     case FunctionType.GOSUB:
                         return function.Execute();
                     case FunctionType.GOTO:
@@ -112,20 +102,17 @@ namespace IngameScript
         }
 
 
-        public class ControlCommand : Command
-        {
+        public class ControlCommand : Command {
             List<CommandParameter> parameters;
             ControlType controlType;
-            public ControlCommand(List<CommandParameter> parameters)
-            {
+            public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
                 controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
                 this.parameters = parameters;
             }
 
-            public override bool Execute()
-            {
+            public override bool Execute() {
                 switch (controlType) {
                     case ControlType.STOP:
                         RUNNING_COMMANDS = null; STATE = ProgramState.STOPPED; break;
@@ -150,10 +137,8 @@ namespace IngameScript
             protected override Command Clone() { return new ControlCommand(parameters); }
         }
 
-        public class WaitCommand : HandlerCommand
-        {
-            public WaitCommand(List<CommandParameter> commandParameters) : base(commandParameters)
-            {
+        public class WaitCommand : HandlerCommand {
+            public WaitCommand(List<CommandParameter> commandParameters) : base(commandParameters) {
             }
 
             public override void PreParseCommands(List<CommandParameter> parameters) {
@@ -161,8 +146,7 @@ namespace IngameScript
                 bool unitExists = parameters.Exists(param => param is UnitCommandParameter);
                 bool timeExists = parameters.Exists(param => param is NumericCommandParameter);
 
-                if (!timeExists && !unitExists) { parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS)); }
-                else if (!unitExists) { parameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
+                if (!timeExists && !unitExists) { parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS)); } else if (!unitExists) { parameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
             }
             public override List<CommandHandler> GetHandlers() { return new List<CommandHandler> { new WaitForDurationUnitHandler() }; }
             protected override Command Clone() { return new WaitCommand(commandParameters); }
@@ -175,7 +159,7 @@ namespace IngameScript
                 if (tagIndex < 0) throw new Exception("Tag is required");
                 tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
             }
-            public override bool Execute() {PROGRAM.IGC.RegisterBroadcastListener(tag);return true;}
+            public override bool Execute() { PROGRAM.IGC.RegisterBroadcastListener(tag); return true; }
         }
 
         public class SendCommand : Command {
@@ -187,20 +171,18 @@ namespace IngameScript
                 message = ((StringCommandParameter)commandParameters[messageIndex]).Value;
                 tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
             }
-            public override bool Execute() {PROGRAM.IGC.SendBroadcastMessage(tag, message);return true;}
+            public override bool Execute() { PROGRAM.IGC.SendBroadcastMessage(tag, message); return true; }
         }
 
-        public class NullCommand : Command {public override bool Execute() {return true;}}
+        public class NullCommand : Command { public override bool Execute() { return true; } }
 
-        public class BlockHandlerCommand : HandlerCommand
-        {
+        public class BlockHandlerCommand : HandlerCommand {
             private BlockHandler blockHandler;
             private IEntityProvider entityProvider;
 
             public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters) { }
 
-            public override void PreParseCommands(List<CommandParameter> commandParameters)
-            {
+            public override void PreParseCommands(List<CommandParameter> commandParameters) {
                 int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
 
                 if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
@@ -221,18 +203,15 @@ namespace IngameScript
                 int directionIndex = commandParameters.FindIndex(param => param is DirectionCommandParameter);
                 int reverseIndex = commandParameters.FindIndex(param => param is ReverseCommandParameter);
 
-                if (boolPropIndex < 0 && boolIndex >= 0)
-                {
+                if (boolPropIndex < 0 && boolIndex >= 0) {
                     commandParameters.Add(new BooleanPropertyCommandParameter(blockHandler.GetDefaultBooleanProperty()));
                 }
 
-                if (boolIndex < 0 && boolPropIndex >= 0)
-                {
+                if (boolIndex < 0 && boolPropIndex >= 0) {
                     commandParameters.Add(new BooleanCommandParameter(true));
                 }
 
-                if (stringPropIndex < 0 && stringIndex >= 0)
-                {
+                if (stringPropIndex < 0 && stringIndex >= 0) {
                     commandParameters.Add(new StringPropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
                 }
 
@@ -241,39 +220,33 @@ namespace IngameScript
                     commandParameters.Add(new StringCommandParameter(""));
                 }
 
-                if (numericIndex >= 0)
-                {
+                if (numericIndex >= 0) {
                     DirectionType direction;
-                    if (directionIndex >= 0)
-                    {
+                    if (directionIndex >= 0) {
                         direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
-                    } else
-                    {
+                    } else {
                         direction = blockHandler.GetDefaultDirection();
                         commandParameters.Add(new DirectionCommandParameter(direction));
                     }
 
-                    if (numericPropIndex < 0)
-                    {
+                    if (numericPropIndex < 0) {
                         commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                     }
                 }
 
-                if (directionIndex >= 0 && numericPropIndex <= 0)
-                {
+                if (directionIndex >= 0 && numericPropIndex <= 0) {
                     DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                 }
 
-                if (reverseIndex >=0 && numericPropIndex < 0)
-                {
+                if (reverseIndex >= 0 && numericPropIndex < 0) {
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
                 }
             }
 
-            public override List<CommandHandler> GetHandlers()
-            {
+            public override List<CommandHandler> GetHandlers() {
                 return new List<CommandHandler>() {
+
                     //Boolean Handlers
                     new TwoParamBlockCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>(entityProvider, blockHandler, (b,e,p,s)=>{  b.SetBooleanPropertyValue(e, p.Value, s.Value); }),
 
@@ -294,8 +267,7 @@ namespace IngameScript
             protected override Command Clone() { return new BlockHandlerCommand(commandParameters); }
         }
 
-        public class ConditionalCommand : Command
-        {
+        public class ConditionalCommand : Command {
             private Condition condition;
             public bool alwaysEvaluate = false;
             private bool evaluated = false;
@@ -304,8 +276,7 @@ namespace IngameScript
             private Command conditionMetCommand;
             private Command conditionNotMetCommand;
 
-            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate)
-            {
+            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate) {
                 this.condition = condition;
                 this.conditionMetCommand = conditionMetCommand;
                 this.conditionNotMetCommand = conditionNotMetCommand;
@@ -313,8 +284,7 @@ namespace IngameScript
                 if (alwaysEvaluate) UpdateAlwaysEvaluate();
             }
 
-            public override bool Execute()
-            {
+            public override bool Execute() {
                 Print("Executing Conditional Command");
                 Print("Async: " + Async);
                 Print("Condition: " + condition.ToString());
@@ -324,11 +294,9 @@ namespace IngameScript
                 bool conditionMet = EvaluateCondition();
                 bool commandResult = false;
 
-                if (conditionMet)
-                {
+                if (conditionMet) {
                     commandResult = conditionMetCommand.Execute();
-                } else
-                {
+                } else {
                     commandResult = conditionNotMetCommand.Execute();
                 }
 
@@ -344,8 +312,7 @@ namespace IngameScript
                 if (alwaysEvaluate) { return !conditionMet; } else { return commandResult; }
             }
 
-            public override void Reset()
-            {
+            public override void Reset() {
                 conditionMetCommand.Reset();
                 conditionNotMetCommand.Reset();
                 evaluated = false;
@@ -353,17 +320,14 @@ namespace IngameScript
             }
             protected override Command Clone() { return new ConditionalCommand(condition, conditionMetCommand.Copy(), conditionNotMetCommand.Copy(), alwaysEvaluate); }
 
-            private void UpdateAlwaysEvaluate()
-            {
+            private void UpdateAlwaysEvaluate() {
                 alwaysEvaluate = true;
                 if (conditionMetCommand is ConditionalCommand) ((ConditionalCommand)conditionMetCommand).UpdateAlwaysEvaluate();
                 if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).UpdateAlwaysEvaluate();
             }
 
-            private bool EvaluateCondition()
-            {
-                if ((!isExecuting && alwaysEvaluate) || !evaluated)
-                {
+            private bool EvaluateCondition() {
+                if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     Debug("Evaluating Value");
                     evaluatedValue = condition.Evaluate(); evaluated = true;
                 }
@@ -372,21 +336,17 @@ namespace IngameScript
             }
         }
 
-        public class MultiActionCommand : Command
-        {
+        public class MultiActionCommand : Command {
             List<Command> commandsToExecute;
             List<Command> currentCommands = null;
             int loopCount = 0;
 
-            public MultiActionCommand(List<Command> commandsToExecute)
-            {
+            public MultiActionCommand(List<Command> commandsToExecute) {
                 this.commandsToExecute = commandsToExecute;
             }
 
-            public override bool Execute()
-            {
-                if (currentCommands == null)
-                {
+            public override bool Execute() {
+                if (currentCommands == null) {
                     currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
                     loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
                 }
@@ -396,8 +356,7 @@ namespace IngameScript
 
                 int commandIndex = 0;
 
-                while (currentCommands != null && commandIndex < currentCommands.Count)
-                {
+                while (currentCommands != null && commandIndex < currentCommands.Count) {
                     Command nextCommand = currentCommands[commandIndex];
 
                     bool handled = nextCommand.Execute();
@@ -414,7 +373,7 @@ namespace IngameScript
             }
             public override void Reset() { currentCommands = null; }
             protected override Command Clone() { return new MultiActionCommand(commandsToExecute); }
-            public void Loop(int times) { loopCount+=times; }
+            public void Loop(int times) { loopCount += times; }
         }
     }
 }

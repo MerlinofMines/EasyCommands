@@ -17,16 +17,13 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{ 
-    partial class Program : MyGridProgram
-    {
+namespace IngameScript {
+    partial class Program : MyGridProgram {
         private double LASER_SCAN_DISTANCE = 10000;
 
         private MyDetectedEntityInfo lastDetectedInfo;
 
-        public Program()
-        {
+        public Program() {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
 
             // The constructor, called only once every session and
@@ -41,8 +38,7 @@ namespace IngameScript
             // timer block.
         }
 
-        public void Save()
-        {
+        public void Save() {
             // Called when the program needs to save its state. Use
             // this method to save your state to the Storage field
             // or some other means. 
@@ -51,8 +47,7 @@ namespace IngameScript
             // needed.
         }
 
-        public void Main(string argument, UpdateType updateSource)
-        {
+        public void Main(string argument, UpdateType updateSource) {
 
             IMyCameraBlock camera = getCamera();
 
@@ -60,19 +55,16 @@ namespace IngameScript
 
             camera.EnableRaycast = true;
 
-            if (!camera.CanScan(LASER_SCAN_DISTANCE))
-            {
+            if (!camera.CanScan(LASER_SCAN_DISTANCE)) {
                 return;
             }
 
             Echo("Scanning");
             MyDetectedEntityInfo detectedEntityInfo = camera.Raycast(LASER_SCAN_DISTANCE);
 
-            if (detectedEntityInfo.IsEmpty())
-            {
+            if (detectedEntityInfo.IsEmpty()) {
                 Echo("No Target");
-            } else
-            {
+            } else {
                 lastDetectedInfo = detectedEntityInfo;
             }
 
@@ -94,8 +86,7 @@ namespace IngameScript
 
         }
 
-        private double calculateClosestDistance()
-        {
+        private double calculateClosestDistance() {
             Vector3D distanceVector = Me.GetPosition() - lastDetectedInfo.Position;
             Vector3D detectedInfoVelocity = lastDetectedInfo.Velocity;
 
@@ -111,11 +102,10 @@ namespace IngameScript
             //TODO: Do Math
             //            return (lastDetectedInfo.Position - Me.GetPosition()).Length();
             return closestDistance;
- 
-       }
-                                                                                                   
-        private IMyTextPanel getLCD()
-        {
+
+        }
+
+        private IMyTextPanel getLCD() {
             List<IMyTextPanel> panels = new List<IMyTextPanel>();
             GridTerminalSystem.GetBlocksOfType<IMyTextPanel>(panels);
 
@@ -125,19 +115,16 @@ namespace IngameScript
 
         }
 
-        private IMyCameraBlock getCamera()
-        {
+        private IMyCameraBlock getCamera() {
             List<IMyCameraBlock> cameras = new List<IMyCameraBlock>();
             GridTerminalSystem.GetBlocksOfType<IMyCameraBlock>(cameras);
 
-            if (cameras.Count == 0)
-            {
+            if (cameras.Count == 0) {
                 Echo("No Camera Found.  Aborting.");
                 return null;
             }
 
-            if (cameras.Count > 1)
-            {
+            if (cameras.Count > 1) {
                 Echo("Multiple Cameras Found. Aborting");
                 return null;
             }

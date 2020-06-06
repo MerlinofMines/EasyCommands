@@ -17,18 +17,14 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class DoorBlockHandler : BlockHandler<IMyDoor>
-        {
-            public DoorBlockHandler() : base()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class DoorBlockHandler : BlockHandler<IMyDoor> {
+            public DoorBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.OPEN, (b) => b.Status != DoorStatus.Closed);//If at all open, you're open
                 booleanPropertySetters.Add(BooleanPropertyType.OPEN, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
                 defaultBooleanProperty = BooleanPropertyType.OPEN;
-               //TODO: Add Opening, Closing Boolean Handlers?
+                //TODO: Add Opening, Closing Boolean Handlers?
 
                 numericPropertyGetters.Add(NumericPropertyType.CLOSED_RATIO, (b) => 1 - b.OpenRatio);
                 numericPropertySetters.Add(NumericPropertyType.CLOSED_RATIO, new DoorRatioSetter());
@@ -37,17 +33,14 @@ namespace IngameScript
 
             }
 
-            public class DoorRatioSetter : NumericPropertySetter<IMyDoor>
-            {
-                public DoorRatioSetter()
-                {
+            public class DoorRatioSetter : NumericPropertySetter<IMyDoor> {
+                public DoorRatioSetter() {
                     Set = (b, v) => Exception();
                     SetDirection = (b, d, v) => Exception();
                     Increment = (b, v) => Exception();
                     IncrementDirection = (b, d, v) => Exception();
                     Reverse = (b) => b.ToggleDoor();
-                    Move = (b, d) =>
-                    {
+                    Move = (b, d) => {
                         if (d == DirectionType.UP) b.OpenDoor();
                         if (d == DirectionType.DOWN) b.CloseDoor();
                     };

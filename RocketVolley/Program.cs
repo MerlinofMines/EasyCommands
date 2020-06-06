@@ -17,10 +17,8 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program : MyGridProgram
-    {
+namespace IngameScript {
+    partial class Program : MyGridProgram {
         // This file contains your actual script.
         //
         // You can either keep all your code here, or you can create separate
@@ -48,8 +46,7 @@ namespace IngameScript
         private int fireTickInterval = 8;
         private bool active = false;
 
-        public Program()
-        {
+        public Program() {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
 
             // The constructor, called only once every session and
@@ -64,8 +61,7 @@ namespace IngameScript
             // timer block.
         }
 
-        public void Save()
-        {
+        public void Save() {
             // Called when the program needs to save its state. Use
             // this method to save your state to the Storage field
             // or some other means. 
@@ -74,15 +70,12 @@ namespace IngameScript
             // needed.
         }
 
-        public void Main(string argument, UpdateType updateSource)
-        {
-            if (argument == "toggle")
-            {
+        public void Main(string argument, UpdateType updateSource) {
+            if (argument == "toggle") {
                 active = !active;
             }
 
-            if (!active)
-            {
+            if (!active) {
                 return;
             }
 
@@ -92,22 +85,18 @@ namespace IngameScript
 
             maxRocket = rockets.Count;
 
-            if (maxRocket > 0)
-            {
+            if (maxRocket > 0) {
                 Echo("Found Rockets: " + rockets.Count);
 
                 fireTick = (fireTick + 1) % fireTickInterval;
 
-                if (fireTick == 0)
-                {
+                if (fireTick == 0) {
                     currentRocket = (currentRocket + 1) % maxRocket;
                     Echo("Firing Rocket: " + currentRocket);
                     rockets[currentRocket].ApplyAction("ShootOnce");
                 }
 
-            }
-            else
-            {
+            } else {
                 Echo("No Available Rockets");
             }
 

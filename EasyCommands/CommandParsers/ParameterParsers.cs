@@ -17,10 +17,8 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
+namespace IngameScript {
+    partial class Program {
         //Configuration.  Keep all words lowercase
         static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are" };
         static String[] groupWords = { "blocks", "group" };
@@ -76,7 +74,7 @@ namespace IngameScript
         static String[] completeWords = { "done", "complete", "finished", "built" };
         static String[] progressWords = { "progress", "completion" };
 
-        static String[] openWords = { "open", "opened"};
+        static String[] openWords = { "open", "opened" };
         static String[] closeWords = { "close", "closed", "shut" };
 
         static String[] gosubKeywords = { "call", "gosub" };
@@ -151,8 +149,7 @@ namespace IngameScript
         //Internal (Don't touch!)
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        public static void initParsers()
-        {
+        public static void initParsers() {
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
             AddWords(deactivateWords, new BooleanCommandParameter(false));
@@ -206,18 +203,15 @@ namespace IngameScript
             AddWords(sendKeywords, new SendCommandParameter());
         }
 
-        static void AddWords(String[] words, params CommandParameter[] commands)
-        {
+        static void AddWords(String[] words, params CommandParameter[] commands) {
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }
 
-        static List<CommandParameter> ParseCommandParameters(List<Token> tokens)
-        {
+        static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
             Print("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
-            foreach (var token in tokens)
-            {
+            foreach (var token in tokens) {
                 String t = token.token;
 
                 if (token.isString) {
@@ -229,42 +223,35 @@ namespace IngameScript
 
                 if (ignoreWords.Contains(t)) continue;
 
-                if (propertyWords.ContainsKey(t))
-                {
+                if (propertyWords.ContainsKey(t)) {
                     commandParameters.AddList(propertyWords[t]);
                     continue;
                 }
 
                 ControlType controlType;
-                if (controlTypeWords.TryGetValue(t, out controlType))
-                {
+                if (controlTypeWords.TryGetValue(t, out controlType)) {
                     commandParameters.Add(new ControlCommandParameter(controlType));
                     continue;
                 }
 
                 BlockType blockType;
-                if (blockTypeGroupWords.TryGetValue(t, out blockType))
-                {
+                if (blockTypeGroupWords.TryGetValue(t, out blockType)) {
                     commandParameters.Add(new BlockTypeCommandParameter(blockType));
                     commandParameters.Add(new GroupCommandParameter());
                     continue;
-                }
-                else if (blockTypeWords.TryGetValue(t, out blockType))
-                {
+                } else if (blockTypeWords.TryGetValue(t, out blockType)) {
                     commandParameters.Add(new BlockTypeCommandParameter(blockType));
                     continue;
                 }
 
                 UnitType unitType;
-                if (unitTypeWords.TryGetValue(t, out unitType))
-                {
+                if (unitTypeWords.TryGetValue(t, out unitType)) {
                     commandParameters.Add(new UnitCommandParameter(unitType));
                     continue;
                 }
 
                 double numericValue;
-                if (Double.TryParse(t, out numericValue))
-                {
+                if (Double.TryParse(t, out numericValue)) {
                     commandParameters.Add(new NumericCommandParameter((float)numericValue));
                     continue;
                 }
@@ -276,8 +263,7 @@ namespace IngameScript
         }
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        public static List<Token> ParseTokens(String commandString)
-        {
+        public static List<Token> ParseTokens(String commandString) {
             return commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
                                     ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false))  // Split the item
@@ -286,13 +272,11 @@ namespace IngameScript
                 .ToList();
         }
 
-        public class Token
-        {
+        public class Token {
             public String token;
             public bool isString;
 
-            public Token(string token, bool isString)
-            {
+            public Token(string token, bool isString) {
                 this.isString = isString;
                 this.token = token.ToLower();
             }

@@ -17,14 +17,10 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public class RotorBlockHandler : BlockHandler<IMyMotorStator>
-        {
-            public RotorBlockHandler()
-            {
+namespace IngameScript {
+    partial class Program {
+        public class RotorBlockHandler : BlockHandler<IMyMotorStator> {
+            public RotorBlockHandler() {
                 defaultDirection = DirectionType.CLOCKWISE;
                 defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
                 defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
@@ -39,20 +35,16 @@ namespace IngameScript
             }
         }
 
-        public class RotorAngleSetter : NumericPropertySetter<IMyMotorStator>
-        {
-            public RotorAngleSetter()
-            {
+        public class RotorAngleSetter : NumericPropertySetter<IMyMotorStator> {
+            public RotorAngleSetter() {
                 Set = rotateToValue;
                 SetDirection = (b, d, v) => rotateToValue(b, v);
-                IncrementDirection = (b, d, v) =>
-                {
+                IncrementDirection = (b, d, v) => {
                     if (d == DirectionType.CLOCKWISE) rotateToValue(b, b.Angle + v);
                     if (d == DirectionType.COUNTERCLOCKWISE) rotateToValue(b, b.Angle - v);
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
-                Move = (b, d) =>
-                {
+                Move = (b, d) => {
                     if (d == DirectionType.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
                     if (d == DirectionType.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
                 };
@@ -60,20 +52,16 @@ namespace IngameScript
             }
         }
 
-        public class RotorVelocitySetter : NumericPropertySetter<IMyMotorStator>
-        {
-            public RotorVelocitySetter()
-            {
+        public class RotorVelocitySetter : NumericPropertySetter<IMyMotorStator> {
+            public RotorVelocitySetter() {
                 Set = (b, v) => b.TargetVelocityRPM = v;
                 SetDirection = (b, d, v) => b.TargetVelocityRPM = v;
-                IncrementDirection = (b, d, v) =>
-                {
+                IncrementDirection = (b, d, v) => {
                     if (d == DirectionType.UP) b.TargetVelocityRPM += v;
                     if (d == DirectionType.DOWN) b.TargetVelocityRPM -= v;
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
-                Move = (b, d) =>
-                {
+                Move = (b, d) => {
                     if (d == DirectionType.UP) Increment(b, 1);
                     if (d == DirectionType.DOWN) Increment(b, -1);
                 };
@@ -82,25 +70,20 @@ namespace IngameScript
         }
 
         //TODO: Directions may become important.  Below needs a lot of work
-        static void rotateToValue(IMyMotorStator rotor, float value)
-        {
+        static void rotateToValue(IMyMotorStator rotor, float value) {
             float newValue = value;
 
             if (newValue > 360) newValue %= 360;
 
-            if (newValue < -360)
-            {
+            if (newValue < -360) {
                 newValue = -((-newValue) % 360);
             }
 
             //TODO: We might find that in some cases, it's faster to go the other way.
-            if (rotor.Angle * (180 / Math.PI) < value)
-            {
+            if (rotor.Angle * (180 / Math.PI) < value) {
                 rotor.UpperLimitDeg = newValue;
                 rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
-            }
-            else
-            {
+            } else {
                 rotor.LowerLimitDeg = newValue;
                 rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);
             }

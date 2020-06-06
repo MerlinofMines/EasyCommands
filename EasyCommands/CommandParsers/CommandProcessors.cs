@@ -17,12 +17,9 @@ using VRage.Game;
 using VRage;
 using VRageMath;
 
-namespace IngameScript
-{
-    partial class Program
-    {
-        public static class CommandParserRegistry
-        {
+namespace IngameScript {
+    partial class Program {
+        public static class CommandParserRegistry {
             private static List<CommandProcessor> CommandParsers = new List<CommandProcessor>() {
                 new AsyncCommandProcessor(),
                 new ParenthesisCommandProcessor(),
@@ -30,13 +27,11 @@ namespace IngameScript
                 new AndCommandProcessor(),
             };
 
-            public static Command ParseCommand(List<CommandParameter> commandParameters)
-            {
+            public static Command ParseCommand(List<CommandParameter> commandParameters) {
                 Debug("Parsing Command");
 
                 bool processing = true;
-                while (processing)
-                {
+                while (processing) {
                     //Keep Processing through until all return false
                     processing = CommandParsers.Exists(p => { Debug("Executing " + p.GetType()); bool processed = p.ProcessCommand(commandParameters); Debug("Result: " + processed); return processed; });
                 }
@@ -46,18 +41,14 @@ namespace IngameScript
             }
         }
 
-        public interface CommandProcessor
-        {
+        public interface CommandProcessor {
             bool ProcessCommand(List<CommandParameter> commandParameters);
         }
 
-        public class AsyncCommandProcessor : CommandProcessor
-        {
-            public bool ProcessCommand(List<CommandParameter> commandParameters)
-            {
+        public class AsyncCommandProcessor : CommandProcessor {
+            public bool ProcessCommand(List<CommandParameter> commandParameters) {
                 bool processed = false;
-                for(int i = 0; i < commandParameters.Count-1; i++)
-                {
+                for (int i = 0; i < commandParameters.Count - 1; i++) {
                     if (!(commandParameters[i] is AsyncCommandParameter && commandParameters[i + 1] is CommandReferenceParameter)) continue;
                     Command subCommand = ((CommandReferenceParameter)commandParameters[i + 1]).Value;
                     subCommand.Async = true;
@@ -69,17 +60,14 @@ namespace IngameScript
             }
         }
 
-        public class ConditionalCommandProcessor : CommandProcessor
-        {
-            public bool ProcessCommand(List<CommandParameter> commandParameters)
-            {
+        public class ConditionalCommandProcessor : CommandProcessor {
+            public bool ProcessCommand(List<CommandParameter> commandParameters) {
                 bool processed = false;
 
                 Debug("Pre Processed Parameters:");
                 commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
 
-                for (int i = 0; i < commandParameters.Count-2; i++)
-                {
+                for (int i = 0; i < commandParameters.Count - 2; i++) {
                     //check for if + condition.  Then look for action (before if or after condition).  If present, keep going
                     //check for otherwise.  if present, if otherwise is followed by command, then process.
                     //if otherwise is not followed by command then do not process (apparently we need to resolve the next thing first, e.g. "otherwise if (condition) (command)
@@ -88,8 +76,7 @@ namespace IngameScript
                     //if condition command and => don't process
 
                     //First, swap silly misordered statements (command) if (condition)
-                    if (commandParameters[i + 1] is IfCommandParameter && commandParameters[i + 2] is ConditionCommandParameter && commandParameters[i] is CommandReferenceParameter)
-                    {
+                    if (commandParameters[i + 1] is IfCommandParameter && commandParameters[i + 2] is ConditionCommandParameter && commandParameters[i] is CommandReferenceParameter) {
                         CommandParameter temp = commandParameters[i];
                         commandParameters.RemoveAt(i);
                         commandParameters.Insert(i + 2, temp);
@@ -106,7 +93,7 @@ namespace IngameScript
                         if (!(commandParameters[i + 4] is CommandReferenceParameter)) continue; //Not ready to parse Otherwise yet!
 
                         if (i + 5 < commandParameters.Count && commandParameters[i + 5] is AndCommandParameter) continue; //Not ready to parse Otherwise yet, there are more commands to parse!
-                        otherwiseCommand = ((CommandReferenceParameter)commandParameters[i+4]).Value;
+                        otherwiseCommand = ((CommandReferenceParameter)commandParameters[i + 4]).Value;
                         commandParameters.RemoveRange(i + 3, 2); //Remove Otherwise and Otherwise Command now that we have stored
                     }
 
@@ -115,15 +102,13 @@ namespace IngameScript
                     Condition condition = ((ConditionCommandParameter)commandParameters[i + 1]).Value;
                     Command actionCommand = ((CommandReferenceParameter)commandParameters[i + 2]).Value;
 
-                    if (ifParameter.swapCommands)
-                    {
+                    if (ifParameter.swapCommands) {
                         Command temp = actionCommand;
                         actionCommand = otherwiseCommand;
                         otherwiseCommand = temp;
                     }
 
-                    if (ifParameter.inverseCondition)
-                    {
+                    if (ifParameter.inverseCondition) {
                         condition = new NotCondition(condition);
                     }
 
@@ -136,14 +121,11 @@ namespace IngameScript
             }
         }
 
-        public class AndCommandProcessor : CommandProcessor
-        {
-            public bool ProcessCommand(List<CommandParameter> commandParameters)
-            {
+        public class AndCommandProcessor : CommandProcessor {
+            public bool ProcessCommand(List<CommandParameter> commandParameters) {
                 bool processed = false;
 
-                for (int i = 0; i < commandParameters.Count - 2; i++)
-                {
+                for (int i = 0; i < commandParameters.Count - 2; i++) {
                     if (!(commandParameters[i] is CommandReferenceParameter && commandParameters[i + 1] is AndCommandParameter && commandParameters[i + 2] is CommandReferenceParameter)) continue;
 
                     List<Command> multiActionCommands = new List<Command>();
@@ -151,15 +133,11 @@ namespace IngameScript
 
                     bool ignore = false;
                     int newIndex = i;
-                    while (newIndex + 2 < commandParameters.Count && commandParameters[newIndex+1] is AndCommandParameter)
-                    {
-                        if (commandParameters[newIndex + 2] is CommandReferenceParameter)
-                        {
+                    while (newIndex + 2 < commandParameters.Count && commandParameters[newIndex + 1] is AndCommandParameter) {
+                        if (commandParameters[newIndex + 2] is CommandReferenceParameter) {
                             multiActionCommands.Add(((CommandReferenceParameter)commandParameters[newIndex + 2]).Value);
                             newIndex += 2;
-                        }
-                        else
-                        {
+                        } else {
                             ignore = true; break;
                         }
                     }
@@ -174,16 +152,13 @@ namespace IngameScript
             }
         }
 
-        public class ParenthesisCommandProcessor : CommandProcessor
-        {
-            public bool ProcessCommand(List<CommandParameter> commandParameters)
-            {
+        public class ParenthesisCommandProcessor : CommandProcessor {
+            public bool ProcessCommand(List<CommandParameter> commandParameters) {
                 bool processed = false;
 
                 Stack<int> openParenthesis = new Stack<int>();
 
-                for(int i = 0; i < commandParameters.Count; i++)
-                {
+                for (int i = 0; i < commandParameters.Count; i++) {
                     if (commandParameters[i] is OpenParenthesisCommandParameter) { openParenthesis.Push(i); i += 2; continue; }// ( ) wouldn't make sense
                     if (!(commandParameters[i] is CloseParenthesisCommandParameter)) continue;
 
