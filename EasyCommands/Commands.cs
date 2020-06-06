@@ -61,8 +61,6 @@ namespace IngameScript {
                 return commandHandler.Handle();
             }
 
-            public override void Reset() { commandHandler.Reset(); }
-
             public abstract void PreParseCommands(List<CommandParameter> parameters);
 
             public abstract List<CommandHandler> GetHandlers();
@@ -137,19 +135,32 @@ namespace IngameScript {
             protected override Command Clone() { return new ControlCommand(parameters); }
         }
 
-        public class WaitCommand : HandlerCommand {
-            public WaitCommand(List<CommandParameter> commandParameters) : base(commandParameters) {
+        public class WaitCommand : Command {
+            int waitTicks, ticks = 0;
+            public WaitCommand(List<CommandParameter> parameters) {
+                int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
+                int timeIndex = parameters.FindIndex(param => param is NumericCommandParameter);
+                waitTicks = getTicks(timeIndex < 0 ? 1 : ((NumericCommandParameter)parameters[timeIndex]).Value, unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
+            }
+            public WaitCommand(int ticks) { waitTicks = ticks; }
+            protected override Command Clone() { return new WaitCommand(waitTicks); }
+            public override void Reset() { ticks = 0; }
+            public override bool Execute() {
+                ticks++;
+                Print("Waited for " + ticks + " ticks");
+                return ticks >= waitTicks;
             }
 
-            public override void PreParseCommands(List<CommandParameter> parameters) {
-                parameters.RemoveAll(param => param is WaitCommandParameter);
-                bool unitExists = parameters.Exists(param => param is UnitCommandParameter);
-                bool timeExists = parameters.Exists(param => param is NumericCommandParameter);
-
-                if (!timeExists && !unitExists) { parameters.Add(new NumericCommandParameter(1f)); parameters.Add(new UnitCommandParameter(UnitType.TICKS)); } else if (!unitExists) { parameters.Add(new UnitCommandParameter(UnitType.SECONDS)); }
+            int getTicks(float numeric, UnitType unitType) {
+                switch (unitType) {
+                    case UnitType.SECONDS:
+                        return (int)(numeric * 60);//Assume 60 ticks / second
+                    case UnitType.TICKS:
+                        return (int)numeric;
+                    default:
+                        throw new Exception("Unsupported Unit Type: " + unitType);
+                }
             }
-            public override List<CommandHandler> GetHandlers() { return new List<CommandHandler> { new WaitForDurationUnitHandler() }; }
-            protected override Command Clone() { return new WaitCommand(commandParameters); }
         }
 
         public class ListenCommand : Command {

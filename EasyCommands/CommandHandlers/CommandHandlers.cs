@@ -51,7 +51,6 @@ namespace IngameScript {
         public abstract class CommandHandler {
             public abstract bool CanHandle(List<CommandParameter> commandParameters);
             public abstract bool Handle();
-            public virtual void Reset() { }
             public virtual CommandHandler Clone() { return this; }
             public bool Supports<T>(List<CommandParameter> commandParameters, out List<CommandParameter> others, out T t) where T : class, CommandParameter {
                 t = null;

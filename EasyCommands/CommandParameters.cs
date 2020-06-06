@@ -37,46 +37,43 @@ namespace IngameScript {
         }
 
         public class NumericCommandParameter : ValueCommandParameter<float>, PrimitiveCommandParameter {
-            public NumericCommandParameter(float value) : base(value) {
-            }
+            public NumericCommandParameter(float value) : base(value) {}
         }
 
         public class BooleanCommandParameter : ValueCommandParameter<bool>, PrimitiveCommandParameter {
-            public BooleanCommandParameter(bool value) : base(value) {
-            }
+            public BooleanCommandParameter(bool value) : base(value) {}
         }
 
         public class DirectionCommandParameter : ValueCommandParameter<DirectionType> {
-            public DirectionCommandParameter(DirectionType value) : base(value) {
-            }
+            public DirectionCommandParameter(DirectionType value) : base(value) {}
         }
 
         public class BooleanPropertyCommandParameter : ValueCommandParameter<BooleanPropertyType>, PropertyCommandParameter {
-            public BooleanPropertyCommandParameter(BooleanPropertyType value) : base(value) {
-            }
+            public BooleanPropertyCommandParameter(BooleanPropertyType value) : base(value) {}
         }
 
         public class StringPropertyCommandParameter : ValueCommandParameter<StringPropertyType>, PropertyCommandParameter {
-            public StringPropertyCommandParameter(StringPropertyType value) : base(value) {
-            }
+            public StringPropertyCommandParameter(StringPropertyType value) : base(value) {}
         }
 
         public class NumericPropertyCommandParameter : ValueCommandParameter<NumericPropertyType>, PropertyCommandParameter {
-            public NumericPropertyCommandParameter(NumericPropertyType value) : base(value) {
-            }
+            public NumericPropertyCommandParameter(NumericPropertyType value) : base(value) {}
         }
+
+        public class UnitCommandParameter : ValueCommandParameter<UnitType> {
+            public UnitCommandParameter(UnitType value) : base(value) {}
+        }
+
 
         public class GroupCommandParameter : CommandParameter { }
         public class AsyncCommandParameter : CommandParameter { }
 
         public class ControlCommandParameter : ValueCommandParameter<ControlType> {
-            public ControlCommandParameter(ControlType value) : base(value) {
-            }
+            public ControlCommandParameter(ControlType value) : base(value) {}
         }
 
         public class FunctionCommandParameter : ValueCommandParameter<FunctionType> {
-            public FunctionCommandParameter(FunctionType value) : base(value) {
-            }
+            public FunctionCommandParameter(FunctionType value) : base(value) {}
         }
 
         public class IfCommandParameter : CommandParameter {
@@ -147,17 +144,5 @@ namespace IngameScript {
         public class WaitCommandParameter : CommandParameter { }
         public class SendCommandParameter : CommandParameter { }
         public class ListenCommandParameter : CommandParameter { }
-
-        public class UnitCommandParameter : CommandParameter {
-            UnitType unit;
-
-            public UnitCommandParameter(UnitType unit) {
-                this.unit = unit;
-            }
-
-            public UnitType GetUnit() {
-                return unit;
-            }
-        }
     }
 }
