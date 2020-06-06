@@ -155,17 +155,17 @@ namespace IngameScript {
 
         public class NullCommand : Command { public override bool Execute() { return true; } }
 
-        public class BlockHandlerCommand : Command {
+        public class BlockCommand : Command {
             private BlockHandler blockHandler;
             private SelectorEntityProvider entityProvider;
             private BlockCommandHandler commandHandler;
 
-            public BlockHandlerCommand(BlockHandler blockHandler, SelectorEntityProvider entityProvider, BlockCommandHandler commandHandler) {
+            public BlockCommand(BlockHandler blockHandler, SelectorEntityProvider entityProvider, BlockCommandHandler commandHandler) {
                 this.blockHandler = blockHandler;
                 this.entityProvider = entityProvider;
                 this.commandHandler = commandHandler;
             }
-            public BlockHandlerCommand(List<CommandParameter> parameters) {
+            public BlockCommand(List<CommandParameter> parameters) {
                 parameters = new List<CommandParameter>(parameters);
                 PreParseCommands(parameters);
                 Debug("Command Handler Post Parsed Command Parameters: ");
@@ -267,7 +267,7 @@ namespace IngameScript {
                     //TODO: GPS Handler?
                 };
             }
-            protected override Command Clone() { return new BlockHandlerCommand(blockHandler, entityProvider, commandHandler); }
+            protected override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {

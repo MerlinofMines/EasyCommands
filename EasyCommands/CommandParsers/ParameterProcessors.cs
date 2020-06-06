@@ -139,7 +139,7 @@ namespace IngameScript {
                 else if (action.Exists(a => a is SendCommandParameter)) command = new SendCommand(action);
                 else if (action.Exists(a => a is ControlCommandParameter)) command = new ControlCommand(action);
                 else if (action.Exists(a => a is WaitCommandParameter)) command = new WaitCommand(action);
-                else if (action.Exists(a => a is SelectorCommandParameter)) command = new BlockHandlerCommand(action);
+                else if (action.Exists(a => a is SelectorCommandParameter)) command = new BlockCommand(action);
                 else throw new Exception("Unknown Command Reference Type.");
                 p.RemoveRange(i, paramCount);
                 p.Insert(i, new CommandReferenceParameter(command));
