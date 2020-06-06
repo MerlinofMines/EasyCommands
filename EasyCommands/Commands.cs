@@ -34,38 +34,6 @@ namespace IngameScript {
             public abstract bool Execute();
         }
 
-        public abstract class HandlerCommand : Command {
-            private CommandHandler commandHandler;
-            protected List<CommandParameter> commandParameters;
-
-            public HandlerCommand(List<CommandParameter> parameters) {
-                commandParameters = parameters;
-                parameters = new List<CommandParameter>(parameters);
-
-                PreParseCommands(parameters);
-
-                Debug("Command Handler Post Parsed Command Parameters: ");
-                parameters.ForEach(param => Debug("" + param.GetType()));
-
-                foreach (CommandHandler handler in GetHandlers()) {
-                    if (handler.CanHandle(parameters)) {
-                        commandHandler = handler;
-                        return;
-                    }
-                }
-
-                throw new Exception("Unsupported Command Parameter Combination");
-            }
-
-            public override bool Execute() {
-                return commandHandler.Handle();
-            }
-
-            public abstract void PreParseCommands(List<CommandParameter> parameters);
-
-            public abstract List<CommandHandler> GetHandlers();
-        }
-
         public class FunctionCommand : Command {
             MultiActionCommand function;
             String functionName;
@@ -187,13 +155,38 @@ namespace IngameScript {
 
         public class NullCommand : Command { public override bool Execute() { return true; } }
 
-        public class BlockHandlerCommand : HandlerCommand {
+        public class BlockHandlerCommand : Command {
             private BlockHandler blockHandler;
             private SelectorEntityProvider entityProvider;
+            private BlockCommandHandler commandHandler;
 
-            public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters) { }
+            public BlockHandlerCommand(BlockHandler blockHandler, SelectorEntityProvider entityProvider, BlockCommandHandler commandHandler) {
+                this.blockHandler = blockHandler;
+                this.entityProvider = entityProvider;
+                this.commandHandler = commandHandler;
+            }
+            public BlockHandlerCommand(List<CommandParameter> parameters) {
+                parameters = new List<CommandParameter>(parameters);
+                PreParseCommands(parameters);
+                Debug("Command Handler Post Parsed Command Parameters: ");
+                parameters.ForEach(param => Debug("" + param.GetType()));
+                foreach (BlockCommandHandler handler in GetHandlers()) {
+                    if (handler.canHandle(parameters)) {
+                        commandHandler = handler;
+                        commandHandler.b = blockHandler;
+                        commandHandler.e = entityProvider;
+                        return;
+                    }
+                }
+                throw new Exception("Unsupported Command Parameter Combination");
+            }
 
-            public override void PreParseCommands(List<CommandParameter> commandParameters) {
+            public override bool Execute() {
+                commandHandler.Execute();
+                return true;
+            }
+
+            public void PreParseCommands(List<CommandParameter> commandParameters) {
                 int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
 
                 if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
@@ -255,27 +248,26 @@ namespace IngameScript {
                 }
             }
 
-            public override List<CommandHandler> GetHandlers() {
-                return new List<CommandHandler>() {
-
+            public List<BlockCommandHandler> GetHandlers() {
+                return new List<BlockCommandHandler>() {
                     //Boolean Handlers
-                    new TwoParamBlockCommandHandler<BooleanPropertyCommandParameter, BooleanCommandParameter>(entityProvider, blockHandler, (b,e,p,s)=>{  b.SetBooleanPropertyValue(e, p.Value, s.Value); }),
+                    new BlockCommandHandler2<BooleanPropertyCommandParameter, BooleanCommandParameter>((b,e,p,s)=>{b.SetBooleanPropertyValue(e, p.Value, s.Value);}),
 
                     //String Handlers
-                    new TwoParamBlockCommandHandler<StringPropertyCommandParameter, StringCommandParameter>(entityProvider, blockHandler, (bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.Value); }),
+                    new BlockCommandHandler2<StringPropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.Value); }),
 
                     //Numeric Handlers
-                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
-                    new TwoParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter>(entityProvider, blockHandler, (b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
-                    new TwoParamBlockCommandHandler<ReverseCommandParameter, NumericPropertyCommandParameter>(entityProvider, blockHandler, (b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
-                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
-                    new ThreeParamBlockCommandHandler<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
-                    new FourParamBlockCommandHandler<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>(entityProvider, blockHandler, (b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
+                    new BlockCommandHandler2<NumericPropertyCommandParameter, NumericCommandParameter>((b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
+                    new BlockCommandHandler2<NumericPropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
+                    new BlockCommandHandler2<ReverseCommandParameter, NumericPropertyCommandParameter>((b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
+                    new BlockCommandHandler3<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>((b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
+                    new BlockCommandHandler3<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
+                    new BlockCommandHandler4<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
 
                     //TODO: GPS Handler?
                 };
             }
-            protected override Command Clone() { return new BlockHandlerCommand(commandParameters); }
+            protected override Command Clone() { return new BlockHandlerCommand(blockHandler, entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {

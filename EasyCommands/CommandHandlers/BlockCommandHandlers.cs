@@ -19,81 +19,85 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, T t);
-        public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, Object e, T t, U u) where T : class, CommandParameter where U : class, CommandParameter;
-        public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter;
-        public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter;
+        public delegate bool CanHandle(List<CommandParameter> parameters);
+        public delegate void Handle(object e);
+        //public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, ref T t);
+        public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, Object e, T t, U u);
+        public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v);
+        public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w);
 
-        public class OneParamBlockCommandHandler<T> : OneParameterCommandHandler<T> where T : class, CommandParameter {
-            private OneParameterBlockDelegate<T> action;
-            protected SelectorEntityProvider entityProvider;
-            protected BlockHandler blockHandler;
+        public class SelectorEntityProvider {
+            protected SelectorCommandParameter selector;
 
-            public OneParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, OneParameterBlockDelegate<T> action) {
-                this.entityProvider = entityProvider;
-                this.blockHandler = blockHandler;
-                this.action = action;
+            public SelectorEntityProvider(SelectorCommandParameter selector) {
+                this.selector = selector;
             }
 
-            public override bool Handle() {
-                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter));
-                return true;
+            public List<Object> GetEntities() {
+                if (selector.isGroup) {
+                    List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                    PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
+
+                    IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
+
+                    if (group == null) {
+                        throw new Exception("Unable to find requested block group: " + selector.selector);
+                    }
+
+                    return BlockHandlerRegistry.GetBlocks(group, selector.blockType);
+
+                } else {
+                    return BlockHandlerRegistry.GetBlocks(selector.blockType, selector.selector);
+                }
             }
-        }
-
-        public class TwoParamBlockCommandHandler<T, U> : TwoParameterCommandHandler<T, U> where T : class, CommandParameter where U : class, CommandParameter {
-            private TwoParameterBlockDelegate<T, U> action;
-            protected SelectorEntityProvider entityProvider;
-            protected BlockHandler blockHandler;
-
-            public TwoParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, TwoParameterBlockDelegate<T, U> action) {
-                this.entityProvider = entityProvider;
-                this.blockHandler = blockHandler;
-                this.action = action;
-            }
-
-            public override bool CanHandle(List<CommandParameter> commandParameters) {
-                List<CommandParameter> others;
-                return Supports<T, U>(commandParameters, out others, out parameter1, out parameter2);
-            }
-
-            public override bool Handle() {
-                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2));
-                return true;
+            public override String ToString() {
+                return selector.blockType + (selector.isGroup ? " in group named " : " named " + selector.selector);
             }
         }
 
-        public class ThreeParamBlockCommandHandler<T, U, V> : ThreeParameterCommandHandler<T, U, V> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter {
-            private ThreeParameterBlockDelegate<T, U, V> action;
-            protected SelectorEntityProvider entityProvider;
-            protected BlockHandler blockHandler;
-
-            public ThreeParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, ThreeParameterBlockDelegate<T, U, V> action) {
-                this.entityProvider = entityProvider;
-                this.blockHandler = blockHandler;
-                this.action = action;
+        public class BlockCommandHandler {
+            public SelectorEntityProvider e;
+            public BlockHandler b;
+            public bool Supports = true;
+            public CanHandle canHandle;
+            public Handle handle;
+            public List<CommandParameter> Bind<X>(List<CommandParameter> parameters, ref X t) {
+                List<CommandParameter> ps = new List<CommandParameter>(parameters);
+                int i = ps.FindIndex(p => p is X);
+                if (i >= 0) { t = (X)ps[i]; ps.RemoveAt(i); } else Supports = false;
+                return ps;
             }
-
-            public override bool Handle() {
-                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3));
-                return true;
+            public void Execute() {
+                e.GetEntities().ForEach(entity => handle(entity));
             }
         }
-
-        public class FourParamBlockCommandHandler<T, U, V, W> : FourParameterCommandHandler<T, U, V, W> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter {
-            private FourParameterBlockDelegate<T, U, V, W> action;
-            protected SelectorEntityProvider entityProvider;
-            protected BlockHandler blockHandler;
-
-            public FourParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, FourParameterBlockDelegate<T, U, V, W> action) {
-                this.entityProvider = entityProvider;
-                this.blockHandler = blockHandler;
-                this.action = action;
+//        Uncomment when needed
+//        public class TwoParamBlockHandler<T, U, V> : BlockCommandHandler {
+//            T p1; U p2; V p3;
+//            public ThreeParamBlockHandler(ThreeParameterBlockDelegate<T, U, V> action) {
+//                canHandle = (p) => Bind<V>(Bind<U>(Bind<T>(p, ref p1), ref p2), ref p3).Count == 0 && Supports;
+//                handle = (e) => action(b, e, ref p1, ref p2, ref p3);
+//            }
+//        }
+        public class BlockCommandHandler2<T, U> : BlockCommandHandler {
+            T p1; U p2;
+            public BlockCommandHandler2(TwoParameterBlockDelegate<T, U> action) {
+                canHandle = (p) => Bind<U>(Bind<T>(p, ref p1), ref p2).Count == 0 && Supports;
+                handle = (e) => action(b, e, p1, p2);
             }
-
-            public override bool Handle() {
-                entityProvider.GetEntities().ForEach(entity => action(blockHandler, entity, parameter1, parameter2, parameter3, parameter4));
-                return true;
+        }
+        public class BlockCommandHandler3<T, U, V> : BlockCommandHandler {
+            T p1; U p2; V p3;
+            public BlockCommandHandler3(ThreeParameterBlockDelegate<T, U, V> action) {
+                canHandle = (p) => Bind<V>(Bind<U>(Bind<T>(p, ref p1), ref p2), ref p3).Count == 0 && Supports;
+                handle = (e) => action(b, e, p1, p2, p3);
+            }
+        }
+        public class BlockCommandHandler4<T, U, V, W> : BlockCommandHandler {
+            T p1; U p2; V p3; W p4;
+            public BlockCommandHandler4(FourParameterBlockDelegate<T, U, V, W> action) {
+                canHandle = (p) => Bind<W>(Bind<V>(Bind<U>(Bind<T>(p, ref p1), ref p2), ref p3), ref p4).Count == 0 && Supports;
+                handle = (e) => action(b, e, p1, p2, p3, p4);
             }
         }
     }
