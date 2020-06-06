@@ -178,7 +178,7 @@ namespace IngameScript {
 
         public class BlockHandlerCommand : HandlerCommand {
             private BlockHandler blockHandler;
-            private IEntityProvider entityProvider;
+            private SelectorEntityProvider entityProvider;
 
             public BlockHandlerCommand(List<CommandParameter> commandParameters) : base(commandParameters) { }
 

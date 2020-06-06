@@ -19,18 +19,14 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface IEntityProvider {
-            List<IMyFunctionalBlock> GetEntities();
-        }
-
-        public class SelectorEntityProvider : IEntityProvider {
+        public class SelectorEntityProvider {
             protected SelectorCommandParameter selector;
 
             public SelectorEntityProvider(SelectorCommandParameter selector) {
                 this.selector = selector;
             }
 
-            public virtual List<IMyFunctionalBlock> GetEntities() {
+            public List<Object> GetEntities() {
                 if (selector.isGroup) {
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                     PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);

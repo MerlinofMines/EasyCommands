@@ -19,17 +19,17 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, IMyFunctionalBlock e, T t);
-        public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, IMyFunctionalBlock e, T t, U u) where T : class, CommandParameter where U : class, CommandParameter;
-        public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, IMyFunctionalBlock e, T t, U u, V v) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter;
-        public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, IMyFunctionalBlock e, T t, U u, V v, W w) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter;
+        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, T t);
+        public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, Object e, T t, U u) where T : class, CommandParameter where U : class, CommandParameter;
+        public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter;
+        public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w) where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter;
 
         public class OneParamBlockCommandHandler<T> : OneParameterCommandHandler<T> where T : class, CommandParameter {
             private OneParameterBlockDelegate<T> action;
-            protected IEntityProvider entityProvider;
+            protected SelectorEntityProvider entityProvider;
             protected BlockHandler blockHandler;
 
-            public OneParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, OneParameterBlockDelegate<T> action) {
+            public OneParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, OneParameterBlockDelegate<T> action) {
                 this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
                 this.action = action;
@@ -43,10 +43,10 @@ namespace IngameScript {
 
         public class TwoParamBlockCommandHandler<T, U> : TwoParameterCommandHandler<T, U> where T : class, CommandParameter where U : class, CommandParameter {
             private TwoParameterBlockDelegate<T, U> action;
-            protected IEntityProvider entityProvider;
+            protected SelectorEntityProvider entityProvider;
             protected BlockHandler blockHandler;
 
-            public TwoParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, TwoParameterBlockDelegate<T, U> action) {
+            public TwoParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, TwoParameterBlockDelegate<T, U> action) {
                 this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
                 this.action = action;
@@ -65,10 +65,10 @@ namespace IngameScript {
 
         public class ThreeParamBlockCommandHandler<T, U, V> : ThreeParameterCommandHandler<T, U, V> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter {
             private ThreeParameterBlockDelegate<T, U, V> action;
-            protected IEntityProvider entityProvider;
+            protected SelectorEntityProvider entityProvider;
             protected BlockHandler blockHandler;
 
-            public ThreeParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, ThreeParameterBlockDelegate<T, U, V> action) {
+            public ThreeParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, ThreeParameterBlockDelegate<T, U, V> action) {
                 this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
                 this.action = action;
@@ -82,10 +82,10 @@ namespace IngameScript {
 
         public class FourParamBlockCommandHandler<T, U, V, W> : FourParameterCommandHandler<T, U, V, W> where T : class, CommandParameter where U : class, CommandParameter where V : class, CommandParameter where W : class, CommandParameter {
             private FourParameterBlockDelegate<T, U, V, W> action;
-            protected IEntityProvider entityProvider;
+            protected SelectorEntityProvider entityProvider;
             protected BlockHandler blockHandler;
 
-            public FourParamBlockCommandHandler(IEntityProvider entityProvider, BlockHandler blockHandler, FourParameterBlockDelegate<T, U, V, W> action) {
+            public FourParamBlockCommandHandler(SelectorEntityProvider entityProvider, BlockHandler blockHandler, FourParameterBlockDelegate<T, U, V, W> action) {
                 this.entityProvider = entityProvider;
                 this.blockHandler = blockHandler;
                 this.action = action;

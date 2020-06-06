@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class DoorBlockHandler : BlockHandler<IMyDoor> {
+        public class DoorBlockHandler : FunctionalBlockHandler<IMyDoor> {
             public DoorBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.OPEN, (b) => b.Status != DoorStatus.Closed);//If at all open, you're open
                 booleanPropertySetters.Add(BooleanPropertyType.OPEN, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });

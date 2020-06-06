@@ -80,16 +80,16 @@ namespace IngameScript {
         public class AggregateCondition : Condition {
             AggregationMode aggregationMode;
             BlockCondition blockCondition;
-            IEntityProvider entityProvider;
+            SelectorEntityProvider entityProvider;
 
-            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, IEntityProvider entityProvider) {
+            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, SelectorEntityProvider entityProvider) {
                 this.aggregationMode = aggregationMode;
                 this.blockCondition = blockCondition;
                 this.entityProvider = entityProvider;
             }
 
             public bool Evaluate() {
-                List<IMyFunctionalBlock> blocks = entityProvider.GetEntities();
+                List<Object> blocks = entityProvider.GetEntities();
 
                 int matches = blocks.Count(block => blockCondition.evaluate(block));
 
@@ -106,7 +106,7 @@ namespace IngameScript {
         }
 
         public interface BlockCondition {
-            bool evaluate(IMyFunctionalBlock block);
+            bool evaluate(Object block);
         }
 
         public class NotBlockCondition : BlockCondition {
@@ -116,7 +116,7 @@ namespace IngameScript {
                 this.blockCondition = blockCondition;
             }
 
-            public bool evaluate(IMyFunctionalBlock block) {
+            public bool evaluate(Object block) {
                 return !blockCondition.evaluate(block);
             }
             public override String ToString() {
@@ -136,7 +136,7 @@ namespace IngameScript {
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
             }
-            public abstract bool evaluate(IMyFunctionalBlock block);
+            public abstract bool evaluate(Object block);
             public override String ToString() {
                 return property + " " + comparator + " " + comparisonValue;
             }
@@ -144,17 +144,17 @@ namespace IngameScript {
 
         public class BooleanBlockCondition : BlockCondition<BooleanPropertyType, bool> {
             public BooleanBlockCondition(BlockHandler blockHandler, BooleanPropertyType property, Comparator<bool> comparator, bool comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(IMyFunctionalBlock block) { return comparator.compare(blockHandler.GetBooleanPropertyValue(block, property), comparisonValue); }
+            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetBooleanPropertyValue(block, property), comparisonValue); }
         }
 
         public class StringBlockCondition : BlockCondition<StringPropertyType, String> {
             public StringBlockCondition(BlockHandler blockHandler, StringPropertyType property, Comparator<String> comparator, String comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(IMyFunctionalBlock block) { return comparator.compare(blockHandler.GetStringPropertyValue(block, property), comparisonValue); }
+            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetStringPropertyValue(block, property), comparisonValue); }
         }
 
         public class NumericBlockCondition : BlockCondition<NumericPropertyType, float> {
             public NumericBlockCondition(BlockHandler blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(IMyFunctionalBlock block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
+            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
         }
 
         public abstract class Comparator<T> {

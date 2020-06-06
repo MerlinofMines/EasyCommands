@@ -196,7 +196,7 @@ namespace IngameScript {
                 AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.Value;
                 ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.Value;
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
-                IEntityProvider provider = new SelectorEntityProvider(selector);
+                SelectorEntityProvider provider = new SelectorEntityProvider(selector);
 
                 BlockCondition blockCondition;
                 if (value is BooleanCommandParameter || property is BooleanPropertyCommandParameter) {

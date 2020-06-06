@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class ProgramBlockHandler : BlockHandler<IMyProgrammableBlock> {
+        public class ProgramBlockHandler : FunctionalBlockHandler<IMyProgrammableBlock> {
             public ProgramBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, block => block.DetailedInfo.EndsWith("Running\n"));
                 booleanPropertyGetters.Add(BooleanPropertyType.STOPPED, block => block.DetailedInfo.EndsWith("Stopped\n"));

@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class ProjectorBlockHandler : BlockHandler<IMyProjector> {
+        public class ProjectorBlockHandler : FunctionalBlockHandler<IMyProjector> {
             public ProjectorBlockHandler() {
                 booleanPropertyGetters.Add(BooleanPropertyType.COMPLETE, block => block.RemainingBlocks == 0);
                 numericPropertyGetters.Add(NumericPropertyType.PROGRESS, block => (block.TotalBlocks - block.RemainingBlocks) / block.TotalBlocks);

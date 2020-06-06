@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class PistonBlockHandler : BlockHandler<IMyPistonBase> {
+        public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
                 defaultDirection = DirectionType.UP;
                 defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);

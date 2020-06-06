@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class RotorBlockHandler : BlockHandler<IMyMotorStator> {
+        public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             public RotorBlockHandler() {
                 defaultDirection = DirectionType.CLOCKWISE;
                 defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);

@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class ConnectorBlockHandler : BlockHandler<IMyShipConnector> {
+        public class ConnectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
             public ConnectorBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, Connected);
                 booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, Connected);
