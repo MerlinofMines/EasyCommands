@@ -32,7 +32,8 @@ namespace IngameScript {
                { BlockType.ROTOR, new RotorBlockHandler() },
                { BlockType.PROGRAM, new ProgramBlockHandler() },
                { BlockType.DOOR, new DoorBlockHandler() },
-               { BlockType.DISPLAY, new TextSurfaceHandler() }
+               { BlockType.DISPLAY, new TextSurfaceHandler() },
+               { BlockType.SOUND, new SoundBlockHandler() },
             };
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
@@ -104,8 +105,8 @@ namespace IngameScript {
 
         public class FunctionalBlockHandler<T> : BlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.ON_OFF, (block) => block.Enabled);
-                booleanPropertySetters.Add(BooleanPropertyType.ON_OFF, (block, enabled) => block.Enabled = enabled);
+                booleanPropertyGetters.Add(BooleanPropertyType.POWER, (block) => block.Enabled);
+                booleanPropertySetters.Add(BooleanPropertyType.POWER, (block, enabled) => block.Enabled = enabled);
             }
             public override List<Object> GetBlocks(String name) {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
@@ -133,7 +134,7 @@ namespace IngameScript {
             protected Dictionary<BooleanPropertyType, BooleanPropertySetter<T>> booleanPropertySetters = new Dictionary<BooleanPropertyType, BooleanPropertySetter<T>>();
             protected Dictionary<StringPropertyType, StringPropertySetter<T>> stringPropertySetters = new Dictionary<StringPropertyType, StringPropertySetter<T>>();
             protected Dictionary<NumericPropertyType, NumericPropertySetter<T>> numericPropertySetters = new Dictionary<NumericPropertyType, NumericPropertySetter<T>>();
-            protected BooleanPropertyType defaultBooleanProperty = BooleanPropertyType.ON_OFF;
+            protected BooleanPropertyType defaultBooleanProperty = BooleanPropertyType.POWER;
             protected StringPropertyType defaultStringProperty = StringPropertyType.NAME;
             protected Dictionary<DirectionType, NumericPropertyType> defaultNumericProperties = new Dictionary<DirectionType, NumericPropertyType>();
             protected DirectionType? defaultDirection = null;

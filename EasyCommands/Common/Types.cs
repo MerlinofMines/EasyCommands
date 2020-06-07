@@ -19,10 +19,10 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY }
-        public enum BooleanPropertyType { ON_OFF, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN }
-        public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, PROGRESS, CLOSED_RATIO, FONT_SIZE }
-        public enum StringPropertyType { NAME, RUN, TEXT, COLOR }
+        public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND }
+        public enum BooleanPropertyType { POWER, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN }
+        public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, PROGRESS, CLOSED_RATIO, FONT_SIZE, VOLUME, RANGE }
+        public enum StringPropertyType { NAME, RUN, TEXT, COLOR, SOUND }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
         public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS }

@@ -87,6 +87,11 @@ namespace IngameScript {
         static String[] colorKeywords = { "color" };
         static String[] textKeywords = { "text", "message" };
 
+        static String[] powerKeywords = { "power" };
+        static String[] soundKeywords = { "music", "song" };
+        static String[] volumeKeywords = { "volume" };
+        static String[] rangeKeywords = { "range", "distance" };
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -134,7 +139,10 @@ namespace IngameScript {
             { "display", BlockType.DISPLAY },
             { "screen", BlockType.DISPLAY },
             { "monitor", BlockType.DISPLAY },
-            { "lcd", BlockType.DISPLAY }
+            { "lcd", BlockType.DISPLAY },
+            { "sound", BlockType.SOUND },
+            { "music", BlockType.SOUND },
+            { "alarm", BlockType.SOUND },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -212,6 +220,10 @@ namespace IngameScript {
             AddWords(fontKeywords, new NumericPropertyCommandParameter(NumericPropertyType.FONT_SIZE));
             AddWords(textKeywords, new StringPropertyCommandParameter(StringPropertyType.TEXT));
             AddWords(colorKeywords, new StringPropertyCommandParameter(StringPropertyType.COLOR));
+            AddWords(powerKeywords, new BooleanPropertyCommandParameter(BooleanPropertyType.POWER));
+            AddWords(soundKeywords, new StringPropertyCommandParameter(StringPropertyType.SOUND));
+            AddWords(volumeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.VOLUME));
+            AddWords(rangeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.RANGE));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {
