@@ -50,12 +50,13 @@ namespace IngameScript {
 
         public class SelectorProcessor : ParameterProcessor {
             protected override bool ShouldProcess(CommandParameter p) {
-                return p is GroupCommandParameter || p is StringCommandParameter || p is BlockTypeCommandParameter;
+                return p is GroupCommandParameter || p is StringCommandParameter || p is BlockTypeCommandParameter || p is IndexCommandParameter;
             }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 bool isGroup = false;
                 StringCommandParameter selector = null;
                 BlockTypeCommandParameter blockType = null;
+                int? index = null;
                 int paramCount = 0;
 
                 while (i + paramCount < p.Count) {
@@ -64,6 +65,7 @@ namespace IngameScript {
                     if (param is GroupCommandParameter) isGroup = true;
                     else if (param is StringCommandParameter && selector == null) selector = ((StringCommandParameter)param);
                     else if (param is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)param);
+                    else if (param is IndexCommandParameter) index = ((IndexCommandParameter)param).Value;
                     else break;
                     paramCount++;
                 }
@@ -79,7 +81,7 @@ namespace IngameScript {
 
                 Debug("Converted String at index: " + i + " to SelectorCommandParamter");
                 p.RemoveRange(i, paramCount);
-                p.Insert(i, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector.Value));
+                p.Insert(i, new SelectorCommandParameter(blockType.GetBlockType(), isGroup, selector.Value, index));
             }
         }
 

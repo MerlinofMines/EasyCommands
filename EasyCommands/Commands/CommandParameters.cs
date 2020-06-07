@@ -31,8 +31,11 @@ namespace IngameScript {
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> SubTokens = new List<CommandParameter>();
-            public StringCommandParameter(string value, params CommandParameter[] SubTokens) : base(value) {
+            public String original;
+            public StringCommandParameter(String value, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
+                Value = value.ToLower();
+                this.original = value;
             }
         }
 
@@ -64,6 +67,9 @@ namespace IngameScript {
             public UnitCommandParameter(UnitType value) : base(value) {}
         }
 
+        public class IndexCommandParameter : ValueCommandParameter<int> {
+            public IndexCommandParameter(int value) : base(value) {}
+        }
 
         public class GroupCommandParameter : CommandParameter { }
         public class AsyncCommandParameter : CommandParameter { }
@@ -116,14 +122,15 @@ namespace IngameScript {
             public BlockType blockType;
             public bool isGroup;
             public String selector;
+            public int? selectorIndex = null;
 
-            public SelectorCommandParameter(BlockType blockType, bool isGroup, string selector) {
+            public SelectorCommandParameter(BlockType blockType, bool isGroup, string selector, int? selectorIndex) {
                 this.blockType = blockType;
                 this.isGroup = isGroup;
                 this.selector = selector;
+                this.selectorIndex = selectorIndex;
             }
         }
-
 
         public class ElseCommandParameter : CommandParameter { }
 

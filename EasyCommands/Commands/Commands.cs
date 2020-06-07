@@ -254,7 +254,7 @@ namespace IngameScript {
                     new BlockCommandHandler2<BooleanPropertyCommandParameter, BooleanCommandParameter>((b,e,p,s)=>{b.SetBooleanPropertyValue(e, p.Value, s.Value);}),
 
                     //String Handlers
-                    new BlockCommandHandler2<StringPropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.Value); }),
+                    new BlockCommandHandler2<StringPropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.original); }),
 
                     //Numeric Handlers
                     new BlockCommandHandler2<NumericPropertyCommandParameter, NumericCommandParameter>((b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),

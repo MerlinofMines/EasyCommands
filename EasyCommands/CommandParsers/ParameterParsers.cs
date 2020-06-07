@@ -83,6 +83,10 @@ namespace IngameScript {
         static String[] listenKeywords = { "listen", "channel" };
         static String[] sendKeywords = { "send", "broadcast" };
 
+        static String[] fontKeywords = { "fontsize", "size" };
+        static String[] colorKeywords = { "color" };
+        static String[] textKeywords = { "text", "message" };
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -127,6 +131,10 @@ namespace IngameScript {
             { "hanger", BlockType.DOOR },
             { "bay", BlockType.DOOR },
             { "gate", BlockType.DOOR },
+            { "display", BlockType.DISPLAY },
+            { "screen", BlockType.DISPLAY },
+            { "monitor", BlockType.DISPLAY },
+            { "lcd", BlockType.DISPLAY }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -201,6 +209,9 @@ namespace IngameScript {
             AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
             AddWords(listenKeywords, new ListenCommandParameter());
             AddWords(sendKeywords, new SendCommandParameter());
+            AddWords(fontKeywords, new NumericPropertyCommandParameter(NumericPropertyType.FONT_SIZE));
+            AddWords(textKeywords, new StringPropertyCommandParameter(StringPropertyType.TEXT));
+            AddWords(colorKeywords, new StringPropertyCommandParameter(StringPropertyType.COLOR));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {
@@ -217,7 +228,7 @@ namespace IngameScript {
                 if (token.isString) {
                     List<Token> subTokens = ParseTokens(t);
                     List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                    commandParameters.Add(new StringCommandParameter(t, subtokenParams.ToArray()));
+                    commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
                     continue;
                 }
 
@@ -256,8 +267,15 @@ namespace IngameScript {
                     continue;
                 }
 
+                int indexValue;
+                if (t.StartsWith("@")) {
+                    if(int.TryParse(t.Substring(1), out indexValue)) {
+                        commandParameters.Add(new IndexCommandParameter(indexValue));
+                    }
+                    continue;
+                }
                 //If nothing else matches, must be a string
-                commandParameters.Add(new StringCommandParameter(t));
+                commandParameters.Add(new StringCommandParameter(token.original));
             }
             return commandParameters;
         }
@@ -274,11 +292,13 @@ namespace IngameScript {
 
         public class Token {
             public String token;
+            public String original;
             public bool isString;
 
             public Token(string token, bool isString) {
                 this.isString = isString;
                 this.token = token.ToLower();
+                this.original = token;
             }
 
             public override string ToString() { return token; }

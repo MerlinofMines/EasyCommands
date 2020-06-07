@@ -34,21 +34,8 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                if (selector.isGroup) {
-                    List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                    PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-
-                    IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == selector.selector);
-
-                    if (group == null) {
-                        throw new Exception("Unable to find requested block group: " + selector.selector);
-                    }
-
-                    return BlockHandlerRegistry.GetBlocks(group, selector.blockType);
-
-                } else {
-                    return BlockHandlerRegistry.GetBlocks(selector.blockType, selector.selector);
-                }
+                List<Object> entities = selector.isGroup ? BlockHandlerRegistry.GetBlocksInGroup(selector.blockType, selector.selector) : BlockHandlerRegistry.GetBlocks(selector.blockType, selector.selector);
+                return selector.selectorIndex.HasValue ? new List<Object>() { entities[selector.selectorIndex.Value] } : entities;
             }
             public override String ToString() {
                 return selector.blockType + (selector.isGroup ? " in group named " : " named " + selector.selector);

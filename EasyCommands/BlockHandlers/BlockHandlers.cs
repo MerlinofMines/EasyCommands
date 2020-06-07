@@ -32,6 +32,7 @@ namespace IngameScript {
                { BlockType.ROTOR, new RotorBlockHandler() },
                { BlockType.PROGRAM, new ProgramBlockHandler() },
                { BlockType.DOOR, new DoorBlockHandler() },
+               { BlockType.DISPLAY, new TextSurfaceHandler() }
             };
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
@@ -40,8 +41,8 @@ namespace IngameScript {
             public static List<Object> GetBlocks(BlockType blockType, String customName) {
                 return blockHandlers[blockType].GetBlocks(customName);
             }
-            public static List<Object> GetBlocks(IMyBlockGroup group, BlockType blockType) {
-                return blockHandlers[blockType].GetBlocks(group);
+            public static List<Object> GetBlocksInGroup(BlockType blockType, String groupName) {
+                return blockHandlers[blockType].GetBlocksInGroup(groupName);
             }
         }
 
@@ -60,6 +61,18 @@ namespace IngameScript {
         public delegate void MovePropertyValue<T>(T block, DirectionType direction);
         public delegate void ReversePropertyValue<T>(T block);
 
+        public class SimpleNumericPropertySetter<T> : NumericPropertySetter<T> {
+            public SimpleNumericPropertySetter(NumericPropertyGetter<T> GetValue, SetPropertyValue<T> SetValue, float delta) {
+                Set = SetValue;
+                SetDirection = (b,d,v) => SetValue(b,v);
+                Increment = (b,v) => SetValue(b, GetValue(b) + v);
+                IncrementDirection = (b,d,v) => SetValue(b, Multiply(d)*GetValue(b) + v);
+                Move = (b, d) => SetValue(b, Multiply(d) * GetValue(b) + delta);
+                Reverse = (b) => SetValue(b, -GetValue(b));
+            }
+            private float Multiply(DirectionType d) { return (d == DirectionType.UP) ? 1 : -1; }
+        }
+
         public class NumericPropertySetter<T> {
             public SetPropertyValue<T> Set;
             public SetPropertyValueDirection<T> SetDirection;
@@ -75,7 +88,7 @@ namespace IngameScript {
             NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
             DirectionType GetDefaultDirection();
             List<Object> GetBlocks(String name);
-            List<Object> GetBlocks(IMyBlockGroup group);
+            List<Object> GetBlocksInGroup(String groupName);
             bool GetBooleanPropertyValue(Object block, BooleanPropertyType property);
             string GetStringPropertyValue(Object block, StringPropertyType property);
             float GetNumericPropertyValue(Object block, NumericPropertyType property);
@@ -99,7 +112,11 @@ namespace IngameScript {
                 PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.ToLower().Equals(name));
                 return blocks.Select(block => (Object)block).ToList();
             }
-            public override List<Object> GetBlocks(IMyBlockGroup group) {
+            public override List<Object> GetBlocksInGroup(String groupName) {
+                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
+                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == groupName);
+                if (group == null) {throw new Exception("Unable to find requested block group: " + groupName);                }
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 group.GetBlocksOfType<T>(blocks);
                 return blocks.Select(block => (Object)block).ToList();
@@ -120,8 +137,8 @@ namespace IngameScript {
             protected StringPropertyType defaultStringProperty = StringPropertyType.NAME;
             protected Dictionary<DirectionType, NumericPropertyType> defaultNumericProperties = new Dictionary<DirectionType, NumericPropertyType>();
             protected DirectionType? defaultDirection = null;
-            public abstract List<object> GetBlocks(string name);
-            public abstract List<object> GetBlocks(IMyBlockGroup group);
+            public abstract List<object> GetBlocks(String name);
+            public abstract List<object> GetBlocksInGroup(String groupName);
 
             public BooleanPropertyType GetDefaultBooleanProperty() {
                 return defaultBooleanProperty;
