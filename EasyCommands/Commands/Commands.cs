@@ -342,20 +342,22 @@ namespace IngameScript {
         public class MultiActionCommand : Command {
             List<Command> commandsToExecute;
             List<Command> currentCommands = null;
-            int loopCount = 0;
-
-            public MultiActionCommand(List<Command> commandsToExecute) {
+            int loopCount;
+            int loopsLeft;
+            public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) {
                 this.commandsToExecute = commandsToExecute;
+                loopCount = loops;
             }
 
             public override bool Execute() {
                 if (currentCommands == null) {
                     currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
-                    loopCount = Math.Max(0, loopCount - 1);//Decrement and stay at 0.  If 0, execute once and stay at 0.
+                    if (loopsLeft == 0) loopsLeft = loopCount;
+                    loopsLeft -= 1;
                 }
 
                 Print("Commands left: " + currentCommands.Count);
-                Print("Loops Left: " + loopCount);
+                Print("Loops Left: " + loopsLeft);
 
                 int commandIndex = 0;
 
@@ -369,14 +371,14 @@ namespace IngameScript {
                 }
 
                 if (currentCommands != null && currentCommands.Count > 0) return false;
-                if (loopCount == 0) return true;
+                if (loopsLeft == 0) return true;
 
                 Reset();
                 return false;
             }
             public override void Reset() { currentCommands = null; }
-            protected override Command Clone() { return new MultiActionCommand(commandsToExecute); }
-            public void Loop(int times) { loopCount += times; }
+            protected override Command Clone() { return new MultiActionCommand(commandsToExecute, loopCount); }
+            public void Loop(int times) { loopsLeft += times; }
         }
     }
 }

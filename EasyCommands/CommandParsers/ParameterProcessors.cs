@@ -25,6 +25,7 @@ namespace IngameScript {
                   new SelectorProcessor(),
                   new FunctionProcessor(),
                   new RunArgumentProcessor(),
+                  new IterationProcessor(),
                   new ConditionProcessor(),
                   new ActionProcessor(),
             };
@@ -145,6 +146,20 @@ namespace IngameScript {
                 else throw new Exception("Unknown Command Reference Type.");
                 p.RemoveRange(i, paramCount);
                 p.Insert(i, new CommandReferenceParameter(command));
+            }
+        }
+
+        public class IterationProcessor : ParameterProcessor {
+            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
+                IterationCommandParameter icp = (IterationCommandParameter)p[i];
+                if (i == 0 || !(p[i - 1] is NumericCommandParameter)) throw new Exception("Iteration must be preceded by a number");
+                icp.Value = (int)Math.Round(((NumericCommandParameter)p[i - 1]).Value);
+                Print("Loops: " + icp.Value);
+                p.RemoveAt(i - 1);
+            }
+
+            protected override bool ShouldProcess(CommandParameter p) {
+                return p is IterationCommandParameter;
             }
         }
 

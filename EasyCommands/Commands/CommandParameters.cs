@@ -107,6 +107,9 @@ namespace IngameScript {
         public class OrCommandParameter : CommandParameter { }
         public class OpenParenthesisCommandParameter : CommandParameter { }
         public class CloseParenthesisCommandParameter : CommandParameter { }
+        public class IterationCommandParameter : ValueCommandParameter<int> {
+            public IterationCommandParameter(int value) : base(value) {}
+        }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode> {
             public AggregationModeCommandParameter(AggregationMode value) : base(value) {

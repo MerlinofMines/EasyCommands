@@ -23,6 +23,7 @@ namespace IngameScript {
             private static List<CommandProcessor> CommandParsers = new List<CommandProcessor>() {
                 new AsyncCommandProcessor(),
                 new ParenthesisCommandProcessor(),
+                new IterationCommandProcessor(),
                 new ConditionalCommandProcessor(),
                 new AndCommandProcessor(),
             };
@@ -55,6 +56,27 @@ namespace IngameScript {
                     commandParameters.RemoveRange(i, 2);
                     commandParameters.Insert(i, new CommandReferenceParameter(subCommand));
                     processed = true;
+                }
+                return processed;
+            }
+        }
+
+        public class IterationCommandProcessor : CommandProcessor {
+            public bool ProcessCommand(List<CommandParameter> commandParameters) {
+                bool processed = false;
+                for (int i = 0; i < commandParameters.Count - 1; i++) {
+                    //First, swap statements (command) (iteration) -> (iteration) (command)
+                    if (commandParameters[i + 1] is IterationCommandParameter && commandParameters[i] is CommandReferenceParameter) {
+                        CommandParameter temp = commandParameters[i];
+                        commandParameters.RemoveAt(i);
+                        commandParameters.Insert(i + 1, temp);
+                    }
+                    if (commandParameters[i] is IterationCommandParameter && commandParameters[i + 1] is CommandReferenceParameter) {
+                        MultiActionCommand command = new MultiActionCommand(new List<Command>() { ((CommandReferenceParameter)commandParameters[i + 1]).Value }, ((IterationCommandParameter)commandParameters[i]).Value);
+                        commandParameters.RemoveRange(i, 2);
+                        commandParameters.Insert(i, new CommandReferenceParameter(command));
+                        processed = true;
+                    }
                 }
                 return processed;
             }

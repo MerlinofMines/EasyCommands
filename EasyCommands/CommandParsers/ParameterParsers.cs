@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Configuration.  Keep all words lowercase
-        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are" };
+        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are", "for"};
         static String[] groupWords = { "blocks", "group" };
         static String[] activateWords = { "move", "go", "on", "begin" };
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
@@ -91,6 +91,7 @@ namespace IngameScript {
         static String[] soundKeywords = { "music", "song" };
         static String[] volumeKeywords = { "volume" };
         static String[] rangeKeywords = { "range", "distance" };
+        static String[] iterationKeywords = { "times", "iterations" };
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -224,6 +225,7 @@ namespace IngameScript {
             AddWords(soundKeywords, new StringPropertyCommandParameter(StringPropertyType.SOUND));
             AddWords(volumeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.VOLUME));
             AddWords(rangeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.RANGE));
+            AddWords(iterationKeywords, new IterationCommandParameter(1));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {
