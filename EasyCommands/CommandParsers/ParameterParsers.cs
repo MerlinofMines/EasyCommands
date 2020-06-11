@@ -92,6 +92,7 @@ namespace IngameScript {
         static String[] volumeKeywords = { "volume" };
         static String[] rangeKeywords = { "range", "distance" };
         static String[] iterationKeywords = { "times", "iterations" };
+        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -120,6 +121,14 @@ namespace IngameScript {
             { "hangers", BlockType.DOOR },
             { "bays", BlockType.DOOR },
             { "gates", BlockType.DOOR },
+            { "displays", BlockType.DISPLAY },
+            { "screens", BlockType.DISPLAY },
+            { "monitors", BlockType.DISPLAY },
+            { "lcds", BlockType.DISPLAY },
+            { "speakers", BlockType.SOUND },
+            { "alarms", BlockType.SOUND },
+            { "cameras", BlockType.CAMERA },
+            { "sensors", BlockType.SENSOR },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -141,9 +150,10 @@ namespace IngameScript {
             { "screen", BlockType.DISPLAY },
             { "monitor", BlockType.DISPLAY },
             { "lcd", BlockType.DISPLAY },
-            { "sound", BlockType.SOUND },
-            { "music", BlockType.SOUND },
+            { "speaker", BlockType.SOUND },
             { "alarm", BlockType.SOUND },
+            { "camera", BlockType.CAMERA },
+            { "sensor", BlockType.SENSOR },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -226,6 +236,7 @@ namespace IngameScript {
             AddWords(volumeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.VOLUME));
             AddWords(rangeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.RANGE));
             AddWords(iterationKeywords, new IterationCommandParameter(1));
+            AddWords(triggerWords, new BooleanPropertyCommandParameter(BooleanPropertyType.TRIGGER));
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {

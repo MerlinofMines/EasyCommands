@@ -34,6 +34,8 @@ namespace IngameScript {
                { BlockType.DOOR, new DoorBlockHandler() },
                { BlockType.DISPLAY, new TextSurfaceHandler() },
                { BlockType.SOUND, new SoundBlockHandler() },
+               { BlockType.CAMERA, new CameraBlockHandler() },
+               { BlockType.SENSOR, new SensorBlockHandler() },
             };
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
@@ -125,6 +127,19 @@ namespace IngameScript {
             protected override string Name(object block) {
                 return ((T)block).CustomName;
             }
+
+            protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key); }
+            protected void SetCustomProperty(T block, String key, String value) {
+                Dictionary<String, String> d = GetCustomData(block);
+                d[key] = value;SaveCustomData(block, d);
+            }
+            protected void SaveCustomData(T block, Dictionary<String, String> data) {
+                block.CustomData = String.Join("\n",data.Keys.Select(k => k + "=" + data[k] + '\n').ToList());
+            }
+            protected Dictionary<String, String> GetCustomData(T block) {
+                List<String> keys = block.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                return keys.ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
+            }
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
@@ -177,7 +192,7 @@ namespace IngameScript {
                 numericPropertySetters[property].Set((T)block, value);
             }
             public void SetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float value) {
-                Print("Setting " + Name(block) + " " + property + " to " + value + "in " + direction + "direction");
+                Print("Setting " + Name(block) + " " + property + " to " + value + " in " + direction + " direction");
                 numericPropertySetters[property].SetDirection((T)block, direction, value);
             }
             public void IncrementNumericPropertyValue(Object block, NumericPropertyType property, float deltaValue) {
@@ -185,11 +200,11 @@ namespace IngameScript {
                 numericPropertySetters[property].Increment((T)block, deltaValue);
             }
             public void IncrementNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float deltaValue) {
-                Print("Incrementing " + Name(block) + " " + property + " by " + deltaValue + "in " + direction + "direction");
+                Print("Incrementing " + Name(block) + " " + property + " by " + deltaValue + " in " + direction + " direction");
                 numericPropertySetters[property].IncrementDirection((T)block, direction, deltaValue);
             }
             public void MoveNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction) {
-                Print("Moving " + Name(block) + " " + property + "in " + direction + "direction");
+                Print("Moving " + Name(block) + " " + property + " in " + direction + " direction");
                 numericPropertySetters[property].Move((T)block, direction);
             }
             public void ReverseNumericPropertyValue(Object block, NumericPropertyType property) {
