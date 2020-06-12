@@ -129,6 +129,7 @@ namespace IngameScript {
             { "alarms", BlockType.SOUND },
             { "cameras", BlockType.CAMERA },
             { "sensors", BlockType.SENSOR },
+            { "beacons", BlockType.BEACON }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -154,6 +155,7 @@ namespace IngameScript {
             { "alarm", BlockType.SOUND },
             { "camera", BlockType.CAMERA },
             { "sensor", BlockType.SENSOR },
+            { "beacon", BlockType.BEACON }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

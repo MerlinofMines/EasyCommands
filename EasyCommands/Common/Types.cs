@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND, CAMERA, SENSOR }
+        public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND, CAMERA, SENSOR, BEACON }
         public enum BooleanPropertyType { POWER, CONNECTED, CONNECTABLE, ANGLE, LOCKED, LOCKABLE, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN, TRIGGER }
         public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, PROGRESS, CLOSED_RATIO, FONT_SIZE, VOLUME, RANGE }
         public enum StringPropertyType { NAME, RUN, TEXT, COLOR, SOUND }

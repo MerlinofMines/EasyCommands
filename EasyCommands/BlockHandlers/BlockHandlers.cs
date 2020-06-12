@@ -36,6 +36,7 @@ namespace IngameScript {
                { BlockType.SOUND, new SoundBlockHandler() },
                { BlockType.CAMERA, new CameraBlockHandler() },
                { BlockType.SENSOR, new SensorBlockHandler() },
+               { BlockType.BEACON, new BeaconBlockHandler()},
             };
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
