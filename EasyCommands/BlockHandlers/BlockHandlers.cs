@@ -22,7 +22,7 @@ namespace IngameScript {
         public static class BlockHandlerRegistry {
             static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
                { BlockType.PISTON, new PistonBlockHandler() },
-               { BlockType.LIGHT, new FunctionalBlockHandler<IMyLightingBlock>() },
+               { BlockType.LIGHT, new LightBlockHandler() },
                { BlockType.MERGE, new MergeBlockHandler() },
                { BlockType.PROJECTOR, new ProjectorBlockHandler() },
                { BlockType.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },

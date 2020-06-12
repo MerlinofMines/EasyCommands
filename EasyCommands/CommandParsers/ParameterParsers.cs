@@ -173,6 +173,16 @@ namespace IngameScript {
             { "resume", ControlType.RESUME },
         };
 
+        static Dictionary<String, Color> colors = new Dictionary<String, Color>{
+            { "red", Color.Red },
+            { "blue", Color.Blue },
+            { "green", Color.Green },
+            { "orange", Color.Orange },
+            { "yellow", Color.Yellow },
+            { "white", Color.White },
+            { "black", Color.Black}
+        };
+
         //Internal (Don't touch!)
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
@@ -237,6 +247,12 @@ namespace IngameScript {
             AddWords(rangeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.RANGE));
             AddWords(iterationKeywords, new IterationCommandParameter(1));
             AddWords(triggerWords, new BooleanPropertyCommandParameter(BooleanPropertyType.TRIGGER));
+        }
+
+        public static Color GetColor(String color) {
+            if (colors.ContainsKey(color)) return colors[color];
+            float rgb; if (float.TryParse(color, out rgb)) return new Color(rgb);
+            throw new Exception("Unknown Color: " + color);
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {

@@ -20,11 +20,6 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class TextSurfaceHandler : BlockHandler<IMyTextSurface> {
-            Dictionary<String, Color> colors = new Dictionary<String, Color>{
-                { "red", Color.Red }, { "blue", Color.Blue }, { "green", Color.Green }, {"orange", Color.Orange },
-                { "yellow", Color.Yellow }, {"white", Color.White }, {"black", Color.Black}
-            };
-
             public TextSurfaceHandler() {
                 stringPropertySetters.Add(StringPropertyType.TEXT, (b, v) => b.WriteText(v));
                 stringPropertySetters.Add(StringPropertyType.COLOR, (b, v) => b.FontColor=GetColor(v));
@@ -66,11 +61,6 @@ namespace IngameScript {
 
             private void Add(IMyTextSurfaceProvider p, List<object> surfaces) {
                 for (int i = 0; i < p.SurfaceCount; i++) surfaces.Add(p.GetSurface(i));
-            }
-
-            private Color GetColor(String color) {
-                if (!colors.ContainsKey(color)) return new Color(float.Parse(color));
-                return colors[color];
             }
         }
     }
