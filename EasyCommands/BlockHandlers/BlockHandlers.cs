@@ -37,6 +37,7 @@ namespace IngameScript {
                { BlockType.CAMERA, new CameraBlockHandler() },
                { BlockType.SENSOR, new SensorBlockHandler() },
                { BlockType.BEACON, new BeaconBlockHandler()},
+               { BlockType.ANTENNA, new AntennaBlockHandler()},
             };
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
