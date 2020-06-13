@@ -37,8 +37,8 @@ namespace IngameScript {
         static String[] angleWords = { "angle" };
         static String[] speedWords = { "speed", "velocity", "rate", "pace" };
         static String[] waitWords = { "wait", "hold" };
-        static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached" };
-        static String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached" };
+        static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached", "dock", "docked" };
+        static String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked" };
 
         static String[] lockWords = { "lock", "freeze" };
         static String[] unlockWords = { "unlock", "unfreeze" };
@@ -90,7 +90,7 @@ namespace IngameScript {
         static String[] powerKeywords = { "power" };
         static String[] soundKeywords = { "music", "song" };
         static String[] volumeKeywords = { "volume" };
-        static String[] rangeKeywords = { "range", "distance" };
+        static String[] rangeKeywords = { "range", "distance", "limit" };
         static String[] iterationKeywords = { "times", "iterations" };
         static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
 
@@ -130,8 +130,14 @@ namespace IngameScript {
             { "cameras", BlockType.CAMERA },
             { "sensors", BlockType.SENSOR },
             { "beacons", BlockType.BEACON },
-            { "antennae", BlockType.BEACON },
-            { "antennas", BlockType.BEACON },
+            { "antennae", BlockType.ANTENNA },
+            { "antennas", BlockType.ANTENNA },
+            { "ships", BlockType.COCKPIT },
+            { "rovers", BlockType.COCKPIT },
+            { "cockpits", BlockType.COCKPIT },
+            { "drones", BlockType.REMOTE },
+            { "remotes", BlockType.REMOTE },
+            { "robots", BlockType.REMOTE },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -159,6 +165,12 @@ namespace IngameScript {
             { "sensor", BlockType.SENSOR },
             { "beacon", BlockType.BEACON },
             { "antenna", BlockType.ANTENNA },
+            { "ship", BlockType.COCKPIT },
+            { "rover", BlockType.COCKPIT },
+            { "cockpit", BlockType.COCKPIT },
+            { "drone", BlockType.REMOTE },
+            { "remote", BlockType.REMOTE },
+            { "robot", BlockType.REMOTE },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

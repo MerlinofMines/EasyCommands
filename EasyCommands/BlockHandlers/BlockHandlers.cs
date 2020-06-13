@@ -38,7 +38,10 @@ namespace IngameScript {
                { BlockType.SENSOR, new SensorBlockHandler() },
                { BlockType.BEACON, new BeaconBlockHandler()},
                { BlockType.ANTENNA, new AntennaBlockHandler()},
+               { BlockType.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
+               { BlockType.REMOTE, new RemoteControlBlockHandler()},
             };
+
             public static BlockHandler GetBlockHandler(BlockType blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
                 return blockHandlers[blockType];
@@ -107,28 +110,31 @@ namespace IngameScript {
             void ReverseNumericPropertyValue(Object block, NumericPropertyType property);
         }
 
-        public class FunctionalBlockHandler<T> : BlockHandler<T> where T : class, IMyFunctionalBlock {
-            public FunctionalBlockHandler() {
+        public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
+            public FunctionalBlockHandler() : base() {
                 booleanPropertyGetters.Add(BooleanPropertyType.POWER, (block) => block.Enabled);
                 booleanPropertySetters.Add(BooleanPropertyType.POWER, (block, enabled) => block.Enabled = enabled);
             }
-            public override List<Object> GetBlocks(String name) {
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+        }
+
+        public abstract class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
+            public override List<T> GetBlocksOfType(String name) {
+                List<T> blocks = new List<T>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.ToLower().Equals(name));
-                return blocks.Select(block => (Object)block).ToList();
+                return blocks;
             }
-            public override List<Object> GetBlocksInGroup(String groupName) {
+
+            public override List<T> GetBlocksOfTypeInGroup(String groupName) {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == groupName);
-                if (group == null) {throw new Exception("Unable to find requested block group: " + groupName);                }
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
+                List<T> blocks = new List<T>();
                 group.GetBlocksOfType<T>(blocks);
-                return blocks.Select(block => (Object)block).ToList();
+                return blocks;
             }
-            protected override string Name(object block) {
-                return ((T)block).CustomName;
-            }
+
+            protected override string Name(T block) { return block.CustomName; }
 
             protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key); }
             protected void SetCustomProperty(T block, String key, String value) {
@@ -155,8 +161,12 @@ namespace IngameScript {
             protected StringPropertyType defaultStringProperty = StringPropertyType.NAME;
             protected Dictionary<DirectionType, NumericPropertyType> defaultNumericProperties = new Dictionary<DirectionType, NumericPropertyType>();
             protected DirectionType? defaultDirection = null;
-            public abstract List<object> GetBlocks(String name);
-            public abstract List<object> GetBlocksInGroup(String groupName);
+
+            public List<Object> GetBlocks(String name) { return GetBlocksOfType(name).Select(t => t as object).ToList(); }
+            public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
+
+            public abstract List<T> GetBlocksOfType(String name);
+            public abstract List<T> GetBlocksOfTypeInGroup(String name);
 
             public BooleanPropertyType GetDefaultBooleanProperty() {
                 return defaultBooleanProperty;
@@ -213,7 +223,10 @@ namespace IngameScript {
                 Print("Reversing " + Name(block) + " " + property);
                 numericPropertySetters[property].Reverse((T)block);
             }
-            protected abstract String Name(Object block);
+            private string Name(object block) {
+                return Name((T)block);
+            }
+            protected abstract string Name(T block);
         }
     }
 }

@@ -29,37 +29,37 @@ namespace IngameScript {
                 defaultNumericProperties.Add(DirectionType.UP,NumericPropertyType.FONT_SIZE);
             }
 
-            public override List<object> GetBlocks(String name) {
+            public override List<IMyTextSurface> GetBlocksOfType(String name) {
                 List<IMyFunctionalBlock> blocks = new List<IMyFunctionalBlock>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.ToLower().Equals(name));
 
-                List<object> surfaces = new List<object>();
+                List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
                 blocks.ForEach((b)=>Add(b, surfaces));
                 return surfaces;
             }
 
-            public override List<object> GetBlocksInGroup(String groupName) {
+            public override List<IMyTextSurface> GetBlocksOfTypeInGroup(String groupName) {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == groupName);
                 if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 group.GetBlocksOfType<IMyTerminalBlock>(blocks);
-                List<object> surfaces = new List<object>();
+                List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
                 blocks.ForEach((b) => Add(b, surfaces));
                 return surfaces;
             }
 
-            protected override string Name(object block) {
-                return ((IMyTextSurface)block).DisplayName;
+            protected override string Name(IMyTextSurface block) {
+                return block.DisplayName;
             }
 
-            private void Add(object b, List<object> surfaces) {
+            private void Add(object b, List<IMyTextSurface> surfaces) {
                 if (b is IMyTextSurface) surfaces.Add((IMyTextSurface)b);
                 else if (b is IMyTextSurfaceProvider) Add((IMyTextSurfaceProvider)b, surfaces);
             }
 
-            private void Add(IMyTextSurfaceProvider p, List<object> surfaces) {
+            private void Add(IMyTextSurfaceProvider p, List<IMyTextSurface> surfaces) {
                 for (int i = 0; i < p.SurfaceCount; i++) surfaces.Add(p.GetSurface(i));
             }
         }
