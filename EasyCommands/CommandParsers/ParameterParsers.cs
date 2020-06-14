@@ -93,6 +93,8 @@ namespace IngameScript {
         static String[] rangeKeywords = { "range", "distance", "limit" };
         static String[] iterationKeywords = { "times", "iterations" };
         static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
+        static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake" };
+        static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate" };
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -118,7 +120,7 @@ namespace IngameScript {
             { "welders", BlockType.WELDER },
             { "grinders", BlockType.GRINDER },
             { "doors", BlockType.DOOR },
-            { "hangers", BlockType.DOOR },
+            { "hangars", BlockType.DOOR },
             { "bays", BlockType.DOOR },
             { "gates", BlockType.DOOR },
             { "displays", BlockType.DISPLAY },
@@ -139,6 +141,8 @@ namespace IngameScript {
             { "remotes", BlockType.REMOTE },
             { "robots", BlockType.REMOTE },
             { "thrusters", BlockType.THRUSTER },
+            { "airvents", BlockType.AIRVENT },
+            { "vents", BlockType.AIRVENT },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -153,7 +157,7 @@ namespace IngameScript {
             { "welder", BlockType.WELDER },
             { "grinder", BlockType.GRINDER },
             { "door", BlockType.DOOR },
-            { "hanger", BlockType.DOOR },
+            { "hangar", BlockType.DOOR },
             { "bay", BlockType.DOOR },
             { "gate", BlockType.DOOR },
             { "display", BlockType.DISPLAY },
@@ -173,6 +177,8 @@ namespace IngameScript {
             { "remote", BlockType.REMOTE },
             { "robot", BlockType.REMOTE },
             { "thruster", BlockType.THRUSTER },
+            { "airvent", BlockType.AIRVENT },
+            { "vent", BlockType.AIRVENT },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -250,7 +256,7 @@ namespace IngameScript {
             AddWords(stoppedWords, new BooleanPropertyCommandParameter(BooleanPropertyType.STOPPED));
             AddWords(pausedWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PAUSED));
             AddWords(completeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.COMPLETE));
-            AddWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.PROGRESS));
+            AddWords(progressWords, new NumericPropertyCommandParameter(NumericPropertyType.RATIO));
             AddWords(openWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(true));
             AddWords(closeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(false));
             AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
@@ -266,6 +272,8 @@ namespace IngameScript {
             AddWords(rangeKeywords, new NumericPropertyCommandParameter(NumericPropertyType.RANGE));
             AddWords(iterationKeywords, new IterationCommandParameter(1));
             AddWords(triggerWords, new BooleanPropertyCommandParameter(BooleanPropertyType.TRIGGER));
+            AddWords(produceWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE));
+            AddWords(consumeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE), new BooleanCommandParameter(false));
         }
 
         public static Color GetColor(String color) {

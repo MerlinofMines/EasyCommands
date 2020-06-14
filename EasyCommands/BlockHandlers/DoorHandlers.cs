@@ -26,10 +26,10 @@ namespace IngameScript {
                 defaultBooleanProperty = BooleanPropertyType.OPEN;
                 //TODO: Add Opening, Closing Boolean Handlers?
 
-                numericPropertyGetters.Add(NumericPropertyType.CLOSED_RATIO, (b) => 1 - b.OpenRatio);
-                numericPropertySetters.Add(NumericPropertyType.CLOSED_RATIO, new DoorRatioSetter());
+                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => 1 - b.OpenRatio);
+                numericPropertySetters.Add(NumericPropertyType.RATIO, new DoorRatioSetter());
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.CLOSED_RATIO);
+                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
 
             }
 

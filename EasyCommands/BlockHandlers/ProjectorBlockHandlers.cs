@@ -22,7 +22,7 @@ namespace IngameScript {
         public class ProjectorBlockHandler : FunctionalBlockHandler<IMyProjector> {
             public ProjectorBlockHandler() {
                 booleanPropertyGetters.Add(BooleanPropertyType.COMPLETE, block => block.RemainingBlocks == 0);
-                numericPropertyGetters.Add(NumericPropertyType.PROGRESS, block => (block.TotalBlocks - block.RemainingBlocks) / block.TotalBlocks);
+                numericPropertyGetters.Add(NumericPropertyType.RATIO, block => (block.TotalBlocks - block.RemainingBlocks) / block.TotalBlocks);
             }
         }
     }
