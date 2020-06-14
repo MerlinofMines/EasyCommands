@@ -138,6 +138,7 @@ namespace IngameScript {
             { "drones", BlockType.REMOTE },
             { "remotes", BlockType.REMOTE },
             { "robots", BlockType.REMOTE },
+            { "thrusters", BlockType.THRUSTER },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -171,6 +172,7 @@ namespace IngameScript {
             { "drone", BlockType.REMOTE },
             { "remote", BlockType.REMOTE },
             { "robot", BlockType.REMOTE },
+            { "thruster", BlockType.THRUSTER },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

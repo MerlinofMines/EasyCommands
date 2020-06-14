@@ -40,6 +40,7 @@ namespace IngameScript {
                { BlockType.ANTENNA, new AntennaBlockHandler()},
                { BlockType.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
                { BlockType.REMOTE, new RemoteControlBlockHandler()},
+               { BlockType.THRUSTER, new ThrusterBlockHandler()},
             };
 
             public static BlockHandler GetBlockHandler(BlockType blockType) {
@@ -74,8 +75,8 @@ namespace IngameScript {
                 Set = SetValue;
                 SetDirection = (b,d,v) => SetValue(b,v);
                 Increment = (b,v) => SetValue(b, GetValue(b) + v);
-                IncrementDirection = (b,d,v) => SetValue(b, Multiply(d)*GetValue(b) + v);
-                Move = (b, d) => SetValue(b, Multiply(d) * GetValue(b) + delta);
+                IncrementDirection = (b,d,v) => SetValue(b, GetValue(b) + Multiply(d) * v);
+                Move = (b, d) => SetValue(b, GetValue(b) + Multiply(d) * delta);
                 Reverse = (b) => SetValue(b, -GetValue(b));
             }
             private float Multiply(DirectionType d) { return (d == DirectionType.UP) ? 1 : -1; }
