@@ -30,6 +30,7 @@ namespace IngameScript {
                { BlockType.DISPLAY, new TextSurfaceHandler() },
                { BlockType.DOOR, new DoorBlockHandler() },
                { BlockType.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
+               { BlockType.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                { BlockType.LIGHT, new LightBlockHandler() },
                { BlockType.MERGE, new MergeBlockHandler() },
                { BlockType.PROGRAM, new ProgramBlockHandler() },
