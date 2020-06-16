@@ -146,6 +146,9 @@ namespace IngameScript {
             { "guns", BlockType.GUN },
             { "launchers", BlockType.GUN },
             { "turrets", BlockType.GUN },
+            { "reactors", BlockType.REACTOR },
+            { "generators", BlockType.GENERATOR },
+            { "tanks", BlockType.TANK },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -185,6 +188,9 @@ namespace IngameScript {
             { "gun", BlockType.GUN },
             { "launcher", BlockType.GUN },
             { "turret", BlockType.GUN },
+            { "reactor", BlockType.REACTOR },
+            { "generator", BlockType.GENERATOR },
+            { "tank", BlockType.TANK },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
