@@ -187,15 +187,16 @@ namespace IngameScript {
             }
 
             public void PreParseCommands(List<CommandParameter> commandParameters) {
-                int selectorIndex = commandParameters.FindIndex(param => param is SelectorCommandParameter);
+                SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
+                if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
+                entityProvider = new SelectorEntityProvider(selector);
+                blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
 
-                if (selectorIndex < 0) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-
-                SelectorCommandParameter selectorParameter = (SelectorCommandParameter)commandParameters[selectorIndex];
-                commandParameters.RemoveAt(selectorIndex);
-
-                entityProvider = new SelectorEntityProvider(selectorParameter);
-                blockHandler = BlockHandlerRegistry.GetBlockHandler(selectorParameter.blockType);
+                var boolVals = extract<BooleanCommandParameter>(commandParameters);
+                var notVals = extract<NotCommandParameter>(commandParameters);
+                var boolVal = (notVals.Count % 2 == 1) ? false : true;
+                boolVals.ForEach(v => boolVal = !(boolVal ^ v.Value));
+                if (boolVals.Count > 0 || notVals.Count > 0) commandParameters.Add(new BooleanCommandParameter(boolVal));
 
                 //TODO: Move to proper command parameter pre-processor
                 int boolPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
@@ -212,7 +213,7 @@ namespace IngameScript {
                 }
 
                 if (boolIndex < 0 && boolPropIndex >= 0) {
-                    commandParameters.Add(new BooleanCommandParameter(true));
+                    commandParameters.Add(new BooleanCommandParameter(boolVal));
                 }
 
                 if (stringPropIndex < 0 && stringIndex >= 0) {

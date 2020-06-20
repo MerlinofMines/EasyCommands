@@ -20,6 +20,26 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
+        public static T extractFirst<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
+            var i = parameters.FindIndex(p => p is T);
+            if (i < 0) return null;
+            T t = (T)parameters[i];
+            parameters.RemoveAt(i);
+            return t;
+        }
+
+        public static List<T> extract<T>(List<CommandParameter> parameters) where T : CommandParameter {
+            int i = 0;
+            List<T> extracted = new List<T>();
+            while (i < parameters.Count) {
+                if (parameters[i] is T) {
+                    extracted.Add((T)parameters[i]);
+                    parameters.RemoveAt(i);
+                } else { i++; };
+            }
+            return extracted;
+        }
+
         public interface CommandParameter { }
         public interface PropertyCommandParameter { }
         public interface PrimitiveCommandParameter { }
@@ -27,6 +47,9 @@ namespace IngameScript {
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T Value;
             public ValueCommandParameter(T value) { this.Value = value; }
+            public override string ToString() {
+                return GetType() + " : " + Value;
+            }
         }
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {

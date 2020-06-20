@@ -22,8 +22,8 @@ namespace IngameScript {
         //Configuration.  Keep all words lowercase
         static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are", "for"};
         static String[] groupWords = { "blocks", "group" };
-        static String[] activateWords = { "move", "go", "on", "begin" };
-        static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end" };
+        static String[] activateWords = { "move", "go", "on", "begin", "true" };
+        static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
         static String[] reverseWords = { "reverse", "switch direction", "turn around" };
         static String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
         static String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
@@ -95,6 +95,7 @@ namespace IngameScript {
         static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
         static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake" };
         static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate" };
+        static String[] ratioWords = { "ratio", "percentage", "percent" };
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -286,6 +287,7 @@ namespace IngameScript {
             AddWords(triggerWords, new BooleanPropertyCommandParameter(BooleanPropertyType.TRIGGER));
             AddWords(produceWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE));
             AddWords(consumeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE), new BooleanCommandParameter(false));
+            AddWords(ratioWords, new NumericPropertyCommandParameter(NumericPropertyType.RATIO));
         }
 
         public static Color GetColor(String color) {

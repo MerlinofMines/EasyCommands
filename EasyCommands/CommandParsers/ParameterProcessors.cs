@@ -126,8 +126,10 @@ namespace IngameScript {
                     p is ControlCommandParameter ||
                     p is FunctionCommandParameter ||
                     p is ListenCommandParameter ||
-                    p is SendCommandParameter;
+                    p is SendCommandParameter ||
+                    p is NotCommandParameter;
             }
+
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 int paramCount = 0;
                 while (i + paramCount < p.Count) {
