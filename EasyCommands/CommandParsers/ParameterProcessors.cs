@@ -127,7 +127,8 @@ namespace IngameScript {
                     p is FunctionCommandParameter ||
                     p is ListenCommandParameter ||
                     p is SendCommandParameter ||
-                    p is NotCommandParameter;
+                    p is NotCommandParameter ||
+                    p is ActionCommandParameter;
             }
 
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
@@ -180,6 +181,7 @@ namespace IngameScript {
                 PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
                 PropertyCommandParameter property = null;//Can be defaulted
                 AggregationModeCommandParameter aggregation = null;
+                DirectionCommandParameter direction = null;//Optional
                 bool inverseAggregation = false;
                 bool inverseBlockCondition = false;
 
@@ -195,6 +197,7 @@ namespace IngameScript {
 
                     if (param is SelectorCommandParameter && selector == null) selector = (SelectorCommandParameter)param;
                     else if (param is ComparisonCommandParameter && comparator == null) comparator = (ComparisonCommandParameter)param;
+                    else if (param is DirectionCommandParameter && direction == null) direction = (DirectionCommandParameter)param;
                     else if (param is AggregationModeCommandParameter && aggregation == null) aggregation = (AggregationModeCommandParameter)param;
                     else if (param is PropertyCommandParameter && property == null) property = (PropertyCommandParameter)param;
                     else if (param is PrimitiveCommandParameter && value == null) value = ((PrimitiveCommandParameter)param);
@@ -237,7 +240,11 @@ namespace IngameScript {
                     if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).Value;
                     if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
                     float numericValue = ((NumericCommandParameter)value).Value;
-                    blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
+                    if (direction != null) {
+                        blockCondition = new NumericDirectionBlockCondition(handler, numericProperty, direction.Value, new NumericComparator(comparison), numericValue);
+                    } else {
+                        blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
+                    }
                 } else {
                     throw new Exception("Unsupported Condition Parameters");
                 }

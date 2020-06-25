@@ -64,12 +64,13 @@ namespace IngameScript {
         public delegate String StringPropertyGetter<T>(T block);
         public delegate bool BooleanPropertyGetter<T>(T block);
         public delegate float NumericPropertyGetter<T>(T block);
+        public delegate float NumericPropertyGetterDirection<T>(T block, DirectionType direction);
 
         //Property Setters
         public delegate void StringPropertySetter<T>(T block, String value);
         public delegate void BooleanPropertySetter<T>(T block, bool value);
         public delegate void SetPropertyValue<T>(T block, float value);
-        public delegate void SetPropertyValueDirection<T>(T block, DirectionType DirectionType, float value);
+        public delegate void SetPropertyValueDirection<T>(T block, DirectionType direction, float value);
         public delegate void IncrementPropertyValue<T>(T block, float deltaValue);
         public delegate void IncrementPropertyValueDirection<T>(T block, DirectionType direction, float deltaValue);
         public delegate void MovePropertyValue<T>(T block, DirectionType direction);
@@ -106,6 +107,7 @@ namespace IngameScript {
             bool GetBooleanPropertyValue(Object block, BooleanPropertyType property);
             string GetStringPropertyValue(Object block, StringPropertyType property);
             float GetNumericPropertyValue(Object block, NumericPropertyType property);
+            float GetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction);
             void SetBooleanPropertyValue(Object block, BooleanPropertyType property, bool value);
             void SetStringPropertyValue(Object block, StringPropertyType property, String value);
             void SetNumericPropertyValue(Object block, NumericPropertyType property, float value);
@@ -160,6 +162,7 @@ namespace IngameScript {
             protected Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>> booleanPropertyGetters = new Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>>();
             protected Dictionary<StringPropertyType, StringPropertyGetter<T>> stringPropertyGetters = new Dictionary<StringPropertyType, StringPropertyGetter<T>>();
             protected Dictionary<NumericPropertyType, NumericPropertyGetter<T>> numericPropertyGetters = new Dictionary<NumericPropertyType, NumericPropertyGetter<T>>();
+            protected Dictionary<NumericPropertyType, NumericPropertyGetterDirection<T>> numericPropertyDirectionGetters = new Dictionary<NumericPropertyType, NumericPropertyGetterDirection<T>>();
             protected Dictionary<BooleanPropertyType, BooleanPropertySetter<T>> booleanPropertySetters = new Dictionary<BooleanPropertyType, BooleanPropertySetter<T>>();
             protected Dictionary<StringPropertyType, StringPropertySetter<T>> stringPropertySetters = new Dictionary<StringPropertyType, StringPropertySetter<T>>();
             protected Dictionary<NumericPropertyType, NumericPropertySetter<T>> numericPropertySetters = new Dictionary<NumericPropertyType, NumericPropertySetter<T>>();
@@ -196,6 +199,9 @@ namespace IngameScript {
             }
             public float GetNumericPropertyValue(Object block, NumericPropertyType property) {
                 return numericPropertyGetters[property]((T)block);
+            }
+            public float GetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction) {
+                return numericPropertyDirectionGetters[property]((T)block, direction);
             }
             public void SetBooleanPropertyValue(Object block, BooleanPropertyType property, bool value) {
                 Print("Setting " + Name(block) + " " + property + " to " + value);

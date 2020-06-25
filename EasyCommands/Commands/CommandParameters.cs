@@ -172,6 +172,7 @@ namespace IngameScript {
             }
         }
 
+        public class ActionCommandParameter : CommandParameter { }
         public class ReverseCommandParameter : CommandParameter { }
         public class RelativeCommandParameter : CommandParameter { }
         public class WaitCommandParameter : CommandParameter { }

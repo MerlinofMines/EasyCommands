@@ -21,10 +21,10 @@ namespace IngameScript {
     partial class Program {
         public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND, CAMERA, SENSOR, BEACON, ANTENNA, COCKPIT, REMOTE, THRUSTER, AIRVENT, GUN, REACTOR, GENERATOR, TANK}
         public enum BooleanPropertyType { POWER, CONNECTED, ANGLE, LOCKED, LOCKABLE, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN, TRIGGER, PRODUCE }
-        public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, RATIO, FONT_SIZE, VOLUME, RANGE }
+        public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, RATIO, FONT_SIZE, VOLUME, RANGE, INPUT }
         public enum StringPropertyType { NAME, RUN, TEXT, COLOR, SOUND }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
-        public enum DirectionType { UP, DOWN, CLOCKWISE, COUNTERCLOCKWISE }
+        public enum DirectionType { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE }
         public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS }
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }

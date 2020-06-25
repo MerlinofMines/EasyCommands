@@ -187,6 +187,8 @@ namespace IngameScript {
             }
 
             public void PreParseCommands(List<CommandParameter> commandParameters) {
+                extract<ActionCommandParameter>(commandParameters);//Extract and ignore
+
                 SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
                 entityProvider = new SelectorEntityProvider(selector);

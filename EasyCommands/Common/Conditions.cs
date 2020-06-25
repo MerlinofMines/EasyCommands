@@ -157,6 +157,14 @@ namespace IngameScript {
             public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
         }
 
+        public class NumericDirectionBlockCondition : BlockCondition<NumericPropertyType, float> {
+            DirectionType direction;
+            public NumericDirectionBlockCondition(BlockHandler blockHandler, NumericPropertyType property, DirectionType direction, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) {
+                this.direction = direction;
+            }
+            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property, direction), comparisonValue); }
+        }
+
         public abstract class Comparator<T> {
             protected ComparisonType comparisonType;
 

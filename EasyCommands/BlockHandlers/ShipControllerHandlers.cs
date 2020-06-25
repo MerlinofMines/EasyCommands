@@ -34,8 +34,23 @@ namespace IngameScript {
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
                 numericPropertyGetters.Add(NumericPropertyType.VELOCITY, (b) => (float)b.GetShipSpeed());
+                numericPropertyDirectionGetters.Add(NumericPropertyType.INPUT, GetPilotInput);
                 defaultDirection = DirectionType.UP;
                 defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.VELOCITY);
+
+            }
+
+            float GetPilotInput(T block, DirectionType direction) {
+                var pilotInput = block.MoveIndicator;
+                switch(direction) {
+                    case DirectionType.UP: return pilotInput.Y;
+                    case DirectionType.DOWN: return -pilotInput.Y;
+                    case DirectionType.LEFT: return -pilotInput.X;
+                    case DirectionType.RIGHT: return pilotInput.X;
+                    case DirectionType.FORWARD: return -pilotInput.Z;
+                    case DirectionType.BACKWARD: return pilotInput.Z;
+                    default: throw new Exception("Unsupported User Input Direction Type: " + direction);
+                }
             }
         }
     }

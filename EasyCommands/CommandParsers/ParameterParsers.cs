@@ -20,15 +20,22 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Configuration.  Keep all words lowercase
-        static String[] ignoreWords = { "the", "than", "turn", "turned", "rotate", "set", "is", "block", "tell", "to", "from", "then", "of", "either", "are", "for"};
+        static String[] ignoreWords = { "the", "than", "turned", "is", "block", "tell", "to", "from", "then", "of", "either", "are", "for" };
         static String[] groupWords = { "blocks", "group" };
         static String[] activateWords = { "move", "go", "on", "begin", "true" };
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
         static String[] reverseWords = { "reverse", "switch direction", "turn around" };
-        static String[] increaseWords = { "increase", "raise", "extend", "expand", "forward", "forwards", "up" };
-        static String[] decreaseWords = { "decrease", "lower", "retract", "reduce", "backward", "backwards", "down" };
+        static String[] increaseWords = { "increase", "raise", "extend", "expand" };
+        static String[] decreaseWords = { "decrease", "lower", "retract", "reduce" };
+        static String[] upWords = { "up", "upward" };
+        static String[] downWords = { "down", "downward" };
+        static String[] leftWords = { "left", "lefthand" };
+        static String[] rightWords = { "right", "righthand" };
+        static String[] forwardWords = { "forward", "forwards", "front" };
+        static String[] backwardWords = { "backward", "backwards", "back" };
         static String[] clockwiseWords = { "clockwise", "clock" };
         static String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
+        static String[] actionWords = { "tell", "turn", "rotate", "set"};
 
         static String[] relativeWords = { "by" };
         static String[] increaseRelativeWords = { "add" };
@@ -96,6 +103,7 @@ namespace IngameScript {
         static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake" };
         static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate" };
         static String[] ratioWords = { "ratio", "percentage", "percent" };
+        static String[] inputWords = { "input", "pilot", "user" };
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -138,6 +146,7 @@ namespace IngameScript {
             { "ships", BlockType.COCKPIT },
             { "rovers", BlockType.COCKPIT },
             { "cockpits", BlockType.COCKPIT },
+            { "seats", BlockType.COCKPIT },
             { "drones", BlockType.REMOTE },
             { "remotes", BlockType.REMOTE },
             { "robots", BlockType.REMOTE },
@@ -180,6 +189,7 @@ namespace IngameScript {
             { "ship", BlockType.COCKPIT },
             { "rover", BlockType.COCKPIT },
             { "cockpit", BlockType.COCKPIT },
+            { "seat", BlockType.COCKPIT },
             { "drone", BlockType.REMOTE },
             { "remote", BlockType.REMOTE },
             { "robot", BlockType.REMOTE },
@@ -228,12 +238,19 @@ namespace IngameScript {
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
             AddWords(deactivateWords, new BooleanCommandParameter(false));
-            AddWords(increaseWords, new DirectionCommandParameter(DirectionType.UP));
-            AddWords(increaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
-            AddWords(decreaseWords, new DirectionCommandParameter(DirectionType.DOWN));
-            AddWords(decreaseRelativeWords, new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(increaseWords, new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(increaseRelativeWords, new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(decreaseWords, new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(decreaseRelativeWords, new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(upWords, new DirectionCommandParameter(DirectionType.UP));
+            AddWords(downWords, new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(leftWords, new DirectionCommandParameter(DirectionType.LEFT));
+            AddWords(rightWords, new DirectionCommandParameter(DirectionType.RIGHT));
+            AddWords(forwardWords, new DirectionCommandParameter(DirectionType.FORWARD));
+            AddWords(backwardWords, new DirectionCommandParameter(DirectionType.BACKWARD));
             AddWords(clockwiseWords, new DirectionCommandParameter(DirectionType.CLOCKWISE));
             AddWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
+            AddWords(actionWords, new ActionCommandParameter());
             AddWords(reverseWords, new ReverseCommandParameter());
             AddWords(relativeWords, new RelativeCommandParameter());
             AddWords(heightWords, new NumericPropertyCommandParameter(NumericPropertyType.HEIGHT));
@@ -288,6 +305,7 @@ namespace IngameScript {
             AddWords(produceWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE));
             AddWords(consumeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE), new BooleanCommandParameter(false));
             AddWords(ratioWords, new NumericPropertyCommandParameter(NumericPropertyType.RATIO));
+            AddWords(inputWords, new NumericPropertyCommandParameter(NumericPropertyType.INPUT));
         }
 
         public static Color GetColor(String color) {
