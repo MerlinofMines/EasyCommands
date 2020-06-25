@@ -104,6 +104,7 @@ namespace IngameScript {
         static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate" };
         static String[] ratioWords = { "ratio", "percentage", "percent" };
         static String[] inputWords = { "input", "pilot", "user" };
+        static String[] rollInputWords = { "roll", "rollInput" };
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -305,7 +306,8 @@ namespace IngameScript {
             AddWords(produceWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE));
             AddWords(consumeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.PRODUCE), new BooleanCommandParameter(false));
             AddWords(ratioWords, new NumericPropertyCommandParameter(NumericPropertyType.RATIO));
-            AddWords(inputWords, new NumericPropertyCommandParameter(NumericPropertyType.INPUT));
+            AddWords(inputWords, new NumericPropertyCommandParameter(NumericPropertyType.MOVE_INPUT));
+            AddWords(rollInputWords, new NumericPropertyCommandParameter(NumericPropertyType.ROLL_INPUT));
         }
 
         public static Color GetColor(String color) {
