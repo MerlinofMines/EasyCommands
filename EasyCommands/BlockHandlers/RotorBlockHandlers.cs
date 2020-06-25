@@ -40,8 +40,8 @@ namespace IngameScript {
                 Set = rotateToValue;
                 SetDirection = (b, d, v) => rotateToValue(b, v);
                 IncrementDirection = (b, d, v) => {
-                    if (d == DirectionType.CLOCKWISE) rotateToValue(b, b.Angle + v);
-                    if (d == DirectionType.COUNTERCLOCKWISE) rotateToValue(b, b.Angle - v);
+                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) rotateToValue(b, b.Angle + v);
+                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) rotateToValue(b, b.Angle - v);
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
                 Move = (b, d) => {
