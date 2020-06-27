@@ -25,9 +25,10 @@ namespace IngameScript {
                 numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
                 numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.SpeedLimit);
                 booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, (b, v) => b.SetDockingMode(v));
-                //TODO: better Property
                 booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => b.IsAutoPilotEnabled);
                 booleanPropertySetters.Add(BooleanPropertyType.TRIGGER, (b,v) => b.SetAutoPilotEnabled(v));
+                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.IsAutoPilotEnabled);
+                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b, v) => b.SetAutoPilotEnabled(v));
             }
         }
 

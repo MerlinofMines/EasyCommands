@@ -47,8 +47,8 @@ namespace IngameScript {
         static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached", "dock", "docked" };
         static String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked" };
 
-        static String[] lockWords = { "lock", "freeze" };
-        static String[] unlockWords = { "unlock", "unfreeze" };
+        static String[] lockWords = { "lock", "locked", "freeze" };
+        static String[] unlockWords = { "unlock", "unlocked", "unfreeze" };
 
         static String[] ifWords = { "if" };
         static String[] elseWords = { "else", "otherwise" };
@@ -105,6 +105,8 @@ namespace IngameScript {
         static String[] ratioWords = { "ratio", "percentage", "percent" };
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
+        static String[] autoWords = { "auto", "refill"};
+
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
@@ -160,6 +162,7 @@ namespace IngameScript {
             { "reactors", BlockType.REACTOR },
             { "generators", BlockType.GENERATOR },
             { "tanks", BlockType.TANK },
+            { "gears", BlockType.GEAR }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -203,6 +206,7 @@ namespace IngameScript {
             { "reactor", BlockType.REACTOR },
             { "generator", BlockType.GENERATOR },
             { "tank", BlockType.TANK },
+            { "gear", BlockType.GEAR }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -308,6 +312,7 @@ namespace IngameScript {
             AddWords(ratioWords, new NumericPropertyCommandParameter(NumericPropertyType.RATIO));
             AddWords(inputWords, new NumericPropertyCommandParameter(NumericPropertyType.MOVE_INPUT));
             AddWords(rollInputWords, new NumericPropertyCommandParameter(NumericPropertyType.ROLL_INPUT));
+            AddWords(autoWords, new BooleanPropertyCommandParameter(BooleanPropertyType.AUTO));
         }
 
         public static Color GetColor(String color) {

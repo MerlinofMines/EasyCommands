@@ -23,6 +23,8 @@ namespace IngameScript {
             public GasTankBlockHandler() {
                 booleanPropertyGetters.Add(BooleanPropertyType.PRODUCE, (b) => !b.Stockpile);
                 booleanPropertySetters.Add(BooleanPropertyType.PRODUCE, (b, v) => b.Stockpile = !v);
+                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.AutoRefillBottles);
+                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b,v) => b.AutoRefillBottles=v);
                 numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.Capacity);
                 numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => (float)b.FilledRatio);
                 defaultDirection = DirectionType.UP;
