@@ -100,8 +100,8 @@ namespace IngameScript {
         static String[] rangeKeywords = { "range", "distance", "limit" };
         static String[] iterationKeywords = { "times", "iterations" };
         static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
-        static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake" };
-        static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate" };
+        static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging" };
+        static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate", "discharge", "discharging" };
         static String[] ratioWords = { "ratio", "percentage", "percent" };
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
@@ -163,7 +163,8 @@ namespace IngameScript {
             { "reactors", BlockType.REACTOR },
             { "generators", BlockType.GENERATOR },
             { "tanks", BlockType.TANK },
-            { "gears", BlockType.GEAR }
+            { "gears", BlockType.GEAR },
+            { "batteries", BlockType.BATTERY },
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -208,7 +209,8 @@ namespace IngameScript {
             { "reactor", BlockType.REACTOR },
             { "generator", BlockType.GENERATOR },
             { "tank", BlockType.TANK },
-            { "gear", BlockType.GEAR }
+            { "gear", BlockType.GEAR },
+            { "battery", BlockType.BATTERY },
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

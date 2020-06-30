@@ -23,6 +23,7 @@ namespace IngameScript {
             static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
                { BlockType.AIRVENT, new AirVentBlockHandler()},
                { BlockType.ANTENNA, new AntennaBlockHandler()},
+               { BlockType.BATTERY, new BatteryBlockHandler()},
                { BlockType.BEACON, new BeaconBlockHandler()},
                { BlockType.CAMERA, new CameraBlockHandler() },
                { BlockType.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
