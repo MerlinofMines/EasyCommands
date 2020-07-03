@@ -99,7 +99,7 @@ namespace IngameScript {
         static String[] volumeKeywords = { "volume" };
         static String[] rangeKeywords = { "range", "distance", "limit" };
         static String[] iterationKeywords = { "times", "iterations" };
-        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped"};
+        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped", "deploy", "deployed"};
         static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging" };
         static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate", "discharge", "discharging" };
         static String[] ratioWords = { "ratio", "percentage", "percent" };
@@ -165,6 +165,8 @@ namespace IngameScript {
             { "tanks", BlockType.TANK },
             { "gears", BlockType.GEAR },
             { "batteries", BlockType.BATTERY },
+            { "chutes", BlockType.PARACHUTE},
+            { "parachutes", BlockType.PARACHUTE},
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -211,6 +213,8 @@ namespace IngameScript {
             { "tank", BlockType.TANK },
             { "gear", BlockType.GEAR },
             { "battery", BlockType.BATTERY },
+            { "chute", BlockType.PARACHUTE},
+            { "parachute", BlockType.PARACHUTE},
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

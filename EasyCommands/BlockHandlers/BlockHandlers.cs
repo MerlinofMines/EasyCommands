@@ -36,6 +36,7 @@ namespace IngameScript {
                { BlockType.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                { BlockType.LIGHT, new LightBlockHandler() },
                { BlockType.MERGE, new MergeBlockHandler() },
+               { BlockType.PARACHUTE, new ParachuteBlockHandler() },
                { BlockType.PROGRAM, new ProgramBlockHandler() },
                { BlockType.PISTON, new PistonBlockHandler() },
                { BlockType.PROJECTOR, new ProjectorBlockHandler() },
@@ -88,6 +89,11 @@ namespace IngameScript {
                 Reverse = (b) => SetValue(b, -GetValue(b));
             }
             private float Multiply(DirectionType d) { return (d == DirectionType.UP) ? 1 : -1; }
+        }
+
+        public class PropertyValueNumericPropertySetter<T> : SimpleNumericPropertySetter<T> where T : class, IMyTerminalBlock {
+            public PropertyValueNumericPropertySetter(String propertyName, float delta) : base((b)=>b.GetValueFloat(propertyName), (b,v)=>b.SetValueFloat(propertyName, v), delta) {
+            }
         }
 
         public class NumericPropertySetter<T> {
