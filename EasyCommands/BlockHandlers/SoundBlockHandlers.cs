@@ -33,7 +33,8 @@ namespace IngameScript {
                 numericPropertyGetters.Add(NumericPropertyType.HEIGHT, (b) => b.LoopPeriod);
                 stringPropertyGetters.Add(StringPropertyType.SOUND, (b) => b.SelectedSound);
                 stringPropertySetters.Add(StringPropertyType.SOUND, (b, v) => b.SelectedSound = v);
-                booleanPropertySetters[BooleanPropertyType.POWER] = (b, v) => { if (v) b.Play(); else b.Stop(); };
+                booleanPropertySetters[BooleanPropertyType.POWER] = (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v+"");};
+                booleanPropertyGetters[BooleanPropertyType.POWER] = (b) => { var p = GetCustomProperty(b, "Playing"); Print("P is: " + p); return p == "True"; };
             }
         }
     }
