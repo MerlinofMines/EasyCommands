@@ -178,6 +178,8 @@ namespace IngameScript {
                         return;
                     }
                 }
+
+                parameters.ForEach(param => Print("" + param.GetType()));
                 throw new Exception("Unsupported Command Parameter Combination");
             }
 
@@ -233,20 +235,24 @@ namespace IngameScript {
                         direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
                     } else {
                         direction = blockHandler.GetDefaultDirection();
+                        directionIndex = commandParameters.Count;
                         commandParameters.Add(new DirectionCommandParameter(direction));
                     }
 
                     if (numericPropIndex < 0) {
+                        numericPropIndex = commandParameters.Count;
                         commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                     }
                 }
 
                 if (directionIndex >= 0 && numericPropIndex <= 0) {
                     DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
+                    numericPropIndex = commandParameters.Count;
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                 }
 
                 if (reverseIndex >= 0 && numericPropIndex < 0) {
+                    numericPropIndex = commandParameters.Count;
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
                 }
             }

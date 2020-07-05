@@ -45,6 +45,7 @@ namespace IngameScript {
                { BlockType.ROTOR, new RotorBlockHandler() },
                { BlockType.SOUND, new SoundBlockHandler() },
                { BlockType.SENSOR, new SensorBlockHandler() },
+               { BlockType.SUSPENSION, new WheelSuspensionBlockHandler() },
                { BlockType.TANK, new GasTankBlockHandler() },
                { BlockType.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
                { BlockType.THRUSTER, new ThrusterBlockHandler()},
