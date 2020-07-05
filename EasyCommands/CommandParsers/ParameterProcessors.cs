@@ -22,8 +22,8 @@ namespace IngameScript {
         public static class ParameterProcessorRegistry {
             private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
             {
-                  new SelectorProcessor(),
                   new FunctionProcessor(),
+                  new SelectorProcessor(),
                   new RunArgumentProcessor(),
                   new IterationProcessor(),
                   new ConditionProcessor(),
@@ -87,12 +87,15 @@ namespace IngameScript {
         }
 
         public class FunctionProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
+            protected override bool ShouldProcess(CommandParameter p) { return p is FunctionCommandParameter; }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                StringCommandParameter param = (StringCommandParameter)p[i];
-                if (FUNCTIONS.ContainsKey(param.Value)) { p.Insert(i, new FunctionCommandParameter(FunctionType.GOTO)); i++; }
+                if (i == p.Count - 1 || !(p[i + 1] is StringCommandParameter)) throw new Exception("Function Name Required after Function Call Keywords");
+                FunctionCommand function = new FunctionCommand(p.GetRange(i, 2));
+                p.RemoveRange(i, 2);
+                p.Insert(i, new CommandReferenceParameter(function));
             }
         }
+
         public class RunArgumentProcessor : ParameterProcessor {
             protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
@@ -124,7 +127,6 @@ namespace IngameScript {
                     p is WaitCommandParameter ||
                     p is UnitCommandParameter ||
                     p is ControlCommandParameter ||
-                    p is FunctionCommandParameter ||
                     p is ListenCommandParameter ||
                     p is SendCommandParameter ||
                     p is NotCommandParameter ||
@@ -140,8 +142,7 @@ namespace IngameScript {
                 List<CommandParameter> action = p.GetRange(i, paramCount);
 
                 Command command;
-                if (action.Exists(a => a is FunctionCommandParameter)) command = new FunctionCommand(action);
-                else if (action.Exists(a => a is ListenCommandParameter)) command = new ListenCommand(action);
+                if (action.Exists(a => a is ListenCommandParameter)) command = new ListenCommand(action);
                 else if (action.Exists(a => a is SendCommandParameter)) command = new SendCommand(action);
                 else if (action.Exists(a => a is ControlCommandParameter)) command = new ControlCommand(action);
                 else if (action.Exists(a => a is WaitCommandParameter)) command = new WaitCommand(action);
@@ -257,6 +258,7 @@ namespace IngameScript {
                 if (inverseAggregation) condition = new NotCondition(condition);
 
                 Debug("Removing Range: " + index + ", Params: " + paramCount);
+
                 commandParameters.RemoveRange(index, paramCount);
                 commandParameters.Insert(index, new ConditionCommandParameter(condition));
 
@@ -264,7 +266,7 @@ namespace IngameScript {
 
                 //TODO: There's definitely bugs with this..
                 int newIndex = index + 1;
-                while (commandParameters[newIndex] is CloseParenthesisCommandParameter) { newIndex++; }
+                while (newIndex < commandParameters.Count - 1 && commandParameters[newIndex] is CloseParenthesisCommandParameter) { newIndex++; }
                 if (commandParameters.Count == newIndex + 1) return;
                 if (commandParameters[newIndex] is AndCommandParameter || commandParameters[newIndex] is OrCommandParameter) {
                     Debug("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");

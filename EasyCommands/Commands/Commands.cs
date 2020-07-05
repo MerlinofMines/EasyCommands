@@ -359,7 +359,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if (currentCommands == null) {
+                if (currentCommands == null || currentCommands.Count == 0) {
                     currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
                     if (loopsLeft == 0) loopsLeft = loopCount;
                     loopsLeft -= 1;
