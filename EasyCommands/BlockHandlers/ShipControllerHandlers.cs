@@ -34,6 +34,8 @@ namespace IngameScript {
 
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
+                booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, (b) => b.HandBrake);
+                booleanPropertySetters.Add(BooleanPropertyType.LOCKED, (b, v) => b.HandBrake = v);
                 numericPropertyGetters.Add(NumericPropertyType.VELOCITY, (b) => (float)b.GetShipSpeed());
                 numericPropertyDirectionGetters.Add(NumericPropertyType.VELOCITY, GetLinearVelocity);
                 numericPropertyDirectionGetters.Add(NumericPropertyType.MOVE_INPUT, GetPilotMovementInput);
