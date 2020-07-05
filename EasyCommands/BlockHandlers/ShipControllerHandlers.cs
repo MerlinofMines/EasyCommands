@@ -35,6 +35,7 @@ namespace IngameScript {
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
                 numericPropertyGetters.Add(NumericPropertyType.VELOCITY, (b) => (float)b.GetShipSpeed());
+                numericPropertyDirectionGetters.Add(NumericPropertyType.VELOCITY, GetLinearVelocity);
                 numericPropertyDirectionGetters.Add(NumericPropertyType.MOVE_INPUT, GetPilotMovementInput);
                 numericPropertyDirectionGetters.Add(NumericPropertyType.ROLL_INPUT, GetPilotRollInput);
                 defaultDirection = DirectionType.UP;
@@ -51,6 +52,19 @@ namespace IngameScript {
                     case DirectionType.FORWARD: return -pilotInput.Z;
                     case DirectionType.BACKWARD: return pilotInput.Z;
                     default: throw new Exception("Unsupported User Input Movement Direction Type: " + direction);
+                }
+            }
+
+            float GetLinearVelocity(T block, DirectionType direction) {
+                var vRel = Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));
+                switch (direction) {
+                    case DirectionType.UP: return Convert.ToSingle(vRel.Y);
+                    case DirectionType.DOWN: return Convert.ToSingle(-vRel.Y);
+                    case DirectionType.LEFT: return Convert.ToSingle(-vRel.X);
+                    case DirectionType.RIGHT: return Convert.ToSingle(vRel.X);
+                    case DirectionType.FORWARD: return Convert.ToSingle(-vRel.Z);
+                    case DirectionType.BACKWARD: return Convert.ToSingle(vRel.Z);
+                    default: throw new Exception("Unsupported Ship Velocity Direction Type: " + direction);
                 }
             }
 
