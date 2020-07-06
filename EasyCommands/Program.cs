@@ -22,12 +22,16 @@ namespace IngameScript {
         //Debug
         private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
         private static bool DEBUG_LOG = false;
+        private static int PARSE_AMOUNT = 1;
 
         static MultiActionCommand RUNNING_COMMANDS;
         static Dictionary<String, MultiActionCommand> FUNCTIONS = new Dictionary<string, MultiActionCommand>();
         static String DEFAULT_FUNCTION;
         static String RUNNING_FUNCTION;
         static String CUSTOM_DATA;
+        static String ARGUMENT;
+        static List<String> COMMAND_STRINGS = new List<String>();
+
         static MyGridProgram PROGRAM;
 
         static ProgramState STATE = ProgramState.STOPPED;
@@ -38,20 +42,27 @@ namespace IngameScript {
         static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
 
         public void Main(string argument) {
-            ParseCommands();
+            if (!String.IsNullOrEmpty(argument)) { ARGUMENT = argument; }
+
+            if (!ParseCommands()) {
+                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                return;
+            }
+
             Echo("Functions: " + FUNCTIONS.Count);
             Echo("Running Function: " + RUNNING_FUNCTION);
+            Echo("Argument: " + ARGUMENT);
 
             List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
             IGC.GetBroadcastListeners(listeners);
             List<MyIGCMessage> messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
-            if (messages.Count > 0) { try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); } } else if (String.IsNullOrEmpty(argument)) {
+            if (messages.Count > 0) { try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); } } else if (String.IsNullOrEmpty(ARGUMENT)) {
                 if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
                     RUNNING_COMMANDS.Reset();
                     STATE = ProgramState.RUNNING;
                 }
                 if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
-            } else { ParseCommand(argument).Execute(); }
+            } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
             UpdateState();
         }
 
@@ -78,44 +89,49 @@ namespace IngameScript {
             }
         }
 
-        static void ParseCommands() {
-            if (RUNNING_COMMANDS == null || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
+        static bool ParseCommands() {
+            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
                 Print("Parsing Custom Data");
                 CUSTOM_DATA = PROGRAM.Me.CustomData;
-                List<String> commandStrings = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                    .ToList();
-
-                ParseFunctions(commandStrings);
-                RUNNING_COMMANDS = (MultiActionCommand)FUNCTIONS[DEFAULT_FUNCTION].Copy();
+                COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                FUNCTIONS.Clear();
             }
+
+            if (COMMAND_STRINGS.Count == 0) return true;
+            Print("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
+            ParseFunctions(COMMAND_STRINGS);
+
+            if (COMMAND_STRINGS.Count > 0) return false;
+            RUNNING_COMMANDS = (MultiActionCommand)FUNCTIONS[DEFAULT_FUNCTION].Copy();
+            return true;
         }
 
         static void ParseFunctions(List<String> commandStrings) {
-            FUNCTIONS.Clear();
             List<int> functionIndices = new List<int>();
             if (!commandStrings[0].StartsWith(":")) { commandStrings.Insert(0, ":main"); }
 
             for (int i = commandStrings.Count - 1; i >= 0; i--) {
-                Print("Command String: " + commandStrings[i]);
+                Debug("Command String: " + commandStrings[i]);
                 if (commandStrings[i].StartsWith(":")) { functionIndices.Add(i); }
             }
             Debug("Function Indices: ");
             Debug(String.Join(" | ", functionIndices));
 
+            int toParse = PARSE_AMOUNT;
             foreach (int i in functionIndices) {
                 String functionString = commandStrings[i].Remove(0, 1).Trim().ToLower();
-                Print("Function String: " + functionString);
+                Print("Parsing Function: " + functionString);
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
-
                 if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
                 FUNCTIONS.Add(functionString, (MultiActionCommand)command);
                 DEFAULT_FUNCTION = functionString;
+                toParse--;
+                if (toParse == 0) break;//Exceeded # of Functions to parse for 1 tick
             }
         }
 
         static Command ParseCommand(List<CommandLine> commandStrings, int index, bool parseSiblings) {
-            Print("Debug Command at index: " + index);
             List<Command> resolvedCommands = new List<Command>();
             while (index < commandStrings.Count - 1)//Parse Sibling & Child Commands, if any
             {

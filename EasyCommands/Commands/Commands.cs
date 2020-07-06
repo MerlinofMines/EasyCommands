@@ -245,7 +245,7 @@ namespace IngameScript {
                     }
                 }
 
-                if (directionIndex >= 0 && numericPropIndex <= 0) {
+                if (directionIndex >= 0 && numericPropIndex < 0) {
                     DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
                     numericPropIndex = commandParameters.Count;
                     commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));

@@ -339,7 +339,7 @@ namespace IngameScript {
         }
 
         static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
-            Print("Command: " + String.Join(" | ", tokens));
+            Debug("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens) {
