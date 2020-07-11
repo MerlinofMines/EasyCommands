@@ -36,7 +36,11 @@ namespace IngameScript {
 
         static ProgramState STATE = ProgramState.STOPPED;
 
-        public Program() { PROGRAM = this; initParsers(); }
+        public Program() {
+            PROGRAM = this;
+            initParsers();
+            Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+        }
 
         static void Print(String str) { PROGRAM.Echo(str); }
         static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
@@ -91,9 +95,14 @@ namespace IngameScript {
 
         static bool ParseCommands() {
             if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
-                Print("Parsing Custom Data");
                 CUSTOM_DATA = PROGRAM.Me.CustomData;
                 COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (COMMAND_STRINGS.Count == 0) {
+                    Print("Welcome to EasyCommands!");
+                    Print("Add Commands to Custom Data");
+                    return false;
+                }
+                Print("Parsing Custom Data");
                 FUNCTIONS.Clear();
             }
 

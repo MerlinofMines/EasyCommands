@@ -108,7 +108,11 @@ namespace IngameScript {
             public WaitCommand(List<CommandParameter> parameters) {
                 int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
                 int timeIndex = parameters.FindIndex(param => param is NumericCommandParameter);
-                waitTicks = getTicks(timeIndex < 0 ? 1 : ((NumericCommandParameter)parameters[timeIndex]).Value, unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
+                if (unitIndex < 0 && timeIndex < 0) {
+                    waitTicks = 1;
+                } else {
+                    waitTicks = getTicks(timeIndex < 0 ? 1 : ((NumericCommandParameter)parameters[timeIndex]).Value, unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
+                }
             }
             public WaitCommand(int ticks) { waitTicks = ticks; }
             protected override Command Clone() { return new WaitCommand(waitTicks); }
