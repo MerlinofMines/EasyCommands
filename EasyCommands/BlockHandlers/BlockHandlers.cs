@@ -28,6 +28,7 @@ namespace IngameScript {
                { BlockType.CAMERA, new CameraBlockHandler() },
                { BlockType.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
                { BlockType.CONNECTOR, new ConnectorBlockHandler() },
+               { BlockType.DETECTOR, new OreDetectorHandler() },
                { BlockType.DISPLAY, new TextSurfaceHandler() },
                { BlockType.DOOR, new DoorBlockHandler() },
                { BlockType.GEAR, new LandingGearHandler() },
