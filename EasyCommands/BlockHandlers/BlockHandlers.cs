@@ -30,6 +30,7 @@ namespace IngameScript {
                { BlockType.CONNECTOR, new ConnectorBlockHandler() },
                { BlockType.DETECTOR, new OreDetectorHandler() },
                { BlockType.DISPLAY, new TextSurfaceHandler() },
+               { BlockType.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
                { BlockType.DOOR, new DoorBlockHandler() },
                { BlockType.GEAR, new LandingGearHandler() },
                { BlockType.GENERATOR, new GasGeneratorHandler()},
