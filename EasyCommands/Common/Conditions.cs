@@ -91,6 +91,8 @@ namespace IngameScript {
             public bool Evaluate() {
                 List<Object> blocks = entityProvider.GetEntities();
 
+                if (blocks.Count == 0) return false; //If there are no blocks, consider this not matching
+
                 int matches = blocks.Count(block => blockCondition.evaluate(block));
 
                 switch (aggregationMode) {

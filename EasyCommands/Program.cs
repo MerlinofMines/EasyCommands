@@ -20,9 +20,9 @@ using VRageMath;
 namespace IngameScript {
     partial class Program : MyGridProgram {
         //Debug
-        private static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
-        private static bool DEBUG_LOG = false;
-        private static int PARSE_AMOUNT = 1;
+        static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
+        static bool DEBUG_LOG = false;
+        static int PARSE_AMOUNT = 1;
 
         static MultiActionCommand RUNNING_COMMANDS;
         static Dictionary<String, MultiActionCommand> FUNCTIONS = new Dictionary<string, MultiActionCommand>();
@@ -31,9 +31,7 @@ namespace IngameScript {
         static String CUSTOM_DATA;
         static String ARGUMENT;
         static List<String> COMMAND_STRINGS = new List<String>();
-
         static MyGridProgram PROGRAM;
-
         static ProgramState STATE = ProgramState.STOPPED;
 
         public Program() {
@@ -48,8 +46,15 @@ namespace IngameScript {
         public void Main(string argument) {
             if (!String.IsNullOrEmpty(argument)) { ARGUMENT = argument; }
 
-            if (!ParseCommands()) {
-                Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+            try {
+                if (!ParseCommands()) {
+                    Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                    return;
+                }
+            } catch (Exception e) {
+                Print("Exception Occurred During Parsing: ");
+                Print(e.Message);
+                Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
 
@@ -60,14 +65,24 @@ namespace IngameScript {
             List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
             IGC.GetBroadcastListeners(listeners);
             List<MyIGCMessage> messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
-            if (messages.Count > 0) { try { ParseCommand((String)messages[0].Data).Execute(); } catch (Exception) { Echo("Unknown Command: " + messages[0].Data); } } else if (String.IsNullOrEmpty(ARGUMENT)) {
-                if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
-                    RUNNING_COMMANDS.Reset();
-                    STATE = ProgramState.RUNNING;
-                }
-                if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
-            } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
-            UpdateState();
+
+            try {
+                if (messages.Count > 0) {
+                    ParseCommand((String)messages[0].Data).Execute();
+                } else if (String.IsNullOrEmpty(ARGUMENT)) {
+                    if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
+                        RUNNING_COMMANDS.Reset();
+                        STATE = ProgramState.RUNNING;
+                    }
+                    if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
+                } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
+                UpdateState();
+            } catch(Exception e) {
+                Print("Exception Occurred: ");
+                Print(e.Message);
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                return;
+            }
         }
 
         void UpdateState() {
@@ -193,10 +208,12 @@ namespace IngameScript {
         class CommandLine {
             public int Depth;
             public List<CommandParameter> CommandParameters;
+            public String CommandString;
 
             public CommandLine(String commandString) {
                 Depth = commandString.TakeWhile(Char.IsWhiteSpace).Count();
                 CommandParameters = ParseCommandParameters(ParseTokens(commandString));
+                CommandString = commandString;
             }
         }
     }

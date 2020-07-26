@@ -51,7 +51,12 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if (function == null) function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
+                if (function == null) {
+                    if (!FUNCTIONS.ContainsKey(functionName)) {
+                        throw new Exception("Undefined Function Name: " + functionName);
+                    }
+                    function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
+                }
                 STATE = ProgramState.RUNNING;
                 switch (type) {
                     case FunctionType.GOSUB:

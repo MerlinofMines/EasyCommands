@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public delegate bool CanHandle(List<CommandParameter> parameters);
         public delegate void Handle(object e);
-        //public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, ref T t);
+        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, ref T t);
         public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, Object e, T t, U u);
         public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v);
         public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w);
@@ -58,14 +58,13 @@ namespace IngameScript {
                 e.GetEntities().ForEach(entity => handle(entity));
             }
         }
-//        Uncomment when needed
-//        public class TwoParamBlockHandler<T, U, V> : BlockCommandHandler {
-//            T p1; U p2; V p3;
-//            public ThreeParamBlockHandler(ThreeParameterBlockDelegate<T, U, V> action) {
-//                canHandle = (p) => Bind<V>(Bind<U>(Bind<T>(p, ref p1), ref p2), ref p3).Count == 0 && Supports;
-//                handle = (e) => action(b, e, ref p1, ref p2, ref p3);
-//            }
-//        }
+        public class BlockCommandHandler1<T> : BlockCommandHandler {
+            T p1;
+            public BlockCommandHandler1(OneParameterBlockDelegate<T> action) {
+                canHandle = (p) => Bind<T>(p, ref p1).Count == 0 && Supports;
+                handle = (e) => action(b, e, ref p1);
+            }
+        }
         public class BlockCommandHandler2<T, U> : BlockCommandHandler {
             T p1; U p2;
             public BlockCommandHandler2(TwoParameterBlockDelegate<T, U> action) {
