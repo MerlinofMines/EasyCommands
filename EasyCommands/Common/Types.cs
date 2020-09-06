@@ -28,6 +28,6 @@ namespace IngameScript {
         public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS }
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
-        public enum FunctionType { GOTO, GOSUB }
+        public enum FunctionType { GOTO, GOSUB, SWITCH }
     }
 }

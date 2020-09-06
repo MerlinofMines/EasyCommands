@@ -24,7 +24,7 @@ namespace IngameScript {
         static String[] groupWords = { "blocks", "group" };
         static String[] activateWords = { "move", "go", "on", "begin", "true" };
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
-        static String[] reverseWords = { "reverse", "switch direction", "turn around" };
+        static String[] reverseWords = { "reverse" };
         static String[] increaseWords = { "increase", "raise", "extend", "expand" };
         static String[] decreaseWords = { "decrease", "lower", "retract", "reduce" };
         static String[] upWords = { "up", "upward" };
@@ -86,6 +86,7 @@ namespace IngameScript {
 
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
+        static String[] switchKeywords = { "switch" };
 
         static String[] listenKeywords = { "listen", "channel" };
         static String[] sendKeywords = { "send", "broadcast" };
@@ -313,6 +314,7 @@ namespace IngameScript {
             AddWords(closeWords, new BooleanPropertyCommandParameter(BooleanPropertyType.OPEN), new BooleanCommandParameter(false));
             AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
             AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
+            AddWords(switchKeywords, new FunctionCommandParameter(FunctionType.SWITCH));
             AddWords(listenKeywords, new ListenCommandParameter());
             AddWords(sendKeywords, new SendCommandParameter());
             AddWords(fontKeywords, new NumericPropertyCommandParameter(NumericPropertyType.FONT_SIZE));

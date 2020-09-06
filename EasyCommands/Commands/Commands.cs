@@ -65,6 +65,11 @@ namespace IngameScript {
                         RUNNING_COMMANDS = function;
                         RUNNING_FUNCTION = functionName;
                         return false;
+                    case FunctionType.SWITCH:
+                        RUNNING_COMMANDS = function;
+                        RUNNING_FUNCTION = functionName;
+                        STATE = ProgramState.STOPPED;
+                        return true;
                     default:
                         throw new Exception("Unsupported Function Type: " + type);
                 }
