@@ -171,10 +171,10 @@ namespace IngameScript {
 
         public class BlockCommand : Command {
             private BlockHandler blockHandler;
-            private SelectorEntityProvider entityProvider;
+            private EntityProvider entityProvider;
             private BlockCommandHandler commandHandler;
 
-            public BlockCommand(BlockHandler blockHandler, SelectorEntityProvider entityProvider, BlockCommandHandler commandHandler) {
+            public BlockCommand(BlockHandler blockHandler, EntityProvider entityProvider, BlockCommandHandler commandHandler) {
                 this.blockHandler = blockHandler;
                 this.entityProvider = entityProvider;
                 this.commandHandler = commandHandler;
@@ -182,6 +182,7 @@ namespace IngameScript {
             public BlockCommand(List<CommandParameter> parameters) {
                 parameters = new List<CommandParameter>(parameters);
                 PreParseCommands(parameters);
+
                 Debug("Command Handler Post Parsed Command Parameters: ");
                 parameters.ForEach(param => Debug("" + param.GetType()));
                 foreach (BlockCommandHandler handler in GetHandlers()) {
@@ -204,11 +205,10 @@ namespace IngameScript {
 
             public void PreParseCommands(List<CommandParameter> commandParameters) {
                 extract<ActionCommandParameter>(commandParameters);//Extract and ignore
-
                 SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-                entityProvider = new SelectorEntityProvider(selector);
-                blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.blockType);
+                blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
+                entityProvider = selector.Value;
 
                 var boolVals = extract<BooleanCommandParameter>(commandParameters);
                 var notVals = extract<NotCommandParameter>(commandParameters);

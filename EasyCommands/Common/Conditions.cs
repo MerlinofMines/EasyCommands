@@ -80,9 +80,9 @@ namespace IngameScript {
         public class AggregateCondition : Condition {
             AggregationMode aggregationMode;
             BlockCondition blockCondition;
-            SelectorEntityProvider entityProvider;
+            EntityProvider entityProvider;
 
-            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, SelectorEntityProvider entityProvider) {
+            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, EntityProvider entityProvider) {
                 this.aggregationMode = aggregationMode;
                 this.blockCondition = blockCondition;
                 this.entityProvider = entityProvider;
@@ -123,6 +123,34 @@ namespace IngameScript {
             }
             public override String ToString() {
                 return "not " + blockCondition;
+            }
+        }
+
+        public class AndBlockCondition : BlockCondition {
+            BlockCondition conditionA;
+            BlockCondition conditionB;
+
+            public AndBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
+                this.conditionA = conditionA;
+                this.conditionB = conditionB;
+            }
+
+            public bool evaluate(object block) {
+                return conditionA.evaluate(block) && conditionB.evaluate(block);
+            }
+        }
+
+        public class OrBlockCondition : BlockCondition {
+            BlockCondition conditionA;
+            BlockCondition conditionB;
+
+            public OrBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
+                this.conditionA = conditionA;
+                this.conditionB = conditionB;
+            }
+
+            public bool evaluate(object block) {
+                return conditionA.evaluate(block) || conditionB.evaluate(block);
             }
         }
 

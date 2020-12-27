@@ -26,24 +26,79 @@ namespace IngameScript {
         public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v);
         public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w);
 
-        public class SelectorEntityProvider {
-            protected SelectorCommandParameter selector;
+        public interface EntityProvider {
+            List<Object> GetEntities();
+            BlockType GetBlockType();
+        }
 
-            public SelectorEntityProvider(SelectorCommandParameter selector) {
+        public class ConditionalEntityProvider : EntityProvider {
+            protected EntityProvider provider;
+            protected BlockCondition condition;
+
+            public ConditionalEntityProvider(EntityProvider provider, BlockCondition condition) {
+                this.provider = provider;
+                this.condition = condition;
+            }
+
+            public BlockType GetBlockType() {
+                return provider.GetBlockType();
+            }
+
+            public List<object> GetEntities() {
+                return provider.GetEntities().Where(b => condition.evaluate(b)).ToList();
+            }
+        }
+
+        public class IndexEntityProvider : EntityProvider {
+            protected EntityProvider provider;
+            protected int index;
+
+            public IndexEntityProvider(EntityProvider provider, int index) {
+                this.provider = provider;
+                this.index = index;
+            }
+
+            public BlockType GetBlockType() {
+                return provider.GetBlockType();
+            }
+
+            public List<object> GetEntities() {
+                List<object> entities = provider.GetEntities();
+                List<object> selectedEntities = new List<Object>();
+
+                //Return empty list if index > Count
+                if (index < entities.Count) selectedEntities.Add(entities[index]);
+
+                return selectedEntities;
+            }
+        }
+
+        public class SelectorEntityProvider : EntityProvider {
+            private BlockType blockType;
+            private bool isGroup;
+            private String selector;
+
+            public SelectorEntityProvider(BlockType blockType, bool isGroup, string selector) {
+                this.blockType = blockType;
+                this.isGroup = isGroup;
                 this.selector = selector;
             }
 
             public List<Object> GetEntities() {
-                List<Object> entities = selector.isGroup ? BlockHandlerRegistry.GetBlocksInGroup(selector.blockType, selector.selector) : BlockHandlerRegistry.GetBlocks(selector.blockType, selector.selector);
-                return selector.selectorIndex.HasValue ? new List<Object>() { entities[selector.selectorIndex.Value] } : entities;
+                return isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selector) : BlockHandlerRegistry.GetBlocks(blockType, selector);                
             }
+
+            public BlockType GetBlockType() {
+                return blockType;
+            }
+
             public override String ToString() {
-                return selector.blockType + (selector.isGroup ? " in group named " : " named " + selector.selector);
+                return blockType + (isGroup ? " in group named " : " named " + selector);
             }
         }
 
         public class BlockCommandHandler {
-            public SelectorEntityProvider e;
+            public EntityProvider e;
             public BlockHandler b;
             public bool Supports = true;
             public CanHandle canHandle;

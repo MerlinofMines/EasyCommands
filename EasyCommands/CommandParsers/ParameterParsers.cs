@@ -57,6 +57,8 @@ namespace IngameScript {
         static String[] untilWords = { "until" };
         static String[] whenWords = { "when" };
         static String[] asyncWords = { "async" };
+        static String[] withWords = { "that", "with", "which", "whose" };
+        static String[] withoutWords = { "without" };
 
         static String[] lessWords = { "less", "<", "below" };
         static String[] lessEqualWords = { "<=" };
@@ -70,7 +72,7 @@ namespace IngameScript {
 
         static String[] andWords = { "and", "&", "&&", "but", "yet" };
         static String[] orWords = { "or", "|", "||" };
-        static String[] notWords = { "not", "!", "isn't", "isnt" };
+        static String[] notWords = { "not", "!", "isn't", "isnt", "aren't", "arent" };
         static String[] openParenthesisWords = { "(" };
         static String[] closeParenthesisWords = { ")" };
 
@@ -292,6 +294,8 @@ namespace IngameScript {
             AddWords(whenWords, new IfCommandParameter(true, true, true));
             AddWords(asyncWords, new AsyncCommandParameter());
             AddWords(elseWords, new ElseCommandParameter());
+            AddWords(withWords, new WithCommandParameter(false));
+            AddWords(withoutWords, new WithCommandParameter(true));
             AddWords(lessWords, new ComparisonCommandParameter(ComparisonType.LESS));
             AddWords(lessEqualWords, new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
             AddWords(equalWords, new ComparisonCommandParameter(ComparisonType.EQUAL));

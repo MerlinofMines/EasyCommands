@@ -105,6 +105,13 @@ namespace IngameScript {
             public FunctionCommandParameter(FunctionType value) : base(value) {}
         }
 
+        public class WithCommandParameter : CommandParameter {
+            public bool inverseCondition;
+            public WithCommandParameter(bool inverseCondition) {
+                this.inverseCondition = inverseCondition;
+            }
+        }
+
         public class IfCommandParameter : CommandParameter {
             public bool inverseCondition;
             public bool alwaysEvaluate;
@@ -119,6 +126,10 @@ namespace IngameScript {
 
         public class ConditionCommandParameter : ValueCommandParameter<Condition> {
             public ConditionCommandParameter(Condition value) : base(value) { }
+        }
+
+        public class BlockConditionCommandParameter : ValueCommandParameter<BlockCondition> {
+            public BlockConditionCommandParameter(BlockCondition value) : base(value) { }
         }
 
         public class CommandReferenceParameter : ValueCommandParameter<Command> {
@@ -144,17 +155,8 @@ namespace IngameScript {
             }
         }
 
-        public class SelectorCommandParameter : CommandParameter {
-            public BlockType blockType;
-            public bool isGroup;
-            public String selector;
-            public int? selectorIndex = null;
-
-            public SelectorCommandParameter(BlockType blockType, bool isGroup, string selector, int? selectorIndex) {
-                this.blockType = blockType;
-                this.isGroup = isGroup;
-                this.selector = selector;
-                this.selectorIndex = selectorIndex;
+        public class SelectorCommandParameter : ValueCommandParameter<EntityProvider> {
+            public SelectorCommandParameter(EntityProvider value) : base(value) {
             }
         }
 
