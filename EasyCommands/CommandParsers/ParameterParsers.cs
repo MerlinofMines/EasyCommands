@@ -172,6 +172,7 @@ namespace IngameScript {
             { "suspension", BlockType.SUSPENSION},
             { "detectors", BlockType.DETECTOR},
             { "drills", BlockType.DRILL},
+            { "engines", BlockType.ENGINE }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -224,6 +225,7 @@ namespace IngameScript {
             { "wheel", BlockType.SUSPENSION},
             { "detector", BlockType.DETECTOR},
             { "drill", BlockType.DRILL},
+            { "engine", BlockType.ENGINE }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()

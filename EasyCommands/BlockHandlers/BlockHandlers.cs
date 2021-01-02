@@ -32,6 +32,7 @@ namespace IngameScript {
                { BlockType.DISPLAY, new TextSurfaceHandler() },
                { BlockType.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
                { BlockType.DOOR, new DoorBlockHandler() },
+               { BlockType.ENGINE, new FunctionalBlockHandler<IMyPowerProducer>() },
                { BlockType.GEAR, new LandingGearHandler() },
                { BlockType.GENERATOR, new GasGeneratorHandler()},
                { BlockType.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
