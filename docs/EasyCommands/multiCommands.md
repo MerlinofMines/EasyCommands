@@ -25,14 +25,14 @@ You can nest tabs pretty easily.  Just make sure that all the items intended to 
 
 ```
 if "outer door" is open
-  turn on the "outer lights" //block 1
-  if "inner door is open" //block 1
-    turn on the "inner lights" //block 2
-    turn on the "generator" //block 2
-  else //block 1
+  turn on the "outer lights"
+  if "inner door is open"
+    turn on the "inner lights"
+    turn on the "generator"
+  else
     close the "outer door"
-    wait 1 //block 3
-  wait 3  //block 1
+    wait 1
+  wait 3
 ```
 
 ## Using "and" and parenthesis
