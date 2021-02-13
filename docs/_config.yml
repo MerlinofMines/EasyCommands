@@ -1,3 +1,11 @@
 theme: jekyll-theme-hacker
 title: Merlin of Mines - Space Engineers
 description: A set of useful scripts for aspiring Space Engineers!
+
+toc:
+  - title: Advanced
+    subfolderitems:
+      - page: Functions
+        url: /functions
+      - page: Multi-Commands
+        url: /multiCommands
