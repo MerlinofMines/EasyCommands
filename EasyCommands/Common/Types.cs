@@ -19,6 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        #region mdk preserve
         public enum BlockType { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND, CAMERA, SENSOR, BEACON, ANTENNA, COCKPIT, REMOTE, THRUSTER, AIRVENT, GUN, REACTOR, GENERATOR, TANK, GEAR, BATTERY, PARACHUTE, SUSPENSION, DETECTOR, DRILL, ENGINE}
         public enum BooleanPropertyType { POWER, CONNECTED, LOCKED, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN, TRIGGER, PRODUCE, AUTO }
         public enum NumericPropertyType { HEIGHT, ANGLE, VELOCITY, RATIO, FONT_SIZE, VOLUME, RANGE, MOVE_INPUT, ROLL_INPUT }
@@ -29,5 +30,6 @@ namespace IngameScript {
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum FunctionType { GOTO, GOSUB, SWITCH }
+        #endregion
     }
 }

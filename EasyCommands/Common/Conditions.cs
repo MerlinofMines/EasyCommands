@@ -29,6 +29,15 @@ namespace IngameScript {
             NONE
         }
 
+        public static String getAggregationModeName(AggregationMode mode) {
+            switch (mode) {
+                case AggregationMode.ALL: return "All";
+                case AggregationMode.ANY: return "Any";
+                case AggregationMode.NONE: return "None";
+                default: throw new Exception("Unsupported Aggregation Mode");
+            }
+        }
+
         public class NotCondition : Condition {
             Condition condition;
 
@@ -99,11 +108,11 @@ namespace IngameScript {
                     case AggregationMode.ALL: return matches == blocks.Count;
                     case AggregationMode.ANY: return matches > 0;
                     case AggregationMode.NONE: return matches == 0;
-                    default: throw new Exception("Unsupported Aggregation Mode: " + aggregationMode);
+                    default: throw new Exception("Unsupported Aggregation Mode");
                 }
             }
             public override String ToString() {
-                return aggregationMode + " of " + entityProvider + " are " + blockCondition;
+                return getAggregationModeName(aggregationMode) + " of " + entityProvider + " are " + blockCondition;
             }
         }
 
