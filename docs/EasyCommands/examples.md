@@ -73,6 +73,7 @@ else if "Airlock Exterior Door" is closed
 The following script can control 2 (or more if you want) doors for your garage or ship hanger by listening on the "garageDoors" channel.  From your vehicle, use the following command to open your door remotely!
 
 Vehicle Opener Script:
+
 ```
 :wait
 wait 1 tick
@@ -88,6 +89,7 @@ send "goto closedoor" to "garageDoors"
 ```
 
 Garage Door Controller Script:
+
 ```
 :setup
 listen "garageDoors"
