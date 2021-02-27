@@ -4,6 +4,10 @@ To use, simply install this script onto your Programmable Block (or blocks!) of 
 
 Then, in the custom data of that programmable block, put in a line separated list of commands that you'd like to execute.
 
+* [Examples](https://spaceengineers.merlinofmines.com/EasyCommands/examples "Examples")
+* [Functions](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions")
+* [Multi Commands](https://spaceengineers.merlinofmines.com/EasyCommands/multiCommands "Multi Commands")
+
 Supported Commands (this is a very small subset of possible command phrases, it just has 1 per actual command capability):
 Wait [for] (number) {seconds/ticks}
 [Turn the] (selector) (blockType) {group} (on/off)
