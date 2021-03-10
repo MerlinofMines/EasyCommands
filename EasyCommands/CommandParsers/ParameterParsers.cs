@@ -339,8 +339,13 @@ namespace IngameScript {
             AddWords(autoWords, new BooleanPropertyCommandParameter(BooleanPropertyType.AUTO));
         }
 
+        public static int HexToFloat(string hex) { return int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier); }
+
         public static Color GetColor(String color) {
-            if (colors.ContainsKey(color)) return colors[color];
+            if (colors.ContainsKey(color.ToLower())) return colors[color.ToLower()];
+            if (color.StartsWith("#") && color.Length==7) {
+                return new Color(HexToFloat(color.Substring(1, 2)), HexToFloat(color.Substring(3, 2)), HexToFloat(color.Substring(5, 2)));
+            }
             float rgb; if (float.TryParse(color, out rgb)) return new Color(rgb);
             throw new Exception("Unknown Color: " + color);
         }
