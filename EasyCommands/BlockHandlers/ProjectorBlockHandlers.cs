@@ -21,8 +21,8 @@ namespace IngameScript {
     partial class Program {
         public class ProjectorBlockHandler : FunctionalBlockHandler<IMyProjector> {
             public ProjectorBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.COMPLETE, block => block.RemainingBlocks == 0);
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, block => (block.TotalBlocks - block.RemainingBlocks) / block.TotalBlocks);
+                AddBooleanHandler(PropertyType.COMPLETE, block => block.RemainingBlocks == 0);
+                AddNumericHandler(PropertyType.RATIO, block => (block.TotalBlocks - block.RemainingBlocks) / block.TotalBlocks);
             }
         }
     }

@@ -21,11 +21,8 @@ namespace IngameScript {
     partial class Program {
         public class ConnectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
             public ConnectorBlockHandler() : base() {
-                booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, Connected);
-                booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, Connected);
-
-                booleanPropertySetters.Add(BooleanPropertyType.LOCKED, Connect);
-                booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, Connect);
+                AddBooleanHandler(PropertyType.LOCKED, Connected, Connect);
+                AddBooleanHandler(PropertyType.CONNECTED, Connected, Connect);
             }
 
             static bool Connected(IMyShipConnector connector) {
@@ -35,7 +32,6 @@ namespace IngameScript {
             static void Connect(IMyShipConnector connector, bool value) {
                 if (value) { connector.Connect(); } else { connector.Disconnect(); }
             }
-            //TODO: Add Connectable Handler
         }
     }
 }

@@ -21,22 +21,19 @@ namespace IngameScript {
     partial class Program {
         public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             public RotorBlockHandler() {
+                AddPropertyHandler(PropertyType.ANGLE, new RotorAngleHandler());
+                AddPropertyHandler(PropertyType.VELOCITY, new RotorVelocityHandler());
                 defaultDirection = DirectionType.CLOCKWISE;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.CLOCKWISE, NumericPropertyType.ANGLE);
-                defaultNumericProperties.Add(DirectionType.COUNTERCLOCKWISE, NumericPropertyType.ANGLE);
-
-                numericPropertyGetters.Add(NumericPropertyType.ANGLE, block => (float)(block.Angle * (180 / Math.PI)));
-                numericPropertyGetters.Add(NumericPropertyType.VELOCITY, block => block.TargetVelocityRPM);
-
-                numericPropertySetters.Add(NumericPropertyType.ANGLE, new RotorAngleSetter());
-                numericPropertySetters.Add(NumericPropertyType.VELOCITY, new RotorVelocitySetter());
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.DOWN, PropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.CLOCKWISE, PropertyType.ANGLE);
+                defaultNumericProperties.Add(DirectionType.COUNTERCLOCKWISE, PropertyType.ANGLE);
             }
         }
 
-        public class RotorAngleSetter : NumericPropertySetter<IMyMotorStator> {
-            public RotorAngleSetter() {
+        public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {
+            public RotorAngleHandler() {
+                GetNumeric = block => (float)(block.Angle * (180 / Math.PI));
                 Set = rotateToValue;
                 SetDirection = (b, d, v) => rotateToValue(b, v);
                 IncrementDirection = (b, d, v) => {
@@ -52,8 +49,9 @@ namespace IngameScript {
             }
         }
 
-        public class RotorVelocitySetter : NumericPropertySetter<IMyMotorStator> {
-            public RotorVelocitySetter() {
+        public class RotorVelocityHandler : PropertyHandler<IMyMotorStator> {
+            public RotorVelocityHandler() {
+                GetNumeric = block => block.TargetVelocityRPM;
                 Set = (b, v) => b.TargetVelocityRPM = v;
                 SetDirection = (b, d, v) => b.TargetVelocityRPM = v;
                 IncrementDirection = (b, d, v) => {

@@ -83,8 +83,33 @@ namespace IngameScript {
         public delegate void MovePropertyValue<T>(T block, DirectionType direction);
         public delegate void ReversePropertyValue<T>(T block);
 
-        public class SimpleNumericPropertySetter<T> : NumericPropertySetter<T> {
-            public SimpleNumericPropertySetter(NumericPropertyGetter<T> GetValue, SetPropertyValue<T> SetValue, float delta) {
+        public class SimpleBooleanPropertyHandler<T> : PropertyHandler<T> {
+            public SimpleBooleanPropertyHandler(BooleanPropertyGetter<T> GetValue, BooleanPropertySetter<T> SetValue) {
+                GetBoolean = GetValue;
+                SetBoolean = SetValue;
+                GetString = (b) => GetBoolean(b).ToString().ToLower();
+                SetString = (b, v) => SetBoolean(b, Boolean.Parse(v.ToLower()));
+                GetNumeric = (b) => GetBoolean(b) ? 1 : 0;
+                Set = (b, v) => SetBoolean(b, v > 0);
+                SetDirection = (b, d, v) => Set(b, v);
+                Reverse = (b) => SetValue(b, !GetValue(b));
+            }
+        }
+
+        public class SimpleStringPropertyHandler<T> : PropertyHandler<T> {
+            public SimpleStringPropertyHandler(StringPropertyGetter<T> GetValue, StringPropertySetter<T> SetValue) {
+                GetString = GetValue;
+                SetString = SetValue;
+                GetNumeric = (b) => GetValue(b).Length;
+                Reverse = (b) => SetValue(b, new String(GetValue(b).Reverse().ToArray()));
+            }
+        }
+
+        public class SimpleNumericPropertyHandler<T> : PropertyHandler<T> {
+            public SimpleNumericPropertyHandler(NumericPropertyGetter<T> GetValue, SetPropertyValue<T> SetValue, float delta) {
+                GetNumeric = GetValue;
+                GetString = (b) => GetValue(b).ToString();
+                GetBoolean = (b) => GetValue(b) > 0;
                 Set = SetValue;
                 SetDirection = (b,d,v) => SetValue(b,v);
                 Increment = (b,v) => SetValue(b, GetValue(b) + v);
@@ -95,12 +120,18 @@ namespace IngameScript {
             private float Multiply(DirectionType d) { return (d == DirectionType.UP) ? 1 : -1; }
         }
 
-        public class PropertyValueNumericPropertySetter<T> : SimpleNumericPropertySetter<T> where T : class, IMyTerminalBlock {
-            public PropertyValueNumericPropertySetter(String propertyName, float delta) : base((b)=>b.GetValueFloat(propertyName), (b,v)=>b.SetValueFloat(propertyName, v), delta) {
+        public class PropertyValueNumericPropertyHandler<T> : SimpleNumericPropertyHandler<T> where T : class, IMyTerminalBlock {
+            public PropertyValueNumericPropertyHandler(String propertyName, float delta) : base((b)=>b.GetValueFloat(propertyName), (b,v)=>b.SetValueFloat(propertyName, v), delta) {
             }
         }
 
-        public class NumericPropertySetter<T> {
+        public class PropertyHandler<T> {
+            public StringPropertyGetter<T> GetString;
+            public StringPropertySetter<T> SetString;
+            public BooleanPropertyGetter<T> GetBoolean;
+            public BooleanPropertySetter<T> SetBoolean;
+            public NumericPropertyGetter<T> GetNumeric;
+            public NumericPropertyGetterDirection<T> GetNumericDirection;
             public SetPropertyValue<T> Set;
             public SetPropertyValueDirection<T> SetDirection;
             public IncrementPropertyValue<T> Increment;
@@ -109,31 +140,30 @@ namespace IngameScript {
             public ReversePropertyValue<T> Reverse;
         }
 
-        public interface BlockHandler {
-            BooleanPropertyType GetDefaultBooleanProperty();
-            StringPropertyType GetDefaultStringProperty();
-            NumericPropertyType GetDefaultNumericProperty(DirectionType direction);
+         public interface BlockHandler {
+            PropertyType GetDefaultBooleanProperty();
+            PropertyType GetDefaultStringProperty();
+            PropertyType GetDefaultNumericProperty(DirectionType direction);
             DirectionType GetDefaultDirection();
             List<Object> GetBlocks(String name);
             List<Object> GetBlocksInGroup(String groupName);
-            bool GetBooleanPropertyValue(Object block, BooleanPropertyType property);
-            string GetStringPropertyValue(Object block, StringPropertyType property);
-            float GetNumericPropertyValue(Object block, NumericPropertyType property);
-            float GetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction);
-            void SetBooleanPropertyValue(Object block, BooleanPropertyType property, bool value);
-            void SetStringPropertyValue(Object block, StringPropertyType property, String value);
-            void SetNumericPropertyValue(Object block, NumericPropertyType property, float value);
-            void SetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float value);
-            void IncrementNumericPropertyValue(Object block, NumericPropertyType property, float deltaValue);
-            void IncrementNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float deltaValue);
-            void MoveNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction);
-            void ReverseNumericPropertyValue(Object block, NumericPropertyType property);
+            bool GetBooleanPropertyValue(Object block, PropertyType property);
+            string GetStringPropertyValue(Object block, PropertyType property);
+            float GetNumericPropertyValue(Object block, PropertyType property);
+            float GetNumericPropertyValue(Object block, PropertyType property, DirectionType direction);
+            void SetBooleanPropertyValue(Object block, PropertyType property, bool value);
+            void SetStringPropertyValue(Object block, PropertyType property, String value);
+            void SetNumericPropertyValue(Object block, PropertyType property, float value);
+            void SetNumericPropertyValue(Object block, PropertyType property, DirectionType direction, float value);
+            void IncrementNumericPropertyValue(Object block, PropertyType property, float deltaValue);
+            void IncrementNumericPropertyValue(Object block, PropertyType property, DirectionType direction, float deltaValue);
+            void MoveNumericPropertyValue(Object block, PropertyType property, DirectionType direction);
+            void ReverseNumericPropertyValue(Object block, PropertyType property);
         }
 
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() : base() {
-                booleanPropertyGetters.Add(BooleanPropertyType.POWER, (block) => block.Enabled);
-                booleanPropertySetters.Add(BooleanPropertyType.POWER, (block, enabled) => block.Enabled = enabled);
+                AddPropertyHandler(PropertyType.POWER, new SimpleBooleanPropertyHandler<T>((block) => block.Enabled, (block, enabled) => block.Enabled = enabled));
             }
         }
 
@@ -171,16 +201,10 @@ namespace IngameScript {
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
-            protected Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>> booleanPropertyGetters = new Dictionary<BooleanPropertyType, BooleanPropertyGetter<T>>();
-            protected Dictionary<StringPropertyType, StringPropertyGetter<T>> stringPropertyGetters = new Dictionary<StringPropertyType, StringPropertyGetter<T>>();
-            protected Dictionary<NumericPropertyType, NumericPropertyGetter<T>> numericPropertyGetters = new Dictionary<NumericPropertyType, NumericPropertyGetter<T>>();
-            protected Dictionary<NumericPropertyType, NumericPropertyGetterDirection<T>> numericPropertyDirectionGetters = new Dictionary<NumericPropertyType, NumericPropertyGetterDirection<T>>();
-            protected Dictionary<BooleanPropertyType, BooleanPropertySetter<T>> booleanPropertySetters = new Dictionary<BooleanPropertyType, BooleanPropertySetter<T>>();
-            protected Dictionary<StringPropertyType, StringPropertySetter<T>> stringPropertySetters = new Dictionary<StringPropertyType, StringPropertySetter<T>>();
-            protected Dictionary<NumericPropertyType, NumericPropertySetter<T>> numericPropertySetters = new Dictionary<NumericPropertyType, NumericPropertySetter<T>>();
-            protected BooleanPropertyType defaultBooleanProperty = BooleanPropertyType.POWER;
-            protected StringPropertyType defaultStringProperty = StringPropertyType.NAME;
-            protected Dictionary<DirectionType, NumericPropertyType> defaultNumericProperties = new Dictionary<DirectionType, NumericPropertyType>();
+            protected Dictionary<PropertyType, PropertyHandler<T>> propertyHandlers = new Dictionary<PropertyType, PropertyHandler<T>>();
+            protected PropertyType defaultBooleanProperty = PropertyType.POWER;
+            protected PropertyType defaultStringProperty = PropertyType.NAME;
+            protected Dictionary<DirectionType, PropertyType> defaultNumericProperties = new Dictionary<DirectionType, PropertyType>();
             protected DirectionType? defaultDirection = null;
 
             public List<Object> GetBlocks(String name) { return GetBlocksOfType(name).Select(t => t as object).ToList(); }
@@ -189,13 +213,13 @@ namespace IngameScript {
             public abstract List<T> GetBlocksOfType(String name);
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
 
-            public BooleanPropertyType GetDefaultBooleanProperty() {
+            public PropertyType GetDefaultBooleanProperty() {
                 return defaultBooleanProperty;
             }
-            public StringPropertyType GetDefaultStringProperty() {
+            public PropertyType GetDefaultStringProperty() {
                 return defaultStringProperty;
             }
-            public NumericPropertyType GetDefaultNumericProperty(DirectionType direction) {
+            public PropertyType GetDefaultNumericProperty(DirectionType direction) {
                 if (!defaultNumericProperties.ContainsKey(direction)) throw new Exception("This Block Does Not Have A Default Numeric Property");
                 return defaultNumericProperties[direction];
             }
@@ -203,54 +227,78 @@ namespace IngameScript {
                 if (!defaultDirection.HasValue) throw new Exception("This Block Does Not Have a Default Direction");
                 return defaultDirection.Value;
             }
-            public bool GetBooleanPropertyValue(Object block, BooleanPropertyType property) {
-                return booleanPropertyGetters[property]((T)block);
+            public bool GetBooleanPropertyValue(Object block, PropertyType property) {
+                return propertyHandlers[property].GetBoolean((T)block);
             }
-            public string GetStringPropertyValue(Object block, StringPropertyType property) {
-                return stringPropertyGetters[property]((T)block);
+            public string GetStringPropertyValue(Object block, PropertyType property) {
+                return propertyHandlers[property].GetString((T)block);
             }
-            public float GetNumericPropertyValue(Object block, NumericPropertyType property) {
-                return numericPropertyGetters[property]((T)block);
+            public float GetNumericPropertyValue(Object block, PropertyType property) {
+                return propertyHandlers[property].GetNumeric((T)block);
             }
-            public float GetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction) {
-                return numericPropertyDirectionGetters[property]((T)block, direction);
+            public float GetNumericPropertyValue(Object block, PropertyType property, DirectionType direction) {
+                return propertyHandlers[property].GetNumericDirection((T)block, direction);
             }
-            public void SetBooleanPropertyValue(Object block, BooleanPropertyType property, bool value) {
+            public void SetBooleanPropertyValue(Object block, PropertyType property, bool value) {
                 Print("Setting " + Name(block) + " " + property + " to " + value);
-                booleanPropertySetters[property]((T)block, value);
+                propertyHandlers[property].SetBoolean((T)block, value);
             }
-            public void SetStringPropertyValue(Object block, StringPropertyType property, String value) {
+            public void SetStringPropertyValue(Object block, PropertyType property, String value) {
                 Print("Setting " + Name(block) + " " + property + " to " + value);
-                stringPropertySetters[property]((T)block, value);
+                propertyHandlers[property].SetString((T)block, value);
             }
-            public void SetNumericPropertyValue(Object block, NumericPropertyType property, float value) {
+            public void SetNumericPropertyValue(Object block, PropertyType property, float value) {
                 Print("Setting " + Name(block) + " " + property + " to " + value);
-                numericPropertySetters[property].Set((T)block, value);
+                propertyHandlers[property].Set((T)block, value);
             }
-            public void SetNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float value) {
+            public void SetNumericPropertyValue(Object block, PropertyType property, DirectionType direction, float value) {
                 Print("Setting " + Name(block) + " " + property + " to " + value + " in " + direction + " direction");
-                numericPropertySetters[property].SetDirection((T)block, direction, value);
+                propertyHandlers[property].SetDirection((T)block, direction, value);
             }
-            public void IncrementNumericPropertyValue(Object block, NumericPropertyType property, float deltaValue) {
+            public void IncrementNumericPropertyValue(Object block, PropertyType property, float deltaValue) {
                 Print("Incrementing " + Name(block) + " " + property + " by " + deltaValue);
-                numericPropertySetters[property].Increment((T)block, deltaValue);
+                propertyHandlers[property].Increment((T)block, deltaValue);
             }
-            public void IncrementNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction, float deltaValue) {
+            public void IncrementNumericPropertyValue(Object block, PropertyType property, DirectionType direction, float deltaValue) {
                 Print("Incrementing " + Name(block) + " " + property + " by " + deltaValue + " in " + direction + " direction");
-                numericPropertySetters[property].IncrementDirection((T)block, direction, deltaValue);
+                propertyHandlers[property].IncrementDirection((T)block, direction, deltaValue);
             }
-            public void MoveNumericPropertyValue(Object block, NumericPropertyType property, DirectionType direction) {
+            public void MoveNumericPropertyValue(Object block, PropertyType property, DirectionType direction) {
                 Print("Moving " + Name(block) + " " + property + " in " + direction + " direction");
-                numericPropertySetters[property].Move((T)block, direction);
+                propertyHandlers[property].Move((T)block, direction);
             }
-            public void ReverseNumericPropertyValue(Object block, NumericPropertyType property) {
+            public void ReverseNumericPropertyValue(Object block, PropertyType property) {
                 Print("Reversing " + Name(block) + " " + property);
-                numericPropertySetters[property].Reverse((T)block);
+                propertyHandlers[property].Reverse((T)block);
             }
             private string Name(object block) {
                 return Name((T)block);
             }
             protected abstract string Name(T block);
+
+            protected void AddBooleanHandler(PropertyType property, BooleanPropertyGetter<T> Get) {
+                AddBooleanHandler(property, Get, (b, v) => { });
+            }
+
+            protected void AddBooleanHandler(PropertyType property, BooleanPropertyGetter<T> Get, BooleanPropertySetter<T> Set) {
+                propertyHandlers[property] = new SimpleBooleanPropertyHandler<T>(Get, Set);
+            }
+
+            protected void AddPropertyHandler(PropertyType property, PropertyHandler<T> handler) {
+                propertyHandlers[property] = handler;
+            }
+
+            protected void AddStringHandler(PropertyType property, StringPropertyGetter<T> Get, StringPropertySetter<T> Set) {
+                propertyHandlers[property] = new SimpleStringPropertyHandler<T>(Get, Set);
+            }
+
+            protected void AddNumericHandler(PropertyType property, NumericPropertyGetter<T> Get) {
+                propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, (b, v) => { }, 0);
+            }
+
+            protected void AddNumericHandler(PropertyType property, NumericPropertyGetter<T> Get, SetPropertyValue<T> Set, float delta) {
+                propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, Set, delta);
+            }
         }
     }
 }

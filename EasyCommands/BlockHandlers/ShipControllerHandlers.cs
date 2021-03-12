@@ -21,40 +21,41 @@ namespace IngameScript {
     partial class Program {
         public class RemoteControlBlockHandler : ShipControllerHandler<IMyRemoteControl> {
             public RemoteControlBlockHandler() : base() {
-                numericPropertySetters.Add(NumericPropertyType.VELOCITY, new SimpleNumericPropertySetter<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
-                numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.SpeedLimit);
-                booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, (b, v) => b.SetDockingMode(v));
-                booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => b.IsAutoPilotEnabled);
-                booleanPropertySetters.Add(BooleanPropertyType.TRIGGER, (b,v) => b.SetAutoPilotEnabled(v));
-                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.IsAutoPilotEnabled);
-                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b, v) => b.SetAutoPilotEnabled(v));
+                AddPropertyHandler(PropertyType.VELOCITY, new RemoteControlVelocityHandler());
+                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericPropertyHandler<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
+                AddBooleanHandler(PropertyType.CONNECTED, b => false, (b,v) => b.SetDockingMode(v)); //TODO: Get Docking Mode?
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
+                AddBooleanHandler(PropertyType.AUTO, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
             }
         }
 
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, (b) => b.HandBrake);
-                booleanPropertySetters.Add(BooleanPropertyType.LOCKED, (b, v) => b.HandBrake = v);
-                numericPropertyGetters.Add(NumericPropertyType.VELOCITY, (b) => (float)b.GetShipSpeed());
-                numericPropertyDirectionGetters.Add(NumericPropertyType.VELOCITY, GetLinearVelocity);
-                numericPropertyDirectionGetters.Add(NumericPropertyType.MOVE_INPUT, GetPilotMovementInput);
-                numericPropertyDirectionGetters.Add(NumericPropertyType.ROLL_INPUT, GetPilotRollInput);
+                AddBooleanHandler(PropertyType.LOCKED, (b) => b.HandBrake, (b, v) => b.HandBrake = v);
+                AddPropertyHandler(PropertyType.VELOCITY, new ShipVelocityHandler<T>());
+                AddPropertyHandler(PropertyType.MOVE_INPUT, new ShipMoveInputHandler<T>());
+                AddPropertyHandler(PropertyType.ROLL_INPUT, new ShipRollInputHandler<T>());
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.VELOCITY);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.VELOCITY);
             }
+        }
 
-            float GetPilotMovementInput(T block, DirectionType direction) {
-                var pilotInput = block.MoveIndicator;
-                switch(direction) {
-                    case DirectionType.UP: return pilotInput.Y;
-                    case DirectionType.DOWN: return -pilotInput.Y;
-                    case DirectionType.LEFT: return -pilotInput.X;
-                    case DirectionType.RIGHT: return pilotInput.X;
-                    case DirectionType.FORWARD: return -pilotInput.Z;
-                    case DirectionType.BACKWARD: return pilotInput.Z;
-                    default: throw new Exception("Unsupported User Input Movement Direction Type: " + direction);
-                }
+        public class RemoteControlVelocityHandler : ShipVelocityHandler<IMyRemoteControl> {
+            public RemoteControlVelocityHandler() : base() {
+                Set = (b, v) => b.SpeedLimit = v;
+                SetDirection = (b, d, v) => Set(b, v);
+                Increment = (b, v) => Set(b, b.SpeedLimit + v);
+                IncrementDirection = (b, d, v) => Set(b, b.SpeedLimit + Multiply(d) * v);
+            }
+            private float Multiply(DirectionType d) { return (d == DirectionType.UP) ? 1 : -1; }
+        }
+
+        public class ShipVelocityHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
+            public ShipVelocityHandler() {
+                GetString = (b) => GetNumeric(b).ToString();
+                GetBoolean = (b) => GetNumeric(b) > 0;
+                GetNumeric = (b) => (float)b.GetShipSpeed();
+                GetNumericDirection = GetLinearVelocity;
             }
 
             float GetLinearVelocity(T block, DirectionType direction) {
@@ -68,6 +69,34 @@ namespace IngameScript {
                     case DirectionType.BACKWARD: return Convert.ToSingle(vRel.Z);
                     default: throw new Exception("Unsupported Ship Velocity Direction Type: " + direction);
                 }
+            }
+
+        }
+
+        public class ShipMoveInputHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
+            public ShipMoveInputHandler() {
+                GetNumericDirection = GetPilotMovementInput;
+                GetNumeric = (b) => b.MoveIndicator.Length();
+            }
+
+            float GetPilotMovementInput(T block, DirectionType direction) {
+                var pilotInput = block.MoveIndicator;
+                switch (direction) {
+                    case DirectionType.UP: return pilotInput.Y;
+                    case DirectionType.DOWN: return -pilotInput.Y;
+                    case DirectionType.LEFT: return -pilotInput.X;
+                    case DirectionType.RIGHT: return pilotInput.X;
+                    case DirectionType.FORWARD: return -pilotInput.Z;
+                    case DirectionType.BACKWARD: return pilotInput.Z;
+                    default: throw new Exception("Unsupported User Input Movement Direction Type: " + direction);
+                }
+            }
+        }
+
+        public class ShipRollInputHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
+            public ShipRollInputHandler() {
+                GetNumericDirection = GetPilotRollInput;
+                GetNumeric = (b) => b.RotationIndicator.Length();
             }
 
             float GetPilotRollInput(T block, DirectionType direction) {

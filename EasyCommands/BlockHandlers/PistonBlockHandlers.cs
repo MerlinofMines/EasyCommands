@@ -21,20 +21,17 @@ namespace IngameScript {
     partial class Program {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
+                AddPropertyHandler(PropertyType.HEIGHT, new PistonHeightHandler());
+                AddPropertyHandler(PropertyType.VELOCITY, new PistonVelocityHandler());
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
-
-                numericPropertyGetters.Add(NumericPropertyType.HEIGHT, block => block.CurrentPosition);
-                numericPropertyGetters.Add(NumericPropertyType.VELOCITY, block => block.Velocity);
-
-                numericPropertySetters.Add(NumericPropertyType.HEIGHT, new PistonHeightSetter());
-                numericPropertySetters.Add(NumericPropertyType.VELOCITY, new PistonVelocitySetter());
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.DOWN, PropertyType.HEIGHT);
             }
         }
 
-        public class PistonHeightSetter : NumericPropertySetter<IMyPistonBase> {
-            public PistonHeightSetter() {
+        public class PistonHeightHandler : PropertyHandler<IMyPistonBase> {
+            public PistonHeightHandler() {
+                GetNumeric = (b) => b.CurrentPosition;
                 Set = extendPistonToValue;
                 SetDirection = (b, d, v) => extendPistonToValue(b, v);
                 IncrementDirection = (b, d, v) => {
@@ -50,8 +47,9 @@ namespace IngameScript {
             }
         }
 
-        public class PistonVelocitySetter : NumericPropertySetter<IMyPistonBase> {
-            public PistonVelocitySetter() {
+        public class PistonVelocityHandler : PropertyHandler<IMyPistonBase> {
+            public PistonVelocityHandler() {
+                GetNumeric = (b) => b.Velocity;
                 Set = (b, v) => b.Velocity = v;
                 SetDirection = (b, d, v) => b.Velocity = v;
                 IncrementDirection = (b, d, v) => {

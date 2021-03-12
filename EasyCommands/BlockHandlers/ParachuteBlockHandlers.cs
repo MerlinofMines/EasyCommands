@@ -21,19 +21,14 @@ namespace IngameScript {
     partial class Program {
         public class ParachuteBlockHandler : FunctionalBlockHandler<IMyParachute> {
             public ParachuteBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.OPEN, (b) => b.Status != DoorStatus.Closed);//If at all open, you're open
-                booleanPropertySetters.Add(BooleanPropertyType.OPEN, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.GetValueBool("AutoDeploy"));
-                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b, v) => b.SetValueBool("AutoDeploy",v));
-                booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => b.Status != DoorStatus.Closed);
-                booleanPropertySetters.Add(BooleanPropertyType.TRIGGER, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                defaultBooleanProperty = BooleanPropertyType.OPEN;
-
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => 1 - b.OpenRatio);
-                numericPropertyGetters.Add(NumericPropertyType.HEIGHT, (b) => b.GetValueFloat("AutoDeployHeight"));
-                numericPropertySetters.Add(NumericPropertyType.HEIGHT, new PropertyValueNumericPropertySetter<IMyParachute>("AutoDeployHeight", 500));
+                AddBooleanHandler(PropertyType.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddBooleanHandler(PropertyType.AUTO, (b) => b.GetValueBool("AutoDeploy"), (b, v) => b.SetValueBool("AutoDeploy", v));
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddNumericHandler(PropertyType.RATIO, (b) => 1 - b.OpenRatio);
+                AddPropertyHandler(PropertyType.HEIGHT, new PropertyValueNumericPropertyHandler<IMyParachute>("AutoDeployHeight", 500));
+                defaultBooleanProperty = PropertyType.OPEN;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
 
             }
         }

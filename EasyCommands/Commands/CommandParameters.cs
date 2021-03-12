@@ -41,7 +41,6 @@ namespace IngameScript {
         }
 
         public interface CommandParameter { }
-        public interface PropertyCommandParameter { }
         public interface PrimitiveCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
@@ -74,16 +73,8 @@ namespace IngameScript {
             public DirectionCommandParameter(DirectionType value) : base(value) {}
         }
 
-        public class BooleanPropertyCommandParameter : ValueCommandParameter<BooleanPropertyType>, PropertyCommandParameter {
-            public BooleanPropertyCommandParameter(BooleanPropertyType value) : base(value) {}
-        }
-
-        public class StringPropertyCommandParameter : ValueCommandParameter<StringPropertyType>, PropertyCommandParameter {
-            public StringPropertyCommandParameter(StringPropertyType value) : base(value) {}
-        }
-
-        public class NumericPropertyCommandParameter : ValueCommandParameter<NumericPropertyType>, PropertyCommandParameter {
-            public NumericPropertyCommandParameter(NumericPropertyType value) : base(value) {}
+        public class PropertyCommandParameter : ValueCommandParameter<PropertyType> {
+            public PropertyCommandParameter(PropertyType value) : base(value) {}
         }
 
         public class UnitCommandParameter : ValueCommandParameter<UnitType> {

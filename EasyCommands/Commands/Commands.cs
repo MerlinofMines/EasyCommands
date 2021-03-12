@@ -217,30 +217,24 @@ namespace IngameScript {
                 if (boolVals.Count > 0 || notVals.Count > 0) commandParameters.Add(new BooleanCommandParameter(boolVal));
 
                 //TODO: Move to proper command parameter pre-processor
-                int boolPropIndex = commandParameters.FindIndex(param => param is BooleanPropertyCommandParameter);
-                int stringPropIndex = commandParameters.FindIndex(param => param is StringPropertyCommandParameter);
-                int numericPropIndex = commandParameters.FindIndex(param => param is NumericPropertyCommandParameter);
+                int propIndex = commandParameters.FindIndex(param => param is PropertyCommandParameter);
+                int primitiveIndex = commandParameters.FindIndex(param => param is PrimitiveCommandParameter);
                 int boolIndex = commandParameters.FindIndex(param => param is BooleanCommandParameter);
                 int stringIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
                 int numericIndex = commandParameters.FindIndex(param => param is NumericCommandParameter);
                 int directionIndex = commandParameters.FindIndex(param => param is DirectionCommandParameter);
                 int reverseIndex = commandParameters.FindIndex(param => param is ReverseCommandParameter);
 
-                if (boolPropIndex < 0 && boolIndex >= 0) {
-                    commandParameters.Add(new BooleanPropertyCommandParameter(blockHandler.GetDefaultBooleanProperty()));
+                if (propIndex < 0 && boolIndex >= 0) {
+                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultBooleanProperty()));
                 }
 
-                if (boolIndex < 0 && boolPropIndex >= 0) {
+                if (propIndex < 0 && stringIndex >= 0) {
+                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
+                }
+
+                if (propIndex >= 0 && primitiveIndex < 0) {
                     commandParameters.Add(new BooleanCommandParameter(boolVal));
-                }
-
-                if (stringPropIndex < 0 && stringIndex >= 0) {
-                    commandParameters.Add(new StringPropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
-                }
-
-                if (stringPropIndex >= 0 && stringIndex < 0)//TODO: Block Default String Value per Property?
-                {
-                    commandParameters.Add(new StringCommandParameter(""));
                 }
 
                 if (numericIndex >= 0) {
@@ -253,39 +247,40 @@ namespace IngameScript {
                         commandParameters.Add(new DirectionCommandParameter(direction));
                     }
 
-                    if (numericPropIndex < 0) {
-                        numericPropIndex = commandParameters.Count;
-                        commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
+                    if (propIndex < 0) {
+                        propIndex = commandParameters.Count;
+                        commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                     }
                 }
 
-                if (directionIndex >= 0 && numericPropIndex < 0) {
+                //TODO: Support directions for more than just numeric
+                if (directionIndex >= 0 && propIndex < 0) {
                     DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
-                    numericPropIndex = commandParameters.Count;
-                    commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
+                    propIndex = commandParameters.Count;
+                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
                 }
 
-                if (reverseIndex >= 0 && numericPropIndex < 0) {
-                    numericPropIndex = commandParameters.Count;
-                    commandParameters.Add(new NumericPropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
+                if (reverseIndex >= 0 && propIndex < 0) {
+                    propIndex = commandParameters.Count;
+                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
                 }
             }
 
             public List<BlockCommandHandler> GetHandlers() {
                 return new List<BlockCommandHandler>() {
                     //Boolean Handlers
-                    new BlockCommandHandler2<BooleanPropertyCommandParameter, BooleanCommandParameter>((b,e,p,s)=>{b.SetBooleanPropertyValue(e, p.Value, s.Value);}),
+                    new BlockCommandHandler2<PropertyCommandParameter, BooleanCommandParameter>((b,e,p,s)=>{b.SetBooleanPropertyValue(e, p.Value, s.Value);}),
 
                     //String Handlers
-                    new BlockCommandHandler2<StringPropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.original); }),
+                    new BlockCommandHandler2<PropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.original); }),
 
                     //Numeric Handlers
-                    new BlockCommandHandler2<NumericPropertyCommandParameter, NumericCommandParameter>((b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
-                    new BlockCommandHandler2<NumericPropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
-                    new BlockCommandHandler2<ReverseCommandParameter, NumericPropertyCommandParameter>((b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
-                    new BlockCommandHandler3<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>((b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
-                    new BlockCommandHandler3<NumericPropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
-                    new BlockCommandHandler4<NumericPropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
+                    new BlockCommandHandler2<PropertyCommandParameter, NumericCommandParameter>((b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
+                    new BlockCommandHandler2<PropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
+                    new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
+                    new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>((b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
+                    new BlockCommandHandler3<PropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
+                    new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
 
                     //TODO: GPS Handler?
                 };

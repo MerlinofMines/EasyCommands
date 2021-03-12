@@ -21,13 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class LightBlockHandler : FunctionalBlockHandler<IMyLightingBlock> {
             public LightBlockHandler() {
-                stringPropertyGetters.Add(StringPropertyType.COLOR, (b) => b.Color.ToString());
-                stringPropertySetters.Add(StringPropertyType.COLOR, (b, v) => b.Color = GetColor(v));
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b)=>b.Radius);
-                numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<IMyLightingBlock>((b) => b.Radius, (b, v) => b.Radius = v, 3));
-                defaultStringProperty = StringPropertyType.COLOR;
+                AddStringHandler(PropertyType.COLOR, (b) => b.Color.ToString(), (b, v) => b.Color = GetColor(v));
+                AddNumericHandler(PropertyType.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
+                defaultStringProperty = PropertyType.COLOR;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RANGE);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
             }
         }
     }

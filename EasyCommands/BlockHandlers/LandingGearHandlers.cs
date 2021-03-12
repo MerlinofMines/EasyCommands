@@ -21,13 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class LandingGearHandler : FunctionalBlockHandler<IMyLandingGear> {
             public LandingGearHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.AutoLock);
-                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b,v) => b.AutoLock=v);
-
-                booleanPropertyGetters.Add(BooleanPropertyType.LOCKED, Connected);
-                booleanPropertyGetters.Add(BooleanPropertyType.CONNECTED, Connected);
-                booleanPropertySetters.Add(BooleanPropertyType.LOCKED, Connect);
-                booleanPropertySetters.Add(BooleanPropertyType.CONNECTED, Connect);
+                AddBooleanHandler(PropertyType.AUTO, (b) => b.AutoLock, (b, v) => b.AutoLock = v);
+                AddBooleanHandler(PropertyType.LOCKED, Connected, Connect);
+                AddBooleanHandler(PropertyType.CONNECTED, Connected, Connect);
             }
 
             static bool Connected(IMyLandingGear gear) {

@@ -21,12 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class TextSurfaceHandler : BlockHandler<IMyTextSurface> {
             public TextSurfaceHandler() {
-                stringPropertySetters.Add(StringPropertyType.TEXT, (b, v) => b.WriteText(v));
-                stringPropertySetters.Add(StringPropertyType.COLOR, (b, v) => b.FontColor=GetColor(v));
-                numericPropertySetters.Add(NumericPropertyType.FONT_SIZE, new SimpleNumericPropertySetter<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
-                defaultStringProperty = StringPropertyType.TEXT;
+                AddStringHandler(PropertyType.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
+                AddStringHandler(PropertyType.COLOR, b => b.FontColor.ToString(), (b, v) => b.FontColor = GetColor(v));
+                AddPropertyHandler(PropertyType.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
+                defaultStringProperty = PropertyType.TEXT;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP,NumericPropertyType.FONT_SIZE);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.FONT_SIZE);
             }
 
             public override List<IMyTextSurface> GetBlocksOfType(String name) {

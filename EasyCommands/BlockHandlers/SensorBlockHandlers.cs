@@ -21,8 +21,8 @@ namespace IngameScript {
     partial class Program {
         public class SensorBlockHandler : FunctionalBlockHandler<IMySensorBlock> {
             public SensorBlockHandler() {
-                defaultBooleanProperty = BooleanPropertyType.TRIGGER;
-                booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => b.IsActive);
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsActive);
+                defaultBooleanProperty = PropertyType.TRIGGER;
             }
         }
     }

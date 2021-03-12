@@ -105,14 +105,14 @@ namespace IngameScript {
             protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 StringCommandParameter param = (StringCommandParameter)p[i];
-                if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is StringPropertyCommandParameter)) return;
-                if (((StringPropertyCommandParameter)param.SubTokens[0]).Value != StringPropertyType.RUN) return;
+                if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is PropertyCommandParameter)) return;
+                if (((PropertyCommandParameter)param.SubTokens[0]).Value != PropertyType.RUN) return;
                 Debug("Found Run Keyword!");
                 List<Token> values = ParseTokens(param.Value);
                 p.RemoveAt(i);
                 values.RemoveAt(0);
                 Debug("Arguments: (" + String.Join(" ", values) + ")");
-                p.Insert(i, new StringPropertyCommandParameter(StringPropertyType.RUN));
+                p.Insert(i, new PropertyCommandParameter(PropertyType.RUN));
                 p.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
             }
         }
@@ -124,9 +124,7 @@ namespace IngameScript {
                     p is NumericCommandParameter ||
                     p is StringCommandParameter ||
                     p is BooleanCommandParameter ||
-                    p is NumericPropertyCommandParameter ||
-                    p is BooleanPropertyCommandParameter ||
-                    p is StringPropertyCommandParameter ||
+                    p is PropertyCommandParameter ||
                     p is ReverseCommandParameter ||
                     p is RelativeCommandParameter ||
                     p is WaitCommandParameter ||
@@ -226,24 +224,22 @@ namespace IngameScript {
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
 
                 BlockCondition blockCondition;
-                if (value is BooleanCommandParameter || property is BooleanPropertyCommandParameter) {
+                if (value == null || value is BooleanCommandParameter) {
                     Debug("Boolean Command");
-                    BooleanPropertyType boolProperty = handler.GetDefaultBooleanProperty();
-                    if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).Value;
+                    PropertyType boolProperty = handler.GetDefaultBooleanProperty();
+                    if (property != null) boolProperty = property.Value;
                     bool boolValue = true; if (value != null) boolValue = ((BooleanCommandParameter)value).Value;
                     blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
-                } else if (value is StringCommandParameter || property is StringPropertyCommandParameter) {
+                } else if (value is StringCommandParameter) {
                     Debug("String Command");
-                    StringPropertyType stringProperty = handler.GetDefaultStringProperty();
-                    if (property != null) stringProperty = ((StringPropertyCommandParameter)property).Value;
-                    if (value == null) throw new Exception("String Comparison Value Cannot Be Left Blank");
+                    PropertyType stringProperty = handler.GetDefaultStringProperty();
+                    if (property != null) stringProperty = property.Value;
                     String stringValue = ((StringCommandParameter)value).Value;
                     blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
-                } else if (value is NumericCommandParameter || property is NumericPropertyCommandParameter) {
+                } else if (value is NumericCommandParameter) {
                     Debug("Numeric Command");
-                    NumericPropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
-                    if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).Value;
-                    if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
+                    PropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
+                    if (property != null) numericProperty = property.Value;
                     float numericValue = ((NumericCommandParameter)value).Value;
                     if (direction != null) {
                         blockCondition = new NumericDirectionBlockCondition(handler, numericProperty, direction.Value, new NumericComparator(comparison), numericValue);
@@ -378,24 +374,22 @@ namespace IngameScript {
                 ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.Value;
 
                 BlockCondition blockCondition;
-                if (value is BooleanCommandParameter || property is BooleanPropertyCommandParameter) {
+                if (value == null || value is BooleanCommandParameter) {
                     Debug("Boolean Command");
-                    BooleanPropertyType boolProperty = handler.GetDefaultBooleanProperty();
-                    if (property != null) boolProperty = ((BooleanPropertyCommandParameter)property).Value;
+                    PropertyType boolProperty = handler.GetDefaultBooleanProperty();
+                    if (property != null) boolProperty = property.Value;
                     bool boolValue = true; if (value != null) boolValue = ((BooleanCommandParameter)value).Value;
                     blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
-                } else if (value is StringCommandParameter || property is StringPropertyCommandParameter) {
+                } else if (value is StringCommandParameter) {
                     Debug("String Command");
-                    StringPropertyType stringProperty = handler.GetDefaultStringProperty();
-                    if (property != null) stringProperty = ((StringPropertyCommandParameter)property).Value;
-                    if (value == null) throw new Exception("String Comparison Value Cannot Be Left Blank");
+                    PropertyType stringProperty = handler.GetDefaultStringProperty();
+                    if (property != null) stringProperty = property.Value;
                     String stringValue = ((StringCommandParameter)value).Value;
                     blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
-                } else if (value is NumericCommandParameter || property is NumericPropertyCommandParameter) {
+                } else if (value is NumericCommandParameter) {
                     Debug("Numeric Command");
-                    NumericPropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
-                    if (property != null) numericProperty = ((NumericPropertyCommandParameter)property).Value;
-                    if (value == null) throw new Exception("Numeric Comparison Value Cannot Be Left Blank");
+                    PropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
+                    if (property != null) numericProperty = property.Value;
                     float numericValue = ((NumericCommandParameter)value).Value;
                     if (direction != null) {
                         blockCondition = new NumericDirectionBlockCondition(handler, numericProperty, direction.Value, new NumericComparator(comparison), numericValue);

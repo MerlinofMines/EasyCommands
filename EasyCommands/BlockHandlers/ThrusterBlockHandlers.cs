@@ -21,11 +21,10 @@ namespace IngameScript {
     partial class Program {
         public class ThrusterBlockHandler : FunctionalBlockHandler<IMyThrust> {
             public ThrusterBlockHandler() {
+                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericPropertyHandler<IMyThrust>((b) => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000));
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
                 defaultDirection = DirectionType.UP;
                 //TODO: Better Properties
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RANGE);
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.ThrustOverride);
-                numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<IMyThrust>((b) => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000));
             }
         }
     }

@@ -21,13 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class AirVentBlockHandler : FunctionalBlockHandler<IMyAirVent> {
             public AirVentBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.COMPLETE, (b) => !InProgress(b));
-                booleanPropertyGetters.Add(BooleanPropertyType.RUNNING, (b) => InProgress(b));
-                booleanPropertyGetters.Add(BooleanPropertyType.PRODUCE, (b) => !InProgress(b));
-                booleanPropertySetters.Add(BooleanPropertyType.PRODUCE, (b, v) => b.Depressurize = !v);
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => b.GetOxygenLevel());
+                AddBooleanHandler(PropertyType.COMPLETE, (b) => !InProgress(b));
+                AddBooleanHandler(PropertyType.RUNNING, (b) => InProgress(b));
+                AddBooleanHandler(PropertyType.PRODUCE, (b) => !InProgress(b), (b, v) => b.Depressurize = !v);
+                AddNumericHandler(PropertyType.RATIO, (b) => b.GetOxygenLevel());
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
             }
 
             bool InProgress(IMyAirVent b) { return b.Status == VentStatus.Depressurizing || b.Status == VentStatus.Pressurizing; }

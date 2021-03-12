@@ -21,12 +21,10 @@ namespace IngameScript {
     partial class Program {
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, GetRange);
-                numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<T>(GetRange, SetRange, 100));
-                booleanPropertySetters.Add(BooleanPropertyType.TRIGGER, Shoot);
-                booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => b.IsShooting);
+                AddNumericHandler(PropertyType.RANGE, GetRange, SetRange, 100);
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsShooting, Shoot);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RANGE);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
             }
             void Shoot(IMyUserControllableGun gun, bool b) { if(b) gun.ApplyAction("Shoot_On"); else gun.ApplyAction("Shoot_Off"); }
             float GetRange(IMyUserControllableGun gun) { return gun.GetValueFloat("Range"); }

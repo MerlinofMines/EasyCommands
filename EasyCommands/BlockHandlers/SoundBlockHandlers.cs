@@ -21,20 +21,15 @@ namespace IngameScript {
     partial class Program {
         public class SoundBlockHandler : FunctionalBlockHandler<IMySoundBlock> {
             public SoundBlockHandler() {
-                defaultStringProperty = StringPropertyType.SOUND;
-                defaultBooleanProperty = BooleanPropertyType.POWER;
+                AddPropertyHandler(PropertyType.VOLUME, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.Volume, (b, v) => b.Volume = v,1));
+                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.Range, (b, v) => b.Range = v,50));
+                AddPropertyHandler(PropertyType.HEIGHT, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60));
+                AddStringHandler(PropertyType.SOUND, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
+                AddBooleanHandler(PropertyType.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); Print("P is: " + p); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
+                defaultStringProperty = PropertyType.SOUND;
+                defaultBooleanProperty = PropertyType.POWER;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.VOLUME);
-                numericPropertySetters.Add(NumericPropertyType.VOLUME, new SimpleNumericPropertySetter<IMySoundBlock>((b) => b.Volume, (b, v) => b.Volume = v,1));
-                numericPropertySetters.Add(NumericPropertyType.RANGE, new SimpleNumericPropertySetter<IMySoundBlock>((b) => b.Range, (b, v) => b.Range = v,50));
-                numericPropertySetters.Add(NumericPropertyType.HEIGHT, new SimpleNumericPropertySetter<IMySoundBlock>((b) => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60));
-                numericPropertyGetters.Add(NumericPropertyType.VOLUME, (b) => b.Volume);
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.Range);
-                numericPropertyGetters.Add(NumericPropertyType.HEIGHT, (b) => b.LoopPeriod);
-                stringPropertyGetters.Add(StringPropertyType.SOUND, (b) => b.SelectedSound);
-                stringPropertySetters.Add(StringPropertyType.SOUND, (b, v) => b.SelectedSound = v);
-                booleanPropertySetters[BooleanPropertyType.POWER] = (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v+"");};
-                booleanPropertyGetters[BooleanPropertyType.POWER] = (b) => { var p = GetCustomProperty(b, "Playing"); Print("P is: " + p); return p == "True"; };
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.VOLUME);
             }
         }
     }

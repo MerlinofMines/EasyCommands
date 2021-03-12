@@ -21,20 +21,18 @@ namespace IngameScript {
     partial class Program {
         public class DoorBlockHandler : FunctionalBlockHandler<IMyDoor> {
             public DoorBlockHandler() : base() {
-                booleanPropertyGetters.Add(BooleanPropertyType.OPEN, (b) => b.Status != DoorStatus.Closed);//If at all open, you're open
-                booleanPropertySetters.Add(BooleanPropertyType.OPEN, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                defaultBooleanProperty = BooleanPropertyType.OPEN;
-                //TODO: Add Opening, Closing Boolean Handlers?
-
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => 1 - b.OpenRatio);
-                numericPropertySetters.Add(NumericPropertyType.RATIO, new DoorRatioSetter());
+                AddBooleanHandler(PropertyType.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddPropertyHandler(PropertyType.RATIO, new DoorRatioHandler());
+                defaultBooleanProperty = PropertyType.OPEN;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
-
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
             }
 
-            public class DoorRatioSetter : NumericPropertySetter<IMyDoor> {
-                public DoorRatioSetter() {
+            public class DoorRatioHandler : PropertyHandler<IMyDoor> {
+                public DoorRatioHandler() {
+                    GetNumeric = (b) => 1 - b.OpenRatio;
+                    GetBoolean = (b) => b.OpenRatio > 0;
+                    GetString = (b) => b.OpenRatio.ToString();
                     Set = (b, v) => Exception();
                     SetDirection = (b, d, v) => Exception();
                     Increment = (b, v) => Exception();

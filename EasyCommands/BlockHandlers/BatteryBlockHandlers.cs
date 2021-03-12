@@ -21,13 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class BatteryBlockHandler : FunctionalBlockHandler<IMyBatteryBlock> {
             public BatteryBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.PRODUCE, (b) => b.ChargeMode != ChargeMode.Recharge);
-                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.ChargeMode == ChargeMode.Auto);
-                booleanPropertySetters.Add(BooleanPropertyType.PRODUCE, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
-                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.MaxStoredPower);
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => b.CurrentStoredPower / b.MaxStoredPower);
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
+                AddBooleanHandler(PropertyType.PRODUCE, (b) => b.ChargeMode != ChargeMode.Recharge, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
+                AddBooleanHandler(PropertyType.AUTO, (b) => b.ChargeMode == ChargeMode.Auto, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
+                AddNumericHandler(PropertyType.RANGE, (b) => b.MaxStoredPower);
+                AddNumericHandler(PropertyType.RATIO, (b) => b.CurrentStoredPower / b.MaxStoredPower);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
                 defaultDirection = DirectionType.UP;
             }
         }

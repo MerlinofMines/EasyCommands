@@ -21,13 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class CameraBlockHandler : FunctionalBlockHandler<IMyCameraBlock> {
             public CameraBlockHandler() {
-                defaultBooleanProperty = BooleanPropertyType.TRIGGER;
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => { var range = (double)GetRange(b); return b.CanScan(range) && !b.Raycast(range).IsEmpty(); }, (b, v) => b.EnableRaycast = v);
+                AddNumericHandler(PropertyType.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
+                defaultBooleanProperty = PropertyType.TRIGGER;
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RANGE);
-                booleanPropertySetters.Add(BooleanPropertyType.TRIGGER, (b,v) => b.EnableRaycast = v);
-                booleanPropertyGetters.Add(BooleanPropertyType.TRIGGER, (b) => {var range = (double)GetRange(b); return b.CanScan(range)&&!b.Raycast(range).IsEmpty();});
-                numericPropertyGetters.Add(NumericPropertyType.RANGE,GetRange);
-                numericPropertySetters.Add(NumericPropertyType.RANGE,new SimpleNumericPropertySetter<IMyCameraBlock>(GetRange, (b, v) => SetCustomProperty(b, "Range", ""+v), 100));
             }
             public float GetRange(IMyCameraBlock b) { return float.Parse(GetCustomProperty(b, "Range") ?? "1000"); }
         }

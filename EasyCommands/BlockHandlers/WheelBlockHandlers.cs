@@ -21,17 +21,13 @@ namespace IngameScript {
     partial class Program {
         public class WheelSuspensionBlockHandler : FunctionalBlockHandler<IMyMotorSuspension> {
             public WheelSuspensionBlockHandler() {
-                numericPropertyGetters.Add(NumericPropertyType.HEIGHT, (b) => b.Height);
-                numericPropertySetters.Add(NumericPropertyType.HEIGHT, new SimpleNumericPropertySetter<IMyMotorSuspension>((b)=>b.Height, (b,v)=>b.Height=v,0.1f));
-                numericPropertyGetters.Add(NumericPropertyType.ANGLE, (b) => b.SteerAngle);
-                numericPropertySetters.Add(NumericPropertyType.ANGLE, new SimpleNumericPropertySetter<IMyMotorSuspension>((b) => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v, 5));
-                numericPropertyGetters.Add(NumericPropertyType.VELOCITY, (b) => b.GetValueFloat("Speed Limit"));
-                numericPropertySetters.Add(NumericPropertyType.VELOCITY, new PropertyValueNumericPropertySetter<IMyMotorSuspension>("Speed Limit", 5));
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => b.Power);
-                numericPropertySetters.Add(NumericPropertyType.RATIO, new SimpleNumericPropertySetter<IMyMotorSuspension>((b) => b.Power, (b,v)=> b.Power = v, 10));
+                AddPropertyHandler(PropertyType.HEIGHT, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b)=>b.Height, (b,v)=>b.Height=v,0.1f));
+                AddPropertyHandler(PropertyType.ANGLE, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b) => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v, 5));
+                AddPropertyHandler(PropertyType.VELOCITY, new PropertyValueNumericPropertyHandler<IMyMotorSuspension>("Speed Limit", 5));
+                AddPropertyHandler(PropertyType.RATIO, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b) => b.Power, (b,v)=> b.Power = v, 10));
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.DOWN, NumericPropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.HEIGHT);
+                defaultNumericProperties.Add(DirectionType.DOWN, PropertyType.HEIGHT);
                 //TODO: Add Strength?
             }
         }

@@ -21,14 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class GasTankBlockHandler : FunctionalBlockHandler<IMyGasTank> {
             public GasTankBlockHandler() {
-                booleanPropertyGetters.Add(BooleanPropertyType.PRODUCE, (b) => !b.Stockpile);
-                booleanPropertySetters.Add(BooleanPropertyType.PRODUCE, (b, v) => b.Stockpile = !v);
-                booleanPropertyGetters.Add(BooleanPropertyType.AUTO, (b) => b.AutoRefillBottles);
-                booleanPropertySetters.Add(BooleanPropertyType.AUTO, (b,v) => b.AutoRefillBottles=v);
-                numericPropertyGetters.Add(NumericPropertyType.RANGE, (b) => b.Capacity);
-                numericPropertyGetters.Add(NumericPropertyType.RATIO, (b) => (float)b.FilledRatio);
+                AddBooleanHandler(PropertyType.PRODUCE, (b) => !b.Stockpile, (b, v) => b.Stockpile = !v);
+                AddBooleanHandler(PropertyType.AUTO, (b) => b.AutoRefillBottles, (b, v) => b.AutoRefillBottles = v);
+                AddNumericHandler(PropertyType.RANGE, (b) => b.Capacity);
+                AddNumericHandler(PropertyType.RATIO, (b) => (float)b.FilledRatio);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, NumericPropertyType.RATIO);
+                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
             }
         }
     }

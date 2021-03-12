@@ -181,24 +181,24 @@ namespace IngameScript {
             }
         }
 
-        public class BooleanBlockCondition : BlockCondition<BooleanPropertyType, bool> {
-            public BooleanBlockCondition(BlockHandler blockHandler, BooleanPropertyType property, Comparator<bool> comparator, bool comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
+        public class BooleanBlockCondition : BlockCondition<PropertyType, bool> {
+            public BooleanBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<bool> comparator, bool comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
             public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetBooleanPropertyValue(block, property), comparisonValue); }
         }
 
-        public class StringBlockCondition : BlockCondition<StringPropertyType, String> {
-            public StringBlockCondition(BlockHandler blockHandler, StringPropertyType property, Comparator<String> comparator, String comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
+        public class StringBlockCondition : BlockCondition<PropertyType, String> {
+            public StringBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<String> comparator, String comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
             public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetStringPropertyValue(block, property), comparisonValue); }
         }
 
-        public class NumericBlockCondition : BlockCondition<NumericPropertyType, float> {
-            public NumericBlockCondition(BlockHandler blockHandler, NumericPropertyType property, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
+        public class NumericBlockCondition : BlockCondition<PropertyType, float> {
+            public NumericBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
             public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
         }
 
-        public class NumericDirectionBlockCondition : BlockCondition<NumericPropertyType, float> {
+        public class NumericDirectionBlockCondition : BlockCondition<PropertyType, float> {
             DirectionType direction;
-            public NumericDirectionBlockCondition(BlockHandler blockHandler, NumericPropertyType property, DirectionType direction, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) {
+            public NumericDirectionBlockCondition(BlockHandler blockHandler, PropertyType property, DirectionType direction, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) {
                 this.direction = direction;
             }
             public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property, direction), comparisonValue); }
