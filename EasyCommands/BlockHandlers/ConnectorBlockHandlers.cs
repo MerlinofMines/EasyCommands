@@ -23,6 +23,8 @@ namespace IngameScript {
             public ConnectorBlockHandler() : base() {
                 AddBooleanHandler(PropertyType.LOCKED, Connected, Connect);
                 AddBooleanHandler(PropertyType.CONNECTED, Connected, Connect);
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.CONNECTED;
+                //TODO: Add Strength
             }
 
             static bool Connected(IMyShipConnector connector) {

@@ -25,8 +25,10 @@ namespace IngameScript {
                 AddBooleanHandler(PropertyType.AUTO, (b) => b.AutoRefillBottles, (b, v) => b.AutoRefillBottles = v);
                 AddNumericHandler(PropertyType.RANGE, (b) => b.Capacity);
                 AddNumericHandler(PropertyType.RATIO, (b) => (float)b.FilledRatio);
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RATIO;
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.AUTO;
+                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RATIO);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
             }
         }
     }

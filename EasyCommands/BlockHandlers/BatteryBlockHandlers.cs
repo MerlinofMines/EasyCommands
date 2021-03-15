@@ -25,7 +25,9 @@ namespace IngameScript {
                 AddBooleanHandler(PropertyType.AUTO, (b) => b.ChargeMode == ChargeMode.Auto, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
                 AddNumericHandler(PropertyType.RANGE, (b) => b.MaxStoredPower);
                 AddNumericHandler(PropertyType.RATIO, (b) => b.CurrentStoredPower / b.MaxStoredPower);
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RATIO;
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.PRODUCE;
+                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RATIO;
                 defaultDirection = DirectionType.UP;
             }
         }

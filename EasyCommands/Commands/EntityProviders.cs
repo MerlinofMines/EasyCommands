@@ -44,9 +44,9 @@ namespace IngameScript {
 
         public class IndexEntityProvider : EntityProvider {
             protected EntityProvider provider;
-            protected int index;
+            protected Variable index;
 
-            public IndexEntityProvider(EntityProvider provider, int index) {
+            public IndexEntityProvider(EntityProvider provider, Variable index) {
                 this.provider = provider;
                 this.index = index;
             }
@@ -60,7 +60,8 @@ namespace IngameScript {
                 List<object> selectedEntities = new List<Object>();
 
                 //Return empty list if index > Count
-                if (index < entities.Count) selectedEntities.Add(entities[index]);
+                int i = (int)CastNumber(index.GetValue()).GetNumericValue();
+                if (i < entities.Count) selectedEntities.Add(entities[i]);
 
                 return selectedEntities;
             }

@@ -22,10 +22,8 @@ namespace IngameScript {
         public static class CommandParserRegistry {
             private static List<CommandProcessor> CommandParsers = new List<CommandProcessor>() {
                 new AsyncCommandProcessor(),
-                new ParenthesisCommandProcessor(),
                 new IterationCommandProcessor(),
                 new ConditionalCommandProcessor(),
-                new AndCommandProcessor(),
             };
 
             public static Command ParseCommand(List<CommandParameter> commandParameters) {
@@ -105,7 +103,7 @@ namespace IngameScript {
                     }
 
                     if (!(commandParameters[i] is IfCommandParameter)) continue;
-                    if (!(commandParameters[i + 1] is ConditionCommandParameter)) throw new Exception("Ifs Must Be Followed By A Condition");
+                    if (!(commandParameters[i + 1] is ConditionCommandParameter)) throw new Exception("Ifs Must Be Followed By A Conditional Variable");
                     if (!(commandParameters[i + 2] is CommandReferenceParameter)) continue; //Not yet ready to parse this one, command not resolved
                     if (i < commandParameters.Count - 3 && commandParameters[i + 3] is AndCommandParameter) continue;  //We want to run more than one command if there is an "and"
 
@@ -121,7 +119,7 @@ namespace IngameScript {
 
                     //Time to Parse!
                     IfCommandParameter ifParameter = (IfCommandParameter)commandParameters[i];
-                    Condition condition = ((ConditionCommandParameter)commandParameters[i + 1]).Value;
+                    Variable condition = ((ConditionCommandParameter)commandParameters[i + 1]).Value;
                     Command actionCommand = ((CommandReferenceParameter)commandParameters[i + 2]).Value;
 
                     if (ifParameter.swapCommands) {
@@ -131,70 +129,13 @@ namespace IngameScript {
                     }
 
                     if (ifParameter.inverseCondition) {
-                        condition = new NotCondition(condition);
+                        condition = new NotVariable(condition);
                     }
 
                     commandParameters.RemoveRange(i, 3);//Remove If, Condition and Command.  Otherwise was already removed, if present.
                     commandParameters.Insert(i, new CommandReferenceParameter(new ConditionalCommand(condition, actionCommand, otherwiseCommand, ifParameter.alwaysEvaluate)));
                     processed = true;
                     i--;//Re-process this one in case this is now (command) if (condition)
-                }
-                return processed;
-            }
-        }
-
-        public class AndCommandProcessor : CommandProcessor {
-            public bool ProcessCommand(List<CommandParameter> commandParameters) {
-                bool processed = false;
-
-                for (int i = 0; i < commandParameters.Count - 2; i++) {
-                    if (!(commandParameters[i] is CommandReferenceParameter && commandParameters[i + 1] is AndCommandParameter && commandParameters[i + 2] is CommandReferenceParameter)) continue;
-
-                    List<Command> multiActionCommands = new List<Command>();
-                    multiActionCommands.Add(((CommandReferenceParameter)commandParameters[i]).Value);
-
-                    bool ignore = false;
-                    int newIndex = i;
-                    while (newIndex + 2 < commandParameters.Count && commandParameters[newIndex + 1] is AndCommandParameter) {
-                        if (commandParameters[newIndex + 2] is CommandReferenceParameter) {
-                            multiActionCommands.Add(((CommandReferenceParameter)commandParameters[newIndex + 2]).Value);
-                            newIndex += 2;
-                        } else {
-                            ignore = true; break;
-                        }
-                    }
-                    if (ignore) { i = newIndex + 2; continue; }//Skip anything we looked over since it won't be ready to process either
-
-                    //Ready to process!
-                    commandParameters.RemoveRange(i, (newIndex + 1) - i);
-                    commandParameters.Insert(i, new CommandReferenceParameter(new MultiActionCommand(multiActionCommands)));
-                    processed = true;
-                }
-                return processed;
-            }
-        }
-
-        public class ParenthesisCommandProcessor : CommandProcessor {
-            public bool ProcessCommand(List<CommandParameter> commandParameters) {
-                bool processed = false;
-
-                Stack<int> openParenthesis = new Stack<int>();
-
-                for (int i = 0; i < commandParameters.Count; i++) {
-                    if (commandParameters[i] is OpenParenthesisCommandParameter) { openParenthesis.Push(i); i += 2; continue; }// ( ) wouldn't make sense
-                    if (!(commandParameters[i] is CloseParenthesisCommandParameter)) continue;
-
-                    //Process!
-                    if (openParenthesis.Count == 0) throw new Exception("Missing Open Parenthesis!");
-                    int startIndex = openParenthesis.Pop();
-
-                    Debug("Processing Parentheses!  StartIndex: " + startIndex + ", end Index: " + i);
-
-                    Command command = CommandParserRegistry.ParseCommand(commandParameters.GetRange(startIndex + 1, (i - 1) - startIndex));
-                    commandParameters.RemoveRange(startIndex, i + 1 - startIndex);
-                    commandParameters.Insert(startIndex, new CommandReferenceParameter(command));
-                    i = startIndex + 1;
-                    processed = true;
                 }
                 return processed;
             }

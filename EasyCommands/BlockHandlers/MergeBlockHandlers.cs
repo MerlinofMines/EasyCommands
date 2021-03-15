@@ -23,6 +23,7 @@ namespace IngameScript {
             public MergeBlockHandler() : base() {
                 AddBooleanHandler(PropertyType.LOCKED, IsMerged);
                 AddBooleanHandler(PropertyType.CONNECTED, IsMerged);
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.CONNECTED;
             }
 
             //https://forum.keenswh.com/threads/merge-block-lock-state-checking.7378572/

@@ -19,9 +19,6 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface Condition {
-            bool Evaluate();
-        }
 
         public enum AggregationMode {
             ANY,
@@ -35,84 +32,6 @@ namespace IngameScript {
                 case AggregationMode.ANY: return "Any";
                 case AggregationMode.NONE: return "None";
                 default: throw new Exception("Unsupported Aggregation Mode");
-            }
-        }
-
-        public class NotCondition : Condition {
-            Condition condition;
-
-            public NotCondition(Condition condition) {
-                this.condition = condition;
-            }
-
-            public bool Evaluate() {
-                return !condition.Evaluate();
-            }
-            public override String ToString() {
-                return "Not ( " + condition + " ) ";
-            }
-        }
-
-        public class AndCondition : Condition {
-            Condition conditionA, conditionB;
-
-            public AndCondition(Condition conditionA, Condition conditionB) {
-                this.conditionA = conditionA;
-                this.conditionB = conditionB;
-            }
-
-            public bool Evaluate() {
-                return conditionA.Evaluate() && conditionB.Evaluate();
-            }
-
-            public override String ToString() {
-                return "And ( " + conditionA + " , " + conditionB + " ) ";
-            }
-        }
-
-        public class OrCondition : Condition {
-            Condition conditionA, conditionB;
-
-            public OrCondition(Condition conditionA, Condition conditionB) {
-                this.conditionA = conditionA;
-                this.conditionB = conditionB;
-            }
-
-            public bool Evaluate() {
-                return conditionA.Evaluate() || conditionB.Evaluate();
-            }
-            public override String ToString() {
-                return "Or ( " + conditionA + " , " + conditionB + " ) ";
-            }
-        }
-
-        public class AggregateCondition : Condition {
-            AggregationMode aggregationMode;
-            BlockCondition blockCondition;
-            EntityProvider entityProvider;
-
-            public AggregateCondition(AggregationMode aggregationMode, BlockCondition blockCondition, EntityProvider entityProvider) {
-                this.aggregationMode = aggregationMode;
-                this.blockCondition = blockCondition;
-                this.entityProvider = entityProvider;
-            }
-
-            public bool Evaluate() {
-                List<Object> blocks = entityProvider.GetEntities();
-
-                if (blocks.Count == 0) return false; //If there are no blocks, consider this not matching
-
-                int matches = blocks.Count(block => blockCondition.evaluate(block));
-
-                switch (aggregationMode) {
-                    case AggregationMode.ALL: return matches == blocks.Count;
-                    case AggregationMode.ANY: return matches > 0;
-                    case AggregationMode.NONE: return matches == 0;
-                    default: throw new Exception("Unsupported Aggregation Mode");
-                }
-            }
-            public override String ToString() {
-                return getAggregationModeName(aggregationMode) + " of " + entityProvider + " are " + blockCondition;
             }
         }
 
@@ -163,88 +82,67 @@ namespace IngameScript {
             }
         }
 
-        public abstract class BlockCondition<T, U> : BlockCondition {
+        public class BlockPropertyCondition : BlockCondition {
             protected BlockHandler blockHandler;
-            protected T property;
-            protected Comparator<U> comparator;
-            protected U comparisonValue;
+            protected PropertyType? property;
+            protected PrimitiveComparator comparator;
+            protected Variable comparisonValue;
 
-            protected BlockCondition(BlockHandler blockHandler, T property, Comparator<U> comparator, U comparisonValue) {
+            public BlockPropertyCondition(BlockHandler blockHandler, PropertyType? property, PrimitiveComparator comparator, Variable comparisonValue) {
                 this.blockHandler = blockHandler;
                 this.property = property;
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
             }
-            public abstract bool evaluate(Object block);
+            public bool evaluate(Object block) {
+                Primitive value = comparisonValue.GetValue();
+                PropertyType prop = ( property.HasValue ) ? property.Value : blockHandler.GetDefaultProperty(value.GetType());
+                return comparator.compare(blockHandler.GetPropertyValue(block, prop), value);
+            }
+
             public override String ToString() {
-                return property + " " + comparator + " " + comparisonValue;
+                return property + " " + comparator + " " + comparisonValue.GetValue();
             }
         }
 
-        public class BooleanBlockCondition : BlockCondition<PropertyType, bool> {
-            public BooleanBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<bool> comparator, bool comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetBooleanPropertyValue(block, property), comparisonValue); }
-        }
+        public class BlockDirectionPropertyCondition : BlockCondition {
+            protected BlockHandler blockHandler;
+            protected PropertyType? property;
+            protected DirectionType direction;
+            protected PrimitiveComparator comparator;
+            protected Variable comparisonValue;
 
-        public class StringBlockCondition : BlockCondition<PropertyType, String> {
-            public StringBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<String> comparator, String comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetStringPropertyValue(block, property), comparisonValue); }
-        }
-
-        public class NumericBlockCondition : BlockCondition<PropertyType, float> {
-            public NumericBlockCondition(BlockHandler blockHandler, PropertyType property, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) { }
-            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property), comparisonValue); }
-        }
-
-        public class NumericDirectionBlockCondition : BlockCondition<PropertyType, float> {
-            DirectionType direction;
-            public NumericDirectionBlockCondition(BlockHandler blockHandler, PropertyType property, DirectionType direction, Comparator<float> comparator, float comparisonValue) : base(blockHandler, property, comparator, comparisonValue) {
+            public BlockDirectionPropertyCondition(BlockHandler blockHandler, PropertyType? property, DirectionType direction, PrimitiveComparator comparator, Variable comparisonValue) {
+                this.blockHandler = blockHandler;
+                this.property = property;
+                this.comparator = comparator;
+                this.comparisonValue = comparisonValue;
                 this.direction = direction;
             }
-            public override bool evaluate(Object block) { return comparator.compare(blockHandler.GetNumericPropertyValue(block, property, direction), comparisonValue); }
+
+            public bool evaluate(Object block) {
+                Primitive value = comparisonValue.GetValue();
+                PropertyType prop = property.GetValueOrDefault(blockHandler.GetDefaultProperty(value.GetType()));
+                return comparator.compare(blockHandler.GetPropertyValue(block, prop, direction), value);
+            }
+
+            public override String ToString() {
+                return property + " " + comparator + " " + comparisonValue.GetValue();
+            }
         }
 
-        public abstract class Comparator<T> {
-            protected ComparisonType comparisonType;
-
-            protected Comparator(ComparisonType comparisonType) {
+        public class PrimitiveComparator {
+            ComparisonType comparisonType;
+            public PrimitiveComparator(ComparisonType comparisonType) {
                 this.comparisonType = comparisonType;
             }
-            public abstract bool compare(T a, T b);
-            public override String ToString() {
-                return comparisonType.ToString();
-            }
-        }
-
-        public class BooleanComparator : Comparator<bool> {
-            public BooleanComparator(ComparisonType comparisonType) : base(comparisonType) { }
-
-            public override bool compare(bool a, bool b) {
-                if (ComparisonType.EQUAL == comparisonType) return a == b;
-                else throw new Exception("Boolean Comparisons Only Support Equality");
-            }
-        }
-
-        public class StringComparator : Comparator<String> {
-            public StringComparator(ComparisonType comparisonType) : base(comparisonType) { }
-
-            public override bool compare(string a, string b) {
-                if (ComparisonType.EQUAL == comparisonType) return a == b;
-                else throw new Exception("Boolean Comparisons Only Support Equality");
-                //TODO: More Comparison Types?? 
-            }
-        }
-
-        public class NumericComparator : Comparator<float> {
-            public NumericComparator(ComparisonType comparisonType) : base(comparisonType) { }
-
-            public override bool compare(float a, float b) {
+            public bool compare(Primitive a, Primitive b) {
                 switch (comparisonType) {
-                    case ComparisonType.GREATER: return a > b;
-                    case ComparisonType.GREATER_OR_EQUAL: return a >= b;
-                    case ComparisonType.EQUAL: return a == b;
-                    case ComparisonType.LESS_OR_EQUAL: return a <= b;
-                    case ComparisonType.LESS: return a < b;
+                    case ComparisonType.GREATER: return a.Compare(b)>0;
+                    case ComparisonType.GREATER_OR_EQUAL: return a.Compare(b) >= 0;
+                    case ComparisonType.EQUAL: return a.Compare(b) == 0;
+                    case ComparisonType.LESS_OR_EQUAL: return a.Compare(b)<=0;
+                    case ComparisonType.LESS: return a.Compare(b)<0;
                     default: throw new Exception("Unsupported Comparison Type");
                 }
             }

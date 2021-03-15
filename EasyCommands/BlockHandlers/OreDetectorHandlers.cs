@@ -23,7 +23,8 @@ namespace IngameScript {
             public OreDetectorHandler() {
                 //TODO: Broadcast using Antennas support
                 AddPropertyHandler(PropertyType.RANGE, new PropertyValueNumericPropertyHandler<IMyOreDetector>("Range", 50));
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RANGE;
+                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RANGE);
                 defaultDirection = DirectionType.UP;
             }
         }

@@ -22,12 +22,13 @@ namespace IngameScript {
         public static class ParameterProcessorRegistry {
             private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
             {
-                  new FunctionProcessor(),
                   new SelectorProcessor(),
-                  new RunArgumentProcessor(),
-                  new IterationProcessor(),
                   new ConditionalSelectorProcessor(),
-                  new ConditionProcessor(),
+                  new RunArgumentProcessor(),
+                  new SimpleVariableProcessor(),
+                  new IfProcessor(),
+                  new IterationProcessor(),
+                  new FunctionProcessor(),
                   new ActionProcessor(),
             };
 
@@ -50,6 +51,23 @@ namespace IngameScript {
             public void Process(List<CommandParameter> p) { for (int i = 0; i < p.Count; i++) { if (ShouldProcess(p[i])) ConvertNext(p, ref i); } }
         }
 
+        public class SimpleVariableProcessor : ParameterProcessor {
+            protected override bool ShouldProcess(CommandParameter p) {
+                return p is StringCommandParameter ||
+                    p is NumericCommandParameter ||
+                    p is BooleanCommandParameter;
+            }
+            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
+                if (p[i] is StringCommandParameter) {
+                    p[i] = new VariableCommandParameter(new StaticVariable(new StringPrimitive(((StringCommandParameter)p[i]).Original)));
+                } else if (p[i] is NumericCommandParameter) {
+                    p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).Value)));
+                } else if (p[i] is BooleanCommandParameter) {
+                    p[i] = new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(((BooleanCommandParameter)p[i]).Value)));
+                }
+            }
+        }
+
         public class SelectorProcessor : ParameterProcessor {
             protected override bool ShouldProcess(CommandParameter p) {
                 return p is GroupCommandParameter || p is StringCommandParameter || p is BlockTypeCommandParameter || p is IndexCommandParameter;
@@ -58,7 +76,7 @@ namespace IngameScript {
                 bool isGroup = false;
                 StringCommandParameter selector = null;
                 BlockTypeCommandParameter blockType = null;
-                int? index = null;
+                Variable index = null;
                 int paramCount = 0;
 
                 while (i + paramCount < p.Count) {
@@ -85,16 +103,17 @@ namespace IngameScript {
                 p.RemoveRange(i, paramCount);
 
                 EntityProvider entityProvider = new SelectorEntityProvider(blockType.GetBlockType(), isGroup, selector.Value);
-                if (index.HasValue) entityProvider = new IndexEntityProvider(entityProvider, index.Value);
+                if (index != null) entityProvider = new IndexEntityProvider(entityProvider, index);
 
                 p.Insert(i, new SelectorCommandParameter(entityProvider));
             }
         }
 
+        //TODO: Take all following VariableCommandParameters as function parameters?  What if they need to be resolved?
         public class FunctionProcessor : ParameterProcessor {
             protected override bool ShouldProcess(CommandParameter p) { return p is FunctionCommandParameter; }
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                if (i == p.Count - 1 || !(p[i + 1] is StringCommandParameter)) throw new Exception("Function Name Required after Function Call Keywords");
+                if (i == p.Count - 1 || !(p[i + 1] is VariableCommandParameter)) throw new Exception("Function Name Required after Function Call Keywords");
                 FunctionCommand function = new FunctionCommand(p.GetRange(i, 2));
                 p.RemoveRange(i, 2);
                 p.Insert(i, new CommandReferenceParameter(function));
@@ -121,9 +140,7 @@ namespace IngameScript {
             protected override bool ShouldProcess(CommandParameter p) {
                 return p is SelectorCommandParameter ||
                     p is DirectionCommandParameter ||
-                    p is NumericCommandParameter ||
-                    p is StringCommandParameter ||
-                    p is BooleanCommandParameter ||
+                    p is VariableCommandParameter ||
                     p is PropertyCommandParameter ||
                     p is ReverseCommandParameter ||
                     p is RelativeCommandParameter ||
@@ -132,7 +149,6 @@ namespace IngameScript {
                     p is ControlCommandParameter ||
                     p is ListenCommandParameter ||
                     p is SendCommandParameter ||
-                    p is NotCommandParameter ||
                     p is ActionCommandParameter;
             }
 
@@ -159,9 +175,8 @@ namespace IngameScript {
         public class IterationProcessor : ParameterProcessor {
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
                 IterationCommandParameter icp = (IterationCommandParameter)p[i];
-                if (i == 0 || !(p[i - 1] is NumericCommandParameter)) throw new Exception("Iteration must be preceded by a number");
-                icp.Value = (int)Math.Round(((NumericCommandParameter)p[i - 1]).Value);
-                Print("Loops: " + icp.Value);
+                if (i == 0 || !(p[i - 1] is VariableCommandParameter)) throw new Exception("Iteration must be preceded by a variable");
+                icp.Value = ((VariableCommandParameter)p[i - 1]).Value;
                 p.RemoveAt(i - 1);
             }
 
@@ -170,155 +185,159 @@ namespace IngameScript {
             }
         }
 
-        public class ConditionProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) { return p is IfCommandParameter; }
+        public class IfProcessor : ParameterProcessor {
+            protected override bool ShouldProcess(CommandParameter p) {
+                return p is IfCommandParameter;
+            }
+
             protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                Debug("Attempting to parse Condition at index " + i);
-                parseNextConditionTokens(p, i + 1);
-                resolveNextCondition(p, i + 1);
+                i++;
+                int length = 0;
+                while (i+length < p.Count && IsVariable(p[i+length])) {
+                    length++;
+                }
+                Print("Length: " + length);
+                Variable condition = ConvertToVariable(p.GetRange(i, length));
+                p.RemoveRange(i, length);
+                p.Insert(i, new ConditionCommandParameter(condition));
+            }
+        }
+
+        static bool IsVariable(CommandParameter p) {
+            return p is OpenParenthesisCommandParameter ||
+                p is CloseParenthesisCommandParameter ||
+                p is AndCommandParameter ||
+                p is OrCommandParameter ||
+                p is NotCommandParameter ||
+                p is AggregationModeCommandParameter ||
+                p is ComparisonCommandParameter ||
+                p is SelectorCommandParameter ||
+                p is PropertyCommandParameter ||
+                p is DirectionCommandParameter ||
+                p is VariableCommandParameter;
+
+            //TODO: Add AggregateProperty
+            //TODO: Add Operation
+        }
+
+        //Attempts to convert entire input list into 1 VariableCommandParameter
+        static Variable ConvertToVariable(List<CommandParameter> parameters) {
+
+            foreach(var p in parameters) {
+                Print("Parameter:  " + p);
             }
 
-            public void parseNextConditionTokens(List<CommandParameter> commandParameters, int index) {
-                Debug("Attempting to parse Condition Tokens at index " + index);
-                SelectorCommandParameter selector = null;//required
-                ComparisonCommandParameter comparator = null;//Can be defaulted
-                PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
-                PropertyCommandParameter property = null;//Can be defaulted
-                AggregationModeCommandParameter aggregation = null;
-                DirectionCommandParameter direction = null;//Optional
-                bool inverseAggregation = false;
-                bool inverseBlockCondition = false;
+            int openPars = -1;
+            int closedPars = -1;
+            int ors = -1;
+            int ands = -1;
+            int aggConditions = -1;
+            int comparisions = -1;
+            int selectors = -1;
+            int nots = -1;
 
-                if (commandParameters[index] is NotCommandParameter || commandParameters[index] is OpenParenthesisCommandParameter) {
-                    Debug("Token is " + commandParameters[index].GetType() + ", continuing");
-                    parseNextConditionTokens(commandParameters, index + 1);
-                    return;
-                }
-
-                int paramCount = 0;
-                while (index + paramCount < commandParameters.Count) {
-                    CommandParameter param = commandParameters[index + paramCount];
-
-                    if (param is SelectorCommandParameter && selector == null) selector = (SelectorCommandParameter)param;
-                    else if (param is ComparisonCommandParameter && comparator == null) comparator = (ComparisonCommandParameter)param;
-                    else if (param is DirectionCommandParameter && direction == null) direction = (DirectionCommandParameter)param;
-                    else if (param is AggregationModeCommandParameter && aggregation == null) aggregation = (AggregationModeCommandParameter)param;
-                    else if (param is PropertyCommandParameter && property == null) property = (PropertyCommandParameter)param;
-                    else if (param is PrimitiveCommandParameter && value == null) value = ((PrimitiveCommandParameter)param);
-                    else if (param is NotCommandParameter) {
-                        if (aggregation != null || selector != null) {
-                            inverseBlockCondition = !inverseBlockCondition;
-                        } else {
-                            inverseAggregation = !inverseAggregation;
-                        }
-                    } else break;
-                    paramCount++;
-                }
-
-                if (selector == null) throw new Exception("All conditions must have a selector");
-                if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
-
-                Debug("Finished parsing condition params.  Count: " + paramCount);
-                AggregationMode aggregationMode = (aggregation == null) ? AggregationMode.ALL : aggregation.Value;
-                ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.Value;
-                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
-
-                BlockCondition blockCondition;
-                if (value == null || value is BooleanCommandParameter) {
-                    Debug("Boolean Command");
-                    PropertyType boolProperty = handler.GetDefaultBooleanProperty();
-                    if (property != null) boolProperty = property.Value;
-                    bool boolValue = true; if (value != null) boolValue = ((BooleanCommandParameter)value).Value;
-                    blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
-                } else if (value is StringCommandParameter) {
-                    Debug("String Command");
-                    PropertyType stringProperty = handler.GetDefaultStringProperty();
-                    if (property != null) stringProperty = property.Value;
-                    String stringValue = ((StringCommandParameter)value).Value;
-                    blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
-                } else if (value is NumericCommandParameter) {
-                    Debug("Numeric Command");
-                    PropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
-                    if (property != null) numericProperty = property.Value;
-                    float numericValue = ((NumericCommandParameter)value).Value;
-                    if (direction != null) {
-                        blockCondition = new NumericDirectionBlockCondition(handler, numericProperty, direction.Value, new NumericComparator(comparison), numericValue);
-                    } else {
-                        blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
-                    }
-                } else {
-                    throw new Exception("Unsupported Condition Parameters");
-                }
-
-                Debug("Inverse Block Condition: " + inverseBlockCondition);
-                Debug("Inverse Aggregation: " + inverseAggregation);
-
-                if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
-                Condition condition = new AggregateCondition(aggregationMode, blockCondition, selector.Value);
-                if (inverseAggregation) condition = new NotCondition(condition);
-
-                Debug("Removing Range: " + index + ", Params: " + paramCount);
-
-                commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Insert(index, new ConditionCommandParameter(condition));
-
-                if (commandParameters.Count == index + 1) return;
-
-                //TODO: There's definitely bugs with this..
-                int newIndex = index + 1;
-                while (newIndex < commandParameters.Count - 1 && commandParameters[newIndex] is CloseParenthesisCommandParameter) { newIndex++; }
-                if (commandParameters.Count == newIndex + 1) return;
-                if (commandParameters[newIndex] is AndCommandParameter || commandParameters[newIndex] is OrCommandParameter) {
-                    Debug("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");
-                    parseNextConditionTokens(commandParameters, newIndex + 1);
-                }
-                Debug("Finished Processing Condition Tokens at index: " + index);
+            for (int i = 0; i < parameters.Count; i++) {
+                if (parameters[i] is OpenParenthesisCommandParameter) { openPars = i; }
+                if (parameters[i] is CloseParenthesisCommandParameter && closedPars < 0) { closedPars = i; }
+                if (parameters[i] is AndCommandParameter) { ands = i; }
+                if (parameters[i] is OrCommandParameter) { ors = i; }
+                if (parameters[i] is NotCommandParameter) { nots = i; }
+                if (parameters[i] is AggregationModeCommandParameter) { aggConditions = i; }
+                if (parameters[i] is ComparisonCommandParameter) { comparisions = i; }
+                if (parameters[i] is SelectorCommandParameter) { selectors = i; }
             }
 
-            public void resolveNextCondition(List<CommandParameter> commandParameters, int index) {
-                Debug("Attempting to resolve Condition at index " + index);
-                if (commandParameters[index] is NotCommandParameter) // Handle Nots first
-                {
-                    commandParameters.RemoveAt(index); // Remove Not
-                    Condition notCondition = new NotCondition(getNextCondition(commandParameters, index));
-                    commandParameters.RemoveAt(index);
-                    commandParameters.Insert(index, new ConditionCommandParameter(notCondition));
-                } else if (commandParameters[index] is OpenParenthesisCommandParameter) { //Handle Parenthesis Next
-                    resolveNextCondition(commandParameters, index + 1);
-                    if (!(commandParameters[index + 2] is CloseParenthesisCommandParameter)) throw new Exception("Mismatched Parenthesis!");
-                    commandParameters.RemoveAt(index); //Remove Open Parenthesis
-                    commandParameters.RemoveAt(index + 1); //Remove Close Parenthesis
+            if (openPars >= 0) { //Parentheses first
+                if (closedPars <= openPars + 1) throw new Exception("Mismatched Parenthesis!");
+                List<CommandParameter> resolved = parameters.GetRange(openPars + 1, (closedPars - 1) - (openPars + 1));
+                Variable converted = ConvertToVariable(resolved);
+                parameters.RemoveRange(openPars, closedPars - openPars);
+                parameters.Insert(openPars, new VariableCommandParameter(converted));
+            } else if (closedPars >= 0) { throw new Exception("Mismatched Parentehsis!"); } else if (ands > 0) { //And Second
+                Variable leftOperand = ConvertToVariable(parameters.GetRange(0, ands));
+                Variable rightOperand = ConvertToVariable(parameters.GetRange(ands + 1, parameters.Count() - (ands + 1)));
+                return new AndVariable(leftOperand, rightOperand);
+            } else if (ors >= 0) {//Ors Third
+                Variable leftOperand = ConvertToVariable(parameters.GetRange(0, ors));
+                Variable rightOperand = ConvertToVariable(parameters.GetRange(ors + 1, parameters.Count() - (ors + 1)));
+                return new OrVariable(leftOperand, rightOperand);
+            } else if (aggConditions >= 0) {//Aggregate condition
+                Print("Found Aggregator.  Parsing Aggregate Condition");
+                Variable aggregateCondition = ParseAggregateCondition(parameters.GetRange(aggConditions, parameters.Count() - aggConditions));
+                parameters.RemoveRange(aggConditions, parameters.Count() - aggConditions);
+                parameters.Insert(aggConditions, new VariableCommandParameter(aggregateCondition));
+            } else if (selectors >= 0 && selectors < comparisions) {
+                Print("Parsing Implied Aggregate Condition");
+                Variable aggregateCondition = ParseAggregateCondition(parameters.GetRange(selectors, parameters.Count() - selectors));
+                parameters.RemoveRange(selectors, parameters.Count() - selectors);
+                parameters.Insert(selectors, new VariableCommandParameter(aggregateCondition));
+            } else if (nots >= 0) {
+                Variable condition = new NotVariable(ConvertToVariable(parameters.GetRange(nots + 1, parameters.Count() - (nots + 1))));
+                parameters.RemoveRange(nots, parameters.Count() - nots);
+                parameters.Insert(nots, new VariableCommandParameter(condition));
+            } else if (parameters.Count() == 1 && parameters[0] is VariableCommandParameter) {
+                //Base Case
+                return ((VariableCommandParameter)parameters[0]).Value;
+            } else {
+                Print("Ended");
+                foreach (var p in parameters) {
+                    Print("Parameter:  " + p);
                 }
+                throw new Exception("Unable to Variable from provided input");
+            }
+            //Recurse if not finished resolving
+            return ConvertToVariable(parameters);
+        }
 
-                if (!(commandParameters[index] is ConditionCommandParameter)) throw new Exception("Invalid Token Inside Condition: " + commandParameters[index].GetType());
-                Condition conditionA = ((ConditionCommandParameter)commandParameters[index]).Value;
-                while (commandParameters.Count > index + 2) //Look for And/Or + more conditions
-                {
-                    if (commandParameters[index + 1] is AndCommandParameter) {//Handle Ands before Ors
-                        Debug("Found And Parameter at index: " + (index + 1));
-                        AndCondition andCondition = new AndCondition(conditionA, getNextCondition(commandParameters, index + 2));
-                        commandParameters.RemoveRange(index, 3);
-                        commandParameters.Insert(index, new ConditionCommandParameter(andCondition));
-                    } else if (commandParameters[index + 1] is OrCommandParameter) {
-                        Debug("Found Or Parameter at index: " + (index + 1));
-                        resolveNextCondition(commandParameters, index + 2);
-                        OrCondition orCondition = new OrCondition(conditionA, getNextCondition(commandParameters, index + 2));
-                        commandParameters.RemoveRange(index, 3);
-                        commandParameters.Insert(index, new ConditionCommandParameter(orCondition));
-                    } else {
-                        break;
-                    }
-                }
+        public static Variable ParseAggregateCondition(List<CommandParameter> commandParameters) {
+            EntityProvider selector = null;//required
+            ComparisonType? comparison = null;//Can be defaulted
+            DirectionType? direction = null;//Optional
+            Variable value = null;//requred? One of primitive or property must be set.
+            PropertyType? property = null;//Can be defaulted
+            AggregationMode? aggregation = null;
+            bool inverseBlockCondition = false;
+
+            int paramCount = 0;
+            while (paramCount < commandParameters.Count) {
+                CommandParameter param = commandParameters[paramCount];
+
+                if (param is SelectorCommandParameter && selector == null) selector = ((SelectorCommandParameter)param).Value;
+                else if (param is ComparisonCommandParameter) comparison = ((ComparisonCommandParameter)param).Value;
+                else if (param is DirectionCommandParameter && direction == null) direction = ((DirectionCommandParameter)param).Value;
+                else if (param is AggregationModeCommandParameter && aggregation == null) aggregation = ((AggregationModeCommandParameter)param).Value;
+                else if (param is PropertyCommandParameter && property == null) property = ((PropertyCommandParameter)param).Value;
+                else if (param is VariableCommandParameter && value == null) value = ((VariableCommandParameter)param).Value;
+                else if (param is NotCommandParameter) { inverseBlockCondition = !inverseBlockCondition;
+                } else throw new Exception("Unknown parameter passed to AggregateCondition");
+                paramCount++;
             }
 
-            private Condition getNextCondition(List<CommandParameter> commandParameters, int index) {
-                if (!(commandParameters[index] is ConditionCommandParameter)) ///Resolve if not a simple condition (more parentheses, for example)
-                {
-                    Debug("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
-                    resolveNextCondition(commandParameters, index);
-                }
-                return ((ConditionCommandParameter)commandParameters[index]).Value;
+            if (selector == null) throw new Exception("All conditions must have a selector");
+            if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
+
+            Debug("Finished parsing condition params.  Count: " + paramCount);
+            PrimitiveComparator comparator = new PrimitiveComparator(comparison.GetValueOrDefault(ComparisonType.EQUAL));
+            BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.GetBlockType());
+
+            if (value == null) {
+                value = new StaticVariable(new BooleanPrimitive(true));
             }
+
+            BlockCondition blockCondition;
+
+            if (direction.HasValue) {
+                blockCondition = new BlockDirectionPropertyCondition(handler, property, direction.Value, comparator, value);
+            } else {
+                blockCondition = new BlockPropertyCondition(handler, property, comparator, value);
+            }
+
+            Debug("Inverse Block Condition: " + inverseBlockCondition);
+
+            if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
+            AggregateConditionVariable condition = new AggregateConditionVariable(aggregation.GetValueOrDefault(AggregationMode.ALL),blockCondition, selector);
+
+            return condition;
         }
 
         public class ConditionalSelectorProcessor : ParameterProcessor {
@@ -341,10 +360,10 @@ namespace IngameScript {
 
             public void parseNextBlockConditionTokens(List<CommandParameter> commandParameters, int index, BlockHandler handler) {
                 Debug("Attempting to parse Condition Tokens at index " + index);
-                ComparisonCommandParameter comparator = null;//Can be defaulted
-                PrimitiveCommandParameter value = null;//requred? One of primitive or property must be set.
-                PropertyCommandParameter property = null;//Can be defaulted
-                DirectionCommandParameter direction = null;//Optional
+                ComparisonType? comparison = null;//Can be defaulted
+                Variable value = null;//requred? One of primitive or property must be set.
+                PropertyType? property = null;//Can be defaulted
+                DirectionType? direction = null;//Optional
 
                 bool inverseBlockCondition = false;
 
@@ -358,10 +377,10 @@ namespace IngameScript {
                 while (index + paramCount < commandParameters.Count) {
                     CommandParameter param = commandParameters[index + paramCount];
 
-                    if (param is ComparisonCommandParameter && comparator == null) comparator = (ComparisonCommandParameter)param;
-                    else if (param is DirectionCommandParameter && direction == null) direction = (DirectionCommandParameter)param;
-                    else if (param is PropertyCommandParameter && property == null) property = (PropertyCommandParameter)param;
-                    else if (param is PrimitiveCommandParameter && value == null) value = ((PrimitiveCommandParameter)param);
+                    if (param is ComparisonCommandParameter && comparison == null) comparison = ((ComparisonCommandParameter)param).Value;
+                    else if (param is DirectionCommandParameter && direction == null) direction = ((DirectionCommandParameter)param).Value;
+                    else if (param is PropertyCommandParameter && property == null) property = ((PropertyCommandParameter)param).Value;
+                    else if (param is VariableCommandParameter && value == null) value = ((VariableCommandParameter)param).Value;
                     else if (param is NotCommandParameter) {
                         inverseBlockCondition = !inverseBlockCondition;
                     } else break;
@@ -371,33 +390,18 @@ namespace IngameScript {
                 if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
 
                 Debug("Finished parsing condition params.  Count: " + paramCount);
-                ComparisonType comparison = (comparator == null) ? ComparisonType.EQUAL : comparator.Value;
+                PrimitiveComparator comparator = new PrimitiveComparator(comparison.GetValueOrDefault(ComparisonType.EQUAL));
+
+                if (value == null) {
+                    value = new StaticVariable(new BooleanPrimitive(true));
+                }
 
                 BlockCondition blockCondition;
-                if (value == null || value is BooleanCommandParameter) {
-                    Debug("Boolean Command");
-                    PropertyType boolProperty = handler.GetDefaultBooleanProperty();
-                    if (property != null) boolProperty = property.Value;
-                    bool boolValue = true; if (value != null) boolValue = ((BooleanCommandParameter)value).Value;
-                    blockCondition = new BooleanBlockCondition(handler, boolProperty, new BooleanComparator(comparison), boolValue);
-                } else if (value is StringCommandParameter) {
-                    Debug("String Command");
-                    PropertyType stringProperty = handler.GetDefaultStringProperty();
-                    if (property != null) stringProperty = property.Value;
-                    String stringValue = ((StringCommandParameter)value).Value;
-                    blockCondition = new StringBlockCondition(handler, stringProperty, new StringComparator(comparison), stringValue);
-                } else if (value is NumericCommandParameter) {
-                    Debug("Numeric Command");
-                    PropertyType numericProperty = handler.GetDefaultNumericProperty(handler.GetDefaultDirection());
-                    if (property != null) numericProperty = property.Value;
-                    float numericValue = ((NumericCommandParameter)value).Value;
-                    if (direction != null) {
-                        blockCondition = new NumericDirectionBlockCondition(handler, numericProperty, direction.Value, new NumericComparator(comparison), numericValue);
-                    } else {
-                        blockCondition = new NumericBlockCondition(handler, numericProperty, new NumericComparator(comparison), numericValue);
-                    }
+
+                if (direction.HasValue) {
+                    blockCondition = new BlockDirectionPropertyCondition(handler, property, direction.Value, comparator, value);
                 } else {
-                    throw new Exception("Unsupported Condition Parameters");
+                    blockCondition = new BlockPropertyCondition(handler, property, comparator, value);
                 }
 
                 Debug("Inverse Block Condition: " + inverseBlockCondition);

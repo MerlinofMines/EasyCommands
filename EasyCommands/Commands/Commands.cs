@@ -36,7 +36,7 @@ namespace IngameScript {
 
         public class FunctionCommand : Command {
             MultiActionCommand function;
-            String functionName;
+            Variable functionName;
             List<CommandParameter> parameters;
             FunctionType type;
 
@@ -44,18 +44,19 @@ namespace IngameScript {
                 this.parameters = parameters;
                 int typeIndex = parameters.FindIndex(p => p is FunctionCommandParameter);
                 if (typeIndex < 0) throw new Exception("Function Type is required for Function Command");
-                int functionindex = parameters.FindIndex(p => p is StringCommandParameter);
+                int functionindex = parameters.FindIndex(p => p is VariableCommandParameter);
                 if (functionindex < 0) throw new Exception("Function name required for Function Command");
-                functionName = ((StringCommandParameter)parameters[functionindex]).Value;
+                functionName = ((VariableCommandParameter)parameters[functionindex]).Value;
                 type = ((FunctionCommandParameter)parameters[typeIndex]).Value;
             }
 
             public override bool Execute() {
                 if (function == null) {
-                    if (!FUNCTIONS.ContainsKey(functionName)) {
+                    String name = CastString(functionName.GetValue()).GetStringValue();
+                    if (!FUNCTIONS.ContainsKey(name)) {
                         throw new Exception("Undefined Function Name: " + functionName);
                     }
-                    function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
+                    function = (MultiActionCommand)FUNCTIONS[name].Copy();
                 }
                 STATE = ProgramState.RUNNING;
                 switch (type) {
@@ -63,11 +64,11 @@ namespace IngameScript {
                         return function.Execute();
                     case FunctionType.GOTO:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionName;
+                        RUNNING_FUNCTION = CastString(functionName.GetValue()).GetStringValue();
                         return false;
                     case FunctionType.SWITCH:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionName;
+                        RUNNING_FUNCTION = CastString(functionName.GetValue()).GetStringValue();
                         STATE = ProgramState.STOPPED;
                         return true;
                     default:
@@ -77,15 +78,20 @@ namespace IngameScript {
             protected override Command Clone() { return new FunctionCommand(parameters); }
         }
 
-
         public class ControlCommand : Command {
-            List<CommandParameter> parameters;
+            Variable loopAmount = new StaticVariable(new NumberPrimitive(1));
             ControlType controlType;
             public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
+                int loopIndex = parameters.FindIndex(p => p is VariableCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
                 controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
-                this.parameters = parameters;
+                if (loopIndex >=0) loopAmount = ((VariableCommandParameter)parameters[controlIndex]).Value;
+            }
+
+            public ControlCommand(ControlType controlType, Variable loopAmount) {
+                this.controlType = controlType;
+                this.loopAmount = loopAmount;
             }
 
             public override bool Execute() {
@@ -103,34 +109,43 @@ namespace IngameScript {
                     case ControlType.RESUME:
                         STATE = ProgramState.RUNNING; break;
                     case ControlType.LOOP:
-                        int numericIndex = parameters.FindIndex(p => p is NumericCommandParameter);
-                        float loopAmount = (numericIndex < 0) ? 1 : ((NumericCommandParameter)parameters[numericIndex]).Value;
-                        RUNNING_COMMANDS.Loop((int)loopAmount); STATE = ProgramState.RUNNING; break;
+                        float loops = CastNumber(loopAmount.GetValue()).GetNumericValue();
+                        RUNNING_COMMANDS.Loop((int)loops); STATE = ProgramState.RUNNING; break;
                     default: throw new Exception("Unsupported Control Type");
                 }
                 return true;
             }
-            protected override Command Clone() { return new ControlCommand(parameters); }
+            protected override Command Clone() { return new ControlCommand(controlType, loopAmount); }
         }
 
         public class WaitCommand : Command {
-            int waitTicks, ticks = 0;
+            Variable waitInterval;
+            UnitType units;
+            int ticksLeft = 0;
             public WaitCommand(List<CommandParameter> parameters) {
                 int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
-                int timeIndex = parameters.FindIndex(param => param is NumericCommandParameter);
+                int timeIndex = parameters.FindIndex(param => param is VariableCommandParameter);
+
                 if (unitIndex < 0 && timeIndex < 0) {
-                    waitTicks = 1;
+                    units = UnitType.TICKS;
                 } else {
-                    waitTicks = getTicks(timeIndex < 0 ? 1 : ((NumericCommandParameter)parameters[timeIndex]).Value, unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
+                    units = (unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
                 }
+                waitInterval = (timeIndex < 0 ? new StaticVariable(new NumberPrimitive(1)) : ((VariableCommandParameter)parameters[timeIndex]).Value);
             }
-            public WaitCommand(int ticks) { waitTicks = ticks; }
-            protected override Command Clone() { return new WaitCommand(waitTicks); }
-            public override void Reset() { ticks = 0; }
+
+            public WaitCommand(Variable waitInterval, UnitType units) {
+                this.waitInterval = waitInterval;
+                this.units = units;
+            }
+
+            protected override Command Clone() { return new WaitCommand(waitInterval,units); }
+            public override void Reset() { ticksLeft = 0; }
             public override bool Execute() {
-                ticks++;
-                Print("Waited for " + ticks + " ticks");
-                return ticks >= waitTicks;
+                if (ticksLeft == 0) ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetNumericValue(), units);
+                Print("Waiting for " + ticksLeft + " ticks");
+                ticksLeft--;
+                return ticksLeft == 0;
             }
 
             int getTicks(float numeric, UnitType unitType) {
@@ -146,25 +161,31 @@ namespace IngameScript {
         }
 
         public class ListenCommand : Command {
-            String tag;
+            Variable tag;
             public ListenCommand(List<CommandParameter> commandParameters) {
-                int tagIndex = commandParameters.FindIndex(p => p is StringCommandParameter);
+                int tagIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
                 if (tagIndex < 0) throw new Exception("Tag is required");
-                tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
+                tag = ((VariableCommandParameter)commandParameters[tagIndex]).Value;
             }
-            public override bool Execute() { PROGRAM.IGC.RegisterBroadcastListener(tag); return true; }
+            public override bool Execute() {
+                String tagString = CastString(tag.GetValue()).GetStringValue();
+                PROGRAM.IGC.RegisterBroadcastListener(tagString); return true;
+            }
         }
 
         public class SendCommand : Command {
-            String message, tag;
+            Variable message, tag;
             public SendCommand(List<CommandParameter> commandParameters) {
-                int messageIndex = commandParameters.FindIndex(p => p is StringCommandParameter);
-                int tagIndex = commandParameters.FindLastIndex(p => p is StringCommandParameter);
-                if (messageIndex == tagIndex) throw new Exception("Both Message and Tag must be present");
-                message = ((StringCommandParameter)commandParameters[messageIndex]).Value;
-                tag = ((StringCommandParameter)commandParameters[tagIndex]).Value;
+                int messageIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
+                int tagIndex = commandParameters.FindLastIndex(p => p is VariableCommandParameter);
+                if (tagIndex < 0 || messageIndex == tagIndex) throw new Exception("Both Message and Tag must be present");
+                message = ((VariableCommandParameter)commandParameters[messageIndex]).Value;
+                tag = ((VariableCommandParameter)commandParameters[tagIndex]).Value;
             }
-            public override bool Execute() { PROGRAM.IGC.SendBroadcastMessage(tag, message); return true; }
+            public override bool Execute() {
+                PROGRAM.IGC.SendBroadcastMessage(CastString(tag.GetValue()).GetStringValue(), CastString(message.GetValue()).GetStringValue());
+                return true; 
+            }
         }
 
         public class NullCommand : Command { public override bool Execute() { return true; } }
@@ -209,87 +230,57 @@ namespace IngameScript {
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
                 blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
                 entityProvider = selector.Value;
-
-                var boolVals = extract<BooleanCommandParameter>(commandParameters);
-                var notVals = extract<NotCommandParameter>(commandParameters);
-                var boolVal = (notVals.Count % 2 == 1) ? false : true;
-                boolVals.ForEach(v => boolVal = !(boolVal ^ v.Value));
-                if (boolVals.Count > 0 || notVals.Count > 0) commandParameters.Add(new BooleanCommandParameter(boolVal));
-
-                //TODO: Move to proper command parameter pre-processor
-                int propIndex = commandParameters.FindIndex(param => param is PropertyCommandParameter);
-                int primitiveIndex = commandParameters.FindIndex(param => param is PrimitiveCommandParameter);
-                int boolIndex = commandParameters.FindIndex(param => param is BooleanCommandParameter);
-                int stringIndex = commandParameters.FindIndex(param => param is StringCommandParameter);
-                int numericIndex = commandParameters.FindIndex(param => param is NumericCommandParameter);
-                int directionIndex = commandParameters.FindIndex(param => param is DirectionCommandParameter);
-                int reverseIndex = commandParameters.FindIndex(param => param is ReverseCommandParameter);
-
-                if (propIndex < 0 && boolIndex >= 0) {
-                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultBooleanProperty()));
-                }
-
-                if (propIndex < 0 && stringIndex >= 0) {
-                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultStringProperty()));
-                }
-
-                if (propIndex >= 0 && primitiveIndex < 0) {
-                    commandParameters.Add(new BooleanCommandParameter(boolVal));
-                }
-
-                if (numericIndex >= 0) {
-                    DirectionType direction;
-                    if (directionIndex >= 0) {
-                        direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
-                    } else {
-                        direction = blockHandler.GetDefaultDirection();
-                        directionIndex = commandParameters.Count;
-                        commandParameters.Add(new DirectionCommandParameter(direction));
-                    }
-
-                    if (propIndex < 0) {
-                        propIndex = commandParameters.Count;
-                        commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
-                    }
-                }
-
-                //TODO: Support directions for more than just numeric
-                if (directionIndex >= 0 && propIndex < 0) {
-                    DirectionType direction = ((DirectionCommandParameter)commandParameters[directionIndex]).Value;
-                    propIndex = commandParameters.Count;
-                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(direction)));
-                }
-
-                if (reverseIndex >= 0 && propIndex < 0) {
-                    propIndex = commandParameters.Count;
-                    commandParameters.Add(new PropertyCommandParameter(blockHandler.GetDefaultNumericProperty(blockHandler.GetDefaultDirection())));
-                }
             }
 
             public List<BlockCommandHandler> GetHandlers() {
                 return new List<BlockCommandHandler>() {
-                    //Boolean Handlers
-                    new BlockCommandHandler2<PropertyCommandParameter, BooleanCommandParameter>((b,e,p,s)=>{b.SetBooleanPropertyValue(e, p.Value, s.Value);}),
-
-                    //String Handlers
-                    new BlockCommandHandler2<PropertyCommandParameter, StringCommandParameter>((bl,e,p,bo)=>{  bl.SetStringPropertyValue(e, p.Value, bo.original); }),
-
-                    //Numeric Handlers
-                    new BlockCommandHandler2<PropertyCommandParameter, NumericCommandParameter>((b,e,p,n)=>{  b.SetNumericPropertyValue(e, p.Value, n.Value); }),
-                    new BlockCommandHandler2<PropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{  b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
-                    new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,n)=>{  b.ReverseNumericPropertyValue(e, n.Value); }),
-                    new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter>((b,e,p,d,n)=>{ b.SetNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
-                    new BlockCommandHandler3<PropertyCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, n.Value); }),
-                    new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, NumericCommandParameter, RelativeCommandParameter>((b,e,p,d,n,r)=>{ b.IncrementNumericPropertyValue(e, p.Value, d.Value, n.Value); }),
-
-                    //TODO: GPS Handler?
+                    //Primitive Handlers
+                    new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
+                        Primitive result = v.Value.GetValue();
+                        PropertyType propertyType = b.GetDefaultProperty(result.GetType());
+                        b.SetPropertyValue(e, propertyType, v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
+                        b.SetPropertyValue(e, p.Value, new BooleanPrimitive(true));
+                    }),
+                    new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
+                        PropertyType propertyType = b.GetDefaultProperty(d.Value);
+                        b.MoveNumericPropertyValue(e, propertyType, d.Value);
+                    }),
+                    new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
+                        b.SetPropertyValue(e, p.Value, v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
+                        PropertyType property = b.GetDefaultProperty(d.Value);
+                        b.SetPropertyValue(e, property, v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
+                        b.SetPropertyValue(e,p.Value,d.Value,v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler3<PropertyCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,v,r)=>{
+                        b.IncrementPropertyValue(e,p.Value,v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
+                        PropertyType property = b.GetDefaultProperty(d.Value);
+                        b.IncrementPropertyValue(e,property,d.Value,v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
+                        b.IncrementPropertyValue(e,p.Value,d.Value,v.Value.GetValue());
+                    }),
+                    new BlockCommandHandler2<PropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{
+                        b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
+                    new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
+                        b.ReverseNumericPropertyValue(e, p.Value); }),
+                    new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
+                        PropertyType property = b.GetDefaultProperty(b.GetDefaultDirection());
+                        b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
             protected override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {
-            private Condition condition;
+            private Variable condition;
             public bool alwaysEvaluate = false;
             private bool evaluated = false;
             private bool evaluatedValue = false;
@@ -297,7 +288,7 @@ namespace IngameScript {
             private Command conditionMetCommand;
             private Command conditionNotMetCommand;
 
-            public ConditionalCommand(Condition condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate) {
+            public ConditionalCommand(Variable condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate) {
                 this.condition = condition;
                 this.conditionMetCommand = conditionMetCommand;
                 this.conditionNotMetCommand = conditionNotMetCommand;
@@ -350,7 +341,7 @@ namespace IngameScript {
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     Debug("Evaluating Value");
-                    evaluatedValue = condition.Evaluate(); evaluated = true;
+                    evaluatedValue = CastBoolean(condition.GetValue()).GetBooleanValue(); evaluated = true;
                 }
                 Print("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
@@ -360,9 +351,14 @@ namespace IngameScript {
         public class MultiActionCommand : Command {
             List<Command> commandsToExecute;
             List<Command> currentCommands = null;
-            int loopCount;
+            Variable loopCount;
             int loopsLeft;
-            public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) {
+
+            public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) : this(commandsToExecute, new StaticVariable(new NumberPrimitive(loops))) {
+
+            }
+
+            public MultiActionCommand(List<Command> commandsToExecute, Variable loops) {
                 this.commandsToExecute = commandsToExecute;
                 loopCount = loops;
             }
@@ -370,7 +366,7 @@ namespace IngameScript {
             public override bool Execute() {
                 if (currentCommands == null || currentCommands.Count == 0) {
                     currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
-                    if (loopsLeft == 0) loopsLeft = loopCount;
+                    if (loopsLeft == 0) loopsLeft = (int)Math.Round(CastNumber(loopCount.GetValue()).GetNumericValue());
                     loopsLeft -= 1;
                 }
 

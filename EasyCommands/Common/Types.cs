@@ -28,6 +28,7 @@ namespace IngameScript {
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum FunctionType { GOTO, GOSUB, SWITCH }
+        public enum PrimitiveType { NUMERIC, BOOLEAN, STRING, VECTOR}
         #endregion
     }
 }

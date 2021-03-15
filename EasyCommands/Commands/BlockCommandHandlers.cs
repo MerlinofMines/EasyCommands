@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public delegate bool CanHandle(List<CommandParameter> parameters);
         public delegate void Handle(object e);
-        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, ref T t);
+        public delegate void OneParameterBlockDelegate<T>(BlockHandler b, Object e, T t);
         public delegate void TwoParameterBlockDelegate<T, U>(BlockHandler b, Object e, T t, U u);
         public delegate void ThreeParameterBlockDelegate<T, U, V>(BlockHandler b, Object e, T t, U u, V v);
         public delegate void FourParameterBlockDelegate<T, U, V, W>(BlockHandler b, Object e, T t, U u, V v, W w);
@@ -46,7 +46,7 @@ namespace IngameScript {
             T p1;
             public BlockCommandHandler1(OneParameterBlockDelegate<T> action) {
                 canHandle = (p) => Bind<T>(p, ref p1).Count == 0 && Supports;
-                handle = (e) => action(b, e, ref p1);
+                handle = (e) => action(b, e, p1);
             }
         }
         public class BlockCommandHandler2<T, U> : BlockCommandHandler {

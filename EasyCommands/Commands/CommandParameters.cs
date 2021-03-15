@@ -42,6 +42,9 @@ namespace IngameScript {
 
         public interface CommandParameter { }
         public interface PrimitiveCommandParameter { }
+        public class VariableCommandParameter : ValueCommandParameter<Variable> {
+            public VariableCommandParameter(Variable value) : base(value) {}
+        }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T Value;
@@ -53,11 +56,11 @@ namespace IngameScript {
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> SubTokens = new List<CommandParameter>();
-            public String original;
+            public String Original;
             public StringCommandParameter(String value, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
                 Value = value.ToLower();
-                this.original = value;
+                this.Original = value;
             }
         }
 
@@ -81,8 +84,8 @@ namespace IngameScript {
             public UnitCommandParameter(UnitType value) : base(value) {}
         }
 
-        public class IndexCommandParameter : ValueCommandParameter<int> {
-            public IndexCommandParameter(int value) : base(value) {}
+        public class IndexCommandParameter : ValueCommandParameter<Variable> {
+            public IndexCommandParameter(Variable value) : base(value) {}
         }
 
         public class GroupCommandParameter : CommandParameter { }
@@ -115,8 +118,9 @@ namespace IngameScript {
             }
         }
 
-        public class ConditionCommandParameter : ValueCommandParameter<Condition> {
-            public ConditionCommandParameter(Condition value) : base(value) { }
+        public class ConditionCommandParameter : ValueCommandParameter<Variable> {
+            public ConditionCommandParameter(Variable value) : base(value) {
+            }
         }
 
         public class BlockConditionCommandParameter : ValueCommandParameter<BlockCondition> {
@@ -132,8 +136,8 @@ namespace IngameScript {
         public class OrCommandParameter : CommandParameter { }
         public class OpenParenthesisCommandParameter : CommandParameter { }
         public class CloseParenthesisCommandParameter : CommandParameter { }
-        public class IterationCommandParameter : ValueCommandParameter<int> {
-            public IterationCommandParameter(int value) : base(value) {}
+        public class IterationCommandParameter : ValueCommandParameter<Variable> {
+            public IterationCommandParameter(Variable value) : base(value) {}
         }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode> {

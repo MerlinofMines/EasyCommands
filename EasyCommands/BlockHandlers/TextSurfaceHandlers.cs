@@ -24,9 +24,9 @@ namespace IngameScript {
                 AddStringHandler(PropertyType.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
                 AddStringHandler(PropertyType.COLOR, b => b.FontColor.ToString(), (b, v) => b.FontColor = GetColor(v));
                 AddPropertyHandler(PropertyType.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
-                defaultStringProperty = PropertyType.TEXT;
+                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.TEXT;
+                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.FONT_SIZE;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.FONT_SIZE);
             }
 
             public override List<IMyTextSurface> GetBlocksOfType(String name) {

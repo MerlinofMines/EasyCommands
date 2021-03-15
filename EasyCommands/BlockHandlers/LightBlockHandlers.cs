@@ -23,9 +23,10 @@ namespace IngameScript {
             public LightBlockHandler() {
                 AddStringHandler(PropertyType.COLOR, (b) => b.Color.ToString(), (b, v) => b.Color = GetColor(v));
                 AddNumericHandler(PropertyType.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
-                defaultStringProperty = PropertyType.COLOR;
+                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.COLOR;
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RANGE;
+                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RANGE);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
             }
         }
     }

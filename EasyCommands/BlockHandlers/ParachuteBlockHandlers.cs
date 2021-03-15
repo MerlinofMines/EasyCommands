@@ -26,9 +26,10 @@ namespace IngameScript {
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
                 AddNumericHandler(PropertyType.RATIO, (b) => 1 - b.OpenRatio);
                 AddPropertyHandler(PropertyType.HEIGHT, new PropertyValueNumericPropertyHandler<IMyParachute>("AutoDeployHeight", 500));
-                defaultBooleanProperty = PropertyType.OPEN;
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.OPEN;
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.HEIGHT;
+                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RATIO);
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RATIO);
 
             }
         }

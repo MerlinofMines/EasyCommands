@@ -21,13 +21,14 @@ namespace IngameScript {
     partial class Program {
         public class WheelSuspensionBlockHandler : FunctionalBlockHandler<IMyMotorSuspension> {
             public WheelSuspensionBlockHandler() {
-                AddPropertyHandler(PropertyType.HEIGHT, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b)=>b.Height, (b,v)=>b.Height=v,0.1f));
-                AddPropertyHandler(PropertyType.ANGLE, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b) => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v, 5));
+                AddNumericHandler(PropertyType.HEIGHT, b => b.Height, (b,v)=>b.Height=v,0.1f);
+                AddNumericHandler(PropertyType.ANGLE, b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v, 5);
+                AddNumericHandler(PropertyType.RATIO, b => b.Power, (b, v) => b.Power = v, 10);
                 AddPropertyHandler(PropertyType.VELOCITY, new PropertyValueNumericPropertyHandler<IMyMotorSuspension>("Speed Limit", 5));
-                AddPropertyHandler(PropertyType.RATIO, new SimpleNumericPropertyHandler<IMyMotorSuspension>((b) => b.Power, (b,v)=> b.Power = v, 10));
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.HEIGHT;
+                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.HEIGHT;
+                defaultPropertiesByDirection[DirectionType.DOWN] = PropertyType.HEIGHT;
                 defaultDirection = DirectionType.UP;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.DOWN, PropertyType.HEIGHT);
                 //TODO: Add Strength?
             }
         }

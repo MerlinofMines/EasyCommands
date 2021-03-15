@@ -23,8 +23,8 @@ namespace IngameScript {
             public CameraBlockHandler() {
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => { var range = (double)GetRange(b); return b.CanScan(range) && !b.Raycast(range).IsEmpty(); }, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(PropertyType.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
-                defaultBooleanProperty = PropertyType.TRIGGER;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.RANGE);
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
+                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
                 defaultDirection = DirectionType.UP;
             }
             public float GetRange(IMyCameraBlock b) { return float.Parse(GetCustomProperty(b, "Range") ?? "1000"); }

@@ -22,23 +22,26 @@ namespace IngameScript {
         public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             public RotorBlockHandler() {
                 AddPropertyHandler(PropertyType.ANGLE, new RotorAngleHandler());
-                AddPropertyHandler(PropertyType.VELOCITY, new RotorVelocityHandler());
+                AddNumericHandler(PropertyType.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
+                AddNumericHandler(PropertyType.HEIGHT, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
+                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.ANGLE;
+                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.HEIGHT);
+                defaultPropertiesByDirection.Add(DirectionType.DOWN, PropertyType.HEIGHT);
+                defaultPropertiesByDirection.Add(DirectionType.CLOCKWISE, PropertyType.ANGLE);
+                defaultPropertiesByDirection.Add(DirectionType.COUNTERCLOCKWISE, PropertyType.ANGLE);
                 defaultDirection = DirectionType.CLOCKWISE;
-                defaultNumericProperties.Add(DirectionType.UP, PropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.DOWN, PropertyType.HEIGHT);
-                defaultNumericProperties.Add(DirectionType.CLOCKWISE, PropertyType.ANGLE);
-                defaultNumericProperties.Add(DirectionType.COUNTERCLOCKWISE, PropertyType.ANGLE);
             }
         }
 
         public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {
             public RotorAngleHandler() {
-                GetNumeric = block => (float)(block.Angle * (180 / Math.PI));
-                Set = rotateToValue;
-                SetDirection = (b, d, v) => rotateToValue(b, v);
+                Get = block => new NumberPrimitive(block.Angle * (float)(180 / Math.PI));
+                GetDirection = (b, d) => Get(b);
+                Set = RotateToValue;
+                SetDirection = (b, d, v) => RotateToValue(b, v);//Bug, we're ignoring direction
                 IncrementDirection = (b, d, v) => {
-                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) rotateToValue(b, b.Angle + v);
-                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) rotateToValue(b, b.Angle - v);
+                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) RotateToValue(b, Get(b).Plus(v));
+                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) RotateToValue(b, Get(b).Minus(v));
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
                 Move = (b, d) => {
@@ -49,26 +52,13 @@ namespace IngameScript {
             }
         }
 
-        public class RotorVelocityHandler : PropertyHandler<IMyMotorStator> {
-            public RotorVelocityHandler() {
-                GetNumeric = block => block.TargetVelocityRPM;
-                Set = (b, v) => b.TargetVelocityRPM = v;
-                SetDirection = (b, d, v) => b.TargetVelocityRPM = v;
-                IncrementDirection = (b, d, v) => {
-                    if (d == DirectionType.UP) b.TargetVelocityRPM += v;
-                    if (d == DirectionType.DOWN) b.TargetVelocityRPM -= v;
-                };
-                Increment = (b, v) => IncrementDirection(b, DirectionType.UP, v);
-                Move = (b, d) => {
-                    if (d == DirectionType.UP) Increment(b, 1);
-                    if (d == DirectionType.DOWN) Increment(b, -1);
-                };
-                Reverse = (b) => b.TargetVelocityRPM *= -1;
-            }
-        }
-
         //TODO: Directions may become important.  Below needs a lot of work
-        static void rotateToValue(IMyMotorStator rotor, float value) {
+        static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
+            if(primitive.GetType()!=PrimitiveType.NUMERIC) {
+                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
+            }
+
+            float value = (float)primitive.GetValue();
             float newValue = value;
 
             if (newValue > 360) newValue %= 360;

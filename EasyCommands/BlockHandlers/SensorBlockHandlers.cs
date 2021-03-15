@@ -22,7 +22,7 @@ namespace IngameScript {
         public class SensorBlockHandler : FunctionalBlockHandler<IMySensorBlock> {
             public SensorBlockHandler() {
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsActive);
-                defaultBooleanProperty = PropertyType.TRIGGER;
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
             }
         }
     }

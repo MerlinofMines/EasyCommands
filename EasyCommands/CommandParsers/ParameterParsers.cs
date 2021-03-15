@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Configuration.  Keep all words lowercase
-        static String[] ignoreWords = { "the", "than", "turned", "is", "block", "tell", "to", "from", "then", "of", "either", "are", "for" };
+        static String[] ignoreWords = { "the", "than", "turned", "block", "to", "from", "then", "of", "either", "for" };
         static String[] groupWords = { "blocks", "group" };
         static String[] activateWords = { "move", "go", "on", "begin", "true" };
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
@@ -62,7 +62,7 @@ namespace IngameScript {
 
         static String[] lessWords = { "less", "<", "below" };
         static String[] lessEqualWords = { "<=" };
-        static String[] equalWords = { "equal", "equals", "=", "==" };
+        static String[] equalWords = { "is", "are", "equal", "equals", "=", "==" };
         static String[] greaterEqualWords = { ">=" };
         static String[] greaterWords = { "greater", ">", "above", "more" };
 
@@ -329,7 +329,7 @@ namespace IngameScript {
             AddWords(soundKeywords, new PropertyCommandParameter(PropertyType.SOUND));
             AddWords(volumeKeywords, new PropertyCommandParameter(PropertyType.VOLUME));
             AddWords(rangeKeywords, new PropertyCommandParameter(PropertyType.RANGE));
-            AddWords(iterationKeywords, new IterationCommandParameter(1));
+            AddWords(iterationKeywords, new IterationCommandParameter(new StaticVariable(new NumberPrimitive(1))));
             AddWords(triggerWords, new PropertyCommandParameter(PropertyType.TRIGGER));
             AddWords(produceWords, new PropertyCommandParameter(PropertyType.PRODUCE));
             AddWords(consumeWords, new PropertyCommandParameter(PropertyType.PRODUCE), new BooleanCommandParameter(false));
@@ -403,10 +403,11 @@ namespace IngameScript {
                     continue;
                 }
 
+                //TODO: Fix/Add support for more than hardcoded indexes
                 int indexValue;
                 if (t.StartsWith("@")) {
                     if(int.TryParse(t.Substring(1), out indexValue)) {
-                        commandParameters.Add(new IndexCommandParameter(indexValue));
+                        commandParameters.Add(new IndexCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
                     }
                     continue;
                 }

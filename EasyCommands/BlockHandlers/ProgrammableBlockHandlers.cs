@@ -26,7 +26,7 @@ namespace IngameScript {
                 AddBooleanHandler(PropertyType.PAUSED, block => block.DetailedInfo.EndsWith("Paused\n"));
                 AddBooleanHandler(PropertyType.COMPLETE, block => block.DetailedInfo.EndsWith("Complete\n"));
                 AddStringHandler(PropertyType.RUN, (block) => "", (block, value) => block.TryRun(value));
-                defaultStringProperty = PropertyType.RUN;
+                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.RUN;
             }
         }
     }
