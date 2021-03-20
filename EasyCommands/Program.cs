@@ -16,9 +16,11 @@ using VRage.Game.ObjectBuilders.Definitions;
 using VRage.Game;
 using VRage;
 using VRageMath;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("EasyCommands.Tests")]
 namespace IngameScript {
-    partial class Program : MyGridProgram {
+    public partial class Program : MyGridProgram {
         //Debug
         static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
         static bool DEBUG_LOG = false;
@@ -36,7 +38,8 @@ namespace IngameScript {
 
         public Program() {
             PROGRAM = this;
-            initParsers();
+            InitializeParsers();
+            ParameterProcessorRegistry.InitializeProcessors();
             Runtime.UpdateFrequency = UPDATE_FREQUENCY;
         }
 
@@ -143,7 +146,7 @@ namespace IngameScript {
 
             int toParse = PARSE_AMOUNT;
             foreach (int i in functionIndices) {
-                String functionString = commandStrings[i].Remove(0, 1).Trim().ToLower();
+                String functionString = commandStrings[i].Remove(0, 1).Trim();
                 Print("Parsing Function: " + functionString);
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
@@ -189,20 +192,19 @@ namespace IngameScript {
             if (resolvedCommands.Count > 1) return new MultiActionCommand(resolvedCommands); else return resolvedCommands[0];
         }
 
-        private static Command ParseCommand(String commandLine) {
+        public static Command ParseCommand(String commandLine) {
             return ParseCommand(ParseCommandParameters(ParseTokens(commandLine)));
         }
 
         private static Command ParseCommand(List<CommandParameter> parameters) {
+            Debug("Parsing Command");
             Debug("Pre Processed Parameters:");
             parameters.ForEach(param => Debug("Type: " + param.GetType()));
 
-            ParameterProcessorRegistry.process(parameters);
+            ParameterProcessorRegistry.Process(parameters);
 
-            Debug("Post Prossessed Parameters:");
-            parameters.ForEach(param => Debug("Type: " + param.GetType()));
-
-            return CommandParserRegistry.ParseCommand(parameters);
+            if (parameters.Count != 1 || !(parameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
+            return ((CommandReferenceParameter)parameters[0]).Value;
         }
 
         class CommandLine {

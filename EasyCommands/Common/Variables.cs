@@ -57,8 +57,8 @@ namespace IngameScript {
         }
 
         public class ComparisonVariable : Variable {
-            Variable a, b;
-            PrimitiveComparator comparator;
+            public Variable a, b;
+            public PrimitiveComparator comparator;
 
             public ComparisonVariable(Variable a, Variable b, PrimitiveComparator comparator) {
                 this.a = a;
@@ -149,7 +149,7 @@ namespace IngameScript {
 
                 if (blocks.Count == 0) return false; //If there are no blocks, consider this not matching
 
-                int matches = blocks.Count(block => blockCondition.evaluate(block));
+                int matches = blocks.Count(block => blockCondition.evaluate(block, entityProvider.GetBlockType()));
 
                 switch (aggregationMode) {
                     case AggregationMode.ALL: return matches == blocks.Count;

@@ -31,7 +31,7 @@ namespace IngameScript {
 
             public override List<IMyTextSurface> GetBlocksOfType(String name) {
                 List<IMyFunctionalBlock> blocks = new List<IMyFunctionalBlock>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.ToLower().Equals(name));
+                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.Equals(name));
 
                 List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
                 blocks.ForEach((b)=>Add(b, surfaces));
@@ -41,7 +41,7 @@ namespace IngameScript {
             public override List<IMyTextSurface> GetBlocksOfTypeInGroup(String groupName) {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == groupName);
+                IMyBlockGroup group = blockGroups.Find(g => g.Name == groupName);
                 if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 group.GetBlocksOfType<IMyTerminalBlock>(blocks);

@@ -24,7 +24,7 @@ namespace IngameScript {
         public enum PropertyType { POWER, CONNECTED, LOCKED, RUNNING, PAUSED, STOPPED, COMPLETE, OPEN, TRIGGER, PRODUCE, AUTO, HEIGHT, ANGLE, VELOCITY, RATIO, FONT_SIZE, VOLUME, RANGE, MOVE_INPUT, ROLL_INPUT, NAME, RUN, TEXT, COLOR, SOUND }
         public enum UnitType { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum DirectionType { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE }
-        public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS }
+        public enum ComparisonType { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS, NOT_EQUALS }
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum FunctionType { GOTO, GOSUB, SWITCH }

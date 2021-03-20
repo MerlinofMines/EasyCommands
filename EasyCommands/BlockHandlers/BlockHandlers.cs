@@ -170,14 +170,14 @@ namespace IngameScript {
         public abstract class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public override List<T> GetBlocksOfType(String name) {
                 List<T> blocks = new List<T>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.ToLower().Equals(name));
+                PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.Equals(name));
                 return blocks;
             }
 
             public override List<T> GetBlocksOfTypeInGroup(String groupName) {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.ToLower() == groupName);
+                IMyBlockGroup group = blockGroups.Find(g => g.Name.Equals(groupName));
                 if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
                 List<T> blocks = new List<T>();
                 group.GetBlocksOfType<T>(blocks);

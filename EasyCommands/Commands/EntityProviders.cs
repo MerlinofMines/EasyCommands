@@ -25,8 +25,8 @@ namespace IngameScript {
         }
 
         public class ConditionalEntityProvider : EntityProvider {
-            protected EntityProvider provider;
-            protected BlockCondition condition;
+            public EntityProvider provider;
+            public BlockCondition condition;
 
             public ConditionalEntityProvider(EntityProvider provider, BlockCondition condition) {
                 this.provider = provider;
@@ -38,13 +38,13 @@ namespace IngameScript {
             }
 
             public List<object> GetEntities() {
-                return provider.GetEntities().Where(b => condition.evaluate(b)).ToList();
+                return provider.GetEntities().Where(b => condition.evaluate(b, provider.GetBlockType())).ToList();
             }
         }
 
         public class IndexEntityProvider : EntityProvider {
-            protected EntityProvider provider;
-            protected Variable index;
+            public  EntityProvider provider;
+            public Variable index;
 
             public IndexEntityProvider(EntityProvider provider, Variable index) {
                 this.provider = provider;
@@ -79,7 +79,8 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                return isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selector) : BlockHandlerRegistry.GetBlocks(blockType, selector);
+                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selector) : BlockHandlerRegistry.GetBlocks(blockType, selector);
+                return entities;
             }
 
             public BlockType GetBlockType() {
