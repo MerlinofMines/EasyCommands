@@ -2,7 +2,7 @@
 using System;
 using static IngameScript.Program;
 
-namespace EasyCommands.Test {
+namespace EasyCommands.Tests {
     [TestClass]
     public class SimpleCommandProcessorTests {
         [TestMethod]
