@@ -35,28 +35,27 @@ namespace IngameScript {
         }
 
         public class FunctionCommand : Command {
+            public String functionName;
+            public FunctionType type;
+
             MultiActionCommand function;
-            Variable functionName;
             List<CommandParameter> parameters;
-            FunctionType type;
 
             public FunctionCommand(List<CommandParameter> parameters) {
                 this.parameters = parameters;
-                int typeIndex = parameters.FindIndex(p => p is FunctionCommandParameter);
+                int typeIndex = parameters.FindIndex(p => p is FunctionCallCommandParameter);
                 if (typeIndex < 0) throw new Exception("Function Type is required for Function Command");
-                int functionindex = parameters.FindIndex(p => p is VariableCommandParameter);
-                if (functionindex < 0) throw new Exception("Function name required for Function Command");
-                functionName = ((VariableCommandParameter)parameters[functionindex]).Value;
-                type = ((FunctionCommandParameter)parameters[typeIndex]).Value;
+                FunctionCallCommandParameter functionDefinition = (FunctionCallCommandParameter)parameters[typeIndex];
+                type = functionDefinition.function;
+                functionName = functionDefinition.functionName;
             }
 
             public override bool Execute() {
                 if (function == null) {
-                    String name = CastString(functionName.GetValue()).GetStringValue();
-                    if (!FUNCTIONS.ContainsKey(name)) {
+                    if (!FUNCTIONS.ContainsKey(functionName)) {
                         throw new Exception("Undefined Function Name: " + functionName);
                     }
-                    function = (MultiActionCommand)FUNCTIONS[name].Copy();
+                    function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
                 }
                 STATE = ProgramState.RUNNING;
                 switch (type) {
@@ -64,11 +63,11 @@ namespace IngameScript {
                         return function.Execute();
                     case FunctionType.GOTO:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = CastString(functionName.GetValue()).GetStringValue();
+                        RUNNING_FUNCTION = functionName;
                         return false;
                     case FunctionType.SWITCH:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = CastString(functionName.GetValue()).GetStringValue();
+                        RUNNING_FUNCTION = functionName;
                         STATE = ProgramState.STOPPED;
                         return true;
                     default:
@@ -119,8 +118,8 @@ namespace IngameScript {
         }
 
         public class WaitCommand : Command {
-            Variable waitInterval;
-            UnitType units;
+            public Variable waitInterval;
+            public UnitType units;
             int ticksLeft = 0;
             public WaitCommand(List<CommandParameter> parameters) {
                 int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
@@ -161,20 +160,20 @@ namespace IngameScript {
         }
 
         public class ListenCommand : Command {
-            Variable tag;
+            public Variable tag;
             public ListenCommand(List<CommandParameter> commandParameters) {
                 int tagIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
                 if (tagIndex < 0) throw new Exception("Tag is required");
                 tag = ((VariableCommandParameter)commandParameters[tagIndex]).Value;
             }
             public override bool Execute() {
-                String tagString = CastString(tag.GetValue()).GetStringValue();
-                PROGRAM.IGC.RegisterBroadcastListener(tagString); return true;
+                PROGRAM.IGC.RegisterBroadcastListener(CastString(tag.GetValue()).GetStringValue());
+                return true;
             }
         }
 
         public class SendCommand : Command {
-            Variable message, tag;
+            public Variable message, tag;
             public SendCommand(List<CommandParameter> commandParameters) {
                 int messageIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
                 int tagIndex = commandParameters.FindLastIndex(p => p is VariableCommandParameter);
@@ -191,9 +190,9 @@ namespace IngameScript {
         public class NullCommand : Command { public override bool Execute() { return true; } }
 
         public class BlockCommand : Command {
-            private BlockHandler blockHandler;
-            private EntityProvider entityProvider;
-            private BlockCommandHandler commandHandler;
+            public BlockHandler blockHandler;
+            public EntityProvider entityProvider;
+            public BlockCommandHandler commandHandler;
 
             public BlockCommand(BlockHandler blockHandler, EntityProvider entityProvider, BlockCommandHandler commandHandler) {
                 this.blockHandler = blockHandler;
@@ -280,16 +279,16 @@ namespace IngameScript {
         }
 
         public class ConditionalCommand : Command {
-            private Variable condition;
+            public Variable Condition;
             public bool alwaysEvaluate = false;
-            private bool evaluated = false;
-            private bool evaluatedValue = false;
-            private bool isExecuting = false;
-            private Command conditionMetCommand;
-            private Command conditionNotMetCommand;
+            public bool evaluated = false;
+            public bool evaluatedValue = false;
+            public bool isExecuting = false;
+            public Command conditionMetCommand;
+            public Command conditionNotMetCommand;
 
             public ConditionalCommand(Variable condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate) {
-                this.condition = condition;
+                this.Condition = condition;
                 this.conditionMetCommand = conditionMetCommand;
                 this.conditionNotMetCommand = conditionNotMetCommand;
                 this.alwaysEvaluate = alwaysEvaluate;
@@ -299,7 +298,7 @@ namespace IngameScript {
             public override bool Execute() {
                 Print("Executing Conditional Command");
                 Print("Async: " + Async);
-                Print("Condition: " + condition.ToString());
+                Print("Condition: " + Condition.ToString());
                 Debug("Action Command: " + conditionMetCommand.ToString());
                 Debug("Other Command: " + conditionNotMetCommand.ToString());
                 Debug("Always Evaluate: " + alwaysEvaluate);
@@ -330,7 +329,7 @@ namespace IngameScript {
                 evaluated = false;
                 isExecuting = false;
             }
-            protected override Command Clone() { return new ConditionalCommand(condition, conditionMetCommand.Copy(), conditionNotMetCommand.Copy(), alwaysEvaluate); }
+            protected override Command Clone() { return new ConditionalCommand(Condition, conditionMetCommand.Copy(), conditionNotMetCommand.Copy(), alwaysEvaluate); }
 
             private void UpdateAlwaysEvaluate() {
                 alwaysEvaluate = true;
@@ -341,7 +340,7 @@ namespace IngameScript {
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     Debug("Evaluating Value");
-                    evaluatedValue = CastBoolean(condition.GetValue()).GetBooleanValue(); evaluated = true;
+                    evaluatedValue = CastBoolean(Condition.GetValue()).GetBooleanValue(); evaluated = true;
                 }
                 Print("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;

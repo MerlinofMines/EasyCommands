@@ -30,7 +30,7 @@ namespace IngameScript {
             int Compare(Primitive p);
         }
 
-        static BooleanPrimitive CastBoolean(Primitive p) {
+        public static BooleanPrimitive CastBoolean(Primitive p) {
             switch (p.GetType()) {
                 case PrimitiveType.BOOLEAN: return new BooleanPrimitive((bool)p.GetValue());
                 case PrimitiveType.NUMERIC: return new BooleanPrimitive((float)p.GetValue() > 0);
@@ -39,7 +39,7 @@ namespace IngameScript {
             }
         }
 
-        static NumberPrimitive CastNumber(Primitive p) {
+        public static NumberPrimitive CastNumber(Primitive p) {
             switch (p.GetType()) {
                 case PrimitiveType.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
                 case PrimitiveType.NUMERIC: return new NumberPrimitive((float)p.GetValue());
@@ -48,7 +48,7 @@ namespace IngameScript {
             }
         }
 
-        static StringPrimitive CastString(Primitive p) {
+        public static StringPrimitive CastString(Primitive p) {
             return new StringPrimitive(p.GetValue().ToString());
         }
 

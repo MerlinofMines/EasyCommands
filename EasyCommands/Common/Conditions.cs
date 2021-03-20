@@ -36,7 +36,7 @@ namespace IngameScript {
         }
 
         public interface BlockCondition {
-            bool evaluate(Object block);
+            bool evaluate(Object block, BlockType blockType);
         }
 
         public class NotBlockCondition : BlockCondition {
@@ -46,8 +46,8 @@ namespace IngameScript {
                 this.blockCondition = blockCondition;
             }
 
-            public bool evaluate(Object block) {
-                return !blockCondition.evaluate(block);
+            public bool evaluate(Object block, BlockType blockType) {
+                return !blockCondition.evaluate(block, blockType);
             }
             public override String ToString() {
                 return "not " + blockCondition;
@@ -63,8 +63,8 @@ namespace IngameScript {
                 this.conditionB = conditionB;
             }
 
-            public bool evaluate(object block) {
-                return conditionA.evaluate(block) && conditionB.evaluate(block);
+            public bool evaluate(object block, BlockType blockType) {
+                return conditionA.evaluate(block, blockType) && conditionB.evaluate(block, blockType);
             }
         }
 
@@ -77,57 +77,34 @@ namespace IngameScript {
                 this.conditionB = conditionB;
             }
 
-            public bool evaluate(object block) {
-                return conditionA.evaluate(block) || conditionB.evaluate(block);
+            public bool evaluate(object block, BlockType blockType) {
+                return conditionA.evaluate(block, blockType) || conditionB.evaluate(block, blockType);
             }
         }
 
         public class BlockPropertyCondition : BlockCondition {
-            protected BlockHandler blockHandler;
             protected PropertyType? property;
+            protected DirectionType? direction;
             protected PrimitiveComparator comparator;
             protected Variable comparisonValue;
 
-            public BlockPropertyCondition(BlockHandler blockHandler, PropertyType? property, PrimitiveComparator comparator, Variable comparisonValue) {
-                this.blockHandler = blockHandler;
-                this.property = property;
-                this.comparator = comparator;
-                this.comparisonValue = comparisonValue;
-            }
-            public bool evaluate(Object block) {
-                Primitive value = comparisonValue.GetValue();
-                PropertyType prop = ( property.HasValue ) ? property.Value : blockHandler.GetDefaultProperty(value.GetType());
-                return comparator.compare(blockHandler.GetPropertyValue(block, prop), value);
-            }
-
-            public override String ToString() {
-                return property + " " + comparator + " " + comparisonValue.GetValue();
-            }
-        }
-
-        public class BlockDirectionPropertyCondition : BlockCondition {
-            protected BlockHandler blockHandler;
-            protected PropertyType? property;
-            protected DirectionType direction;
-            protected PrimitiveComparator comparator;
-            protected Variable comparisonValue;
-
-            public BlockDirectionPropertyCondition(BlockHandler blockHandler, PropertyType? property, DirectionType direction, PrimitiveComparator comparator, Variable comparisonValue) {
-                this.blockHandler = blockHandler;
+            public BlockPropertyCondition(PropertyType? property, DirectionType? direction, PrimitiveComparator comparator, Variable comparisonValue) {
                 this.property = property;
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
                 this.direction = direction;
             }
 
-            public bool evaluate(Object block) {
+            public bool evaluate(Object block, BlockType blockType) {
+                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
                 Primitive value = comparisonValue.GetValue();
-                PropertyType prop = property.GetValueOrDefault(blockHandler.GetDefaultProperty(value.GetType()));
-                return comparator.compare(blockHandler.GetPropertyValue(block, prop, direction), value);
+                PropertyType prop = property.HasValue ? property.Value : handler.GetDefaultProperty(value.GetType());
+                if (direction.HasValue) return comparator.compare(handler.GetPropertyValue(block, prop, direction.Value), value);
+                else return comparator.compare(handler.GetPropertyValue(block, prop), value);
             }
 
             public override String ToString() {
-                return property + " " + comparator + " " + comparisonValue.GetValue();
+                return property + " " + comparator + " " + (direction.HasValue ? direction + " " : "") + comparisonValue.GetValue();
             }
         }
 
@@ -141,10 +118,23 @@ namespace IngameScript {
                     case ComparisonType.GREATER: return a.Compare(b)>0;
                     case ComparisonType.GREATER_OR_EQUAL: return a.Compare(b) >= 0;
                     case ComparisonType.EQUAL: return a.Compare(b) == 0;
-                    case ComparisonType.LESS_OR_EQUAL: return a.Compare(b)<=0;
+                    case ComparisonType.LESS_OR_EQUAL: return a.Compare(b) <= 0;
                     case ComparisonType.LESS: return a.Compare(b)<0;
+                    case ComparisonType.NOT_EQUALS: return a.Compare(b) != 0;
                     default: throw new Exception("Unsupported Comparison Type");
                 }
+            }
+        }
+
+        public static ComparisonType Inverse(ComparisonType comparisonType) {
+            switch (comparisonType) {
+                case ComparisonType.GREATER: return ComparisonType.LESS_OR_EQUAL;
+                case ComparisonType.GREATER_OR_EQUAL: return ComparisonType.LESS;
+                case ComparisonType.EQUAL: return ComparisonType.NOT_EQUALS;
+                case ComparisonType.LESS_OR_EQUAL: return ComparisonType.GREATER;
+                case ComparisonType.LESS: return ComparisonType.GREATER_OR_EQUAL;
+                case ComparisonType.NOT_EQUALS: return ComparisonType.EQUAL;
+                default: throw new Exception("Unsupported Comparison Type");
             }
         }
     }

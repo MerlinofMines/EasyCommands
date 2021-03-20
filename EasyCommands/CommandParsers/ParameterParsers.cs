@@ -110,6 +110,8 @@ namespace IngameScript {
         static String[] rollInputWords = { "roll", "rollInput" };
         static String[] autoWords = { "auto", "refill"};
 
+        static bool Initialized = false;
+
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
         {
             { "second", UnitType.SECONDS },
@@ -260,7 +262,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        public static void initParsers() {
+        public static void InitializeParsers() {
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
             AddWords(deactivateWords, new BooleanCommandParameter(false));
@@ -329,7 +331,7 @@ namespace IngameScript {
             AddWords(soundKeywords, new PropertyCommandParameter(PropertyType.SOUND));
             AddWords(volumeKeywords, new PropertyCommandParameter(PropertyType.VOLUME));
             AddWords(rangeKeywords, new PropertyCommandParameter(PropertyType.RANGE));
-            AddWords(iterationKeywords, new IterationCommandParameter(new StaticVariable(new NumberPrimitive(1))));
+            AddWords(iterationKeywords, new IteratorCommandParameter());
             AddWords(triggerWords, new PropertyCommandParameter(PropertyType.TRIGGER));
             AddWords(produceWords, new PropertyCommandParameter(PropertyType.PRODUCE));
             AddWords(consumeWords, new PropertyCommandParameter(PropertyType.PRODUCE), new BooleanCommandParameter(false));
@@ -337,6 +339,7 @@ namespace IngameScript {
             AddWords(inputWords, new PropertyCommandParameter(PropertyType.MOVE_INPUT));
             AddWords(rollInputWords, new PropertyCommandParameter(PropertyType.ROLL_INPUT));
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
+            Initialized = true;
         }
 
         public static int HexToFloat(string hex) { return int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier); }
@@ -355,6 +358,7 @@ namespace IngameScript {
         }
 
         static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
+            if (!Initialized) InitializeParsers();
             Debug("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
@@ -404,10 +408,15 @@ namespace IngameScript {
                 }
 
                 //TODO: Fix/Add support for more than hardcoded indexes
-                int indexValue;
                 if (t.StartsWith("@")) {
-                    if(int.TryParse(t.Substring(1), out indexValue)) {
-                        commandParameters.Add(new IndexCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
+                    if (t.Length == 1) commandParameters.Add(new IndexCommandParameter());
+                    else {
+                        int indexValue;
+                        if (int.TryParse(t.Substring(1), out indexValue)) {
+                            commandParameters.Add(new IndexSelectorCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
+                        } else {
+                            throw new Exception("Unable to parse index indicator: " + t);
+                        }
                     }
                     continue;
                 }

@@ -20,466 +20,953 @@ using VRageMath;
 namespace IngameScript {
     partial class Program : MyGridProgram {
         public static class ParameterProcessorRegistry {
+            private static bool initialized = false;
+
             private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
             {
-                  new SelectorProcessor(),
-                  new ConditionalSelectorProcessor(),
+                  new ParenthesisProcessor(),
+                  new FunctionProcessor(),
                   new RunArgumentProcessor(),
-                  new SimpleVariableProcessor(),
+                  new SelectorProcessor(),
+                  new PrimitiveProcessor(),
+                  new RedundantComparisonProcessor(),
+                  new AndProcessor(),
+                  new OrProcessor(),
+                  new NotProcessor(),
+                  new VariableComparisonProcessor(),
+                  new BlockComparisonProcessor(),
+                  new IndexProcessor(),
+                  new ConditionalSelectorProcessor(),
+                  new IndexSelectorProcessor(),
+                  new AggregationProcessor(),
+                  new IteratorProcessor(),
                   new IfProcessor(),
                   new IterationProcessor(),
-                  new FunctionProcessor(),
                   new ActionProcessor(),
+                  new WaitProcessor(),
+                  new FunctionCallCommandProcessor(),
+                  new SendCommandProcessor(),
+                  new ListenCommandProcessor(),
+                  new ControlProcessor(),
+                  new IterationProcessor(),
+                  new ConditionalCommandProcessor(),
+                  new AsyncCommandProcessor()
             };
 
-            public static void process(List<CommandParameter> commandParameters) {
-                foreach (ParameterProcessor parser in parameterProcessors) {
-                    Debug("Start Parameter Processor: " + parser.GetType());
-                    Debug("Pre Processed Parameters:");
-                    commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
-                    parser.Process(commandParameters);
-                    Debug("End Parameter Processor: " + parser.GetType());
-                    Debug("Post Processed Parameters:");
-                    commandParameters.ForEach(param => Debug("Type: " + param.GetType()));
+            static Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
+            static Dictionary<Type, int> priorityByParameterProcessor = new Dictionary<Type, int>();
+
+            public static void InitializeProcessors() {
+                for(int i = 0; i < parameterProcessors.Count; i++) {
+                    ParameterProcessor processor = parameterProcessors[i];
+
+                    List<Type> types = processor.GetProcessedTypes();
+                    foreach (Type t in types) {
+                        if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = new List<ParameterProcessor>();
+                        parameterProcessorsByParameterType[t].Add(processor);
+                    }
+                    priorityByParameterProcessor[processor.GetType()] = i;
+                    initialized = true;
                 }
             }
-        }
 
-        public abstract class ParameterProcessor {
-            protected abstract bool ShouldProcess(CommandParameter p);
-            protected abstract void ConvertNext(List<CommandParameter> p, ref int i);
-            public void Process(List<CommandParameter> p) { for (int i = 0; i < p.Count; i++) { if (ShouldProcess(p[i])) ConvertNext(p, ref i); } }
-        }
+            public static void Process(List<CommandParameter> commandParameters) {
+                if(!initialized) InitializeProcessors();
 
-        public class SimpleVariableProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) {
-                return p is StringCommandParameter ||
-                    p is NumericCommandParameter ||
-                    p is BooleanCommandParameter;
+                List<ParameterProcessor> sortedParameterProcessors = new List<ParameterProcessor>();
+
+                AddProcessors(commandParameters, sortedParameterProcessors);
+
+                int processorIndex = 0;
+
+                while(processorIndex < sortedParameterProcessors.Count) {
+                    bool revisit = false;
+                    bool processed = false;
+                    ParameterProcessor current = sortedParameterProcessors[processorIndex];
+                    for(int i = 0;i<commandParameters.Count;i++) {
+                        if(current.CanProcess(commandParameters[i])) {
+                            List<CommandParameter> finalParameters;
+                            if (current.Process(commandParameters, i, out finalParameters)) {
+                                AddProcessors(finalParameters, sortedParameterProcessors);
+                                processed = true;
+                                //break; TODO: -Not sure if this may be needed! But much faster processing w/o this.
+                            } else revisit = true;
+                        }
+                    }
+                    if (processed) { processorIndex = 0; continue; }
+                    if (!revisit) sortedParameterProcessors.RemoveAt(processorIndex);
+                    else processorIndex++;
+                }
             }
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                if (p[i] is StringCommandParameter) {
-                    p[i] = new VariableCommandParameter(new StaticVariable(new StringPrimitive(((StringCommandParameter)p[i]).Original)));
+
+            static void AddProcessors(List<CommandParameter> types, List<ParameterProcessor> sortedParameterProcessors) {
+                //how awefully inefficient
+                for (int i = 0; i < types.Count; i++) {
+                    List<ParameterProcessor> processors;
+                    if (!parameterProcessorsByParameterType.TryGetValue(types[i].GetType(), out processors)) continue;
+                    foreach (ParameterProcessor processor in processors) {
+                        if(!sortedParameterProcessors.Contains(processor)) InsertProcessor(processor, sortedParameterProcessors);
+                     }
+                }
+            }
+
+            static void InsertProcessor(ParameterProcessor processor, List<ParameterProcessor> parameterProcessors) {
+                int priority = priorityByParameterProcessor[processor.GetType()];
+                int i = 0;
+                while (i < parameterProcessors.Count() && priorityByParameterProcessor[parameterProcessors[i].GetType()] < priority) i++;
+                parameterProcessors.Insert(i, processor);
+            }
+        }
+
+        public interface ParameterProcessor {
+            List<Type> GetProcessedTypes();
+            bool CanProcess(CommandParameter p);
+            bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
+        }
+
+        public abstract class ParameterProcessor<T> : ParameterProcessor where T : class, CommandParameter {
+            public virtual List<Type> GetProcessedTypes() { return new List<Type>() { typeof(T) }; }
+            public bool CanProcess(CommandParameter p) {
+                return p is T;
+            }
+            public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
+        }
+
+        public abstract class SimpleParameterProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
+            public abstract void Initialize();
+            public abstract bool ProcessLeft(CommandParameter p);
+            public abstract bool ProcessRight(CommandParameter p);
+            public abstract bool CanConvert(List<CommandParameter> p);
+            public abstract CommandParameter Convert(List<CommandParameter> p);
+
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
+                Initialize();
+                int j = i + 1;
+                while (j < p.Count) {
+                    if (ProcessRight(p[j])) j++;
+                    else break;
+                }
+
+                int k = i;
+                while (k > 0) {
+                    if (ProcessLeft(p[k - 1])) k--;
+                    else break;
+                }
+
+                List<CommandParameter> commandParameters = p.GetRange(k, j - k);
+
+                if (!CanConvert(commandParameters)) return false;
+
+                CommandParameter param = Convert(commandParameters);
+                p.RemoveRange(k, j - k);
+                p.Insert(k, param);
+                finalParameters = new List<CommandParameter>() { p[k] };
+                return true;
+            }
+        }
+
+        public abstract class SimpleCommandProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
+            public abstract void Initialize();
+            public abstract bool CanConvert();
+            public abstract bool ProcessParameterArgument(CommandParameter p);
+            public abstract Command GetCommand(List<CommandParameter> commandParameters);
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
+                Initialize();
+                int j = i + 1;
+                while (j < p.Count) {
+                    if (ProcessParameterArgument(p[j])) j++;
+                    else break;
+                }
+
+                List<CommandParameter> commandParameters = p.GetRange(i, j - i);
+                Command command = GetCommand(commandParameters);
+                p.RemoveRange(i, j - i);
+                p.Insert(i, new CommandReferenceParameter(command));
+                finalParameters = new List<CommandParameter>() { p[i] };
+                return true;
+            }
+        }
+
+        public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
+                for(int j = i+1; j<p.Count; j++) {
+                    if (p[j] is OpenParenthesisCommandParameter) return false;
+                    else if (p[j] is CloseParenthesisCommandParameter) {
+                        finalParameters = p.GetRange(i+1, j - 1);
+                        ParameterProcessorRegistry.Process(finalParameters);
+                        p.RemoveRange(i, j - i);
+                        p.InsertRange(i, finalParameters);
+                        return true;
+                    }
+                }
+                throw new Exception("Missing Closing Parenthesis for Command");
+            }
+        }
+
+        public class PrimitiveProcessor : ParameterProcessor<PrimitiveCommandParameter> {
+            public override List<Type> GetProcessedTypes() {
+                return new List<Type>() { typeof(StringCommandParameter), typeof(NumericCommandParameter), typeof(BooleanCommandParameter) };
+            }
+
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                if (p[i] is StringCommandParameter) {//TODO: Handle Color & GPS
+                    p[i] = new VariableCommandParameter(new StaticVariable(new StringPrimitive(((StringCommandParameter)p[i]).Value)));
                 } else if (p[i] is NumericCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).Value)));
                 } else if (p[i] is BooleanCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(((BooleanCommandParameter)p[i]).Value)));
+                } else {
+                    finalParameters = null;
+                    return false;
                 }
+                finalParameters = new List<CommandParameter>() { p[i] };
+                return true;
             }
         }
 
-        public class SelectorProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) {
-                return p is GroupCommandParameter || p is StringCommandParameter || p is BlockTypeCommandParameter || p is IndexCommandParameter;
+        public class AndProcessor : SimpleParameterProcessor<AndCommandParameter> {
+            CommandParameter left, right;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                if (left == null || right == null) return false;
+                if (left.GetType() != right.GetType()) return false;
+                return (left is BlockConditionCommandParameter ||
+                    left is VariableCommandParameter);
             }
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                bool isGroup = false;
-                StringCommandParameter selector = null;
-                BlockTypeCommandParameter blockType = null;
-                Variable index = null;
-                int paramCount = 0;
 
-                while (i + paramCount < p.Count) {
-                    CommandParameter param = p[i + paramCount];
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                if (left is BlockConditionCommandParameter) {
+                    BlockCondition a = ((BlockConditionCommandParameter)left).Value;
+                    BlockCondition b = ((BlockConditionCommandParameter)right).Value;
+                    return new BlockConditionCommandParameter(new AndBlockCondition(a, b));
+                } else {
+                    Variable a = ((VariableCommandParameter)left).Value;
+                    Variable b = ((VariableCommandParameter)right).Value;
+                    return new VariableCommandParameter(new AndVariable(a, b));
+                }
+            }
 
-                    if (param is GroupCommandParameter) isGroup = true;
-                    else if (param is StringCommandParameter && selector == null) selector = ((StringCommandParameter)param);
-                    else if (param is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)param);
-                    else if (param is IndexCommandParameter) index = ((IndexCommandParameter)param).Value;
-                    else break;
-                    paramCount++;
+            public override void Initialize() {
+                left = null;
+                right = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (left != null) return false;
+                left = p;
+                return true;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (right != null) return false;
+                right = p;
+                return true;
+            }
+        }
+
+        public class OrProcessor : SimpleParameterProcessor<OrCommandParameter> {
+            CommandParameter left, right;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                if (left == null || right == null) return false;
+                if (left.GetType() != right.GetType()) return false;
+                return (left is BlockConditionCommandParameter ||
+                    left is VariableCommandParameter);
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                if (left is BlockConditionCommandParameter) {
+                    BlockCondition a = ((BlockConditionCommandParameter)left).Value;
+                    BlockCondition b = ((BlockConditionCommandParameter)right).Value;
+                    return new BlockConditionCommandParameter(new OrBlockCondition(a, b));
+                } else {
+                    Variable a = ((VariableCommandParameter)left).Value;
+                    Variable b = ((VariableCommandParameter)right).Value;
+                    return new VariableCommandParameter(new OrVariable(a, b));
+                }
+            }
+
+            public override void Initialize() {
+                left = null;
+                right = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (left != null) return false;
+                left = p;
+                return true;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (right != null) return false;
+                right = p;
+                return true;
+            }
+        }
+
+        public class NotProcessor : SimpleParameterProcessor<NotCommandParameter> {
+            Variable variable;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return variable != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                return new VariableCommandParameter(new NotVariable(variable));
+            }
+
+            public override void Initialize() {
+                variable = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && variable == null) {
+                    variable = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class ConditionalSelectorProcessor : SimpleParameterProcessor<WithCommandParameter> {
+            EntityProvider entityProvider;
+            BlockCondition blockCondition;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return entityProvider != null && blockCondition != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ConditionalEntityProvider provider = new ConditionalEntityProvider(entityProvider, blockCondition);
+                return new SelectorCommandParameter(provider);
+            }
+
+            public override void Initialize() {
+                entityProvider = null;
+                blockCondition = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is SelectorCommandParameter && entityProvider == null) {
+                    entityProvider = ((SelectorCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is BlockConditionCommandParameter && blockCondition == null) {
+                    blockCondition = ((BlockConditionCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class IndexProcessor : SimpleParameterProcessor<IndexCommandParameter> {
+            Variable indexSelector;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return indexSelector != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                return new IndexSelectorCommandParameter(indexSelector);
+            }
+
+            public override void Initialize() {
+                indexSelector = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && indexSelector == null) {
+                    indexSelector = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class IndexSelectorProcessor : SimpleParameterProcessor<IndexSelectorCommandParameter> {
+            EntityProvider entityProvider;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return entityProvider != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                Variable indexSpecifier = findFirst<IndexSelectorCommandParameter>(p).Value;
+                EntityProvider provider = new IndexEntityProvider(entityProvider, indexSpecifier);
+                return new SelectorCommandParameter(provider);
+            }
+
+            public override void Initialize() {
+                entityProvider = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is SelectorCommandParameter && entityProvider == null) {
+                    entityProvider = ((SelectorCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return false;
+            }
+        }
+
+        public class AggregationProcessor : SimpleParameterProcessor<BlockConditionCommandParameter> {
+            AggregationMode? aggegration;
+            EntityProvider entityProvider;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return entityProvider != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                BlockCondition blockCondition = findFirst<BlockConditionCommandParameter>(p).Value;
+                Variable variable = new AggregateConditionVariable(aggegration.GetValueOrDefault(AggregationMode.ALL), blockCondition, entityProvider);
+                return new VariableCommandParameter(variable);
+            }
+
+            public override void Initialize() {
+                entityProvider = null;
+                aggegration = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is SelectorCommandParameter && entityProvider == null) {
+                    entityProvider = ((SelectorCommandParameter)p).Value;
+                    return true;
+                } else if (p is AggregationModeCommandParameter && !aggegration.HasValue) {
+                    aggegration = ((AggregationModeCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return false;
+            }
+        }
+
+        //"is not <" => "!<"
+        //"is <" => "<"
+        //"is not" => !=
+        // "not greater than" => <
+        public class RedundantComparisonProcessor : SimpleParameterProcessor<ComparisonCommandParameter> {
+            ComparisonType? comparison;
+            bool invertComparison;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                ComparisonType implicitType = extractFirst<ComparisonCommandParameter>(p).Value;
+                return implicitType==ComparisonType.EQUAL && (comparison.HasValue || invertComparison); 
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ComparisonType comp = comparison.GetValueOrDefault(ComparisonType.EQUAL);
+                if (invertComparison) comp = Inverse(comp);
+                return new ComparisonCommandParameter(comp);
+            }
+
+            public override void Initialize() {
+                comparison = null;
+                invertComparison = false;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is NotCommandParameter && !invertComparison && comparison == null) {
+                    invertComparison = true;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is NotCommandParameter && !invertComparison && comparison == null) {
+                    invertComparison = true;
+                    return true;
+                } else if (p is ComparisonCommandParameter && comparison == null) {
+                    comparison = ((ComparisonCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class BlockComparisonProcessor : SimpleParameterProcessor<ComparisonCommandParameter> {
+            Variable comparisonValue;
+            PropertyType? property;
+            DirectionType? direction;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return comparisonValue != null || (property.HasValue);
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ComparisonType comparison = findFirst<ComparisonCommandParameter>(p).Value;
+
+                PrimitiveComparator comparator = new PrimitiveComparator(comparison);
+
+                if (comparisonValue == null) {
+                    comparisonValue = new StaticVariable(new BooleanPrimitive(true));
                 }
 
-                if (selector == null) throw new Exception("All selectors must have a string identifier");
+                BlockCondition blockCondition = new BlockPropertyCondition(property, direction, comparator, comparisonValue);
 
+                return new BlockConditionCommandParameter(blockCondition);
+            }
+
+            public override void Initialize() {
+                comparisonValue = null;
+                property = null;
+                direction = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is PropertyCommandParameter && property == null) {
+                    property = ((PropertyCommandParameter)p).Value;
+                } else if (p is DirectionCommandParameter && direction == null) {
+                    direction = ((DirectionCommandParameter)p).Value;
+                } else return false;
+                return true;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is PropertyCommandParameter && property == null) {
+                    property = ((PropertyCommandParameter)p).Value;
+                } else if (p is DirectionCommandParameter && direction == null) {
+                    direction = ((DirectionCommandParameter)p).Value;
+                } else if (p is VariableCommandParameter && comparisonValue == null) {
+                    comparisonValue = ((VariableCommandParameter)p).Value;
+                } else return false;
+                return true;
+            }
+        }
+
+        public class VariableComparisonProcessor : SimpleParameterProcessor<ComparisonCommandParameter> {
+            Variable a, b;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return a != null & b != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ComparisonType comparison = extractFirst<ComparisonCommandParameter>(p).Value;
+                Variable v = new ComparisonVariable(a, b, new PrimitiveComparator(comparison));
+                return new VariableCommandParameter(v);
+            }
+
+            public override void Initialize() {
+                a = null;
+                b = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is VariableCommandParameter && a == null) {
+                    a = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && b == null) {
+                    b = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class SelectorProcessor : SimpleParameterProcessor<StringCommandParameter> {
+            BlockType? blockType = null;
+            bool isGroup = false;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                StringCommandParameter selector = findFirst<StringCommandParameter>(p);
                 if (blockType == null) {
-                    int blockTypeIndex = selector.SubTokens.FindLastIndex(s => s is BlockTypeCommandParameter);//Use Last Block Type
-                    if (blockTypeIndex < 0) return; //Apparently not a Selector
+                    BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(selector.SubTokens);
+                    if (type != null) blockType = type.Value;
                     if (selector.SubTokens.Exists(s => s is GroupCommandParameter)) isGroup = true;
-                    blockType = ((BlockTypeCommandParameter)selector.SubTokens[blockTypeIndex]);
                 }
+                return blockType != null;
+            }
 
-                Debug("Converted String at index: " + i + " to SelectorCommandParamter");
-                p.RemoveRange(i, paramCount);
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                StringCommandParameter selector = findFirst<StringCommandParameter>(p);
+                return new SelectorCommandParameter(new SelectorEntityProvider(blockType.Value, isGroup, selector.Value));
+            }
 
-                EntityProvider entityProvider = new SelectorEntityProvider(blockType.GetBlockType(), isGroup, selector.Value);
-                if (index != null) entityProvider = new IndexEntityProvider(entityProvider, index);
+            public override void Initialize() {
+                blockType = null;
+                isGroup = false;
+            }
 
-                p.Insert(i, new SelectorCommandParameter(entityProvider));
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)p).Value;
+                else if (p is GroupCommandParameter && !isGroup) isGroup = true;
+                else return false;
+                return true;
             }
         }
 
-        //TODO: Take all following VariableCommandParameters as function parameters?  What if they need to be resolved?
-        public class FunctionProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) { return p is FunctionCommandParameter; }
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                if (i == p.Count - 1 || !(p[i + 1] is VariableCommandParameter)) throw new Exception("Function Name Required after Function Call Keywords");
-                FunctionCommand function = new FunctionCommand(p.GetRange(i, 2));
+        public class FunctionProcessor : ParameterProcessor<FunctionCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
+                if (i == p.Count - 1 || !(p[i + 1] is StringCommandParameter)) return false;
+                FunctionCommandParameter function = (FunctionCommandParameter)p[i];
+                StringCommandParameter functionName = (StringCommandParameter)p[i + 1];
                 p.RemoveRange(i, 2);
-                p.Insert(i, new CommandReferenceParameter(function));
+                p.Insert(i, new FunctionCallCommandParameter(function.Value, functionName.Value));
+                finalParameters = new List<CommandParameter>();
+                finalParameters.Add(p[i]);
+                return true;
             }
         }
 
-        public class RunArgumentProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) { return p is StringCommandParameter; }
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
+        public class RunArgumentProcessor : ParameterProcessor<StringCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
                 StringCommandParameter param = (StringCommandParameter)p[i];
-                if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is PropertyCommandParameter)) return;
-                if (((PropertyCommandParameter)param.SubTokens[0]).Value != PropertyType.RUN) return;
+                if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is PropertyCommandParameter)) return false;
+                if (((PropertyCommandParameter)param.SubTokens[0]).Value != PropertyType.RUN) return false;
                 Debug("Found Run Keyword!");
                 List<Token> values = ParseTokens(param.Value);
                 p.RemoveAt(i);
                 values.RemoveAt(0);
                 Debug("Arguments: (" + String.Join(" ", values) + ")");
                 p.Insert(i, new PropertyCommandParameter(PropertyType.RUN));
-                p.Insert(i + 1, new StringCommandParameter(String.Join(" ", values)));
+                p.Insert(i + 1, new VariableCommandParameter(new StaticVariable(new StringPrimitive(String.Join(" ", values)))));
+                finalParameters = p.GetRange(i, 2);
+                return true;
             }
         }
 
-        public class ActionProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) {
-                return p is SelectorCommandParameter ||
-                    p is DirectionCommandParameter ||
-                    p is VariableCommandParameter ||
-                    p is PropertyCommandParameter ||
-                    p is ReverseCommandParameter ||
-                    p is RelativeCommandParameter ||
-                    p is WaitCommandParameter ||
-                    p is UnitCommandParameter ||
-                    p is ControlCommandParameter ||
-                    p is ListenCommandParameter ||
-                    p is SendCommandParameter ||
-                    p is ActionCommandParameter;
+        public class WaitProcessor : SimpleCommandProcessor<WaitCommandParameter> {
+            bool unitIndex, timeIndex;
+
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                return new WaitCommand(commandParameters);
             }
 
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                int paramCount = 0;
-                while (i + paramCount < p.Count) {
-                    if (!ShouldProcess(p[i + paramCount])) break;
-                    paramCount++;
-                }
-                List<CommandParameter> action = p.GetRange(i, paramCount);
+            public override void Initialize() {
+                unitIndex = false;
+                timeIndex = false;
+            }
 
-                Command command;
-                if (action.Exists(a => a is ListenCommandParameter)) command = new ListenCommand(action);
-                else if (action.Exists(a => a is SendCommandParameter)) command = new SendCommand(action);
-                else if (action.Exists(a => a is ControlCommandParameter)) command = new ControlCommand(action);
-                else if (action.Exists(a => a is WaitCommandParameter)) command = new WaitCommand(action);
-                else if (action.Exists(a => a is SelectorCommandParameter)) command = new BlockCommand(action);
-                else throw new Exception("Unknown Command Reference Type.");
-                p.RemoveRange(i, paramCount);
-                p.Insert(i, new CommandReferenceParameter(command));
+            public override bool CanConvert() {
+                return true;
+            }
+
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                if (p is UnitCommandParameter && !unitIndex) unitIndex = true;
+                else if (p is VariableCommandParameter && !timeIndex) timeIndex = true;
+                else return false;
+                return true;
             }
         }
 
-        public class IterationProcessor : ParameterProcessor {
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                IterationCommandParameter icp = (IterationCommandParameter)p[i];
-                if (i == 0 || !(p[i - 1] is VariableCommandParameter)) throw new Exception("Iteration must be preceded by a variable");
-                icp.Value = ((VariableCommandParameter)p[i - 1]).Value;
-                p.RemoveAt(i - 1);
+        public class ControlProcessor : SimpleCommandProcessor<ControlCommandParameter> {
+            bool loopIndex;
+
+            public override void Initialize() {
+                loopIndex = false;
             }
 
-            protected override bool ShouldProcess(CommandParameter p) {
-                return p is IterationCommandParameter;
-            }
-        }
-
-        public class IfProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) {
-                return p is IfCommandParameter;
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                return new ControlCommand(commandParameters);
             }
 
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                i++;
-                int length = 0;
-                while (i+length < p.Count && IsVariable(p[i+length])) {
-                    length++;
-                }
-                Print("Length: " + length);
-                Variable condition = ConvertToVariable(p.GetRange(i, length));
-                p.RemoveRange(i, length);
-                p.Insert(i, new ConditionCommandParameter(condition));
+            public override bool CanConvert() {
+                return true;
+            }
+
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                if (p is VariableCommandParameter && !loopIndex) loopIndex = true;
+                else return false;
+                return true;
             }
         }
 
-        static bool IsVariable(CommandParameter p) {
-            return p is OpenParenthesisCommandParameter ||
-                p is CloseParenthesisCommandParameter ||
-                p is AndCommandParameter ||
-                p is OrCommandParameter ||
-                p is NotCommandParameter ||
-                p is AggregationModeCommandParameter ||
-                p is ComparisonCommandParameter ||
-                p is SelectorCommandParameter ||
-                p is PropertyCommandParameter ||
-                p is DirectionCommandParameter ||
-                p is VariableCommandParameter;
+        public class SendCommandProcessor : SimpleCommandProcessor<SendCommandParameter> {
+            bool messageIndex, tagIndex;
 
-            //TODO: Add AggregateProperty
-            //TODO: Add Operation
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                return new SendCommand(commandParameters);
+            }
+
+            public override void Initialize() {
+                tagIndex = false;
+                messageIndex = false;
+            }
+
+            public override bool CanConvert() {
+                return tagIndex && messageIndex;
+            }
+
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                if (p is VariableCommandParameter && !messageIndex) messageIndex = true;
+                else if (p is VariableCommandParameter && !tagIndex) tagIndex = true;
+                else return false;
+                return true;
+            }
         }
 
-        //Attempts to convert entire input list into 1 VariableCommandParameter
-        static Variable ConvertToVariable(List<CommandParameter> parameters) {
+        public class ListenCommandProcessor : SimpleCommandProcessor<ListenCommandParameter> {
+            bool tagIndex;
 
-            foreach(var p in parameters) {
-                Print("Parameter:  " + p);
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                return new ListenCommand(commandParameters);
             }
 
-            int openPars = -1;
-            int closedPars = -1;
-            int ors = -1;
-            int ands = -1;
-            int aggConditions = -1;
-            int comparisions = -1;
-            int selectors = -1;
-            int nots = -1;
-
-            for (int i = 0; i < parameters.Count; i++) {
-                if (parameters[i] is OpenParenthesisCommandParameter) { openPars = i; }
-                if (parameters[i] is CloseParenthesisCommandParameter && closedPars < 0) { closedPars = i; }
-                if (parameters[i] is AndCommandParameter) { ands = i; }
-                if (parameters[i] is OrCommandParameter) { ors = i; }
-                if (parameters[i] is NotCommandParameter) { nots = i; }
-                if (parameters[i] is AggregationModeCommandParameter) { aggConditions = i; }
-                if (parameters[i] is ComparisonCommandParameter) { comparisions = i; }
-                if (parameters[i] is SelectorCommandParameter) { selectors = i; }
+            public override void Initialize() {
+                tagIndex = false;
             }
 
-            if (openPars >= 0) { //Parentheses first
-                if (closedPars <= openPars + 1) throw new Exception("Mismatched Parenthesis!");
-                List<CommandParameter> resolved = parameters.GetRange(openPars + 1, (closedPars - 1) - (openPars + 1));
-                Variable converted = ConvertToVariable(resolved);
-                parameters.RemoveRange(openPars, closedPars - openPars);
-                parameters.Insert(openPars, new VariableCommandParameter(converted));
-            } else if (closedPars >= 0) { throw new Exception("Mismatched Parentehsis!"); } else if (ands > 0) { //And Second
-                Variable leftOperand = ConvertToVariable(parameters.GetRange(0, ands));
-                Variable rightOperand = ConvertToVariable(parameters.GetRange(ands + 1, parameters.Count() - (ands + 1)));
-                return new AndVariable(leftOperand, rightOperand);
-            } else if (ors >= 0) {//Ors Third
-                Variable leftOperand = ConvertToVariable(parameters.GetRange(0, ors));
-                Variable rightOperand = ConvertToVariable(parameters.GetRange(ors + 1, parameters.Count() - (ors + 1)));
-                return new OrVariable(leftOperand, rightOperand);
-            } else if (aggConditions >= 0) {//Aggregate condition
-                Print("Found Aggregator.  Parsing Aggregate Condition");
-                Variable aggregateCondition = ParseAggregateCondition(parameters.GetRange(aggConditions, parameters.Count() - aggConditions));
-                parameters.RemoveRange(aggConditions, parameters.Count() - aggConditions);
-                parameters.Insert(aggConditions, new VariableCommandParameter(aggregateCondition));
-            } else if (selectors >= 0 && selectors < comparisions) {
-                Print("Parsing Implied Aggregate Condition");
-                Variable aggregateCondition = ParseAggregateCondition(parameters.GetRange(selectors, parameters.Count() - selectors));
-                parameters.RemoveRange(selectors, parameters.Count() - selectors);
-                parameters.Insert(selectors, new VariableCommandParameter(aggregateCondition));
-            } else if (nots >= 0) {
-                Variable condition = new NotVariable(ConvertToVariable(parameters.GetRange(nots + 1, parameters.Count() - (nots + 1))));
-                parameters.RemoveRange(nots, parameters.Count() - nots);
-                parameters.Insert(nots, new VariableCommandParameter(condition));
-            } else if (parameters.Count() == 1 && parameters[0] is VariableCommandParameter) {
-                //Base Case
-                return ((VariableCommandParameter)parameters[0]).Value;
-            } else {
-                Print("Ended");
-                foreach (var p in parameters) {
-                    Print("Parameter:  " + p);
-                }
-                throw new Exception("Unable to Variable from provided input");
+            public override bool CanConvert() {
+                return tagIndex;
             }
-            //Recurse if not finished resolving
-            return ConvertToVariable(parameters);
+
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                if (p is VariableCommandParameter && !tagIndex) tagIndex = true;
+                else return false;
+                return true;
+            }
         }
 
-        public static Variable ParseAggregateCondition(List<CommandParameter> commandParameters) {
-            EntityProvider selector = null;//required
-            ComparisonType? comparison = null;//Can be defaulted
-            DirectionType? direction = null;//Optional
-            Variable value = null;//requred? One of primitive or property must be set.
-            PropertyType? property = null;//Can be defaulted
-            AggregationMode? aggregation = null;
-            bool inverseBlockCondition = false;
-
-            int paramCount = 0;
-            while (paramCount < commandParameters.Count) {
-                CommandParameter param = commandParameters[paramCount];
-
-                if (param is SelectorCommandParameter && selector == null) selector = ((SelectorCommandParameter)param).Value;
-                else if (param is ComparisonCommandParameter) comparison = ((ComparisonCommandParameter)param).Value;
-                else if (param is DirectionCommandParameter && direction == null) direction = ((DirectionCommandParameter)param).Value;
-                else if (param is AggregationModeCommandParameter && aggregation == null) aggregation = ((AggregationModeCommandParameter)param).Value;
-                else if (param is PropertyCommandParameter && property == null) property = ((PropertyCommandParameter)param).Value;
-                else if (param is VariableCommandParameter && value == null) value = ((VariableCommandParameter)param).Value;
-                else if (param is NotCommandParameter) { inverseBlockCondition = !inverseBlockCondition;
-                } else throw new Exception("Unknown parameter passed to AggregateCondition");
-                paramCount++;
+        public class FunctionCallCommandProcessor : SimpleCommandProcessor<FunctionCallCommandParameter> {
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                return new FunctionCommand(commandParameters);
             }
 
-            if (selector == null) throw new Exception("All conditions must have a selector");
-            if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
+            public override void Initialize() {}
 
-            Debug("Finished parsing condition params.  Count: " + paramCount);
-            PrimitiveComparator comparator = new PrimitiveComparator(comparison.GetValueOrDefault(ComparisonType.EQUAL));
-            BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.GetBlockType());
-
-            if (value == null) {
-                value = new StaticVariable(new BooleanPrimitive(true));
+            public override bool CanConvert() {
+                return true;
             }
 
-            BlockCondition blockCondition;
-
-            if (direction.HasValue) {
-                blockCondition = new BlockDirectionPropertyCondition(handler, property, direction.Value, comparator, value);
-            } else {
-                blockCondition = new BlockPropertyCondition(handler, property, comparator, value);
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                return p is VariableCommandParameter;
             }
-
-            Debug("Inverse Block Condition: " + inverseBlockCondition);
-
-            if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
-            AggregateConditionVariable condition = new AggregateConditionVariable(aggregation.GetValueOrDefault(AggregationMode.ALL),blockCondition, selector);
-
-            return condition;
         }
 
-        public class ConditionalSelectorProcessor : ParameterProcessor {
-            protected override bool ShouldProcess(CommandParameter p) { return p is WithCommandParameter; }
-            protected override void ConvertNext(List<CommandParameter> p, ref int i) {
-                //TODO: Handle AggregationParameter and ignore ("any", "all")
-                Debug("Attempting to parse Block Condition at index " + i);
-                if (i == 0) throw new Exception("Block Condition must come after a selector");
-                SelectorCommandParameter selector = p[i - 1] as SelectorCommandParameter;
-                if (selector == null) throw new Exception("Block Condition must come after a selector");
-                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
-                parseNextBlockConditionTokens(p, i, handler);
-                resolveNextBlockCondition(p, i, handler);
-                BlockConditionCommandParameter blockCondition = p[i] as BlockConditionCommandParameter;
-                if (blockCondition == null) throw new Exception("Unable to parse Block Condition Parameters");
-                EntityProvider provider = new ConditionalEntityProvider(selector.Value, blockCondition.Value);
-                p.RemoveRange(i - 1, 2);
-                p.Insert(i - 1, new SelectorCommandParameter(provider));
+        public class AsyncCommandProcessor : SimpleCommandProcessor<AsyncCommandParameter> {
+            Command command = null;
+
+            public override Command GetCommand(List<CommandParameter> commandParameters) {
+                command.Async = true;
+                return command;
             }
 
-            public void parseNextBlockConditionTokens(List<CommandParameter> commandParameters, int index, BlockHandler handler) {
-                Debug("Attempting to parse Condition Tokens at index " + index);
-                ComparisonType? comparison = null;//Can be defaulted
-                Variable value = null;//requred? One of primitive or property must be set.
-                PropertyType? property = null;//Can be defaulted
-                DirectionType? direction = null;//Optional
-
-                bool inverseBlockCondition = false;
-
-                if (commandParameters[index] is WithCommandParameter || commandParameters[index] is NotCommandParameter || commandParameters[index] is OpenParenthesisCommandParameter) {
-                    Debug("Token is " + commandParameters[index].GetType() + ", continuing");
-                    parseNextBlockConditionTokens(commandParameters, index + 1, handler);
-                    return;
-                }
-
-                int paramCount = 0;
-                while (index + paramCount < commandParameters.Count) {
-                    CommandParameter param = commandParameters[index + paramCount];
-
-                    if (param is ComparisonCommandParameter && comparison == null) comparison = ((ComparisonCommandParameter)param).Value;
-                    else if (param is DirectionCommandParameter && direction == null) direction = ((DirectionCommandParameter)param).Value;
-                    else if (param is PropertyCommandParameter && property == null) property = ((PropertyCommandParameter)param).Value;
-                    else if (param is VariableCommandParameter && value == null) value = ((VariableCommandParameter)param).Value;
-                    else if (param is NotCommandParameter) {
-                        inverseBlockCondition = !inverseBlockCondition;
-                    } else break;
-                    paramCount++;
-                }
-
-                if (value == null && property == null) throw new Exception("All conditions must have either a property or a value");
-
-                Debug("Finished parsing condition params.  Count: " + paramCount);
-                PrimitiveComparator comparator = new PrimitiveComparator(comparison.GetValueOrDefault(ComparisonType.EQUAL));
-
-                if (value == null) {
-                    value = new StaticVariable(new BooleanPrimitive(true));
-                }
-
-                BlockCondition blockCondition;
-
-                if (direction.HasValue) {
-                    blockCondition = new BlockDirectionPropertyCondition(handler, property, direction.Value, comparator, value);
-                } else {
-                    blockCondition = new BlockPropertyCondition(handler, property, comparator, value);
-                }
-
-                Debug("Inverse Block Condition: " + inverseBlockCondition);
-
-                if (inverseBlockCondition) blockCondition = new NotBlockCondition(blockCondition);
-
-                Debug("Removing Range: " + index + ", Params: " + paramCount);
-
-                commandParameters.RemoveRange(index, paramCount);
-                commandParameters.Insert(index, new BlockConditionCommandParameter(blockCondition));
-
-                if (commandParameters.Count == index + 1) return;
-
-                //TODO: There's definitely bugs with this..
-                int newIndex = index + 1;
-                while (newIndex < commandParameters.Count - 1 && commandParameters[newIndex] is CloseParenthesisCommandParameter) { newIndex++; }
-                if (commandParameters.Count == newIndex + 1) return;
-                if (commandParameters[newIndex] is AndCommandParameter || commandParameters[newIndex] is OrCommandParameter || commandParameters[newIndex] is WithCommandParameter) {
-                    Debug("Next Token After Processing Condition is " + commandParameters[newIndex].GetType() + ", continuing");
-                    parseNextBlockConditionTokens(commandParameters, newIndex + 1, handler);
-                }
-                Debug("Finished Processing Condition Tokens at index: " + index);
+            public override void Initialize() {
+                command = null;
             }
 
-            public void resolveNextBlockCondition(List<CommandParameter> commandParameters, int index, BlockHandler handler) {
-                Debug("Attempting to resolve Condition at index " + index);
-                //TODO: Add ThatCommandParameter Support here for handling That w/ inversion ("without").  
-                if (commandParameters[index] is WithCommandParameter) { // Handle "That"
-                    bool inverseBlockCondition = ((WithCommandParameter)commandParameters[index]).inverseCondition;
-                    commandParameters.RemoveAt(index); // Remove That
-                    if (inverseBlockCondition) commandParameters.Insert(index, new NotCommandParameter());//If invert, insert not
-                    resolveNextBlockCondition(commandParameters, index, handler);
-                } else if (commandParameters[index] is NotCommandParameter) { // Handle Nots
-                    commandParameters.RemoveAt(index); // Remove Not
-                    BlockCondition notCondition = new NotBlockCondition(getNextBlockCondition(commandParameters, index, handler));
-                    commandParameters.RemoveAt(index);
-                    commandParameters.Insert(index, new BlockConditionCommandParameter(notCondition));
-                } else if (commandParameters[index] is OpenParenthesisCommandParameter) { //Handle Parenthesis Next
-                    resolveNextBlockCondition(commandParameters, index + 1, handler);
-                    if (!(commandParameters[index + 2] is CloseParenthesisCommandParameter)) throw new Exception("Mismatched Parenthesis!");
-                    commandParameters.RemoveAt(index); //Remove Open Parenthesis
-                    commandParameters.RemoveAt(index + 1); //Remove Close Parenthesis
+            public override bool CanConvert() {
+                return command != null;
+            }
+
+            public override bool ProcessParameterArgument(CommandParameter p) {
+                if (p is CommandReferenceParameter && command == null) {
+                    command = ((CommandReferenceParameter)p).Value;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public class ActionProcessor : SimpleParameterProcessor<SelectorCommandParameter> {
+            bool hasDirection, hasVariable, hasProperty, hasReverse, hasRelative, hasAction;
+
+            public override void Initialize() {
+                hasAction = false;
+                hasProperty = false;
+                hasVariable = false;
+                hasDirection = false;
+                hasRelative = false;
+                hasDirection = false;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return Process(p);
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return Process(p);
+            }
+
+            private bool Process(CommandParameter p) {
+                if (p is DirectionCommandParameter && !hasDirection) hasDirection = true;
+                else if (p is VariableCommandParameter && !hasVariable) hasVariable = true;
+                else if (p is PropertyCommandParameter && !hasProperty) hasProperty = true;
+                else if (p is ReverseCommandParameter && !hasReverse) hasReverse = true;
+                else if (p is RelativeCommandParameter && !hasRelative) hasRelative = true;
+                else if ((p is ActionCommandParameter) && !hasAction) hasAction = true;
+                else return false;
+                return true;
+            }
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return hasVariable || hasProperty || hasDirection;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                BlockCommand command = new BlockCommand(p);
+                return new CommandReferenceParameter(command);
+            }
+        }
+
+        public class IteratorProcessor : SimpleParameterProcessor<IteratorCommandParameter> {
+            Variable iterations;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return iterations != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                return new IterationCommandParameter(iterations);
+            }
+
+            public override void Initialize() {
+                iterations = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is VariableCommandParameter && iterations == null) {
+                    iterations = ((VariableCommandParameter)p).Value;
+                    return true;
+                }
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return false;
+            }
+        }
+
+        public class IterationProcessor : SimpleParameterProcessor<IterationCommandParameter> {
+            Command command = null;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return command != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                IterationCommandParameter iterations = extractFirst<IterationCommandParameter>(p);
+                MultiActionCommand multiCommand = new MultiActionCommand(new List<Command>() { command }, iterations.Value);
+                return new CommandReferenceParameter(multiCommand);
+            }
+
+            public override void Initialize() {
+                command = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return Process(p);
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return Process(p);
+            }
+
+            private bool Process(CommandParameter p) {
+                if (p is CommandReferenceParameter && command == null) {
+                    command = ((CommandReferenceParameter)p).Value;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public class IfProcessor : SimpleParameterProcessor<IfCommandParameter> {
+            Variable condition;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return condition != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                IfCommandParameter parameter = extractFirst<IfCommandParameter>(p);
+                if (parameter.inverseCondition) condition = new NotVariable(condition);
+
+                return new ConditionCommandParameter(condition, parameter.alwaysEvaluate, parameter.swapCommands);
+            }
+
+            public override void Initialize() {
+                condition = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if(p is VariableCommandParameter && condition == null) {
+                    condition = ((VariableCommandParameter)p).Value;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public class ConditionalCommandProcessor : SimpleParameterProcessor<ConditionCommandParameter> {
+            Command conditionMetCommand, conditionNotMetCommand;
+            bool otherwise;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return conditionMetCommand != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ConditionCommandParameter condition = extractFirst<ConditionCommandParameter>(p);
+                if (conditionNotMetCommand == null) conditionNotMetCommand = new NullCommand(); 
+
+                if (condition.swapCommands) {
+                    var temp = conditionMetCommand;
+                    conditionMetCommand = conditionNotMetCommand;
+                    conditionNotMetCommand = temp;
                 }
 
-                if (!(commandParameters[index] is BlockConditionCommandParameter)) throw new Exception("Invalid Token Inside Condition: " + commandParameters[index].GetType());
-                BlockCondition conditionA = ((BlockConditionCommandParameter)commandParameters[index]).Value;
-                while (commandParameters.Count > index + 2) //Look for And/Or + more conditions
-                {
-                    if (commandParameters[index + 1] is AndCommandParameter) {//Handle Ands before Ors
-                        Debug("Found And Parameter at index: " + (index + 1));
-                        AndBlockCondition andCondition = new AndBlockCondition(conditionA, getNextBlockCondition(commandParameters, index + 2, handler));
-                        commandParameters.RemoveRange(index, 3);
-                        commandParameters.Insert(index, new BlockConditionCommandParameter(andCondition));
-                    } else if (commandParameters[index + 1] is OrCommandParameter) {
-                        Debug("Found Or Parameter at index: " + (index + 1));
-                        resolveNextBlockCondition(commandParameters, index + 2, handler);
-                        OrBlockCondition orCondition = new OrBlockCondition(conditionA, getNextBlockCondition(commandParameters, index + 2, handler));
-                        commandParameters.RemoveRange(index, 3);
-                        commandParameters.Insert(index, new BlockConditionCommandParameter(orCondition));
-                    } else if (commandParameters[index + 1] is WithCommandParameter) { // That x that y = And
-                        Debug("Found That Parameter at index, assuming And: " + (index + 1));
-                        AndBlockCondition andCondition = new AndBlockCondition(conditionA, getNextBlockCondition(commandParameters, index + 1, handler));
-                        commandParameters.RemoveRange(index, 2);
-                        commandParameters.Insert(index, new BlockConditionCommandParameter(andCondition));
+                Command command = new ConditionalCommand(condition.Value, conditionMetCommand, conditionNotMetCommand, condition.alwaysEvaluate);
+                return new CommandReferenceParameter(command);
+            }
+
+            public override void Initialize() {
+                conditionMetCommand = null;
+                conditionNotMetCommand = null;
+                otherwise = false;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is CommandReferenceParameter && conditionMetCommand == null) {
+                    conditionMetCommand = ((CommandReferenceParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is CommandReferenceParameter) {
+                    if (otherwise) {
+                        if (conditionNotMetCommand == null) {
+                            conditionNotMetCommand = ((CommandReferenceParameter)p).Value;
+                            return true;
+                        } else return false;
                     } else {
-                        break;
+                        if (conditionMetCommand == null) {
+                            conditionMetCommand = ((CommandReferenceParameter)p).Value;
+                            return true;
+                        } else return false;
                     }
-                }
-            }
-
-            private BlockCondition getNextBlockCondition(List<CommandParameter> commandParameters, int index, BlockHandler handler) {
-                if (!(commandParameters[index] is BlockConditionCommandParameter)) ///Resolve if not a simple condition (more parentheses, for example)
-                {
-                    Debug("In getNextCondition.  Next Condition at index " + index + " is not simple, resolving");
-                    resolveNextBlockCondition(commandParameters, index, handler);
-                }
-                return ((BlockConditionCommandParameter)commandParameters[index]).Value;
+                } else if (p is ElseCommandParameter && !otherwise) {
+                    otherwise = true;
+                    return true;
+                } else return false;
             }
         }
+
     }
 }

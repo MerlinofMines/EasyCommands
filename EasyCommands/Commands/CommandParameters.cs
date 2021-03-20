@@ -20,6 +20,20 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
+        public static T findFirst<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
+            var i = parameters.FindIndex(p => p is T);
+            if (i < 0) return null;
+            T t = (T)parameters[i];
+            return t;
+        }
+
+        public static T findLast<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
+            var i = parameters.FindLastIndex(p => p is T);
+            if (i < 0) return null;
+            T t = (T)parameters[i];
+            return t;
+        }
+
         public static T extractFirst<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
             var i = parameters.FindIndex(p => p is T);
             if (i < 0) return null;
@@ -41,7 +55,24 @@ namespace IngameScript {
         }
 
         public interface CommandParameter { }
-        public interface PrimitiveCommandParameter { }
+        public interface PrimitiveCommandParameter : CommandParameter { }
+        public class IndexCommandParameter : CommandParameter { }
+        public class GroupCommandParameter : CommandParameter { }
+        public class AsyncCommandParameter : CommandParameter { }
+        public class NotCommandParameter : CommandParameter { }
+        public class AndCommandParameter : CommandParameter { }
+        public class OrCommandParameter : CommandParameter { }
+        public class OpenParenthesisCommandParameter : CommandParameter { }
+        public class CloseParenthesisCommandParameter : CommandParameter { }
+        public class IteratorCommandParameter : CommandParameter { }
+        public class ActionCommandParameter : CommandParameter { }
+        public class ReverseCommandParameter : CommandParameter { }
+        public class RelativeCommandParameter : CommandParameter { }
+        public class WaitCommandParameter : CommandParameter { }
+        public class SendCommandParameter : CommandParameter { }
+        public class ListenCommandParameter : CommandParameter { }
+        public class ElseCommandParameter : CommandParameter { }
+
         public class VariableCommandParameter : ValueCommandParameter<Variable> {
             public VariableCommandParameter(Variable value) : base(value) {}
         }
@@ -56,11 +87,8 @@ namespace IngameScript {
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> SubTokens = new List<CommandParameter>();
-            public String Original;
             public StringCommandParameter(String value, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
-                Value = value.ToLower();
-                this.Original = value;
             }
         }
 
@@ -84,12 +112,9 @@ namespace IngameScript {
             public UnitCommandParameter(UnitType value) : base(value) {}
         }
 
-        public class IndexCommandParameter : ValueCommandParameter<Variable> {
-            public IndexCommandParameter(Variable value) : base(value) {}
+        public class IndexSelectorCommandParameter : ValueCommandParameter<Variable> {
+            public IndexSelectorCommandParameter(Variable value) : base(value) {}
         }
-
-        public class GroupCommandParameter : CommandParameter { }
-        public class AsyncCommandParameter : CommandParameter { }
 
         public class ControlCommandParameter : ValueCommandParameter<ControlType> {
             public ControlCommandParameter(ControlType value) : base(value) {}
@@ -97,6 +122,16 @@ namespace IngameScript {
 
         public class FunctionCommandParameter : ValueCommandParameter<FunctionType> {
             public FunctionCommandParameter(FunctionType value) : base(value) {}
+        }
+
+        public class FunctionCallCommandParameter : CommandParameter {
+            public FunctionType function;
+            public String functionName;
+
+            public FunctionCallCommandParameter(FunctionType function, string functionName) {
+                this.function = function;
+                this.functionName = functionName;
+            }
         }
 
         public class WithCommandParameter : CommandParameter {
@@ -119,7 +154,12 @@ namespace IngameScript {
         }
 
         public class ConditionCommandParameter : ValueCommandParameter<Variable> {
-            public ConditionCommandParameter(Variable value) : base(value) {
+            public bool alwaysEvaluate;
+            public bool swapCommands;
+
+            public ConditionCommandParameter(Variable value, bool alwaysEvaluate, bool swapCommands) : base(value) {
+                this.alwaysEvaluate = alwaysEvaluate;
+                this.swapCommands = swapCommands;
             }
         }
 
@@ -131,11 +171,6 @@ namespace IngameScript {
             public CommandReferenceParameter(Command value) : base(value) { }
         }
 
-        public class NotCommandParameter : CommandParameter { }
-        public class AndCommandParameter : CommandParameter { }
-        public class OrCommandParameter : CommandParameter { }
-        public class OpenParenthesisCommandParameter : CommandParameter { }
-        public class CloseParenthesisCommandParameter : CommandParameter { }
         public class IterationCommandParameter : ValueCommandParameter<Variable> {
             public IterationCommandParameter(Variable value) : base(value) {}
         }
@@ -155,25 +190,8 @@ namespace IngameScript {
             }
         }
 
-        public class ElseCommandParameter : CommandParameter { }
-
-        public class BlockTypeCommandParameter : CommandParameter {
-            private BlockType blockType;
-
-            public BlockTypeCommandParameter(BlockType blockType) {
-                this.blockType = blockType;
-            }
-
-            public BlockType GetBlockType() {
-                return blockType;
-            }
+        public class BlockTypeCommandParameter : ValueCommandParameter<BlockType> {
+            public BlockTypeCommandParameter(BlockType value) : base(value) {}
         }
-
-        public class ActionCommandParameter : CommandParameter { }
-        public class ReverseCommandParameter : CommandParameter { }
-        public class RelativeCommandParameter : CommandParameter { }
-        public class WaitCommandParameter : CommandParameter { }
-        public class SendCommandParameter : CommandParameter { }
-        public class ListenCommandParameter : CommandParameter { }
     }
 }
