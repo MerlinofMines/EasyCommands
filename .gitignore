@@ -19,8 +19,6 @@
 
 #Project Files
 *.sln
-*.csproj
-**/*.csproj
 
 # Build results
 [Dd]ebug/
@@ -348,5 +346,3 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-# Visual Studio analyzer configuration
-.editorconfig
