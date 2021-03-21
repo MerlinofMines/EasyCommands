@@ -6,6 +6,19 @@ namespace EasyCommands.Tests {
     [TestClass]
     public class SelectorLogicParameterProcessorTests {
         [TestMethod]
+        public void BasicSelector() {
+            var command = ParseCommand("recharge the \"batteries\"");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.AreEqual(BlockType.BATTERY, sep.GetBlockType());
+            Assert.IsTrue(sep.isGroup);
+            Assert.IsTrue(sep.selector is StaticVariable);
+            Assert.AreEqual("batteries", CastString(sep.selector.GetValue()).GetStringValue());
+        }
+
+        [TestMethod]
         public void ConditionalSelector() {
             var command = ParseCommand("recharge \"batteries\" whose ratio < 0.5");
             Assert.IsTrue(command is BlockCommand);
@@ -50,16 +63,16 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
-        public void Test() {
-            var command = ParseCommand("set the \"Crush Program\" display @0 text to \"Ready\"");
+        public void VariableSelector() {
+            var command = ParseCommand("turn on the [a] sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            Assert.AreEqual(BlockType.DISPLAY, bc.entityProvider.GetBlockType());
-            IndexEntityProvider sep = (IndexEntityProvider)bc.entityProvider;
-            Assert.AreEqual(0, CastNumber(sep.index.GetValue()).GetNumericValue());
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(sep.selector is InMemoryVariable);
+            InMemoryVariable variable = (InMemoryVariable)sep.selector;
+            Assert.AreEqual("a", variable.variableName);
+            Assert.AreEqual(BlockType.SOUND, sep.blockType);
         }
-
-        //TODO: VariableSelector
     }
 }

@@ -35,27 +35,25 @@ namespace IngameScript {
         }
 
         public class FunctionCommand : Command {
-            public String functionName;
             public FunctionType type;
+            public FunctionDefinition functionDefinition;
+            public Dictionary<String, Variable> inputParameters;
 
             MultiActionCommand function;
-            List<CommandParameter> parameters;
 
-            public FunctionCommand(List<CommandParameter> parameters) {
-                this.parameters = parameters;
-                int typeIndex = parameters.FindIndex(p => p is FunctionCallCommandParameter);
-                if (typeIndex < 0) throw new Exception("Function Type is required for Function Command");
-                FunctionCallCommandParameter functionDefinition = (FunctionCallCommandParameter)parameters[typeIndex];
-                type = functionDefinition.function;
-                functionName = functionDefinition.functionName;
+            public FunctionCommand(FunctionType type, FunctionDefinition functionDefinition, Dictionary<string, Variable> inputParameters) {
+                this.type = type;
+                this.functionDefinition = functionDefinition;
+                this.inputParameters = inputParameters;
+                function = null;
             }
 
             public override bool Execute() {
                 if (function == null) {
-                    if (!FUNCTIONS.ContainsKey(functionName)) {
-                        throw new Exception("Undefined Function Name: " + functionName);
+                    function = (MultiActionCommand)functionDefinition.function.Copy();
+                    foreach(string key in inputParameters.Keys) {
+                        Program.memoryVariables[key] = new StaticVariable(inputParameters[key].GetValue());
                     }
-                    function = (MultiActionCommand)FUNCTIONS[functionName].Copy();
                 }
                 STATE = ProgramState.RUNNING;
                 switch (type) {
@@ -63,18 +61,38 @@ namespace IngameScript {
                         return function.Execute();
                     case FunctionType.GOTO:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionName;
+                        RUNNING_FUNCTION = functionDefinition.functionName;
                         return false;
                     case FunctionType.SWITCH:
                         RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionName;
+                        RUNNING_FUNCTION = functionDefinition.functionName;
                         STATE = ProgramState.STOPPED;
                         return true;
                     default:
                         throw new Exception("Unsupported Function Type: " + type);
                 }
             }
-            protected override Command Clone() { return new FunctionCommand(parameters); }
+            protected override Command Clone() { return new FunctionCommand(type, functionDefinition, inputParameters); }
+        }
+
+        public class VariableAssignmentCommand : Command {
+            public String variableName;
+            public Variable variable;
+            public bool useReference;
+
+            public VariableAssignmentCommand(string variableName, Variable variable, bool useReference) {
+                this.variableName = variableName;
+                this.variable = variable;
+                this.useReference = useReference;
+            }
+
+            public override bool Execute() {
+                Variable value = useReference ? variable : new StaticVariable(variable.GetValue());
+                Program.memoryVariables[variableName] = value;
+                return true;
+            }
+
+            protected override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference); }
         }
 
         public class ControlCommand : Command {

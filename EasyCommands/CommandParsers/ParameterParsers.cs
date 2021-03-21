@@ -109,6 +109,8 @@ namespace IngameScript {
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
         static String[] autoWords = { "auto", "refill"};
+        static String[] assignWords = { "assign", "allocate", "designate"};
+        static String[] bindWords = { "bind", "tie", "link"};
 
         static bool Initialized = false;
 
@@ -341,6 +343,8 @@ namespace IngameScript {
             AddWords(inputWords, new PropertyCommandParameter(PropertyType.MOVE_INPUT));
             AddWords(rollInputWords, new PropertyCommandParameter(PropertyType.ROLL_INPUT));
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
+            AddWords(assignWords, new AssignmentCommandParameter(false));
+            AddWords(bindWords, new AssignmentCommandParameter(true));
             Initialized = true;
         }
 
@@ -366,6 +370,11 @@ namespace IngameScript {
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens) {
                 String t = token.token;
+
+                if(token.isExplicitString) {
+                    commandParameters.Add(new VariableCommandParameter(new StaticVariable(new StringPrimitive(token.original))));
+                    continue;
+                }
 
                 if (token.isString) {
                     List<Token> subTokens = ParseTokens(t);
@@ -422,6 +431,19 @@ namespace IngameScript {
                     }
                     continue;
                 }
+
+                //Variable References
+                if (t.StartsWith("{") && t.EndsWith("}")) {
+                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    continue;
+                }
+
+                //Variable References used as Selectors
+                if (t.StartsWith("[") && t.EndsWith("]")) {
+                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    continue;
+                }
+
                 //If nothing else matches, must be a string
                 commandParameters.Add(new StringCommandParameter(token.original));
             }
@@ -430,21 +452,33 @@ namespace IngameScript {
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
         public static List<Token> ParseTokens(String commandString) {
+            List<Token> singleQuoteTokens = commandString.Trim().Split('\'')
+            .SelectMany((element, index) => index % 2 == 0  // If even index
+                ? ParseDoubleQuotes(element)  // Split the item
+                : new Token[] { new Token(element, true, true) })  // Keep the entire item
+            .ToList();
+
+            return singleQuoteTokens;
+        }
+
+        static Token[] ParseDoubleQuotes(String commandString) {
             return commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
-                                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false))  // Split the item
-                                    : new Token[] { new Token(element, true) })  // Keep the entire item
+                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false, false))  // Split the item
+                    : new Token[] { new Token(element, true, false) })  // Keep the entire item
                 .SelectMany(element => element)
-                .ToList();
+                .ToArray();
         }
 
         public class Token {
             public String token;
             public String original;
             public bool isString;
+            public bool isExplicitString;
 
-            public Token(string token, bool isString) {
+            public Token(string token, bool isString, bool isExplicitString) {
                 this.isString = isString;
+                this.isExplicitString = isExplicitString;
                 this.token = token.ToLower();
                 this.original = token;
             }

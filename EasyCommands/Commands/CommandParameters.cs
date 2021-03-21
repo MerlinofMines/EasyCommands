@@ -73,8 +73,30 @@ namespace IngameScript {
         public class ListenCommandParameter : CommandParameter { }
         public class ElseCommandParameter : CommandParameter { }
 
+        public class AssignmentCommandParameter : CommandParameter {
+            public bool useReference;
+
+            public AssignmentCommandParameter(bool useReference) {
+                this.useReference = useReference;
+            }
+        }
+
+        public class VariableAssignmentCommandParameter : CommandParameter {
+            public string variableName;
+            public bool useReference;
+
+            public VariableAssignmentCommandParameter(string variableName, bool useReference) {
+                this.variableName = variableName;
+                this.useReference = useReference;
+            }
+        }
+
         public class VariableCommandParameter : ValueCommandParameter<Variable> {
             public VariableCommandParameter(Variable value) : base(value) {}
+        }
+
+        public class VariableSelectorCommandParameter : ValueCommandParameter<Variable> {
+            public VariableSelectorCommandParameter(Variable value) : base(value) { }
         }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
@@ -124,13 +146,13 @@ namespace IngameScript {
             public FunctionCommandParameter(FunctionType value) : base(value) {}
         }
 
-        public class FunctionCallCommandParameter : CommandParameter {
-            public FunctionType function;
-            public String functionName;
+        public class FunctionDefinitionCommandParameter : CommandParameter {
+            public FunctionType functionType;
+            public FunctionDefinition functionDefinition;
 
-            public FunctionCallCommandParameter(FunctionType function, string functionName) {
-                this.function = function;
-                this.functionName = functionName;
+            public FunctionDefinitionCommandParameter(FunctionType functionType, FunctionDefinition functionDefinition) {
+                this.functionType = functionType;
+                this.functionDefinition = functionDefinition;
             }
         }
 

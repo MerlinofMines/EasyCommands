@@ -27,7 +27,7 @@ namespace IngameScript {
         static int PARSE_AMOUNT = 1;
 
         static MultiActionCommand RUNNING_COMMANDS;
-        static Dictionary<String, MultiActionCommand> FUNCTIONS = new Dictionary<string, MultiActionCommand>();
+        public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
         static String DEFAULT_FUNCTION;
         static String RUNNING_FUNCTION;
         static String CUSTOM_DATA;
@@ -39,6 +39,7 @@ namespace IngameScript {
         public delegate List<MyIGCMessage> BroadcastMessageProvider(MyGridProgram program);
         static public CustomDataProvider CUSTOM_DATA_PROVIDER = (p) => p.Me.CustomData;
         static public BroadcastMessageProvider BROADCAST_MESSAGE_PROVIDER = provideMessages;
+        static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
 
         static List<MyIGCMessage> provideMessages(MyGridProgram program)
         {
@@ -138,7 +139,7 @@ namespace IngameScript {
             ParseFunctions(COMMAND_STRINGS);
 
             if (COMMAND_STRINGS.Count > 0) return false;
-            RUNNING_COMMANDS = (MultiActionCommand)FUNCTIONS[DEFAULT_FUNCTION].Copy();
+            RUNNING_COMMANDS = (MultiActionCommand)(FUNCTIONS[DEFAULT_FUNCTION].function).Copy();
             return true;
         }
 
@@ -153,15 +154,28 @@ namespace IngameScript {
             Debug("Function Indices: ");
             Debug(String.Join(" | ", functionIndices));
 
+            //Parse Function Definitions
+            foreach (int i in functionIndices) {
+                String functionString = commandStrings[i].Remove(0, 1).Trim();
+                List<Token> nameAndParams = ParseTokens(functionString);
+                String functionName = nameAndParams[0].original;
+                nameAndParams.RemoveAt(0);
+                FunctionDefinition definition = new FunctionDefinition(functionName, nameAndParams.Select(t => t.original).ToList());
+                FUNCTIONS[functionName] = definition;
+            }
+
+            //Parse Function Commands and add to Definitions
             int toParse = PARSE_AMOUNT;
             foreach (int i in functionIndices) {
                 String functionString = commandStrings[i].Remove(0, 1).Trim();
-                Print("Parsing Function: " + functionString);
+                List<Token> nameAndParams = ParseTokens(functionString);
+                String functionName = nameAndParams[0].original;
+                Print("Parsing Function: " + functionName);
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
                 if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
-                FUNCTIONS.Add(functionString, (MultiActionCommand)command);
-                DEFAULT_FUNCTION = functionString;
+                FUNCTIONS[functionName].function = (MultiActionCommand)command;
+                DEFAULT_FUNCTION = functionName;
                 toParse--;
                 if (toParse == 0) break;//Exceeded # of Functions to parse for 1 tick
             }
@@ -225,6 +239,24 @@ namespace IngameScript {
                 Depth = commandString.TakeWhile(Char.IsWhiteSpace).Count();
                 CommandParameters = ParseCommandParameters(ParseTokens(commandString));
                 CommandString = commandString;
+            }
+        }
+
+        public class FunctionDefinition {
+            public String functionName;
+            public MultiActionCommand function;
+            public List<String> parameterNames;
+
+            public FunctionDefinition(string functionName, List<string> parameterNames) {
+                this.functionName = functionName;
+                this.parameterNames = parameterNames;
+                this.function = null;
+            }
+
+            public FunctionDefinition(string functionName, MultiActionCommand function, List<string> parameterNames) {
+                this.functionName = functionName;
+                this.function = function;
+                this.parameterNames = parameterNames;
             }
         }
     }
