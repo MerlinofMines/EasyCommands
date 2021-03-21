@@ -20,6 +20,10 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public static class BlockHandlerRegistry {
+            public delegate List<Object> BlockProvider(BlockType blockType, String name);
+            public static BlockProvider BLOCK_PROVIDER = GetBlocks;
+            public static BlockProvider GROUP_BLOCK_PROVIDER = GetBlocksInGroup;
+
             static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
                { BlockType.AIRVENT, new AirVentBlockHandler()},
                { BlockType.ANTENNA, new AntennaBlockHandler()},

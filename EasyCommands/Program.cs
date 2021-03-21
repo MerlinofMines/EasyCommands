@@ -35,7 +35,18 @@ namespace IngameScript {
         static List<String> COMMAND_STRINGS = new List<String>();
         static MyGridProgram PROGRAM;
         static ProgramState STATE = ProgramState.STOPPED;
+        public delegate String CustomDataProvider(MyGridProgram program);
+        public delegate List<MyIGCMessage> BroadcastMessageProvider(MyGridProgram program);
+        static public CustomDataProvider CUSTOM_DATA_PROVIDER = (p) => p.Me.CustomData;
+        static public BroadcastMessageProvider BROADCAST_MESSAGE_PROVIDER = provideMessages;
         static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
+
+        static List<MyIGCMessage> provideMessages(MyGridProgram program)
+        {
+            List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+            program.IGC.GetBroadcastListeners(listeners);
+            return listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
+        }
 
         public Program() {
             PROGRAM = this;
@@ -66,9 +77,7 @@ namespace IngameScript {
             Echo("Running Function: " + RUNNING_FUNCTION);
             Echo("Argument: " + ARGUMENT);
 
-            List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
-            IGC.GetBroadcastListeners(listeners);
-            List<MyIGCMessage> messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
+            List<MyIGCMessage> messages = BROADCAST_MESSAGE_PROVIDER(PROGRAM);
 
             try {
                 if (messages.Count > 0) {
@@ -113,8 +122,8 @@ namespace IngameScript {
         }
 
         static bool ParseCommands() {
-            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
-                CUSTOM_DATA = PROGRAM.Me.CustomData;
+            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(CUSTOM_DATA_PROVIDER(PROGRAM))) {
+                CUSTOM_DATA = CUSTOM_DATA_PROVIDER(PROGRAM);
                 COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 if (COMMAND_STRINGS.Count == 0) {
                     Print("Welcome to EasyCommands!");

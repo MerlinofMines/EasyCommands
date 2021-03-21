@@ -1,0 +1,15 @@
+﻿### Test Setup
+
+When setting this up in Visual Studio, you will need to ensure that you've added references to:
+* EasyCommands project
+* MDKUtilities
+* Sandbox.Common
+* Sandbox.Game
+* Sandbox.Graphics
+* SpaceEngineers.Game
+* SpaceEngineers.ObjectBuilders
+* VRage.Game
+* VRage.Math
+* Also, use NuGet to take a dependency on Moq (see the packages.config file)
+
+This is all required for the tests to function properly.
