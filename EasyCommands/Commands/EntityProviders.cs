@@ -79,7 +79,7 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selector) : BlockHandlerRegistry.GetBlocks(blockType, selector);
+                List<object> entities = isGroup ? BlockHandlerRegistry.GROUP_BLOCK_PROVIDER(blockType, selector) : BlockHandlerRegistry.BLOCK_PROVIDER(blockType, selector);
                 return entities;
             }
 

@@ -263,6 +263,8 @@ namespace IngameScript {
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
         public static void InitializeParsers() {
+            if (Initialized) return;
+
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
             AddWords(deactivateWords, new BooleanCommandParameter(false));
@@ -358,7 +360,7 @@ namespace IngameScript {
         }
 
         static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
-            if (!Initialized) InitializeParsers();
+            InitializeParsers();
             Debug("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();

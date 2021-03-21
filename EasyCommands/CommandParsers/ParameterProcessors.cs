@@ -57,6 +57,8 @@ namespace IngameScript {
             static Dictionary<Type, int> priorityByParameterProcessor = new Dictionary<Type, int>();
 
             public static void InitializeProcessors() {
+                if (initialized) return;
+
                 for(int i = 0; i < parameterProcessors.Count; i++) {
                     ParameterProcessor processor = parameterProcessors[i];
 
@@ -71,7 +73,7 @@ namespace IngameScript {
             }
 
             public static void Process(List<CommandParameter> commandParameters) {
-                if(!initialized) InitializeProcessors();
+                InitializeProcessors();
 
                 List<ParameterProcessor> sortedParameterProcessors = new List<ParameterProcessor>();
 
