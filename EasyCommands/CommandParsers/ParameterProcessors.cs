@@ -669,10 +669,12 @@ namespace IngameScript {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
                 finalParameters = null;
                 if (i == p.Count - 1 || !(p[i + 1] is StringCommandParameter)) return false;
-                FunctionCommandParameter function = (FunctionCommandParameter)p[i];
+                FunctionType functionType = ((FunctionCommandParameter)p[i]).Value;
                 StringCommandParameter functionName = (StringCommandParameter)p[i + 1];
+                FunctionDefinition definition;
+                if (!FUNCTIONS.TryGetValue(functionName.Value, out definition)) throw new Exception("Unknown function: " + functionName.Value);
                 p.RemoveRange(i, 2);
-                p.Insert(i, new FunctionCallCommandParameter(function.Value, functionName.Value));
+                p.Insert(i, new FunctionDefinitionCommandParameter(functionType, definition));
                 finalParameters = new List<CommandParameter>();
                 finalParameters.Add(p[i]);
                 return true;
@@ -818,19 +820,40 @@ namespace IngameScript {
             }
         }
 
-        public class FunctionCallCommandProcessor : SimpleCommandProcessor<FunctionCallCommandParameter> {
-            public override Command GetCommand(List<CommandParameter> commandParameters) {
-                return new FunctionCommand(commandParameters);
+        public class FunctionCallCommandProcessor : SimpleParameterProcessor<FunctionDefinitionCommandParameter> {
+            List<Variable> variables;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                FunctionDefinition function = findFirst<FunctionDefinitionCommandParameter>(p).functionDefinition;
+                return function.parameterNames.Count() == variables.Count;
+
             }
 
-            public override void Initialize() {}
-
-            public override bool CanConvert() {
-                return true;
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                FunctionDefinitionCommandParameter function = findFirst<FunctionDefinitionCommandParameter>(p);
+                FunctionDefinition definition = function.functionDefinition;
+                FunctionType functionType = function.functionType;
+                Dictionary<string, Variable> inputParameters = new Dictionary<string, Variable>();
+                for (int i = 0; i < definition.parameterNames.Count(); i++) {
+                    inputParameters[definition.parameterNames[i]] = variables[i];
+                }
+                Command command = new FunctionCommand(functionType, definition, inputParameters);
+                return new CommandReferenceParameter(command);
             }
 
-            public override bool ProcessParameterArgument(CommandParameter p) {
-                return p is VariableCommandParameter;
+            public override void Initialize() {
+                variables = new List<Variable>();
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter) {
+                    variables.Add(((VariableCommandParameter)p).Value);
+                    return true;
+                } else return false;
             }
         }
 

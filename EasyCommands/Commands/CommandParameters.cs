@@ -146,13 +146,13 @@ namespace IngameScript {
             public FunctionCommandParameter(FunctionType value) : base(value) {}
         }
 
-        public class FunctionCallCommandParameter : CommandParameter {
-            public FunctionType function;
-            public String functionName;
+        public class FunctionDefinitionCommandParameter : CommandParameter {
+            public FunctionType functionType;
+            public FunctionDefinition functionDefinition;
 
-            public FunctionCallCommandParameter(FunctionType function, string functionName) {
-                this.function = function;
-                this.functionName = functionName;
+            public FunctionDefinitionCommandParameter(FunctionType functionType, FunctionDefinition functionDefinition) {
+                this.functionType = functionType;
+                this.functionDefinition = functionDefinition;
             }
         }
 

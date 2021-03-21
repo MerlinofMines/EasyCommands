@@ -1,5 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests {
@@ -24,11 +27,24 @@ namespace EasyCommands.Tests {
 
         [TestMethod]
         public void FunctionCommand() {
+            FUNCTIONS["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = ParseCommand("goto \"listen\"");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionName);
+            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
             Assert.AreEqual(FunctionType.GOTO, functionCommand.type);
+        }
+
+        [TestMethod]
+        public void FunctionCommandWithParameters() {
+            FUNCTIONS["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
+            var command = ParseCommand("goto \"listen\" 2 3");
+            Assert.IsTrue(command is FunctionCommand);
+            FunctionCommand functionCommand = (FunctionCommand)command;
+            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual(FunctionType.GOTO, functionCommand.type);
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetNumericValue());
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetNumericValue());
         }
 
         [TestMethod]
