@@ -26,8 +26,10 @@ namespace IngameScript {
             {
                   new ParenthesisProcessor(),
                   new FunctionProcessor(),
+                  new AssignmentProcessor(),
                   new RunArgumentProcessor(),
                   new SelectorProcessor(),
+                  new VariableSelectorProcessor(),
                   new PrimitiveProcessor(),
                   new RedundantComparisonProcessor(),
                   new AndProcessor(),
@@ -45,6 +47,7 @@ namespace IngameScript {
                   new ActionProcessor(),
                   new WaitProcessor(),
                   new FunctionCallCommandProcessor(),
+                  new VariableAssignmentProcesor(),
                   new SendCommandProcessor(),
                   new ListenCommandProcessor(),
                   new ControlProcessor(),
@@ -596,7 +599,8 @@ namespace IngameScript {
 
             public override CommandParameter Convert(List<CommandParameter> p) {
                 StringCommandParameter selector = findFirst<StringCommandParameter>(p);
-                return new SelectorCommandParameter(new SelectorEntityProvider(blockType.Value, isGroup, selector.Value));
+                Variable variable = new StaticVariable(new StringPrimitive(selector.Value));
+                return new SelectorCommandParameter(new SelectorEntityProvider(blockType.Value, isGroup, variable));
             }
 
             public override void Initialize() {
@@ -612,6 +616,51 @@ namespace IngameScript {
                 if (p is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)p).Value;
                 else if (p is GroupCommandParameter && !isGroup) isGroup = true;
                 else return false;
+                return true;
+            }
+        }
+
+        public class VariableSelectorProcessor : SimpleParameterProcessor<VariableSelectorCommandParameter> {
+            BlockType? blockType = null;
+            bool isGroup = false;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return blockType != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                VariableSelectorCommandParameter selector = findFirst<VariableSelectorCommandParameter>(p);
+                Variable variable = selector.Value;
+                return new SelectorCommandParameter(new SelectorEntityProvider(blockType.Value, isGroup, variable));
+            }
+
+            public override void Initialize() {
+                blockType = null;
+                isGroup = false;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is BlockTypeCommandParameter && blockType == null) blockType = ((BlockTypeCommandParameter)p).Value;
+                else if (p is GroupCommandParameter && !isGroup) isGroup = true;
+                else return false;
+                return true;
+            }
+        }
+
+        public class AssignmentProcessor : ParameterProcessor<AssignmentCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+                finalParameters = null;
+                if (i == p.Count - 1 || !(p[i + 1] is StringCommandParameter)) return false;
+                AssignmentCommandParameter assignment = (AssignmentCommandParameter)p[i];
+                StringCommandParameter variableName = (StringCommandParameter)p[i + 1];
+                p.RemoveRange(i, 2);
+                p.Insert(i, new VariableAssignmentCommandParameter(variableName.Value, assignment.useReference));
+                finalParameters = new List<CommandParameter>();
+                finalParameters.Add(p[i]);
                 return true;
             }
         }
@@ -737,6 +786,35 @@ namespace IngameScript {
                 if (p is VariableCommandParameter && !tagIndex) tagIndex = true;
                 else return false;
                 return true;
+            }
+        }
+
+        public class VariableAssignmentProcesor : SimpleParameterProcessor<VariableAssignmentCommandParameter> {
+            Variable variable;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return variable != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                VariableAssignmentCommandParameter assignment = findFirst<VariableAssignmentCommandParameter>(p);
+                Command command = new VariableAssignmentCommand(assignment.variableName, variable, assignment.useReference);
+                return new CommandReferenceParameter(command);
+            }
+
+            public override void Initialize() {
+                variable = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && variable == null) {
+                    variable = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
             }
         }
 

@@ -73,8 +73,30 @@ namespace IngameScript {
         public class ListenCommandParameter : CommandParameter { }
         public class ElseCommandParameter : CommandParameter { }
 
+        public class AssignmentCommandParameter : CommandParameter {
+            public bool useReference;
+
+            public AssignmentCommandParameter(bool useReference) {
+                this.useReference = useReference;
+            }
+        }
+
+        public class VariableAssignmentCommandParameter : CommandParameter {
+            public string variableName;
+            public bool useReference;
+
+            public VariableAssignmentCommandParameter(string variableName, bool useReference) {
+                this.variableName = variableName;
+                this.useReference = useReference;
+            }
+        }
+
         public class VariableCommandParameter : ValueCommandParameter<Variable> {
             public VariableCommandParameter(Variable value) : base(value) {}
+        }
+
+        public class VariableSelectorCommandParameter : ValueCommandParameter<Variable> {
+            public VariableSelectorCommandParameter(Variable value) : base(value) { }
         }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {

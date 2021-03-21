@@ -43,7 +43,7 @@ namespace IngameScript {
         }
 
         public class IndexEntityProvider : EntityProvider {
-            public  EntityProvider provider;
+            public EntityProvider provider;
             public Variable index;
 
             public IndexEntityProvider(EntityProvider provider, Variable index) {
@@ -68,18 +68,19 @@ namespace IngameScript {
         }
 
         public class SelectorEntityProvider : EntityProvider {
-            private BlockType blockType;
-            private bool isGroup;
-            private String selector;
+            public BlockType blockType;
+            public bool isGroup;
+            public Variable selector;
 
-            public SelectorEntityProvider(BlockType blockType, bool isGroup, string selector) {
+            public SelectorEntityProvider(BlockType blockType, bool isGroup, Variable selector) {
                 this.blockType = blockType;
                 this.isGroup = isGroup;
                 this.selector = selector;
             }
 
             public List<Object> GetEntities() {
-                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selector) : BlockHandlerRegistry.GetBlocks(blockType, selector);
+                String selectorString = CastString(selector.GetValue()).GetStringValue();
+                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selectorString) : BlockHandlerRegistry.GetBlocks(blockType, selectorString);
                 return entities;
             }
 

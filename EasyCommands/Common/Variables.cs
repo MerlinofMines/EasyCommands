@@ -164,25 +164,22 @@ namespace IngameScript {
             }
         }
 
-
         public class InMemoryVariable : Variable {
-            String variableName;
-            Variable defaultValue;
+            public String variableName;
 
-            public InMemoryVariable(string variableName, Variable defaultValue) {
+            public InMemoryVariable(string variableName) {
                 this.variableName = variableName;
-                this.defaultValue = defaultValue;
             }
 
             public Primitive GetValue() {
-                //Program.getMemoryVariables[variableName].orElse(defaultValue).getValue());
-                return defaultValue.GetValue();
+                Variable variable;
+                if(!Program.memoryVariables.TryGetValue(variableName, out variable)) throw new Exception("No Variable exists with name: " + variableName);
+                return variable.GetValue();
             }
 
             public void setValue(Variable v) {
-                //Program.setMemoryVariables(variableName, v);
+                Program.memoryVariables[variableName] = new StaticVariable(v.GetValue());
             }
         }
-
     }
 }

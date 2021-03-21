@@ -21,6 +21,12 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
+        public void SimpleBlockCommandWithVariableValue() {
+            var command = ParseCommand("set the \"pistons\" to {b}");
+            Assert.IsTrue(command is BlockCommand);
+        }
+
+        [TestMethod]
         public void SimpleBlockCommandWithDirection() {
             var command = ParseCommand("retract the \"pistons\"");
             Assert.IsTrue(command is BlockCommand);

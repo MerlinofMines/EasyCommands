@@ -59,8 +59,26 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
-        public void Test() {
-            var Command = ParseCommand("wait until \"boom cockpit\" is locked");
+        public void AssignVariable() {
+            var command = ParseCommand("assign \"a\" to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand) command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+        [TestMethod]
+        public void LockVariable() {
+            var command = ParseCommand("bind \"a\" to {b} is 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.IsTrue(assignCommand.variable is ComparisonVariable);
+            Assert.IsTrue(assignCommand.useReference);
+
+            ComparisonVariable comparison = (ComparisonVariable)assignCommand.variable;
+            Assert.IsTrue(comparison.a is InMemoryVariable);
         }
     }
 }

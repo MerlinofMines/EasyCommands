@@ -35,6 +35,7 @@ namespace IngameScript {
         static List<String> COMMAND_STRINGS = new List<String>();
         static MyGridProgram PROGRAM;
         static ProgramState STATE = ProgramState.STOPPED;
+        static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
 
         public Program() {
             PROGRAM = this;

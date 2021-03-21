@@ -77,6 +77,26 @@ namespace IngameScript {
             protected override Command Clone() { return new FunctionCommand(parameters); }
         }
 
+        public class VariableAssignmentCommand : Command {
+            public String variableName;
+            public Variable variable;
+            public bool useReference;
+
+            public VariableAssignmentCommand(string variableName, Variable variable, bool useReference) {
+                this.variableName = variableName;
+                this.variable = variable;
+                this.useReference = useReference;
+            }
+
+            public override bool Execute() {
+                Variable value = useReference ? variable : new StaticVariable(variable.GetValue());
+                Program.memoryVariables[variableName] = value;
+                return true;
+            }
+
+            protected override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference); }
+        }
+
         public class ControlCommand : Command {
             Variable loopAmount = new StaticVariable(new NumberPrimitive(1));
             ControlType controlType;
