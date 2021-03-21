@@ -457,13 +457,13 @@ namespace IngameScript {
 
                 //Variable References
                 if (t.StartsWith("{") && t.EndsWith("}")) {
-                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
                     continue;
                 }
 
                 //Variable References used as Selectors
                 if (t.StartsWith("[") && t.EndsWith("]")) {
-                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
                     continue;
                 }
 
