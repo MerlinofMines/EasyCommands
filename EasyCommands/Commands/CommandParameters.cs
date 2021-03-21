@@ -73,6 +73,14 @@ namespace IngameScript {
         public class ListenCommandParameter : CommandParameter { }
         public class ElseCommandParameter : CommandParameter { }
 
+        public class MultiplyCommandParameter : ValueCommandParameter<OperandType> {
+            public MultiplyCommandParameter(OperandType value) : base(value) {}
+        }
+
+        public class AddCommandParameter : ValueCommandParameter<OperandType> {
+            public AddCommandParameter(OperandType value) : base(value) {}
+        }
+
         public class AssignmentCommandParameter : CommandParameter {
             public bool useReference;
 

@@ -21,11 +21,10 @@ namespace IngameScript {
     partial class Program {
         public interface Variable {
             Primitive GetValue();
-            void setValue(Variable v);
         }
 
         public class StaticVariable : Variable {
-            Primitive primitive;
+            public Primitive primitive;
 
             public StaticVariable(Primitive primitive) {
                 this.primitive = primitive;
@@ -34,14 +33,10 @@ namespace IngameScript {
             public Primitive GetValue() {
                 return primitive;
             }
-
-            public void setValue(Variable v) {
-                //static variables cannot be set
-            }
         }
 
         public class LockedVariable : Variable {
-            Variable locked;
+            public Variable locked;
 
             public LockedVariable(Variable locked) {
                 this.locked = locked;
@@ -49,10 +44,6 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 return locked.GetValue();
-            }
-
-            public void setValue(Variable v) {
-                locked.setValue(v);
             }
         }
 
@@ -69,14 +60,10 @@ namespace IngameScript {
             public Primitive GetValue() {
                 return new BooleanPrimitive(comparator.compare(a.GetValue(), b.GetValue()));
             }
-
-            public void setValue(Variable v) {
-                //void
-            }
         }
 
         public class NotVariable : Variable {
-            Variable v;
+            public Variable v;
 
             public NotVariable(Variable v) {
                 this.v = v;
@@ -85,14 +72,10 @@ namespace IngameScript {
             public Primitive GetValue() {
                 return v.GetValue().Not();
             }
-
-            public void setValue(Variable v) {
-                v.setValue(new NotVariable(v));
-            }
         }
 
         public class AndVariable : Variable {
-            Variable a, b;
+            public Variable a, b;
 
             public AndVariable(Variable a, Variable b) {
                 this.a = a;
@@ -102,14 +85,10 @@ namespace IngameScript {
             public Primitive GetValue() {
                 return new BooleanPrimitive(CastBoolean(a.GetValue()).GetBooleanValue() && CastBoolean(b.GetValue()).GetBooleanValue());
             }
-
-            public void setValue(Variable v) {
-                //void
-            }
         }
 
         public class OrVariable : Variable {
-            Variable a, b;
+            public Variable a, b;
 
             public OrVariable(Variable a, Variable b) {
                 this.a = a;
@@ -119,16 +98,34 @@ namespace IngameScript {
             public Primitive GetValue() {
                 return new BooleanPrimitive(CastBoolean(a.GetValue()).GetBooleanValue() || CastBoolean(b.GetValue()).GetBooleanValue());
             }
+        }
 
-            public void setValue(Variable v) {
-                //void
+        public class OperandVariable : Variable {
+            public Variable a, b;
+            public OperandType operand;
+
+            public OperandVariable(Variable a, Variable b, OperandType operand) {
+                this.a = a;
+                this.b = b;
+                this.operand = operand;
+            }
+
+            public Primitive GetValue() {
+                switch(operand) {
+                    case OperandType.ADD: return a.GetValue().Plus(b.GetValue());
+                    case OperandType.SUBTACT: return a.GetValue().Minus(b.GetValue());
+                    case OperandType.MULTIPLY: return a.GetValue().Multiply(b.GetValue());
+                    case OperandType.DIVIDE: return a.GetValue().Divide(b.GetValue());
+                    //TODO: MOD
+                    default: throw new Exception("Unknown Operand type: " + operand);
+                }
             }
         }
 
         public class AggregateConditionVariable : Variable {
-            AggregationMode aggregationMode;
-            BlockCondition blockCondition;
-            EntityProvider entityProvider;
+            public AggregationMode aggregationMode;
+            public BlockCondition blockCondition;
+            public EntityProvider entityProvider;
 
             public AggregateConditionVariable(AggregationMode aggregationMode, BlockCondition blockCondition, EntityProvider entityProvider) {
                 this.aggregationMode = aggregationMode;
@@ -138,10 +135,6 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 return new BooleanPrimitive(Evaluate());
-            }
-
-            public void setValue(Variable v) {
-                //void
             }
 
             public bool Evaluate() {
@@ -175,10 +168,6 @@ namespace IngameScript {
                 Variable variable;
                 if(!Program.memoryVariables.TryGetValue(variableName, out variable)) throw new Exception("No Variable exists with name: " + variableName);
                 return variable.GetValue();
-            }
-
-            public void setValue(Variable v) {
-                Program.memoryVariables[variableName] = new StaticVariable(v.GetValue());
             }
         }
     }
