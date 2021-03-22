@@ -35,7 +35,7 @@ namespace IngameScript {
         static String[] backwardWords = { "backward", "backwards", "back" };
         static String[] clockwiseWords = { "clockwise", "clock" };
         static String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
-        static String[] actionWords = { "tell", "turn", "rotate", "set"};
+        static String[] actionWords = { "tell", "turn", "rotate", "set" };
 
         static String[] relativeWords = { "by" };
         static String[] increaseRelativeWords = { "add" };
@@ -102,15 +102,15 @@ namespace IngameScript {
         static String[] volumeKeywords = { "volume" };
         static String[] rangeKeywords = { "range", "distance", "limit" };
         static String[] iterationKeywords = { "times", "iterations" };
-        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot"};
+        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot" };
         static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging" };
         static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate", "discharge", "discharging" };
         static String[] ratioWords = { "ratio", "percentage", "percent" };
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
-        static String[] autoWords = { "auto", "refill"};
-        static String[] assignWords = { "assign", "allocate", "designate"};
-        static String[] bindWords = { "bind", "tie", "link"};
+        static String[] autoWords = { "auto", "refill" };
+        static String[] assignWords = { "assign", "allocate", "designate" };
+        static String[] bindWords = { "bind", "tie", "link" };
 
         static bool Initialized = false;
 
@@ -125,6 +125,19 @@ namespace IngameScript {
             { "meter", UnitType.METERS },
             { "meters", UnitType.METERS },
             { "rpm", UnitType.RPM }
+        };
+
+        static Dictionary<String, OperandType> operandWords = new Dictionary<String, OperandType> {
+            { "plus", OperandType.ADD },
+            { "+", OperandType.ADD },
+            { "minus", OperandType.SUBTACT },
+            { "-", OperandType.SUBTACT },
+            { "multiply", OperandType.MULTIPLY },
+            { "*", OperandType.MULTIPLY },
+            { "divide", OperandType.DIVIDE },
+            { "/", OperandType.DIVIDE },
+            { "mod", OperandType.MOD },
+            { "%", OperandType.MOD }
         };
 
         static Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
@@ -412,6 +425,16 @@ namespace IngameScript {
                     continue;
                 }
 
+                OperandType operandType;
+                if (operandWords.TryGetValue(t, out operandType)) {
+                    if (operandType == OperandType.ADD || operandType == OperandType.SUBTACT) {
+                        commandParameters.Add(new AddCommandParameter(operandType));
+                    } else {
+                        commandParameters.Add(new MultiplyCommandParameter(operandType));
+                    }
+                    continue;
+                }
+
                 double numericValue;
                 if (Double.TryParse(t, out numericValue)) {
                     commandParameters.Add(new NumericCommandParameter((float)numericValue));
@@ -434,13 +457,13 @@ namespace IngameScript {
 
                 //Variable References
                 if (t.StartsWith("{") && t.EndsWith("}")) {
-                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
                     continue;
                 }
 
                 //Variable References used as Selectors
                 if (t.StartsWith("[") && t.EndsWith("]")) {
-                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(t.Substring(1, t.Length - 2))));
+                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
                     continue;
                 }
 

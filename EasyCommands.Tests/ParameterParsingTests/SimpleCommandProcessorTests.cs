@@ -85,6 +85,17 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
+        public void AssignVariableCaseIsPreserved() {
+            var command = ParseCommand("assign \"a\" to {variableName}");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.IsTrue(assignCommand.variable is InMemoryVariable);
+            InMemoryVariable memoryVariable = (InMemoryVariable)assignCommand.variable;
+            Assert.AreEqual("variableName", memoryVariable.variableName);
+        }
+
+        [TestMethod]
         public void LockVariable() {
             var command = ParseCommand("bind \"a\" to {b} is 2");
             Assert.IsTrue(command is VariableAssignmentCommand);

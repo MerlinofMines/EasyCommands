@@ -117,6 +117,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParameterParsingTests\OperatorParameterProcessorTests.cs" />
     <Compile Include="ScriptTests\ConditionalBlockExecutionTests.cs" />
     <Compile Include="ParameterParsingTests\BlockCommandProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\BooleanLogicParameterProcessorTests.cs" />
