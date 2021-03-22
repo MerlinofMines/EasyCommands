@@ -981,7 +981,7 @@ namespace IngameScript {
             }
 
             public override bool CanConvert(List<CommandParameter> p) {
-                return hasVariable || hasProperty || hasDirection;
+                return hasVariable || hasProperty || hasDirection || hasReverse;
             }
 
             public override CommandParameter Convert(List<CommandParameter> p) {
