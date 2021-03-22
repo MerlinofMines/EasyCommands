@@ -33,6 +33,13 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
+        public void SimpleBlockCommandWithReverse()
+        {
+            var command = ParseCommand("reverse the \"pistons\"");
+            Assert.IsTrue(command is BlockCommand);
+        }
+
+        [TestMethod]
         public void SimpleBlockCommandWithPropertyAndVariable() {
             var command = ParseCommand("set the \"pistons\" height to 2");
             Assert.IsTrue(command is BlockCommand);
@@ -58,5 +65,6 @@ namespace EasyCommands.Tests {
             command = ParseCommand("set the \"rotors\" angle to 30 clockwise");
             Assert.IsTrue(command is BlockCommand);
         }
+
     }
 }
