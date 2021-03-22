@@ -40,7 +40,7 @@ namespace IngameScript {
         }
 
         public class NotBlockCondition : BlockCondition {
-            BlockCondition blockCondition;
+            public BlockCondition blockCondition;
 
             public NotBlockCondition(BlockCondition blockCondition) {
                 this.blockCondition = blockCondition;
@@ -55,8 +55,8 @@ namespace IngameScript {
         }
 
         public class AndBlockCondition : BlockCondition {
-            BlockCondition conditionA;
-            BlockCondition conditionB;
+            public BlockCondition conditionA;
+            public BlockCondition conditionB;
 
             public AndBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
                 this.conditionA = conditionA;
@@ -69,8 +69,8 @@ namespace IngameScript {
         }
 
         public class OrBlockCondition : BlockCondition {
-            BlockCondition conditionA;
-            BlockCondition conditionB;
+            public BlockCondition conditionA;
+            public BlockCondition conditionB;
 
             public OrBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
                 this.conditionA = conditionA;
@@ -83,10 +83,10 @@ namespace IngameScript {
         }
 
         public class BlockPropertyCondition : BlockCondition {
-            protected PropertyType? property;
-            protected DirectionType? direction;
-            protected PrimitiveComparator comparator;
-            protected Variable comparisonValue;
+            public PropertyType? property;
+            public DirectionType? direction;
+            public PrimitiveComparator comparator;
+            public Variable comparisonValue;
 
             public BlockPropertyCondition(PropertyType? property, DirectionType? direction, PrimitiveComparator comparator, Variable comparisonValue) {
                 this.property = property;
@@ -109,7 +109,7 @@ namespace IngameScript {
         }
 
         public class PrimitiveComparator {
-            ComparisonType comparisonType;
+            public ComparisonType comparisonType;
             public PrimitiveComparator(ComparisonType comparisonType) {
                 this.comparisonType = comparisonType;
             }

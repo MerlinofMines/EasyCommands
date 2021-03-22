@@ -32,6 +32,8 @@ namespace IngameScript {
                   new VariableSelectorProcessor(),
                   new PrimitiveProcessor(),
                   new RedundantComparisonProcessor(),
+                  new MultiplyProcessor(),
+                  new AddProcessor(),
                   new AndProcessor(),
                   new OrProcessor(),
                   new NotProcessor(),
@@ -229,6 +231,69 @@ namespace IngameScript {
                 }
                 finalParameters = new List<CommandParameter>() { p[i] };
                 return true;
+            }
+        }
+
+
+        public class MultiplyProcessor : SimpleParameterProcessor<MultiplyCommandParameter> {
+            Variable a, b;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return a != null & b != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                OperandType operand = findFirst<MultiplyCommandParameter>(p).Value;
+                return new VariableCommandParameter(new OperandVariable(a, b, operand));
+            }
+
+            public override void Initialize() {
+                a = null;
+                b = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is VariableCommandParameter && a == null) {
+                    a = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && b == null) {
+                    b = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
+        public class AddProcessor : SimpleParameterProcessor<AddCommandParameter> {
+            Variable a, b;
+            public override bool CanConvert(List<CommandParameter> p) {
+                return a != null & b != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                OperandType operand = findFirst<AddCommandParameter>(p).Value;
+                return new VariableCommandParameter(new OperandVariable(a, b, operand));
+            }
+
+            public override void Initialize() {
+                a = null;
+                b = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                if (p is VariableCommandParameter && a == null) {
+                    a = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && b == null) {
+                    b = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
             }
         }
 
