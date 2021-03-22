@@ -50,7 +50,7 @@ namespace IngameScript {
 
             public override bool Execute() {
                 if (function == null) {
-                    function = (MultiActionCommand)functionDefinition.function.Copy();
+                    function = (MultiActionCommand)FUNCTIONS[functionDefinition.functionName].function.Copy();
                     foreach(string key in inputParameters.Keys) {
                         Program.memoryVariables[key] = new StaticVariable(inputParameters[key].GetValue());
                     }
