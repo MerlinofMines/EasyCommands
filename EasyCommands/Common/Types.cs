@@ -30,6 +30,7 @@ namespace IngameScript {
         public enum FunctionType { GOTO, GOSUB, SWITCH }
         public enum PrimitiveType { NUMERIC, BOOLEAN, STRING, VECTOR }
         public enum OperandType { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD };
+        public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }
         #endregion
     }
 }

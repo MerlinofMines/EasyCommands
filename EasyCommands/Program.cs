@@ -22,9 +22,11 @@ using System.Runtime.CompilerServices;
 namespace IngameScript {
     public partial class Program : MyGridProgram {
         //Debug
-        static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
-        static bool DEBUG_LOG = false;
-        static int PARSE_AMOUNT = 1;
+        #region mdk preserve
+        public static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
+        public static LogLevel LOG_LEVEL = LogLevel.INFO;
+        public static int PARSE_AMOUNT = 1;
+        #endregion
 
         static MultiActionCommand RUNNING_COMMANDS;
         public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
@@ -37,8 +39,7 @@ namespace IngameScript {
         static ProgramState STATE = ProgramState.STOPPED;
         public delegate String CustomDataProvider(MyGridProgram program);
         public delegate List<MyIGCMessage> BroadcastMessageProvider(MyGridProgram program);
-        static public CustomDataProvider CUSTOM_DATA_PROVIDER = (p) => p.Me.CustomData;
-        static public BroadcastMessageProvider BROADCAST_MESSAGE_PROVIDER = provideMessages;
+        public static BroadcastMessageProvider BROADCAST_MESSAGE_PROVIDER = provideMessages;
         static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
 
         static List<MyIGCMessage> provideMessages(MyGridProgram program)
@@ -56,7 +57,9 @@ namespace IngameScript {
         }
 
         static void Print(String str) { PROGRAM.Echo(str); }
-        static void Debug(String str) { if (DEBUG_LOG) PROGRAM.Echo(str); }
+        static void Info(String str) { if (LOG_LEVEL != LogLevel.SCRIPT_ONLY) PROGRAM.Echo(str); }
+        static void Debug(String str) { if (LOG_LEVEL == LogLevel.DEBUG || LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
+        static void Trace(String str) { if (LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
 
         public void Main(string argument) {
             if (!String.IsNullOrEmpty(argument)) { ARGUMENT = argument; }
@@ -67,15 +70,15 @@ namespace IngameScript {
                     return;
                 }
             } catch (Exception e) {
-                Print("Exception Occurred During Parsing: ");
-                Print(e.Message);
+                Info("Exception Occurred During Parsing: ");
+                Info(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
 
-            Echo("Functions: " + FUNCTIONS.Count);
-            Echo("Running Function: " + RUNNING_FUNCTION);
-            Echo("Argument: " + ARGUMENT);
+            Info("Running Function: " + RUNNING_FUNCTION);
+            Debug("Functions: " + FUNCTIONS.Count);
+            Debug("Argument: " + ARGUMENT);
 
             List<MyIGCMessage> messages = BROADCAST_MESSAGE_PROVIDER(PROGRAM);
 
@@ -91,8 +94,8 @@ namespace IngameScript {
                 } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
                 UpdateState();
             } catch(Exception e) {
-                Print("Exception Occurred: ");
-                Print(e.Message);
+                Info("Exception Occurred: ");
+                Info(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
@@ -102,19 +105,19 @@ namespace IngameScript {
             switch (STATE) {
                 case ProgramState.RUNNING:
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
-                    Print("Running");
+                    Info("Running");
                     break;
                 case ProgramState.PAUSED:
                     Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Print("Paused");
+                    Info("Paused");
                     break;
                 case ProgramState.STOPPED:
                     Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Print("Stopped");
+                    Info("Stopped");
                     break;
                 case ProgramState.COMPLETE:
                     Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Print("Complete");
+                    Info("Complete");
                     break;
                 default:
                     throw new Exception("Unknown Program State");
@@ -122,20 +125,20 @@ namespace IngameScript {
         }
 
         static bool ParseCommands() {
-            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(CUSTOM_DATA_PROVIDER(PROGRAM))) {
-                CUSTOM_DATA = CUSTOM_DATA_PROVIDER(PROGRAM);
+            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
+                CUSTOM_DATA = PROGRAM.Me.CustomData;
                 COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 if (COMMAND_STRINGS.Count == 0) {
-                    Print("Welcome to EasyCommands!");
-                    Print("Add Commands to Custom Data");
+                    Info("Welcome to EasyCommands!");
+                    Info("Add Commands to Custom Data");
                     return false;
                 }
-                Print("Parsing Custom Data");
+                Info("Parsing Custom Data");
                 FUNCTIONS.Clear();
             }
 
             if (COMMAND_STRINGS.Count == 0) return true;
-            Print("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
+            Info("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
             ParseFunctions(COMMAND_STRINGS);
 
             if (COMMAND_STRINGS.Count > 0) return false;
@@ -148,11 +151,11 @@ namespace IngameScript {
             if (!commandStrings[0].StartsWith(":")) { commandStrings.Insert(0, ":main"); }
 
             for (int i = commandStrings.Count - 1; i >= 0; i--) {
-                Debug("Command String: " + commandStrings[i]);
+                Trace("Command String: " + commandStrings[i]);
                 if (commandStrings[i].StartsWith(":")) { functionIndices.Add(i); }
             }
-            Debug("Function Indices: ");
-            Debug(String.Join(" | ", functionIndices));
+            Trace("Function Indices: ");
+            Trace(String.Join(" | ", functionIndices));
 
             //Parse Function Definitions
             foreach (int i in functionIndices) {
@@ -170,7 +173,7 @@ namespace IngameScript {
                 String functionString = commandStrings[i].Remove(0, 1).Trim();
                 List<Token> nameAndParams = ParseTokens(functionString);
                 String functionName = nameAndParams[0].original;
-                Print("Parsing Function: " + functionName);
+                Info("Parsing Function: " + functionName);
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
                 if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
@@ -189,12 +192,12 @@ namespace IngameScript {
                 CommandLine next = commandStrings[index + 1];
                 if (current.Depth > next.Depth) break;//End, break
                 if (current.Depth < next.Depth) {//I'm a parent of next line
-                    Debug("Parsing Sub Command @ Index: " + (index + 1));
+                    Trace("Parsing Sub Command @ Index: " + (index + 1));
                     current.CommandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, true)));
                     continue;
                 }
                 if (next.CommandParameters[0] is ElseCommandParameter) {//Handle Otherwise
-                    Debug("Handling Otherwise @ index: " + index);
+                    Trace("Handling Otherwise @ index: " + index);
                     current.CommandParameters.Add(next.CommandParameters[0]);
                     next.CommandParameters.RemoveAt(0);
                     current.CommandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, false)));
@@ -202,13 +205,13 @@ namespace IngameScript {
                 }
 
                 if (!parseSiblings) break;//Only parsing myself
-                Debug("Parsing Sibling Command @ Index: " + index);
+                Trace("Parsing Sibling Command @ Index: " + index);
                 resolvedCommands.Add(ParseCommand(current.CommandParameters));
                 commandStrings.RemoveAt(index);
             }
 
             //Parse Last one, which has become current
-            Debug("Parsing Final Command @ Index: " + index);
+            Trace("Parsing Final Command @ Index: " + index);
             resolvedCommands.Add(ParseCommand(commandStrings[index].CommandParameters));
             commandStrings.RemoveAt(index);
 
@@ -220,9 +223,9 @@ namespace IngameScript {
         }
 
         private static Command ParseCommand(List<CommandParameter> parameters) {
-            Debug("Parsing Command");
-            Debug("Pre Processed Parameters:");
-            parameters.ForEach(param => Debug("Type: " + param.GetType()));
+            Trace("Parsing Command");
+            Trace("Pre Processed Parameters:");
+            parameters.ForEach(param => Trace("Type: " + param.GetType()));
 
             ParameterProcessorRegistry.Process(parameters);
 

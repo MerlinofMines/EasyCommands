@@ -34,6 +34,21 @@ namespace IngameScript {
             public abstract bool Execute();
         }
 
+        public class PrintCommand : Command {
+            public Variable variable;
+
+            public PrintCommand(Variable variable) {
+                this.variable = variable;
+            }
+
+            public override bool Execute() {
+                Print(CastString(variable.GetValue()).GetStringValue());
+                return true;
+            }
+
+            protected override Command Clone() { return new PrintCommand(variable); }
+        }
+
         public class FunctionCommand : Command {
             public FunctionType type;
             public FunctionDefinition functionDefinition;
@@ -160,7 +175,7 @@ namespace IngameScript {
             public override void Reset() { ticksLeft = 0; }
             public override bool Execute() {
                 if (ticksLeft == 0) ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetNumericValue(), units);
-                Print("Waiting for " + ticksLeft + " ticks");
+                Debug("Waiting for " + ticksLeft + " ticks");
                 ticksLeft--;
                 return ticksLeft == 0;
             }
@@ -221,8 +236,8 @@ namespace IngameScript {
                 parameters = new List<CommandParameter>(parameters);
                 PreParseCommands(parameters);
 
-                Debug("Command Handler Post Parsed Command Parameters: ");
-                parameters.ForEach(param => Debug("" + param.GetType()));
+                Trace("Command Handler Post Parsed Command Parameters: ");
+                parameters.ForEach(param => Trace("" + param.GetType()));
                 foreach (BlockCommandHandler handler in GetHandlers()) {
                     if (handler.canHandle(parameters)) {
                         commandHandler = handler;
@@ -232,7 +247,7 @@ namespace IngameScript {
                     }
                 }
 
-                parameters.ForEach(param => Print("" + param.GetType()));
+                parameters.ForEach(param => Debug("" + param.GetType()));
                 throw new Exception("Unsupported Command Parameter Combination");
             }
 
@@ -314,12 +329,12 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Print("Executing Conditional Command");
-                Print("Async: " + Async);
-                Print("Condition: " + Condition.ToString());
-                Debug("Action Command: " + conditionMetCommand.ToString());
-                Debug("Other Command: " + conditionNotMetCommand.ToString());
-                Debug("Always Evaluate: " + alwaysEvaluate);
+                Debug("Executing Conditional Command");
+                Debug("Async: " + Async);
+                Debug("Condition: " + Condition.ToString());
+                Trace("Action Command: " + conditionMetCommand.ToString());
+                Trace("Other Command: " + conditionNotMetCommand.ToString());
+                Trace("Always Evaluate: " + alwaysEvaluate);
                 bool conditionMet = EvaluateCondition();
                 bool commandResult = false;
 
@@ -357,10 +372,10 @@ namespace IngameScript {
 
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
-                    Debug("Evaluating Value");
+                    Trace("Evaluating Value");
                     evaluatedValue = CastBoolean(Condition.GetValue()).GetBooleanValue(); evaluated = true;
                 }
-                Print("Evaluated Value: " + evaluatedValue);
+                Debug("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
             }
         }
@@ -387,8 +402,8 @@ namespace IngameScript {
                     loopsLeft -= 1;
                 }
 
-                Print("Commands left: " + currentCommands.Count);
-                Print("Loops Left: " + loopsLeft);
+                Debug("Commands left: " + currentCommands.Count);
+                Debug("Loops Left: " + loopsLeft);
 
                 int commandIndex = 0;
 
@@ -398,7 +413,7 @@ namespace IngameScript {
                     bool handled = nextCommand.Execute();
                     if (handled && currentCommands != null) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
                     if (!nextCommand.Async) break;
-                    Print("Command is async, continuing to command at index: " + commandIndex);
+                    Debug("Command is async, continuing to command at index: " + commandIndex);
                 }
 
                 if (currentCommands != null && currentCommands.Count > 0) return false;

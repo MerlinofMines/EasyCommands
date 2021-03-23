@@ -47,6 +47,7 @@ namespace IngameScript {
                   new IfProcessor(),
                   new IterationProcessor(),
                   new ActionProcessor(),
+                  new PrintCommandProcessor(),
                   new WaitProcessor(),
                   new FunctionCallCommandProcessor(),
                   new VariableAssignmentProcesor(),
@@ -718,6 +719,33 @@ namespace IngameScript {
             }
         }
 
+        public class PrintCommandProcessor : SimpleParameterProcessor<PrintCommandParameter> {
+            Variable variable;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return variable != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                return new CommandReferenceParameter(new PrintCommand(variable));
+            }
+
+            public override void Initialize() {
+                variable = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && variable == null) {
+                    variable = ((VariableCommandParameter)p).Value;
+                    return true;
+                } else return false;
+            }
+        }
+
         public class AssignmentProcessor : ParameterProcessor<AssignmentCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
                 finalParameters = null;
@@ -754,11 +782,11 @@ namespace IngameScript {
                 StringCommandParameter param = (StringCommandParameter)p[i];
                 if (param.SubTokens.Count == 0 || !(param.SubTokens[0] is PropertyCommandParameter)) return false;
                 if (((PropertyCommandParameter)param.SubTokens[0]).Value != PropertyType.RUN) return false;
-                Debug("Found Run Keyword!");
+                Trace("Found Run Keyword!");
                 List<Token> values = ParseTokens(param.Value);
                 p.RemoveAt(i);
                 values.RemoveAt(0);
-                Debug("Arguments: (" + String.Join(" ", values) + ")");
+                Trace("Arguments: (" + String.Join(" ", values) + ")");
                 p.Insert(i, new PropertyCommandParameter(PropertyType.RUN));
                 p.Insert(i + 1, new VariableCommandParameter(new StaticVariable(new StringPrimitive(String.Join(" ", values)))));
                 finalParameters = p.GetRange(i, 2);

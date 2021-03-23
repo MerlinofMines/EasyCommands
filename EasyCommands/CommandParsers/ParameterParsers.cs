@@ -111,6 +111,7 @@ namespace IngameScript {
         static String[] autoWords = { "auto", "refill" };
         static String[] assignWords = { "assign", "allocate", "designate" };
         static String[] bindWords = { "bind", "tie", "link" };
+        static String[] printWords = { "print", "log", "echo", "write" };
 
         static bool Initialized = false;
 
@@ -358,6 +359,7 @@ namespace IngameScript {
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
             AddWords(assignWords, new AssignmentCommandParameter(false));
             AddWords(bindWords, new AssignmentCommandParameter(true));
+            AddWords(printWords, new PrintCommandParameter());
             Initialized = true;
         }
 
@@ -378,7 +380,7 @@ namespace IngameScript {
 
         static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
             InitializeParsers();
-            Debug("Command: " + String.Join(" | ", tokens));
+            Trace("Command: " + String.Join(" | ", tokens));
 
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens) {

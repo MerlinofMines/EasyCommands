@@ -237,27 +237,27 @@ namespace IngameScript {
                 return propertyHandlers[property].GetDirection((T)block, direction);
             }
             public void SetPropertyValue(Object block, PropertyType property, Primitive value) {
-                Print("Setting " + Name(block) + " " + property + " to " + value.GetValue());
+                Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue());
                 propertyHandlers[property].Set((T)block, value);
             }
             public void SetPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value) {
-                Print("Setting " + Name(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
+                Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property].SetDirection((T)block, direction, value);
             }
             public void IncrementPropertyValue(Object block, PropertyType property, Primitive value) {
-                Print("Incrementing " + Name(block) + " " + property + " by " + value.GetValue());
+                Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue());
                 propertyHandlers[property].Increment((T)block, value);
             }
             public void IncrementPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value) {
-                Print("Incrementing " + Name(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
+                Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property].IncrementDirection((T)block, direction, value);
             }
             public void MoveNumericPropertyValue(Object block, PropertyType property, DirectionType direction) {
-                Print("Moving " + Name(block) + " " + property + " in " + direction + " direction");
+                Debug("Moving " + Name(block) + " " + property + " in " + direction + " direction");
                 propertyHandlers[property].Move((T)block, direction);
             }
             public void ReverseNumericPropertyValue(Object block, PropertyType property) {
-                Print("Reversing " + Name(block) + " " + property);
+                Debug("Reversing " + Name(block) + " " + property);
                 propertyHandlers[property].Reverse((T)block);
             }
             private string Name(object block) {
