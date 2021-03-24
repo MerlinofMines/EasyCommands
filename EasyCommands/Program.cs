@@ -127,7 +127,9 @@ namespace IngameScript {
         static bool ParseCommands() {
             if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
                 CUSTOM_DATA = PROGRAM.Me.CustomData;
-                COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(line => !line.StartsWith("#"))
+                    .ToList();
                 if (COMMAND_STRINGS.Count == 0) {
                     Info("Welcome to EasyCommands!");
                     Info("Add Commands to Custom Data");

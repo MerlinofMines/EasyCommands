@@ -37,5 +37,31 @@ print 'Hello World'
             Assert.AreEqual(1, logger.Count);
             Assert.AreEqual("Hello World", logger[0]);
         }
+
+        [TestMethod]
+        public void commentsAreIgnored() {
+            List<String> logger = new List<String>();
+            var me = new Mock<IMyProgrammableBlock>();
+
+            MDKFactory.ProgramConfig config = default;
+            config.Echo = (message) => logger.Add(message);
+            config.ProgrammableBlock = me.Object;
+
+            var program = MDKFactory.CreateProgram<Program>(config);
+            String script = @"
+:main
+#This is a comment
+print 'Hello World'
+";
+            me.Setup(b => b.CustomData).Returns(script);
+            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
+            //TODO: Replace this with mock objects passed to config setup in Program.
+            Program.BROADCAST_MESSAGE_PROVIDER = (x) => new List<MyIGCMessage>();
+
+            MDKFactory.Run(program);
+
+            Assert.AreEqual(1, logger.Count);
+            Assert.AreEqual("Hello World", logger[0]);
+        }
     }
 }
