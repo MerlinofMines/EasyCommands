@@ -489,10 +489,26 @@ namespace IngameScript {
         static Token[] ParseDoubleQuotes(String commandString) {
             return commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
-                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(t => new Token(t, false, false))  // Split the item
+                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .SelectMany(ParseParenthesis)
+                    .Select(t => new Token(t, false, false))  // Split the item
                     : new Token[] { new Token(element, true, false) })  // Keep the entire item
                 .SelectMany(element => element)
                 .ToArray();
+        }
+
+        static String[] ParseParenthesis(String command) {
+            List<String> tokens = new List<String>();
+            if (command.StartsWith("(") || command.StartsWith(")")) {
+                tokens.Add(command.Substring(0, 1));
+                tokens.AddRange(ParseParenthesis(command.Substring(1)));
+            } else if (command.EndsWith("(") || command.EndsWith(")")) {
+                tokens.Add(command.Substring(0, command.Length - 1));
+                tokens.Add(command.Substring(command.Length - 1));
+            } else {
+                tokens.Add(command);
+            }
+            return tokens.Where(t => t.Length>0).ToArray();
         }
 
         public class Token {

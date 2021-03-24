@@ -4,7 +4,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests {
     [TestClass]
-    public class TokenParsingTests {
+    public class StringParsingTests {
         [TestMethod]
         public void BasicStrings() {
             var tokens = ParseTokens("turn on the rotors");
