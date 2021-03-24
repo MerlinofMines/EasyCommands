@@ -23,7 +23,13 @@ namespace EasyCommands.Tests
             mockRoverCockpit.Setup(b => b.GetShipVelocities()).Returns(new MyShipVelocities(new Vector3D(0, 0, 2), Vector3D.Zero));
             mockReverseSirens.Setup(b => b.CustomData).Returns("Playing=False");
 
-            var program = MDKFactory.CreateProgram<Program>();
+            var me = new Mock<IMyProgrammableBlock>();
+
+            MDKFactory.ProgramConfig config = default;
+            config.ProgrammableBlock = me.Object;
+
+            var program = MDKFactory.CreateProgram<Program>(config);
+
             String script = @"
 :reverseSirens
   if ""rover cockpit"" backwards velocity > 1
@@ -32,9 +38,10 @@ namespace EasyCommands.Tests
   else
     turn off the ""reverse sirens""
 ";
-            Program.CUSTOM_DATA_PROVIDER = (x) => {
-                return script;
-            };
+
+            me.Setup(b => b.CustomData).Returns(script);
+
+            //TODO: Replace these with mock objects passed to config setup in Program.
             Program.BROADCAST_MESSAGE_PROVIDER = (x) => new List<MyIGCMessage>();
             Program.BlockHandlerRegistry.BLOCK_PROVIDER = (blockType, name) =>
             {

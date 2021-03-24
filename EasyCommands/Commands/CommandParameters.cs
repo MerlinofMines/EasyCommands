@@ -72,6 +72,7 @@ namespace IngameScript {
         public class SendCommandParameter : CommandParameter { }
         public class ListenCommandParameter : CommandParameter { }
         public class ElseCommandParameter : CommandParameter { }
+        public class PrintCommandParameter : CommandParameter { }
 
         public class MultiplyCommandParameter : ValueCommandParameter<OperandType> {
             public MultiplyCommandParameter(OperandType value) : base(value) {}

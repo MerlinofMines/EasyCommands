@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddPropertyHandler(PropertyType.RANGE, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.Range, (b, v) => b.Range = v,50));
                 AddPropertyHandler(PropertyType.HEIGHT, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60));
                 AddStringHandler(PropertyType.SOUND, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
-                AddBooleanHandler(PropertyType.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); Print("P is: " + p); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
+                AddBooleanHandler(PropertyType.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); Debug("P is: " + p); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
                 defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.SOUND;
                 defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.VOLUME;
                 defaultPropertiesByDirection[DirectionType.UP] = PropertyType.VOLUME;

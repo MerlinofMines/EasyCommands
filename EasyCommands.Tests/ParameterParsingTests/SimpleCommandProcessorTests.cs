@@ -9,6 +9,24 @@ namespace EasyCommands.Tests {
     [TestClass]
     public class SimpleCommandProcessorTests {
         [TestMethod]
+        public void PrintCommand() {
+            var command = ParseCommand("print 'Hello World'");
+            Assert.IsTrue(command is PrintCommand);
+            PrintCommand printCommand = (PrintCommand)command;
+            Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()).GetStringValue());
+        }
+
+        [TestMethod]
+        public void PrintCommandVariable() {
+            var command = ParseCommand("print {a}");
+            Assert.IsTrue(command is PrintCommand);
+            PrintCommand printCommand = (PrintCommand)command;
+            Assert.IsTrue(printCommand.variable is InMemoryVariable);
+            InMemoryVariable variable = (InMemoryVariable)printCommand.variable;
+            Assert.AreEqual("a", variable.variableName);
+        }
+
+        [TestMethod]
         public void ListenCommand() {
             var command = ParseCommand("listen \"garageDoors\"");
             Assert.IsTrue(command is ListenCommand);
