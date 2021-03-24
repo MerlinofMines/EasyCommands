@@ -116,7 +116,7 @@ namespace IngameScript {
                     case OperandType.SUBTACT: return a.GetValue().Minus(b.GetValue());
                     case OperandType.MULTIPLY: return a.GetValue().Multiply(b.GetValue());
                     case OperandType.DIVIDE: return a.GetValue().Divide(b.GetValue());
-                    //TODO: MOD
+                    case OperandType.MOD: return a.GetValue().Mod(b.GetValue());
                     default: throw new Exception("Unknown Operand type: " + operand);
                 }
             }
