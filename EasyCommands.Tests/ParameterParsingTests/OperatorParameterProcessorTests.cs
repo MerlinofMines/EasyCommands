@@ -51,6 +51,18 @@ namespace EasyCommands.Tests {
         }
 
         [TestMethod]
+        public void AssignSimpleMod()
+        {
+            var command = ParseCommand("assign a to 5 % 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is OperandVariable);
+            OperandVariable variable = (OperandVariable)assignment.variable;
+            Assert.AreEqual(OperandType.MOD, variable.operand);
+            Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
         public void AssignSimpleAdditionVariable() {
             var command = ParseCommand("assign a to {b} + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);

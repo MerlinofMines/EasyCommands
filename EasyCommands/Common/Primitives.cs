@@ -26,6 +26,7 @@ namespace IngameScript {
             Primitive Minus(Primitive p);
             Primitive Multiply(Primitive p);
             Primitive Divide(Primitive p);
+            Primitive Mod(Primitive p);
             Primitive Not();
             int Compare(Primitive p);
         }
@@ -78,6 +79,10 @@ namespace IngameScript {
             public Primitive Multiply(Primitive p) {
                 throw new Exception("Cannot Multiply Booleans");
             }
+            public Primitive Mod(Primitive p)
+            {
+                throw new Exception("Cannot Mod Booleans");
+            }
 
             public Primitive Not() {
                 return new BooleanPrimitive(!value);
@@ -90,6 +95,7 @@ namespace IngameScript {
             public int Compare(Primitive p) {
                 return value.CompareTo(CastBoolean(p).GetBooleanValue());
             }
+
         }
 
         public class NumberPrimitive : Primitive {
@@ -123,6 +129,11 @@ namespace IngameScript {
                 return new NumberPrimitive(number * CastNumber(p).GetNumericValue());
             }
 
+            public Primitive Mod(Primitive p)
+            {
+                return new NumberPrimitive(number % CastNumber(p).GetNumericValue());
+            }
+
             public Primitive Not() {
                 return new NumberPrimitive(-number);
             }
@@ -134,6 +145,7 @@ namespace IngameScript {
             PrimitiveType Primitive.GetType() {
                 return PrimitiveType.NUMERIC;
             }
+
         }
 
         public class StringPrimitive : Primitive {
@@ -188,6 +200,11 @@ namespace IngameScript {
 
             PrimitiveType Primitive.GetType() {
                 return PrimitiveType.STRING;
+            }
+
+            public Primitive Mod(Primitive p)
+            {
+                throw new Exception("Cannot Mod a String");
             }
         }
 
