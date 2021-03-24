@@ -97,6 +97,12 @@ namespace IngameScript {
         static String[] colorKeywords = { "color" };
         static String[] textKeywords = { "text", "message" };
 
+        static String[] blinkIntervalKeywords = { "blinkinterval", "blinkInterval", "interval" };
+        static String[] blinkLengthKeywords = { "blinklength", "blinkLength" };
+        static String[] blinkOffsetKeywords = { "blinkoffset", "blinkOffset" };
+        static String[] intensityKeywords = { "intensity" };
+        static String[] falloffKeywrods = { "falloff" };
+
         static String[] powerKeywords = { "power" };
         static String[] soundKeywords = { "music", "song" };
         static String[] volumeKeywords = { "volume" };
@@ -349,6 +355,11 @@ namespace IngameScript {
             AddWords(soundKeywords, new PropertyCommandParameter(PropertyType.SOUND));
             AddWords(volumeKeywords, new PropertyCommandParameter(PropertyType.VOLUME));
             AddWords(rangeKeywords, new PropertyCommandParameter(PropertyType.RANGE));
+            AddWords(blinkIntervalKeywords, new PropertyCommandParameter(PropertyType.BLINK_INTERVAL));
+            AddWords(blinkLengthKeywords, new PropertyCommandParameter(PropertyType.BLINK_LENGTH));
+            AddWords(blinkOffsetKeywords, new PropertyCommandParameter(PropertyType.BLINK_OFFSET));
+            AddWords(intensityKeywords, new PropertyCommandParameter(PropertyType.INTENSITY));
+            AddWords(falloffKeywrods, new PropertyCommandParameter(PropertyType.FALLOFF));
             AddWords(iterationKeywords, new IteratorCommandParameter());
             AddWords(triggerWords, new PropertyCommandParameter(PropertyType.TRIGGER));
             AddWords(produceWords, new PropertyCommandParameter(PropertyType.PRODUCE));
