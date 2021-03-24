@@ -200,12 +200,12 @@ namespace IngameScript {
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
                 finalParameters = null;
-                for(int j = i+1; j<p.Count; j++) {
+                for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
-                        finalParameters = p.GetRange(i+1, j - 1);
+                        finalParameters = p.GetRange(i+1, j - (i+1));
                         ParameterProcessorRegistry.Process(finalParameters);
-                        p.RemoveRange(i, j - i);
+                        p.RemoveRange(i, j - i + 1);
                         p.InsertRange(i, finalParameters);
                         return true;
                     }
