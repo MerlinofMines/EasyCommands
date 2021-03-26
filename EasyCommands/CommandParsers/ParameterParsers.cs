@@ -385,6 +385,18 @@ namespace IngameScript {
             throw new Exception("Unknown Color: " + color);
         }
 
+        public static bool GetVector(String s, out Vector3D vector) {
+            vector = Vector3D.Zero;
+            List<double> components = new List<double>();
+            s.Split(':').ForEach(c => {
+                double result;
+                if(Double.TryParse(c, out result)) components.Add(result);
+            });
+            if (components.Count() != 3) return false;
+            vector = new Vector3D(components[0], components[1], components[2]);
+            return true;
+        }
+
         static void AddWords(String[] words, params CommandParameter[] commands) {
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }

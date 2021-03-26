@@ -220,8 +220,13 @@ namespace IngameScript {
             }
 
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
-                if (p[i] is StringCommandParameter) {//TODO: Handle Color & GPS
-                    p[i] = new VariableCommandParameter(new StaticVariable(new StringPrimitive(((StringCommandParameter)p[i]).Value)));
+                if (p[i] is StringCommandParameter) {
+                    String value = ((StringCommandParameter)p[i]).Value;
+                    Primitive primitive = new StringPrimitive(value);
+                    Vector3D vector;
+                    if (GetVector(value, out vector)) primitive = new VectorPrimitive(vector);
+                    //TODO Handle Color
+                    p[i] = new VariableCommandParameter(new StaticVariable(primitive));
                 } else if (p[i] is NumericCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).Value)));
                 } else if (p[i] is BooleanCommandParameter) {
@@ -234,7 +239,6 @@ namespace IngameScript {
                 return true;
             }
         }
-
 
         public class MultiplyProcessor : SimpleParameterProcessor<MultiplyCommandParameter> {
             Variable a, b;

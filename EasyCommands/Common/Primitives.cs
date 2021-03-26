@@ -45,12 +45,29 @@ namespace IngameScript {
                 case PrimitiveType.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
                 case PrimitiveType.NUMERIC: return new NumberPrimitive((float)p.GetValue());
                 case PrimitiveType.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
+                case PrimitiveType.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
                 default: throw new Exception("Cannot convert Primitive Type: " + p.GetType() + " To Boolean");
             }
         }
 
         public static StringPrimitive CastString(Primitive p) {
-            return new StringPrimitive(p.GetValue().ToString());
+            switch (p.GetType()) {
+                case PrimitiveType.VECTOR:
+                    Vector3D vector = CastVector(p).GetVectorValue();
+                    return new StringPrimitive(vector.X + ":" + vector.Y + ":" + vector.Z);
+                default: return new StringPrimitive(p.GetValue().ToString());
+            }
+        }
+
+        public static VectorPrimitive CastVector(Primitive p) {
+            switch (p.GetType()) {
+                case PrimitiveType.VECTOR: return new VectorPrimitive(((VectorPrimitive)p).GetVectorValue());
+                case PrimitiveType.STRING:
+                    Vector3D vector;
+                    if (GetVector((String)p.GetValue(), out vector)) return new VectorPrimitive(vector);
+                    goto default;
+                default: throw new Exception("Cannot convert Primitive Type: " + p.GetType() + " To Vector");
+            }
         }
 
         public class BooleanPrimitive : Primitive {
@@ -208,7 +225,91 @@ namespace IngameScript {
             }
         }
 
-        //Add Color
-        //Add Vector
+        public class VectorPrimitive : Primitive {
+            Vector3D vector;
+
+            public VectorPrimitive(Vector3D vector) {
+                this.vector = vector;
+            }
+
+            public int Compare(Primitive p) {
+                switch(p.GetType()) {
+                    case PrimitiveType.VECTOR:
+                        return vector.Length().CompareTo(((Vector3D)p.GetValue()).Length());
+                    case PrimitiveType.NUMERIC:
+                        return ((float)vector.Length()).CompareTo(((float)p.GetValue()));
+                    default: throw new Exception("Cannot compare vector to type: " + p.GetType());
+                }
+            }
+
+            public Primitive Divide(Primitive p) {
+                float length;
+                switch (p.GetType()) {
+                    case PrimitiveType.VECTOR:
+                        length = (float)((Vector3D)p.GetValue()).Length();
+                        break;
+                    case PrimitiveType.NUMERIC:
+                        length = (float)p.GetValue();
+                        break;
+                    default: throw new Exception("Cannot divide vector by type: " + p.GetType());
+                }
+                return new VectorPrimitive(Vector3D.Divide(vector, length));
+            }
+
+            public object GetValue() {
+                return vector;
+            }
+
+            public Vector3D GetVectorValue() {
+                return vector;
+            }
+
+            public Primitive Minus(Primitive p) {
+                return new VectorPrimitive(Vector3.Subtract(vector, CastVector(p).GetVectorValue()));
+            }
+
+            //For a vector, modding a vector with another vector is asking to perform vector rejection.
+            //https://en.wikipedia.org/wiki/Vector_projection
+            public Primitive Mod(Primitive p) {
+                Vector3D normalVector = CastVector(p).GetVectorValue();
+                return new VectorPrimitive(Vector3D.Reject(vector, normalVector));
+            }
+
+            public Primitive Project(Primitive p) {
+                Vector3D projectionVector = CastVector(p).GetVectorValue();
+                return new VectorPrimitive(Vector3D.ProjectOnVector(ref vector, ref projectionVector));
+            }
+
+            public Primitive DotProduct(Primitive p) {
+                Vector3D dotVector = CastVector(p).GetVectorValue();
+                return new NumberPrimitive((float)Vector3D.Dot(vector, dotVector));
+            }
+
+            //For a vector, multiplying by another vector is asking to perform the cross product on the two
+            public Primitive Multiply(Primitive p) {
+                switch (p.GetType()) {
+                    case PrimitiveType.VECTOR:
+                        return new VectorPrimitive(vector.Cross((Vector3D)p.GetValue()));
+                    case PrimitiveType.NUMERIC:
+                        float length = (float)p.GetValue();
+                        return new VectorPrimitive(Vector3D.Multiply(vector, length));
+                    default: throw new Exception("Cannot multiply vector by type: " + p.GetType());
+                }
+            }
+
+            public Primitive Not() {
+                return new VectorPrimitive(Vector3D.Multiply(vector, -1));
+            }
+
+            public Primitive Plus(Primitive p) {
+                return new VectorPrimitive(Vector3D.Add(vector, CastVector(p).GetVectorValue()));
+            }
+
+            PrimitiveType Primitive.GetType() {
+                return PrimitiveType.VECTOR;
+            }
+        }
+
+        //Add Color Primitive
     }
 }
