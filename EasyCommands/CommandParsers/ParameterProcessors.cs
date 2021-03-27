@@ -42,6 +42,7 @@ namespace IngameScript {
                   new IndexProcessor(),
                   new ConditionalSelectorProcessor(),
                   new IndexSelectorProcessor(),
+                  new PropertyAggregationProcessor(),
                   new AggregationProcessor(),
                   new IteratorProcessor(),
                   new IfProcessor(),
@@ -494,6 +495,43 @@ namespace IngameScript {
 
             public override bool ProcessRight(CommandParameter p) {
                 return false;
+            }
+        }
+
+        public class PropertyAggregationProcessor : SimpleParameterProcessor<PropertyAggregationCommandParameter> {
+            EntityProvider entityProvider;
+            PropertyType? property;
+            DirectionType? direction;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return entityProvider != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                PropertyAggregatorType aggregator = findFirst<PropertyAggregationCommandParameter>(p).Value;
+                return new VariableCommandParameter(new AggregatePropertyVariable(aggregator, entityProvider, property, direction));
+            }
+
+            public override void Initialize() {
+                entityProvider = null;
+                property = null;
+                direction = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return Process(p);
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                return Process(p);
+            }
+
+            bool Process(CommandParameter p) {
+                if (p is SelectorCommandParameter && entityProvider == null) entityProvider = ((SelectorCommandParameter)p).Value;
+                else if (p is PropertyCommandParameter && !property.HasValue) property = ((PropertyCommandParameter)p).Value;
+                else if (p is DirectionCommandParameter && !direction.HasValue) direction = ((DirectionCommandParameter)p).Value;
+                else return false;
+                return true;
             }
         }
 

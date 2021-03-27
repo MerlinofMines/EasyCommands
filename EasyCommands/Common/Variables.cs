@@ -111,7 +111,7 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                switch(operand) {
+                switch (operand) {
                     case OperandType.ADD: return a.GetValue().Plus(b.GetValue());
                     case OperandType.SUBTACT: return a.GetValue().Minus(b.GetValue());
                     case OperandType.MULTIPLY: return a.GetValue().Multiply(b.GetValue());
@@ -154,6 +154,48 @@ namespace IngameScript {
 
             public override String ToString() {
                 return getAggregationModeName(aggregationMode) + " of " + entityProvider + " are " + blockCondition;
+            }
+        }
+
+        public class AggregatePropertyVariable : Variable {
+            public PropertyAggregatorType aggregationType;
+            public EntityProvider entityProvider;
+            public PropertyType? property;
+            public DirectionType? direction;
+
+            public AggregatePropertyVariable(PropertyAggregatorType aggregationType, EntityProvider entityProvider, PropertyType? property, DirectionType? direction) {
+                this.aggregationType = aggregationType;
+                this.entityProvider = entityProvider;
+                this.property = property;
+                this.direction = direction;
+            }
+
+            public Primitive GetValue() {
+                List<Object> blocks = entityProvider.GetEntities();
+
+                if(aggregationType == PropertyAggregatorType.COUNT) {
+                    return new NumberPrimitive(blocks.Count);
+                }
+
+                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
+
+                PropertyType p = property.HasValue ? property.Value : handler.GetDefaultProperty(PrimitiveType.NUMERIC);
+
+                List<Primitive> propertyValues = blocks.Select(b => {
+                    return direction.HasValue ? handler.GetPropertyValue(b, p, direction.Value) : handler.GetPropertyValue(b, p);
+                }).ToList();
+
+                switch(aggregationType) {
+                    case PropertyAggregatorType.SUM:
+                        return SumAggregator(propertyValues);
+                    case PropertyAggregatorType.AVG:
+                        return AverageAggregator(propertyValues);
+                    case PropertyAggregatorType.MIN:
+                        return MinAggregator(propertyValues);
+                    case PropertyAggregatorType.MAX:
+                        return MaxAggregator(propertyValues);
+                    default: throw new Exception("Unknown Aggregation type: " + aggregationType);
+                }
             }
         }
 

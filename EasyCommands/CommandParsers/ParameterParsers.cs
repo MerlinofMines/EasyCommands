@@ -147,6 +147,19 @@ namespace IngameScript {
             { "%", OperandType.MOD }
         };
 
+        static Dictionary<String, PropertyAggregatorType> aggregationWords = new Dictionary<String, PropertyAggregatorType> {
+            { "average", PropertyAggregatorType.AVG },
+            { "avg", PropertyAggregatorType.AVG },
+            { "min", PropertyAggregatorType.MIN },
+            { "minimum", PropertyAggregatorType.MIN },
+            { "max", PropertyAggregatorType.MAX },
+            { "maximum", PropertyAggregatorType.MAX},
+            { "count", PropertyAggregatorType.COUNT},
+            { "number", PropertyAggregatorType.COUNT},
+            { "sum", PropertyAggregatorType.SUM},
+            { "total", PropertyAggregatorType.SUM},
+        };
+
         static Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
             { "pistons", BlockType.PISTON },
             { "lights", BlockType.LIGHT },
@@ -457,6 +470,12 @@ namespace IngameScript {
                     } else {
                         commandParameters.Add(new MultiplyCommandParameter(operandType));
                     }
+                    continue;
+                }
+
+                PropertyAggregatorType aggregatorType;
+                if (aggregationWords.TryGetValue(t, out aggregatorType)) {
+                    commandParameters.Add(new PropertyAggregationCommandParameter(aggregatorType));
                     continue;
                 }
 

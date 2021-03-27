@@ -211,6 +211,11 @@ namespace IngameScript {
             }
         }
 
+        public class PropertyAggregationCommandParameter : ValueCommandParameter<PropertyAggregatorType> {
+            public PropertyAggregationCommandParameter(PropertyAggregatorType value) : base(value) {
+            }
+        }
+
         public class ComparisonCommandParameter : ValueCommandParameter<ComparisonType> {
             public ComparisonCommandParameter(ComparisonType value) : base(value) {
             }

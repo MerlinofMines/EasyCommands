@@ -19,8 +19,6 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public delegate Primitive Aggregator(List<Primitive> primitives);
-
         public static Primitive SumAggregator(List<Primitive> primitives) {
             if (primitives.Count==0) {
                 throw new Exception("Cannot sum an empty list");
@@ -39,8 +37,32 @@ namespace IngameScript {
             return SumAggregator(primitives).Divide(new NumberPrimitive(primitives.Count));
         }
 
-        public static Primitive CountAggregator(List<Primitive> primitives) {
-            return new NumberPrimitive(primitives.Count);
+        public static Primitive MinAggregator(List<Primitive> primitives) {
+            if (primitives.Count == 0) {
+                throw new Exception("Cannot sum an empty list");
+            }
+
+            Primitive result = primitives[0];
+
+            for (int i = 1; i < primitives.Count; i++) {
+                if (primitives[i].Compare(result) < 0) result = primitives[i];
+            }
+
+            return result;
+        }
+
+        public static Primitive MaxAggregator(List<Primitive> primitives) {
+            if (primitives.Count == 0) {
+                throw new Exception("Cannot sum an empty list");
+            }
+
+            Primitive result = primitives[0];
+
+            for (int i = 1; i < primitives.Count; i++) {
+                if (primitives[i].Compare(result) > 0) result = primitives[i];
+            }
+
+            return result;
         }
     }
 }
