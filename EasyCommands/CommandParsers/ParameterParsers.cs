@@ -82,7 +82,8 @@ namespace IngameScript {
         static String[] pausedWords = { "paused", "halted" };
         static String[] completeWords = { "done", "complete", "finished", "built" };
         static String[] progressWords = { "progress", "completion" };
-
+        static String[] directionWords = { "direction" };
+        static String[] positionWords = { "coordinates", "position", "location" };
         static String[] openWords = { "open", "opened" };
         static String[] closeWords = { "close", "closed", "shut" };
 
@@ -381,6 +382,8 @@ namespace IngameScript {
             AddWords(inputWords, new PropertyCommandParameter(PropertyType.MOVE_INPUT));
             AddWords(rollInputWords, new PropertyCommandParameter(PropertyType.ROLL_INPUT));
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
+            AddWords(directionWords, new PropertyCommandParameter(PropertyType.DIRECTION));
+            AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
             AddWords(assignWords, new AssignmentCommandParameter(false));
             AddWords(bindWords, new AssignmentCommandParameter(true));
             AddWords(printWords, new PrintCommandParameter());
@@ -401,10 +404,13 @@ namespace IngameScript {
         public static bool GetVector(String s, out Vector3D vector) {
             vector = Vector3D.Zero;
             List<double> components = new List<double>();
-            s.Split(':').ForEach(c => {
+            string[] vectorStrings = s.Split(':');
+                
+            foreach(string component in vectorStrings) {
                 double result;
-                if(Double.TryParse(c, out result)) components.Add(result);
-            });
+                if (Double.TryParse(component, out result)) components.Add(result);
+            }
+
             if (components.Count() != 3) return false;
             vector = new Vector3D(components[0], components[1], components[2]);
             return true;

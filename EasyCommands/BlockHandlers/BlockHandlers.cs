@@ -1,20 +1,10 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
+﻿using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
 using System;
-using VRage.Collections;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame.Utilities;
+using System.Collections.Generic;
+using System.Linq;
 using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRage.Game;
-using VRage;
 using VRageMath;
 
 namespace IngameScript {
@@ -85,11 +75,13 @@ namespace IngameScript {
         public delegate bool GetBooleanProperty<T>(T block);
         public delegate string GetStringProperty<T>(T block);
         public delegate float GetNumericProperty<T>(T block);
+        public delegate Vector3D GetVectorProperty<T>(T block);
 
         //Setters
         public delegate void SetBooleanProperty<T>(T block, bool value);
         public delegate void SetStringProperty<T>(T block, String value);
         public delegate void SetNumericProperty<T>(T block, float value);
+        public delegate void SetVectorProperty<T>(T block, Vector3D value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
@@ -118,8 +110,7 @@ namespace IngameScript {
         public class SimpleNumericPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleNumericPropertyHandler(GetNumericProperty<T> GetValue, SetNumericProperty<T> SetValue, float delta)
                 : base((b) => new NumberPrimitive(GetValue(b)), (b,v)=> {
-                    if (v.GetType() != PrimitiveType.NUMERIC) throw new Exception("Cannot assign non-number to this property");
-                    SetValue(b, (float)v.GetValue());
+                    SetValue(b, CastNumber(v).GetNumericValue());
                 }, new NumberPrimitive(delta)) {
             }
         }
@@ -127,7 +118,7 @@ namespace IngameScript {
         public class SimpleStringPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleStringPropertyHandler(GetStringProperty<T> GetValue, SetStringProperty<T> SetValue)
                 : base((b) => new StringPrimitive(GetValue(b)), (b, v) => {
-                    SetValue(b,v.GetValue().ToString());
+                    SetValue(b,CastString(v).GetStringValue());
                 }, new StringPrimitive("")) {
             }
         }
@@ -135,14 +126,75 @@ namespace IngameScript {
         public class SimpleBooleanPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleBooleanPropertyHandler(GetBooleanProperty<T> GetValue, SetBooleanProperty<T> SetValue)
                 : base((b) => new BooleanPrimitive(GetValue(b)), (b, v) => {
-                    if (v.GetType() != PrimitiveType.BOOLEAN) throw new Exception("Cannot assign non-boolean to this property");
-                    SetValue(b, (bool)v.GetValue());
+                    SetValue(b, CastBoolean(v).GetBooleanValue());
                 }, new BooleanPrimitive(true)) {
+            }
+        }
+
+        public class SimpleVectorPropertyHandler<T> : SimplePropertyHandler<T> {
+            public SimpleVectorPropertyHandler(GetVectorProperty<T> GetValue, SetVectorProperty<T> SetValue)
+                : base((b) => new VectorPrimitive(GetValue(b)), (b, v) => {
+                    SetValue(b, CastVector(v).GetVectorValue());
+                }, new VectorPrimitive(Vector3D.Zero)) {
             }
         }
 
         public class PropertyValueNumericPropertyHandler<T> : SimpleNumericPropertyHandler<T> where T : class, IMyTerminalBlock {
             public PropertyValueNumericPropertyHandler(String propertyName, float delta) : base((b) => b.GetValueFloat(propertyName), (b, v) => b.SetValueFloat(propertyName, v), delta) {
+            }
+        }
+
+        public class DirectionVectorPropertyHandler<T> : PropertyHandler<T> where T : class, IMyTerminalBlock {
+            public DirectionVectorPropertyHandler() {
+                Get = (b) => GetDirection(b, DirectionType.FORWARD);
+                GetDirection = (b, d) => {
+                    Vector3D vector;
+                    MatrixD b2w = GetBlock2WorldTransform(b);
+                    switch (d) {
+                        case DirectionType.FORWARD:
+                            vector = b2w.Forward;
+                            break;
+                        case DirectionType.BACKWARD:
+                            vector = b2w.Backward;
+                            break;
+                        case DirectionType.UP:
+                            vector = b2w.Up;
+                            break;
+                        case DirectionType.DOWN:
+                            vector = b2w.Down;
+                            break;
+                        case DirectionType.LEFT:
+                            vector = b2w.Left;
+                            break;
+                        case DirectionType.RIGHT:
+                            vector = b2w.Right;
+                            break;
+                        default: throw new Exception("Cannot get direction value for direction: " + d);
+                    }
+                    return new VectorPrimitive(vector/vector.Length());//Return normalized vector
+                };
+                Set = (b,v) => { };
+                SetDirection = (b, d, v) => { };
+                Increment = (b, v) => { };
+                IncrementDirection = (b, d, v) => { };
+                Move = (b, d) => { };
+                Reverse = (b) => { };
+            }
+
+             //Taken from https://forum.keenswh.com/threads/how-do-i-get-the-world-position-and-rotation-of-a-ship.7363867/
+            MatrixD GetGrid2WorldTransform(IMyCubeGrid grid) {
+                Vector3D origin = grid.GridIntegerToWorld(new Vector3I(0, 0, 0));
+                Vector3D plusY = grid.GridIntegerToWorld(new Vector3I(0, 1, 0)) - origin;
+                Vector3D plusZ = grid.GridIntegerToWorld(new Vector3I(0, 0, 1)) - origin;
+                return MatrixD.CreateScale(grid.GridSize) * MatrixD.CreateWorld(origin, -plusZ, plusY);
+            }
+
+            MatrixD GetBlock2WorldTransform(IMyCubeBlock blk) {
+                Matrix blk2grid;
+                blk.Orientation.GetMatrix(out blk2grid);
+                return blk2grid *
+                       MatrixD.CreateTranslation(new Vector3D(blk.Min + blk.Max) / 2.0) *
+                       GetGrid2WorldTransform(blk.CubeGrid);
             }
         }
 
@@ -172,6 +224,13 @@ namespace IngameScript {
         }
 
         public abstract class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
+
+            public TerminalBlockHandler() {
+                AddPropertyHandler(PropertyType.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
+                AddPropertyHandler(PropertyType.DIRECTION, new DirectionVectorPropertyHandler<T>());
+                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.POSITION;
+            }
+
             public override List<T> GetBlocksOfType(String name) {
                 List<T> blocks = new List<T>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, block => block.CustomName.Equals(name));

@@ -34,5 +34,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(-26601.8512032533, vector.Y);
             Assert.AreEqual(12058.8229348438, vector.Z);
         }
+
+        [TestMethod]
+        public void AssignVariableToSelectorProperty() {
+            var command = ParseCommand("assign \"vector\" to avg \"Main Cockpit\" position");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+        }
     }
 }
