@@ -347,6 +347,10 @@ namespace IngameScript {
             protected void AddNumericHandler(PropertyType property, GetNumericProperty<T> Get, SetNumericProperty<T> Set, float delta) {
                 propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, Set, delta);
             }
+
+            protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
+                propertyHandlers[property] = new SimpleVectorPropertyHandler<T>(Get, Set);
+            }
         }
     }
 }

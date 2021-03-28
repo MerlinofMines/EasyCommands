@@ -19,6 +19,13 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public class TurretBlockHandler<T> : GunBlockHandler<T> where T : class, IMyLargeTurretBase {
+            public TurretBlockHandler() : base() {
+                AddVectorHandler(PropertyType.TARGET, b => b.GetTargetedEntity().Position, (b, v) => b.SetTarget(v));
+                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
+            }
+        }
+
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
                 AddNumericHandler(PropertyType.RANGE, GetRange, SetRange, 100);

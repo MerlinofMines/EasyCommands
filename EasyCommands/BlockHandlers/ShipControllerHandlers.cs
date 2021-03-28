@@ -26,6 +26,12 @@ namespace IngameScript {
                 AddBooleanHandler(PropertyType.CONNECTED, b => false, (b,v) => b.SetDockingMode(v)); //TODO: Get Docking Mode?
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
                 AddBooleanHandler(PropertyType.AUTO, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
+                AddVectorHandler(PropertyType.TARGET, (b) => b.CurrentWaypoint.Coords, (b, v) => {
+                    b.ClearWaypoints();
+                    b.AddWaypoint(new MyWaypointInfo("target", v));
+                });
+                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
+                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.AUTO;
             }
         }
 

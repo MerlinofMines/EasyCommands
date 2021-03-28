@@ -86,6 +86,7 @@ namespace IngameScript {
         static String[] positionWords = { "coordinates", "position", "location" };
         static String[] openWords = { "open", "opened" };
         static String[] closeWords = { "close", "closed", "shut" };
+        static String[] targetWords = { "target", "destination", "waypoint" };
 
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
@@ -384,6 +385,7 @@ namespace IngameScript {
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
             AddWords(directionWords, new PropertyCommandParameter(PropertyType.DIRECTION));
             AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
+            AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));
             AddWords(assignWords, new AssignmentCommandParameter(false));
             AddWords(bindWords, new AssignmentCommandParameter(true));
             AddWords(printWords, new PrintCommandParameter());
