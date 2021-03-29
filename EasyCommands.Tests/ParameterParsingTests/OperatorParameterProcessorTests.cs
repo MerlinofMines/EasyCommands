@@ -7,6 +7,60 @@ namespace EasyCommands.Tests {
     public class OperatorParameterProcessorTests {
 
         [TestMethod]
+        public void AssignAbsoluteValue() {
+            var command = ParseCommand("assign a to abs -3 + 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignAbsoluteValueVector() {
+            var command = ParseCommand("assign a to abs \"1:0:0\" + 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
+            Assert.IsTrue(variable.a is UniOperandVariable);
+            UniOperandVariable operation = (UniOperandVariable)variable.a;
+            Assert.AreEqual(UniOperandType.ABS, operation.operand);
+            Assert.AreEqual(PrimitiveType.VECTOR, operation.a.GetValue().GetPrimitiveType());
+            Assert.AreEqual(PrimitiveType.NUMERIC, variable.a.GetValue().GetPrimitiveType());
+            Assert.AreEqual(3f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignSquaeRootValue() {
+            var command = ParseCommand("assign a to sqrt 9 + 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignSquareRootValueVector() {
+            var command = ParseCommand("assign a to sqrt \"9:0:0\" + 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
+            Assert.IsTrue(variable.a is UniOperandVariable);
+            UniOperandVariable operation = (UniOperandVariable)variable.a;
+            Assert.AreEqual(UniOperandType.SQRT, operation.operand);
+            Assert.AreEqual(PrimitiveType.VECTOR, operation.a.GetValue().GetPrimitiveType());
+            Assert.AreEqual(PrimitiveType.NUMERIC, variable.a.GetValue().GetPrimitiveType());
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
         public void AssignSimpleAddition() {
             var command = ParseCommand("assign a to 3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);

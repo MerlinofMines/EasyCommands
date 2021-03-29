@@ -77,6 +77,10 @@ namespace IngameScript {
 
             //Numeric
             AddUniOperation<float>(UniOperandType.NOT, a => -a);
+            AddUniOperation<float>(UniOperandType.ABS, a => Math.Abs(a));
+            AddUniOperation<float>(UniOperandType.SQRT, a => Math.Sqrt(a));
+            AddUniOperation<Vector3D>(UniOperandType.ABS, a => a.Length());
+            AddUniOperation<Vector3D>(UniOperandType.SQRT, a => Math.Sqrt(a.Length()));
             AddBiOperation<float, float>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<float, float>(BiOperandType.SUBTACT, (a, b) => a - b);
             AddBiOperation<float, float>(BiOperandType.MULTIPLY, (a, b) => a * b);

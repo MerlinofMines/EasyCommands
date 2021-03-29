@@ -32,6 +32,7 @@ namespace IngameScript {
                   new VariableSelectorProcessor(),
                   new PrimitiveProcessor(),
                   new RedundantComparisonProcessor(),
+                  new UniOperationProcessor(),
                   new MultiplyProcessor(),
                   new AddProcessor(),
                   new AndProcessor(),
@@ -300,6 +301,33 @@ namespace IngameScript {
                     b = ((VariableCommandParameter)p).Value;
                     return true;
                 } else return false;
+            }
+        }
+
+        public class UniOperationProcessor : SimpleParameterProcessor<UniOperationCommandParameter> {
+            Variable variable;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return variable != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                UniOperandType operandType = findFirst<UniOperationCommandParameter>(p).Value;
+                return new VariableCommandParameter(new UniOperandVariable(operandType, variable));
+            }
+
+            public override void Initialize() {
+                variable = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is VariableCommandParameter && variable == null) variable = ((VariableCommandParameter)p).Value;
+                else return false;
+                return true;
             }
         }
 

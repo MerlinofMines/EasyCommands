@@ -136,7 +136,13 @@ namespace IngameScript {
             { "rpm", UnitType.RPM }
         };
 
-        static Dictionary<String, BiOperandType> operandWords = new Dictionary<String, BiOperandType> {
+        static Dictionary<String, UniOperandType> uniOperandWords = new Dictionary<String, UniOperandType> {
+            { "abs", UniOperandType.ABS },
+            { "absolute", UniOperandType.ABS },
+            { "sqrt", UniOperandType.SQRT },
+        };
+
+        static Dictionary<String, BiOperandType> biOperandWords = new Dictionary<String, BiOperandType> {
             { "plus", BiOperandType.ADD },
             { "+", BiOperandType.ADD },
             { "minus", BiOperandType.SUBTACT },
@@ -471,12 +477,19 @@ namespace IngameScript {
                     continue;
                 }
 
-                BiOperandType operandType;
-                if (operandWords.TryGetValue(t, out operandType)) {
-                    if (operandType == BiOperandType.ADD || operandType == BiOperandType.SUBTACT) {
-                        commandParameters.Add(new AddCommandParameter(operandType));
+                UniOperandType uniOperandType;
+                if (uniOperandWords.TryGetValue(t, out uniOperandType)) {
+                    commandParameters.Add(new UniOperationCommandParameter(uniOperandType));
+                    continue;
+                }
+
+
+                BiOperandType biOperandType;
+                if (biOperandWords.TryGetValue(t, out biOperandType)) {
+                    if (biOperandType == BiOperandType.ADD || biOperandType == BiOperandType.SUBTACT) {
+                        commandParameters.Add(new AddCommandParameter(biOperandType));
                     } else {
-                        commandParameters.Add(new MultiplyCommandParameter(operandType));
+                        commandParameters.Add(new MultiplyCommandParameter(biOperandType));
                     }
                     continue;
                 }
