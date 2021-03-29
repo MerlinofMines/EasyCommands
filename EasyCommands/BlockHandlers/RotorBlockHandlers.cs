@@ -54,7 +54,7 @@ namespace IngameScript {
 
         //TODO: Directions may become important.  Below needs a lot of work
         static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
-            if(primitive.GetType()!=PrimitiveType.NUMERIC) {
+            if(primitive.GetPrimitiveType()!=PrimitiveType.NUMERIC) {
                 throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 

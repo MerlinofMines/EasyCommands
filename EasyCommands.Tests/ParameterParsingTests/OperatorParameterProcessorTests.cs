@@ -11,9 +11,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.ADD, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
             Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
         }
 
@@ -22,9 +22,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 3 - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.SUBTACT, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.SUBTACT, variable.operand);
             Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
         }
 
@@ -33,9 +33,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 3 * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.MULTIPLY, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.MULTIPLY, variable.operand);
             Assert.AreEqual(6f, CastNumber(variable.GetValue()).GetValue());
         }
 
@@ -44,9 +44,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 6 / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.DIVIDE, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.DIVIDE, variable.operand);
             Assert.AreEqual(3f, CastNumber(variable.GetValue()).GetValue());
         }
 
@@ -56,9 +56,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 5 % 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.MOD, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.MOD, variable.operand);
             Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
         }
 
@@ -67,9 +67,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to {b} + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.ADD, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.ADD, variable.operand);
             Assert.IsTrue(variable.a is InMemoryVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
@@ -79,9 +79,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to {b} - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.SUBTACT, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.SUBTACT, variable.operand);
             Assert.IsTrue(variable.a is InMemoryVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
@@ -91,9 +91,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to {b} * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.MULTIPLY, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.MULTIPLY, variable.operand);
             Assert.IsTrue(variable.a is InMemoryVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
@@ -103,9 +103,9 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to {b} / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable variable = (OperandVariable)assignment.variable;
-            Assert.AreEqual(OperandType.DIVIDE, variable.operand);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.DIVIDE, variable.operand);
             Assert.IsTrue(variable.a is InMemoryVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
@@ -115,14 +115,14 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 4 * 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable addVariable = (OperandVariable)assignment.variable;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(11f, CastNumber(addVariable.GetValue()).GetNumericValue());
-            Assert.AreEqual(OperandType.ADD, addVariable.operand);
-            Assert.IsTrue(addVariable.a is OperandVariable);
+            Assert.AreEqual(BiOperandType.ADD, addVariable.operand);
+            Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
-            OperandVariable multiplyVariable = (OperandVariable)addVariable.a;
-            Assert.AreEqual(OperandType.MULTIPLY, multiplyVariable.operand);
+            BiOperandVariable multiplyVariable = (BiOperandVariable)addVariable.a;
+            Assert.AreEqual(BiOperandType.MULTIPLY, multiplyVariable.operand);
         }
 
         [TestMethod]
@@ -130,14 +130,14 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to 4 / 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is OperandVariable);
-            OperandVariable addVariable = (OperandVariable)assignment.variable;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(5f, CastNumber(addVariable.GetValue()).GetNumericValue());
-            Assert.AreEqual(OperandType.ADD, addVariable.operand);
-            Assert.IsTrue(addVariable.a is OperandVariable);
+            Assert.AreEqual(BiOperandType.ADD, addVariable.operand);
+            Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
-            OperandVariable multiplyVariable = (OperandVariable)addVariable.a;
-            Assert.AreEqual(OperandType.DIVIDE, multiplyVariable.operand);
+            BiOperandVariable multiplyVariable = (BiOperandVariable)addVariable.a;
+            Assert.AreEqual(BiOperandType.DIVIDE, multiplyVariable.operand);
         }
 
         [TestMethod]
@@ -147,7 +147,7 @@ namespace EasyCommands.Tests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is ComparisonVariable);
             ComparisonVariable variable = (ComparisonVariable)assignment.variable;
-            Assert.IsTrue(variable.a is OperandVariable);
+            Assert.IsTrue(variable.a is BiOperandVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
 
@@ -156,9 +156,10 @@ namespace EasyCommands.Tests {
             var command = ParseCommand("assign a to {b} + 1 and {c}");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is AndVariable);
-            AndVariable variable = (AndVariable)assignment.variable;
-            Assert.IsTrue(variable.a is OperandVariable);
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.AND, variable.operand);
+            Assert.IsTrue(variable.a is BiOperandVariable);
             Assert.IsTrue(variable.b is InMemoryVariable);
         }
 
@@ -171,7 +172,7 @@ namespace EasyCommands.Tests {
             AggregateConditionVariable condition = (AggregateConditionVariable)assignment.Condition;
             Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
             BlockPropertyCondition blockCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.IsTrue(blockCondition.comparisonValue is OperandVariable);
+            Assert.IsTrue(blockCondition.comparisonValue is BiOperandVariable);
         }
     }
 }

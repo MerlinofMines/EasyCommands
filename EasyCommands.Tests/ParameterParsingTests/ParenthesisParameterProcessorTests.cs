@@ -25,7 +25,7 @@ namespace EasyCommands.Tests {
             Variable condition = conditionalCommand.Condition;
             Assert.IsTrue(condition is ComparisonVariable);
             ComparisonVariable comparison = (ComparisonVariable)condition;
-            Assert.IsTrue(comparison.a is OperandVariable);
+            Assert.IsTrue(comparison.a is BiOperandVariable);
         }
     }
 }

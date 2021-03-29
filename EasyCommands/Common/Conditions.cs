@@ -98,7 +98,7 @@ namespace IngameScript {
             public bool evaluate(Object block, BlockType blockType) {
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
                 Primitive value = comparisonValue.GetValue();
-                PropertyType prop = property.HasValue ? property.Value : handler.GetDefaultProperty(value.GetType());
+                PropertyType prop = property.HasValue ? property.Value : handler.GetDefaultProperty(value.GetPrimitiveType());
                 if (direction.HasValue) return comparator.compare(handler.GetPropertyValue(block, prop, direction.Value), value);
                 else return comparator.compare(handler.GetPropertyValue(block, prop), value);
             }

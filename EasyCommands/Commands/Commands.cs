@@ -269,7 +269,7 @@ namespace IngameScript {
                     //Primitive Handlers
                     new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
                         Primitive result = v.Value.GetValue();
-                        PropertyType propertyType = b.GetDefaultProperty(result.GetType());
+                        PropertyType propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
                         b.SetPropertyValue(e, propertyType, v.Value.GetValue());
                     }),
                     new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{

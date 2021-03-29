@@ -74,12 +74,12 @@ namespace IngameScript {
         public class ElseCommandParameter : CommandParameter { }
         public class PrintCommandParameter : CommandParameter { }
 
-        public class MultiplyCommandParameter : ValueCommandParameter<OperandType> {
-            public MultiplyCommandParameter(OperandType value) : base(value) {}
+        public class MultiplyCommandParameter : ValueCommandParameter<BiOperandType> {
+            public MultiplyCommandParameter(BiOperandType value) : base(value) {}
         }
 
-        public class AddCommandParameter : ValueCommandParameter<OperandType> {
-            public AddCommandParameter(OperandType value) : base(value) {}
+        public class AddCommandParameter : ValueCommandParameter<BiOperandType> {
+            public AddCommandParameter(BiOperandType value) : base(value) {}
         }
 
         public class AssignmentCommandParameter : CommandParameter {

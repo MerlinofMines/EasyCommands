@@ -62,63 +62,32 @@ namespace IngameScript {
             }
         }
 
-        public class NotVariable : Variable {
-            public Variable v;
+        public class UniOperandVariable : Variable {
+            public Variable a;
+            public UniOperandType operand;
 
-            public NotVariable(Variable v) {
-                this.v = v;
-            }
-
-            public Primitive GetValue() {
-                return v.GetValue().Not();
-            }
-        }
-
-        public class AndVariable : Variable {
-            public Variable a, b;
-
-            public AndVariable(Variable a, Variable b) {
-                this.a = a;
-                this.b = b;
-            }
-
-            public Primitive GetValue() {
-                return new BooleanPrimitive(CastBoolean(a.GetValue()).GetBooleanValue() && CastBoolean(b.GetValue()).GetBooleanValue());
-            }
-        }
-
-        public class OrVariable : Variable {
-            public Variable a, b;
-
-            public OrVariable(Variable a, Variable b) {
-                this.a = a;
-                this.b = b;
-            }
-
-            public Primitive GetValue() {
-                return new BooleanPrimitive(CastBoolean(a.GetValue()).GetBooleanValue() || CastBoolean(b.GetValue()).GetBooleanValue());
-            }
-        }
-
-        public class OperandVariable : Variable {
-            public Variable a, b;
-            public OperandType operand;
-
-            public OperandVariable(Variable a, Variable b, OperandType operand) {
-                this.a = a;
-                this.b = b;
+            public UniOperandVariable(UniOperandType operand, Variable a) {
                 this.operand = operand;
+                this.a = a;
             }
 
             public Primitive GetValue() {
-                switch (operand) {
-                    case OperandType.ADD: return a.GetValue().Plus(b.GetValue());
-                    case OperandType.SUBTACT: return a.GetValue().Minus(b.GetValue());
-                    case OperandType.MULTIPLY: return a.GetValue().Multiply(b.GetValue());
-                    case OperandType.DIVIDE: return a.GetValue().Divide(b.GetValue());
-                    case OperandType.MOD: return a.GetValue().Mod(b.GetValue());
-                    default: throw new Exception("Unknown Operand type: " + operand);
-                }
+                return PerformOperation(operand, a.GetValue());
+            }
+        }
+
+        public class BiOperandVariable : Variable {
+            public Variable a, b;
+            public BiOperandType operand;
+
+            public BiOperandVariable(BiOperandType operand, Variable a, Variable b) {
+                this.operand = operand;
+                this.a = a;
+                this.b = b;
+            }
+
+            public Primitive GetValue() {
+                return PerformOperation(operand, a.GetValue(), b.GetValue());
             }
         }
 

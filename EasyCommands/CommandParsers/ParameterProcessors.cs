@@ -248,8 +248,8 @@ namespace IngameScript {
             }
 
             public override CommandParameter Convert(List<CommandParameter> p) {
-                OperandType operand = findFirst<MultiplyCommandParameter>(p).Value;
-                return new VariableCommandParameter(new OperandVariable(a, b, operand));
+                BiOperandType operand = findFirst<MultiplyCommandParameter>(p).Value;
+                return new VariableCommandParameter(new BiOperandVariable(operand, a, b));
             }
 
             public override void Initialize() {
@@ -279,8 +279,8 @@ namespace IngameScript {
             }
 
             public override CommandParameter Convert(List<CommandParameter> p) {
-                OperandType operand = findFirst<AddCommandParameter>(p).Value;
-                return new VariableCommandParameter(new OperandVariable(a, b, operand));
+                BiOperandType operand = findFirst<AddCommandParameter>(p).Value;
+                return new VariableCommandParameter(new BiOperandVariable(operand, a, b));
             }
 
             public override void Initialize() {
@@ -321,7 +321,7 @@ namespace IngameScript {
                 } else {
                     Variable a = ((VariableCommandParameter)left).Value;
                     Variable b = ((VariableCommandParameter)right).Value;
-                    return new VariableCommandParameter(new AndVariable(a, b));
+                    return new VariableCommandParameter(new BiOperandVariable(BiOperandType.AND, a, b));
                 }
             }
 
@@ -361,7 +361,7 @@ namespace IngameScript {
                 } else {
                     Variable a = ((VariableCommandParameter)left).Value;
                     Variable b = ((VariableCommandParameter)right).Value;
-                    return new VariableCommandParameter(new OrVariable(a, b));
+                    return new VariableCommandParameter(new BiOperandVariable(BiOperandType.OR, a, b));
                 }
             }
 
@@ -391,7 +391,7 @@ namespace IngameScript {
             }
 
             public override CommandParameter Convert(List<CommandParameter> p) {
-                return new VariableCommandParameter(new NotVariable(variable));
+                return new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, variable));
             }
 
             public override void Initialize() {
@@ -1129,7 +1129,7 @@ namespace IngameScript {
 
             public override CommandParameter Convert(List<CommandParameter> p) {
                 IfCommandParameter parameter = extractFirst<IfCommandParameter>(p);
-                if (parameter.inverseCondition) condition = new NotVariable(condition);
+                if (parameter.inverseCondition) condition = new UniOperandVariable(UniOperandType.NOT, condition);
 
                 return new ConditionCommandParameter(condition, parameter.alwaysEvaluate, parameter.swapCommands);
             }

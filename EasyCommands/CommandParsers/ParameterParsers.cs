@@ -136,17 +136,17 @@ namespace IngameScript {
             { "rpm", UnitType.RPM }
         };
 
-        static Dictionary<String, OperandType> operandWords = new Dictionary<String, OperandType> {
-            { "plus", OperandType.ADD },
-            { "+", OperandType.ADD },
-            { "minus", OperandType.SUBTACT },
-            { "-", OperandType.SUBTACT },
-            { "multiply", OperandType.MULTIPLY },
-            { "*", OperandType.MULTIPLY },
-            { "divide", OperandType.DIVIDE },
-            { "/", OperandType.DIVIDE },
-            { "mod", OperandType.MOD },
-            { "%", OperandType.MOD }
+        static Dictionary<String, BiOperandType> operandWords = new Dictionary<String, BiOperandType> {
+            { "plus", BiOperandType.ADD },
+            { "+", BiOperandType.ADD },
+            { "minus", BiOperandType.SUBTACT },
+            { "-", BiOperandType.SUBTACT },
+            { "multiply", BiOperandType.MULTIPLY },
+            { "*", BiOperandType.MULTIPLY },
+            { "divide", BiOperandType.DIVIDE },
+            { "/", BiOperandType.DIVIDE },
+            { "mod", BiOperandType.MOD },
+            { "%", BiOperandType.MOD }
         };
 
         static Dictionary<String, PropertyAggregatorType> aggregationWords = new Dictionary<String, PropertyAggregatorType> {
@@ -471,9 +471,9 @@ namespace IngameScript {
                     continue;
                 }
 
-                OperandType operandType;
+                BiOperandType operandType;
                 if (operandWords.TryGetValue(t, out operandType)) {
-                    if (operandType == OperandType.ADD || operandType == OperandType.SUBTACT) {
+                    if (operandType == BiOperandType.ADD || operandType == BiOperandType.SUBTACT) {
                         commandParameters.Add(new AddCommandParameter(operandType));
                     } else {
                         commandParameters.Add(new MultiplyCommandParameter(operandType));

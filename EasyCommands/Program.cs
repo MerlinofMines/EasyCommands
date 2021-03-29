@@ -53,6 +53,7 @@ namespace IngameScript {
             PROGRAM = this;
             InitializeParsers();
             ParameterProcessorRegistry.InitializeProcessors();
+            InitializeOperators();
             Runtime.UpdateFrequency = UPDATE_FREQUENCY;
         }
 
