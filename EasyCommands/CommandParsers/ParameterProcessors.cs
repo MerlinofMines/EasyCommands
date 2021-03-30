@@ -170,13 +170,30 @@ namespace IngameScript {
                         return new VariableCommandParameter(new AggregatePropertyVariable(p.Value, selector.GetValue().Value, property, direction));
                     }),
 
-                //AggregationProcessor
+                //AggregateConditionProcessors
                 TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(
                     optionalLeft<AggregationModeCommandParameter>(),requiredLeft<SelectorCommandParameter>(),
                     (p,aggregation,selector) => {
                         AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().Value : AggregationMode.ALL;
                         return new VariableCommandParameter(new AggregateConditionVariable(mode, p.Value, selector.GetValue().Value));
                     }),
+                TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,BlockTypeCommandParameter>(
+                    optionalLeft<AggregationModeCommandParameter>(),requiredLeft<BlockTypeCommandParameter>(),
+                    (p,aggregation,blockType) => {
+                        AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().Value : AggregationMode.ALL;
+                        return new VariableCommandParameter(new AggregateConditionVariable(mode, p.Value, new AllEntityProvider(blockType.GetValue().Value)));
+                    }),
+
+                //ImplicitAllSelectorProcessor
+                OneValueRule<BlockTypeCommandParameter,GroupCommandParameter>(
+                    optionalRight<GroupCommandParameter>(),
+                    (blockType, group) => new SelectorCommandParameter(new AllEntityProvider(blockType.Value))),
+
+                //AggregateSelectorProcessor
+                OneValueRule<AggregationModeCommandParameter,SelectorCommandParameter>(
+                    requiredRight<SelectorCommandParameter>(),
+                    (aggregation, selector) => aggregation.Value != AggregationMode.NONE && selector.HasValue(),
+                    (aggregation, selector) => selector.GetValue()),
 
                 //IteratorProcessor
                 OneValueRule<IteratorCommandParameter,VariableCommandParameter>(

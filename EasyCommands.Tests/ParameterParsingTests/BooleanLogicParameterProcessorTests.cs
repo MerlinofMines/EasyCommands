@@ -58,5 +58,48 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = ParseCommand("if not all of the \"batteries\" ratio > 0.75 turn on the \"generators\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
+
+        [TestMethod]
+        public void ImplicitSelectorUsedInAggregateCondition() {
+            var command = ParseCommand("if any battery ratio < 0.75 turn on the generators");
+            Assert.IsTrue(command is ConditionalCommand);
+            ConditionalCommand conditionalCommand = (ConditionalCommand)command;
+            Assert.IsTrue(conditionalCommand.Condition is AggregateConditionVariable);
+            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.Condition;
+            Assert.IsTrue(condition.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.BATTERY, condition.entityProvider.GetBlockType());
+            Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
+            Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
+            BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
+            Assert.AreEqual(PropertyType.RATIO, propertyCondition.property);
+
+            Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
+            BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
+            Assert.IsTrue(metCommand.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.GENERATOR, metCommand.entityProvider.GetBlockType());
+        }
+
+        [TestMethod]
+        public void ImplicitSelectorUsedInAggregateConditionWithNot() {
+            var command = ParseCommand("if not all of the batteries ratio < 0.75 turn on the generators");
+            Assert.IsTrue(command is ConditionalCommand);
+            ConditionalCommand conditionalCommand = (ConditionalCommand)command;
+            Assert.IsTrue(conditionalCommand.Condition is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)conditionalCommand.Condition;
+            Assert.AreEqual(UniOperandType.NOT, variable.operand);
+            Assert.IsTrue(variable.a is AggregateConditionVariable);
+            AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;
+            Assert.IsTrue(condition.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.BATTERY, condition.entityProvider.GetBlockType());
+            Assert.AreEqual(AggregationMode.ALL, condition.aggregationMode);
+            Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
+            BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
+            Assert.AreEqual(PropertyType.RATIO, propertyCondition.property);
+
+            Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
+            BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
+            Assert.IsTrue(metCommand.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.GENERATOR, metCommand.entityProvider.GetBlockType());
+        }
     }
 }

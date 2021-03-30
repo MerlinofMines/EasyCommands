@@ -80,7 +80,7 @@ namespace IngameScript {
 
             public List<Object> GetEntities() {
                 String selectorString = CastString(selector.GetValue()).GetStringValue();
-                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selectorString) : BlockHandlerRegistry.GetBlocks(blockType, selectorString);
+                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selectorString) : BlockHandlerRegistry.GetBlocks(blockType, block => block.CustomName.Equals(selectorString));
                 return entities;
             }
 
@@ -106,6 +106,22 @@ namespace IngameScript {
 
             public List<object> GetEntities() {
                 return BlockHandlerRegistry.GetBlocksInGroup(blockType, PROGRAM.Me.CustomName);
+            }
+        }
+
+        public class AllEntityProvider : EntityProvider {
+            public BlockType blockType;
+
+            public AllEntityProvider(BlockType blockType) {
+                this.blockType = blockType;
+            }
+
+            public BlockType GetBlockType() {
+                return blockType;
+            }
+
+            public List<object> GetEntities() {
+                return BlockHandlerRegistry.GetBlocks(blockType, block => true);
             }
         }
     }
