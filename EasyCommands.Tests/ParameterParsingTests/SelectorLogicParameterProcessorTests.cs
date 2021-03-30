@@ -74,5 +74,27 @@ namespace EasyCommands.Tests {
             Assert.AreEqual("a", variable.variableName);
             Assert.AreEqual(BlockType.SOUND, sep.blockType);
         }
+
+        [TestMethod]
+        public void MySelector() {
+            var command = ParseCommand("assign a to my average location");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable variable = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.IsTrue(variable.entityProvider is SelfEntityProvider);
+            Assert.AreEqual(BlockType.PROGRAM, variable.entityProvider.GetBlockType());
+        }
+
+        [TestMethod]
+        public void MySelectorWithBlockType() {
+            var command = ParseCommand("set my display @0 text to \"hello world\"");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(iep.provider is SelfEntityProvider);
+            Assert.AreEqual(BlockType.DISPLAY, iep.provider.GetBlockType());
+        }
     }
 }

@@ -120,6 +120,7 @@ namespace IngameScript {
         static String[] assignWords = { "assign", "allocate", "designate" };
         static String[] bindWords = { "bind", "tie", "link" };
         static String[] printWords = { "print", "log", "echo", "write" };
+        static String[] selfWords = { "my", "self", "this" };
 
         static bool Initialized = false;
 
@@ -426,6 +427,11 @@ namespace IngameScript {
 
                 if (propertyWords.ContainsKey(t)) {
                     commandParameters.AddList(propertyWords[t]);
+                    continue;
+                }
+
+                if (selfWords.Contains(t)) {
+                    commandParameters.Add(new SelfCommandParameter());
                     continue;
                 }
 

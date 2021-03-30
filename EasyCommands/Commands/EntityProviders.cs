@@ -92,5 +92,21 @@ namespace IngameScript {
                 return blockType + (isGroup ? " in group named " : " named " + selector);
             }
         }
+
+        public class SelfEntityProvider : EntityProvider {
+            public BlockType blockType;
+
+            public SelfEntityProvider(BlockType blockType) {
+                this.blockType = blockType;
+            }
+
+            public BlockType GetBlockType() {
+                return blockType;
+            }
+
+            public List<object> GetEntities() {
+                return BlockHandlerRegistry.GROUP_BLOCK_PROVIDER(blockType, PROGRAM.Me.CustomName);
+            }
+        }
     }
 }

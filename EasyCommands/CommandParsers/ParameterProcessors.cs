@@ -28,6 +28,7 @@ namespace IngameScript {
                   new FunctionProcessor(),
                   new AssignmentProcessor(),
                   new RunArgumentProcessor(),
+                  new SelfSelectorProcessor(),
                   new SelectorProcessor(),
                   new VariableSelectorProcessor(),
                   new PrimitiveProcessor(),
@@ -719,6 +720,32 @@ namespace IngameScript {
                     b = ((VariableCommandParameter)p).Value;
                     return true;
                 } else return false;
+            }
+        }
+
+        public class SelfSelectorProcessor : SimpleParameterProcessor<SelfCommandParameter> {
+            BlockType? blockType = null;
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return true;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                return new SelectorCommandParameter(new SelfEntityProvider(blockType.GetValueOrDefault(BlockType.PROGRAM)));
+            }
+
+            public override void Initialize() {
+                blockType = null;
+            }
+
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
+            }
+
+            public override bool ProcessRight(CommandParameter p) {
+                if (p is BlockTypeCommandParameter && !blockType.HasValue) blockType = ((BlockTypeCommandParameter)p).Value;
+                else return false;
+                return true;
             }
         }
 

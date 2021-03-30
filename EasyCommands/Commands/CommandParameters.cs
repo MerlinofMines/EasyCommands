@@ -73,6 +73,7 @@ namespace IngameScript {
         public class ListenCommandParameter : CommandParameter { }
         public class ElseCommandParameter : CommandParameter { }
         public class PrintCommandParameter : CommandParameter { }
+        public class SelfCommandParameter : CommandParameter { }
 
         public class UniOperationCommandParameter : ValueCommandParameter<UniOperandType> {
             public UniOperationCommandParameter(UniOperandType value) : base(value) {
