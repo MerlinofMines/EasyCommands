@@ -108,5 +108,21 @@ namespace IngameScript {
                 return BlockHandlerRegistry.GetBlocksInGroup(blockType, PROGRAM.Me.CustomName);
             }
         }
+
+        public class AllEntityProvider : EntityProvider {
+            public BlockType blockType;
+
+            public AllEntityProvider(BlockType blockType) {
+                this.blockType = blockType;
+            }
+
+            public BlockType GetBlockType() {
+                return blockType;
+            }
+
+            public List<object> GetEntities() {
+                return BlockHandlerRegistry.GetAllBlocks(blockType);
+            }
+        }
     }
 }

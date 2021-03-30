@@ -94,5 +94,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregatorType.AVG, aggregate.aggregationType);
         }
+
+        [TestMethod]
+        public void AssignAvgOfBlocksUsingImplicitSelector() {
+            var command = ParseCommand("assign \"a\" to the average gun range");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregatorType.AVG, aggregate.aggregationType);
+            Assert.IsTrue(aggregate.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.GUN, aggregate.entityProvider.GetBlockType());
+        }
     }
 }

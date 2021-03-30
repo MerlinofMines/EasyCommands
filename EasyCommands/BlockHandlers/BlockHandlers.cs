@@ -50,9 +50,15 @@ namespace IngameScript {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
                 return blockHandlers[blockType];
             }
+
+            public static List<Object> GetAllBlocks(BlockType blockType) {
+                return blockHandlers[blockType].GetAllBlocks();
+            }
+
             public static List<Object> GetBlocks(BlockType blockType, String customName) {
                 return blockHandlers[blockType].GetBlocks(customName);
             }
+
             public static List<Object> GetBlocksInGroup(BlockType blockType, String groupName) {
                 return blockHandlers[blockType].GetBlocksInGroup(groupName);
             }
@@ -209,6 +215,7 @@ namespace IngameScript {
             PropertyType GetDefaultProperty(PrimitiveType type);
             PropertyType GetDefaultProperty(DirectionType direction);
             DirectionType GetDefaultDirection();
+            List<Object> GetAllBlocks();
             List<Object> GetBlocks(String name);
             List<Object> GetBlocksInGroup(String groupName);
 
@@ -236,6 +243,12 @@ namespace IngameScript {
                 AddPropertyHandler(PropertyType.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
                 AddPropertyHandler(PropertyType.DIRECTION, new DirectionVectorPropertyHandler<T>());
                 defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.POSITION;
+            }
+
+            public override List<T> GetAllBlocksOfType() {
+                List<T> blocks = new List<T>();
+                PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks);
+                return blocks;
             }
 
             public override List<T> GetBlocksOfType(String name) {
@@ -278,9 +291,11 @@ namespace IngameScript {
             protected Dictionary<DirectionType, PropertyType> defaultPropertiesByDirection = new Dictionary<DirectionType, PropertyType>();
             protected DirectionType? defaultDirection = null;
 
+            public List<Object> GetAllBlocks() { return GetAllBlocksOfType().Select(T => T as object).ToList(); }
             public List<Object> GetBlocks(String name) { return GetBlocksOfType(name).Select(t => t as object).ToList(); }
             public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
 
+            public abstract List<T> GetAllBlocksOfType();
             public abstract List<T> GetBlocksOfType(String name);
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
 

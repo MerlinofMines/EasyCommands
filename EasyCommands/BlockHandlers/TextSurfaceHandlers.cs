@@ -30,6 +30,15 @@ namespace IngameScript {
                 defaultDirection = DirectionType.UP;
             }
 
+            public override List<IMyTextSurface> GetAllBlocksOfType() {
+                List<IMyFunctionalBlock> blocks = new List<IMyFunctionalBlock>();
+                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks);
+
+                List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
+                blocks.ForEach((b) => Add(b, surfaces));
+                return surfaces;
+            }
+
             public override List<IMyTextSurface> GetBlocksOfType(String name) {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.Equals(name));
