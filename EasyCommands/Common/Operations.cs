@@ -29,7 +29,7 @@ namespace IngameScript {
             = new Dictionary<UniOperandType, Dictionary<PrimitiveType, UniOperation>>();
 
         public static Primitive PerformOperation(BiOperandType type, Primitive a, Primitive b) {
-            if (!OperatorsInitialized) InitializeOperators();
+            InitializeOperators();
             if (!BiOperations.ContainsKey(type)
                 || !BiOperations[type].ContainsKey(a.GetPrimitiveType())
                 || !BiOperations[type][a.GetPrimitiveType()].ContainsKey(b.GetPrimitiveType())) {
@@ -39,7 +39,7 @@ namespace IngameScript {
         }
 
         public static Primitive PerformOperation(UniOperandType type, Primitive a) {
-            if (!OperatorsInitialized) InitializeOperators();
+            InitializeOperators();
             if (!UniOperations.ContainsKey(type)
                 || !UniOperations[type].ContainsKey(a.GetPrimitiveType())) { 
                 throw new Exception("Cannot perform operation: " + type + " on type: " + a.GetPrimitiveType());
@@ -63,7 +63,7 @@ namespace IngameScript {
         }
 
         public static void InitializeOperators() {
-
+            if (OperatorsInitialized) return;
             //Booleans
             AddUniOperation<bool>(UniOperandType.NOT, a => !a);
             AddBiOperation<bool, bool>(BiOperandType.AND, (a,b) => a && b);
@@ -72,6 +72,7 @@ namespace IngameScript {
             AddBiOperation<string, string>(BiOperandType.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<float, float>(BiOperandType.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<Vector3D, Vector3D>(BiOperandType.COMPARE, (a, b) => a.Length().CompareTo(b.Length()));
+            AddBiOperation<Color, Color>(BiOperandType.COMPARE, (a, b) => a.PackedValue.CompareTo(b.PackedValue));
             AddBiOperation<Vector3D, float>(BiOperandType.COMPARE, (a, b) => a.Length().CompareTo(b));
             AddBiOperation<float, Vector3D>(BiOperandType.COMPARE, (a, b) => a.CompareTo(b.Length()));
 
@@ -92,8 +93,10 @@ namespace IngameScript {
             AddBiOperation<string, bool>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<string, float>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<string, Vector3D>(BiOperandType.ADD, (a, b) => a + ToString(b));
+            AddBiOperation<string, Color>(BiOperandType.ADD, (a, b) => b + a.ToString());
             AddBiOperation<bool, string>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<float, string>(BiOperandType.ADD, (a, b) => a + b);
+            AddBiOperation<Color, string>(BiOperandType.ADD, (a, b) => a.ToString() + b);
             AddBiOperation<Vector3D, string>(BiOperandType.ADD, (a, b) => ToString(a) + b);
             AddBiOperation<string, string>(BiOperandType.SUBTACT, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, string>(BiOperandType.MOD, (a, b) => a.Replace(b, ""));
@@ -114,6 +117,16 @@ namespace IngameScript {
             //Modding a vector by another vector is asking to perform vector rejection.
             //See https://en.wikipedia.org/wiki/Vector_projection
             AddBiOperation<Vector3D, Vector3D>(BiOperandType.MOD, (a, b) => Vector3D.Reject(a, b));
+
+            //Color
+            AddUniOperation<Color>(UniOperandType.NOT, a => new Color(255 - a.R, 255 - a.G, 255 - a.B));
+            AddBiOperation<Color, Color>(BiOperandType.ADD, (a, b) => a + b);
+            AddBiOperation<Color, Color>(BiOperandType.SUBTACT, (a, b) => new Color(Math.Max(a.R - b.R, 0), Math.Max(a.G - b.G,0), Math.Max(a.B - b.B, 0)));
+            AddBiOperation<Color, float>(BiOperandType.MULTIPLY, (a, b) => Color.Multiply(a, b));
+            AddBiOperation<float, Color>(BiOperandType.MULTIPLY, (a, b) => Color.Multiply(b, a));
+            AddBiOperation<Color, float>(BiOperandType.DIVIDE, (a, b) => Color.Multiply(a, 1/b));
+
+            OperatorsInitialized = true;
         }
 
         static UniOperation SimpleUniOperand<T>(Func<T,object> resolver) {

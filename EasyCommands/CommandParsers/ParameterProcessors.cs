@@ -227,7 +227,8 @@ namespace IngameScript {
                     Primitive primitive = new StringPrimitive(value);
                     Vector3D vector;
                     if (GetVector(value, out vector)) primitive = new VectorPrimitive(vector);
-                    //TODO Handle Color
+                    Color color;
+                    if (GetColor(value, out color)) primitive = new ColorPrimitive(color);
                     p[i] = new VariableCommandParameter(new StaticVariable(primitive));
                 } else if (p[i] is NumericCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).Value)));

@@ -22,9 +22,10 @@ namespace IngameScript {
         public class TextSurfaceHandler : BlockHandler<IMyTextSurface> {
             public TextSurfaceHandler() {
                 AddStringHandler(PropertyType.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
-                AddStringHandler(PropertyType.COLOR, b => b.FontColor.ToString(), (b, v) => b.FontColor = GetColor(v));
+                AddColorHandler(PropertyType.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
                 AddPropertyHandler(PropertyType.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
                 defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.TEXT;
+                defaultPropertiesByPrimitive[PrimitiveType.COLOR] = PropertyType.COLOR;
                 defaultPropertiesByDirection[DirectionType.UP] = PropertyType.FONT_SIZE;
                 defaultDirection = DirectionType.UP;
             }

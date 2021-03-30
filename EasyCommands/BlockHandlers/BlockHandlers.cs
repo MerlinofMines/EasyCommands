@@ -76,12 +76,14 @@ namespace IngameScript {
         public delegate string GetStringProperty<T>(T block);
         public delegate float GetNumericProperty<T>(T block);
         public delegate Vector3D GetVectorProperty<T>(T block);
+        public delegate Color GetColorProperty<T>(T block);
 
         //Setters
         public delegate void SetBooleanProperty<T>(T block, bool value);
         public delegate void SetStringProperty<T>(T block, String value);
         public delegate void SetNumericProperty<T>(T block, float value);
         public delegate void SetVectorProperty<T>(T block, Vector3D value);
+        public delegate void SetColorProperty<T>(T block, Color value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
@@ -136,6 +138,14 @@ namespace IngameScript {
                 : base((b) => new VectorPrimitive(GetValue(b)), (b, v) => {
                     SetValue(b, CastVector(v).GetVectorValue());
                 }, new VectorPrimitive(Vector3D.Zero)) {
+            }
+        }
+
+        public class SimpleColorPropertyHandler<T> : SimplePropertyHandler<T> {
+            public SimpleColorPropertyHandler(GetColorProperty<T> GetValue, SetColorProperty<T> SetValue)
+                : base((b) => new ColorPrimitive(GetValue(b)), (b, v) => {
+                    SetValue(b, CastColor(v).GetColorValue());
+                }, new ColorPrimitive(new Color(10,10,10))) {
             }
         }
 
@@ -350,6 +360,10 @@ namespace IngameScript {
 
             protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
                 propertyHandlers[property] = new SimpleVectorPropertyHandler<T>(Get, Set);
+            }
+
+            protected void AddColorHandler(PropertyType property, GetColorProperty<T> Get, SetColorProperty<T> Set) {
+                propertyHandlers[property] = new SimpleColorPropertyHandler<T>(Get, Set);
             }
         }
     }

@@ -28,7 +28,7 @@ namespace IngameScript {
         public enum ControlType { START, RESTART, STOP, PARSE, LOOP, PAUSE, RESUME }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum FunctionType { GOTO, GOSUB, SWITCH }
-        public enum PrimitiveType { NUMERIC, BOOLEAN, STRING, VECTOR }
+        public enum PrimitiveType { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR }
         public enum BiOperandType { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE };
         public enum UniOperandType { NOT, ABS, SQRT };
         public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }

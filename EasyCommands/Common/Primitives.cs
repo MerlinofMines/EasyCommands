@@ -65,6 +65,7 @@ namespace IngameScript {
             { typeof(int), PrimitiveType.NUMERIC },
             { typeof(double), PrimitiveType.NUMERIC },
             { typeof(Vector3D), PrimitiveType.VECTOR},
+            { typeof(Color), PrimitiveType.COLOR }
         };
 
         static PrimitiveType GetType(Type type) {
@@ -86,12 +87,14 @@ namespace IngameScript {
                 return new StringPrimitive((string)o);
             } else if (o is Vector3D) {
                 return new VectorPrimitive((Vector3D)o);
+            } else if (o is Color) {
+                return new ColorPrimitive((Color)o);
             } else throw new Exception("Cannot convert type: " + o.GetType() + " to primitive");
         }
 
         public static BooleanPrimitive CastBoolean(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.BOOLEAN: return new BooleanPrimitive((bool)p.GetValue());
+                case PrimitiveType.BOOLEAN: return (BooleanPrimitive)p;
                 case PrimitiveType.NUMERIC: return new BooleanPrimitive((float)p.GetValue() > 0);
                 case PrimitiveType.STRING: return new BooleanPrimitive(bool.Parse((string)p.GetValue()));
                 default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
@@ -101,7 +104,7 @@ namespace IngameScript {
         public static NumberPrimitive CastNumber(Primitive p) {
             switch (p.GetPrimitiveType()) {
                 case PrimitiveType.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
-                case PrimitiveType.NUMERIC: return new NumberPrimitive((float)p.GetValue());
+                case PrimitiveType.NUMERIC: return (NumberPrimitive)p;
                 case PrimitiveType.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
                 case PrimitiveType.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
                 default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
@@ -111,25 +114,76 @@ namespace IngameScript {
         public static StringPrimitive CastString(Primitive p) {
             switch (p.GetPrimitiveType()) {
                 case PrimitiveType.VECTOR:
-                    Vector3D vector = CastVector(p).GetVectorValue();
-                    return new StringPrimitive(ToString(vector));
+                    return new StringPrimitive(ToString(CastVector(p).GetVectorValue()));
+                case PrimitiveType.COLOR:
+                    return new StringPrimitive(ToString(CastColor(p).GetColorValue()));
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
+        }
+
+        public static VectorPrimitive CastVector(Primitive p) {
+            switch (p.GetPrimitiveType()) {
+                case PrimitiveType.VECTOR: return (VectorPrimitive)p;
+                case PrimitiveType.STRING:
+                    Vector3D vector;
+                    if (GetVector((String)p.GetValue(), out vector)) return new VectorPrimitive(vector);
+                    goto default;
+                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " to Vector");
+            }
+        }
+
+        public static ColorPrimitive CastColor(Primitive p) {
+            switch (p.GetPrimitiveType()) {
+                case PrimitiveType.COLOR: return (ColorPrimitive)p;
+                case PrimitiveType.STRING:
+                    Color color;
+                    if (GetColor((String)p.GetValue(), out color)) return new ColorPrimitive(color);
+                    goto default;
+                case PrimitiveType.NUMERIC:
+                    return new ColorPrimitive(new Color((float)p.GetValue()));
+                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
+            }
+        }
+
+        public static bool GetColor(String s, out Color color) {
+            Color? possibleColor = null;
+            if (colors.ContainsKey(s.ToLower())) possibleColor = colors[s.ToLower()];
+            else if (s.StartsWith("#") && s.Length == 7) {
+                possibleColor = new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2)));
+            }
+            color = possibleColor.GetValueOrDefault(Color.White);
+            return possibleColor.HasValue;
+        }
+
+        public static bool GetVector(String s, out Vector3D vector) {
+            vector = Vector3D.Zero;
+            List<double> components = new List<double>();
+            string[] vectorStrings = s.Split(':');
+
+            foreach (string component in vectorStrings) {
+                double result;
+                if (Double.TryParse(component, out result)) components.Add(result);
+            }
+
+            if (components.Count() != 3) return false;
+            vector = new Vector3D(components[0], components[1], components[2]);
+            return true;
         }
 
         static string ToString(Vector3D vector) {
             return vector.X + ":" + vector.Y + ":" + vector.Z;
         }
 
-        public static VectorPrimitive CastVector(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case PrimitiveType.VECTOR: return new VectorPrimitive(((VectorPrimitive)p).GetVectorValue());
-                case PrimitiveType.STRING:
-                    Vector3D vector;
-                    if (GetVector((String)p.GetValue(), out vector)) return new VectorPrimitive(vector);
-                    goto default;
-                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Vector");
-            }
+        static string ToString(Color color) {
+            return "#" + IntToHex(color.R) + IntToHex(color.G) + IntToHex(color.B);
+        }
+
+        static int HexToInt(string hex) {
+            return int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier);
+        }
+
+        static string IntToHex(int hex) {
+            return hex.ToString("X");
         }
 
         public class BooleanPrimitive : Primitive {
@@ -194,6 +248,20 @@ namespace IngameScript {
             }
         }
 
-        //Add Color Primitive
+        public class ColorPrimitive : Primitive {
+            public Color color;
+
+            public ColorPrimitive(Color color) : base(PrimitiveType.COLOR) {
+                this.color = color;
+            }
+
+            public override object GetValue() {
+                return color;
+            }
+
+            public Color GetColorValue() {
+                return color;
+            }
+        }
     }
 }

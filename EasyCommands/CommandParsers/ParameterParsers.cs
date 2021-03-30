@@ -398,32 +398,6 @@ namespace IngameScript {
             Initialized = true;
         }
 
-        public static int HexToFloat(string hex) { return int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier); }
-
-        public static Color GetColor(String color) {
-            if (colors.ContainsKey(color.ToLower())) return colors[color.ToLower()];
-            if (color.StartsWith("#") && color.Length==7) {
-                return new Color(HexToFloat(color.Substring(1, 2)), HexToFloat(color.Substring(3, 2)), HexToFloat(color.Substring(5, 2)));
-            }
-            float rgb; if (float.TryParse(color, out rgb)) return new Color(rgb);
-            throw new Exception("Unknown Color: " + color);
-        }
-
-        public static bool GetVector(String s, out Vector3D vector) {
-            vector = Vector3D.Zero;
-            List<double> components = new List<double>();
-            string[] vectorStrings = s.Split(':');
-                
-            foreach(string component in vectorStrings) {
-                double result;
-                if (Double.TryParse(component, out result)) components.Add(result);
-            }
-
-            if (components.Count() != 3) return false;
-            vector = new Vector3D(components[0], components[1], components[2]);
-            return true;
-        }
-
         static void AddWords(String[] words, params CommandParameter[] commands) {
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }

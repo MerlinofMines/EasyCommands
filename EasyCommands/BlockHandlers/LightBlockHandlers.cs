@@ -21,14 +21,14 @@ namespace IngameScript {
     partial class Program {
         public class LightBlockHandler : FunctionalBlockHandler<IMyLightingBlock> {
             public LightBlockHandler() {
-                AddStringHandler(PropertyType.COLOR, (b) => b.Color.ToString(), (b, v) => b.Color = GetColor(v));
+                AddColorHandler(PropertyType.COLOR, (b) => b.Color, (b, v) => b.Color = v);
                 AddNumericHandler(PropertyType.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
                 AddNumericHandler(PropertyType.BLINK_INTERVAL, (b) => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
                 AddNumericHandler(PropertyType.BLINK_LENGTH, (b) => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
                 AddNumericHandler(PropertyType.BLINK_OFFSET, (b) => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
                 AddNumericHandler(PropertyType.INTENSITY, (b) => b.Intensity, (b, v) => b.Intensity = v, 1f);
                 AddNumericHandler(PropertyType.FALLOFF, (b) => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
-                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.COLOR;
+                defaultPropertiesByPrimitive[PrimitiveType.COLOR] = PropertyType.COLOR;
                 defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RANGE;
                 defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RANGE);
                 defaultDirection = DirectionType.UP;

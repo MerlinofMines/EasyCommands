@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using VRageMath;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests {
@@ -227,6 +228,76 @@ namespace EasyCommands.Tests {
             Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
             BlockPropertyCondition blockCondition = (BlockPropertyCondition)condition.blockCondition;
             Assert.IsTrue(blockCondition.comparisonValue is BiOperandVariable);
+        }
+
+        [TestMethod]
+        public void AssignColor() {
+            var command = ParseCommand("assign a to \"red\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual(Color.Red, primitive.GetValue());
+        }
+
+        [TestMethod]
+        public void AssignColorFromHex() {
+            var command = ParseCommand("assign a to \"#ff0000\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual(Color.Red, primitive.GetValue());
+        }
+
+        [TestMethod]
+        public void AssignAddedColors() {
+            var command = ParseCommand("assign a to \"#ff0000\" + \"#00ff00\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual(Color.Yellow, primitive.GetValue());
+        }
+
+        [TestMethod]
+        public void AssignSubtractedColors() {
+            var command = ParseCommand("assign a to \"#ffff00\" - \"#00ff00\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual(Color.Red, primitive.GetValue());
+        }
+
+        [TestMethod]
+        public void AssignMultipliedColor() {
+            var command = ParseCommand("assign a to \"#112233\" * 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual("#224466", CastString(primitive).GetStringValue());
+        }
+
+        [TestMethod]
+        public void AssignDividedColor() {
+            var command = ParseCommand("assign a to \"#224466\" / 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual("#112233", CastString(primitive).GetStringValue());
+        }
+
+        [TestMethod]
+        public void AssignNotColor() {
+            var command = ParseCommand("assign a to not \"red\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive primitive = assignment.variable.GetValue();
+            Assert.AreEqual(PrimitiveType.COLOR, primitive.GetPrimitiveType());
+            Assert.AreEqual(Color.Cyan, primitive.GetValue());
         }
     }
 }
