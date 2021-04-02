@@ -128,10 +128,12 @@
     <Compile Include="ParameterParsingTests\SelectorLogicParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\SimpleCommandProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptTests\ScriptTest.cs" />
     <Compile Include="ScriptTests\SimpleCommandExecutionTests.cs" />
     <Compile Include="ScriptTests\SimpleBlockCommandTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
+    <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Instructions.readme" />

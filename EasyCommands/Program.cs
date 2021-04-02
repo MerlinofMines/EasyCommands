@@ -36,16 +36,16 @@ namespace IngameScript {
         static String ARGUMENT;
         static List<String> COMMAND_STRINGS = new List<String>();
         static MyGridProgram PROGRAM;
-        static ProgramState STATE = ProgramState.STOPPED;
+        public static ProgramState STATE = ProgramState.STOPPED;
         public delegate String CustomDataProvider(MyGridProgram program);
-        public delegate List<MyIGCMessage> BroadcastMessageProvider(MyGridProgram program);
-        public static BroadcastMessageProvider BROADCAST_MESSAGE_PROVIDER = provideMessages;
+        public delegate List<MyIGCMessage> BroadcastMessageProvider();
+        public BroadcastMessageProvider broadcastMessageProvider;
         static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
 
-        static List<MyIGCMessage> provideMessages(MyGridProgram program)
+        List<MyIGCMessage> provideMessages()
         {
             List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
-            program.IGC.GetBroadcastListeners(listeners);
+            IGC.GetBroadcastListeners(listeners);
             return listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
         }
 
@@ -55,6 +55,7 @@ namespace IngameScript {
             ParameterProcessorRegistry.InitializeProcessors();
             InitializeOperators();
             Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+            broadcastMessageProvider = provideMessages;
         }
 
         static void Print(String str) { PROGRAM.Echo(str); }
@@ -81,7 +82,7 @@ namespace IngameScript {
             Debug("Functions: " + FUNCTIONS.Count);
             Debug("Argument: " + ARGUMENT);
 
-            List<MyIGCMessage> messages = BROADCAST_MESSAGE_PROVIDER(PROGRAM);
+            List<MyIGCMessage> messages = broadcastMessageProvider();
 
             try {
                 if (messages.Count > 0) {

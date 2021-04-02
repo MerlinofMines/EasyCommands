@@ -15,12 +15,6 @@ namespace EasyCommands.Tests.ScriptTests
         [TestMethod]
         public void LightBlockHandlerTest()
         {
-            var me = new Mock<IMyProgrammableBlock>();
-            MDKFactory.ProgramConfig config = default;
-            config.ProgrammableBlock = me.Object;
-
-            var program = MDKFactory.CreateProgram<Program>(config);
-            int numCommandsInScript = 7;
             String script = @"
 :lightshow
 set the ""cool light"" color to ""blue""
@@ -32,39 +26,94 @@ set the ""cool light"" blinkLength to 2
 turn on the ""cool light""
 ";
 
-            me.Setup(b => b.CustomData).Returns(script);
+            using (ScriptTest test = new ScriptTest(script))
+            {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("cool light", mockLight);
 
-            var mockLight = new Mock<IMyLightingBlock>();
-            //TODO: Replace these with mock objects passed to config setup in Program.
-            Program.BROADCAST_MESSAGE_PROVIDER = (x) => new List<MyIGCMessage>();
-            Program.BlockHandlerRegistry.BLOCK_PROVIDER = (blockType, name) =>
-            {
-                var blocks = new List<Object>();
-                if (blockType.Equals(Program.BlockType.LIGHT) && name.Equals("cool light"))
-                {
-                    blocks.Add(mockLight.Object);
-                }
-                return blocks;
-            };
-            Program.BlockHandlerRegistry.GROUP_BLOCK_PROVIDER = (blockType, name) =>
-            {
-                return new List<object>();
-            };
+                test.RunUntilDone();
 
-            // Seven commands in the script, so we need to run the program seven times
-            for (int i = 0; i < numCommandsInScript; i++)
-            {
-                MDKFactory.Run(program);
+                mockLight.VerifySet(b => b.Color = new Color(0, 0, 255));
+                mockLight.VerifySet(b => b.Intensity = 10f);
+                mockLight.VerifySet(b => b.BlinkIntervalSeconds = 0.5f);
+                mockLight.VerifySet(b => b.BlinkOffset = 0.25f);
+                mockLight.VerifySet(b => b.Falloff = 1);
+                mockLight.VerifySet(b => b.BlinkLength = 2);
+                mockLight.VerifySet(b => b.Enabled = true);
             }
+        }
 
-            mockLight.VerifySet(b => b.Color = new Color(0, 0, 255));
-            mockLight.VerifySet(b => b.Intensity = 10f);
-            mockLight.VerifySet(b => b.BlinkIntervalSeconds = 0.5f);
-            mockLight.VerifySet(b => b.BlinkOffset = 0.25f);
-            mockLight.VerifySet(b => b.Falloff = 1);
-            mockLight.VerifySet(b => b.BlinkLength = 2);
-            mockLight.VerifySet(b => b.Enabled = true);
+        [TestMethod]
+        public void MultipleBlocksSameType()
+        {
+            String script = @"
+:lightshow
+set the ""intense light"" intensity to 10
+set the ""intense light"" blinkInterval to 0.5
+set the ""intense light"" blinkOffset to 0.25
+set the ""intense light"" blinkLength to 2
+set the ""cool light"" color to ""blue""
+set the ""cool light"" falloff to 1
+turn on the ""cool light""
+turn on the ""intense light""
+";
 
+            using (ScriptTest test = new ScriptTest(script))
+            {
+                var mockCoolLight = new Mock<IMyLightingBlock>();
+                var mockIntenseLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("cool light", mockCoolLight);
+                test.MockBlocksOfType("intense light", mockIntenseLight);
+
+                test.RunUntilDone();
+
+                mockIntenseLight.VerifySet(b => b.Intensity = 10f);
+                mockIntenseLight.VerifySet(b => b.BlinkIntervalSeconds = 0.5f);
+                mockIntenseLight.VerifySet(b => b.BlinkOffset = 0.25f);
+                mockIntenseLight.VerifySet(b => b.BlinkLength = 2);
+                mockCoolLight.VerifySet(b => b.Color = new Color(0, 0, 255));
+                mockCoolLight.VerifySet(b => b.Falloff = 1);
+                mockCoolLight.VerifySet(b => b.Enabled = true);
+                mockIntenseLight.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void BlocksAloneAndInGroups()
+        {
+            String script = @"
+:lightshow
+set the ""single light"" intensity to 10
+set the ""hangar lights"" blinkInterval to 0.5
+set the ""hangar lights"" blinkOffset to 0.25
+turn on the ""hangar lights""
+";
+
+            using (ScriptTest test = new ScriptTest(script))
+            {
+                // In this test, single light and other light are both in
+                // a group called "hangar lights"
+                // We want to ensure that we're manipulating both lights when we
+                // perform commands on the group, but that we can still interact
+                // with just one of the lights when we want to
+                var mockSingleLight = new Mock<IMyLightingBlock>();
+                var mockOtherLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("single light", mockSingleLight);
+                test.MockBlocksOfType("other light", mockOtherLight);
+                test.MockBlocksInGroup("hangar lights", mockSingleLight, mockOtherLight);
+
+                test.RunUntilDone();
+
+                mockSingleLight.VerifySet(b => b.Intensity = 10f);
+                mockSingleLight.VerifySet(b => b.BlinkIntervalSeconds = 0.5f);
+                mockSingleLight.VerifySet(b => b.BlinkOffset = 0.25f);
+                mockOtherLight.VerifySet(b => b.BlinkIntervalSeconds = 0.5f);
+                mockOtherLight.VerifySet(b => b.BlinkOffset = 0.25f);
+                mockSingleLight.VerifySet(b => b.Enabled = true);
+                mockOtherLight.VerifySet(b => b.Enabled = true);
+                // We should have never manipulated the intensity of "other light"
+                mockOtherLight.VerifySet(b => b.Intensity = 10f, Times.Never);
+            }
         }
     }
 }
