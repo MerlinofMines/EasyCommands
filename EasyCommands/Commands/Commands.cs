@@ -47,9 +47,9 @@ namespace IngameScript {
 
             public override bool Execute() {
                 if(Async) {
-                    AddAsyncCommand(command);
+                    QueueAsyncThread(new Thread(command, "Queud", "Unknown"));
                 } else {
-                    AddQueuedCommand(command);
+                    QueueThread(new Thread(command, "Queud", "Unknown"));
                 }
                 return true;
             }
@@ -94,7 +94,9 @@ namespace IngameScript {
                     case FunctionType.GOSUB:
                         return function.Execute();
                     case FunctionType.GOTO:
-                        SetCurrentCommand(function);
+                        Thread currentThread = GetCurrentThread();
+                        currentThread.SetCommand(function);
+                        currentThread.SetName(functionDefinition.functionName);
                         return false;
                     default:
                         throw new Exception("Unsupported Function Type: " + type);
@@ -138,21 +140,21 @@ namespace IngameScript {
             public override bool Execute() {
                 switch (controlType) {
                     case ControlType.STOP:
-                        COMMAND_QUEUE.Clear();
-                        ASYNC_COMMAND_QUEUE.Clear();
+                        THREAD_QUEUE.Clear();
+                        ASYNC_THREAD_QUEUE.Clear();
                         throw new InterruptException(ProgramState.STOPPED);
                     case ControlType.START:
                     case ControlType.RESTART:
-                        COMMAND_QUEUE.Clear();
-                        ASYNC_COMMAND_QUEUE.Clear();
+                        THREAD_QUEUE.Clear();
+                        ASYNC_THREAD_QUEUE.Clear();
                         throw new InterruptException(ProgramState.RUNNING);
                     case ControlType.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
                     case ControlType.RESUME:
                         STATE = ProgramState.RUNNING; return true;
                     case ControlType.REPEAT:
-                        Command command = GetCurrentCommand();
-                        SetCurrentCommand(command.Clone());
+                        Thread currentThread = GetCurrentThread();
+                        currentThread.SetCommand(currentThread.GetCommand().Clone());
                         return false;
                     default: throw new Exception("Unsupported Control Type: " + controlType);
                 }
