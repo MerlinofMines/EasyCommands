@@ -21,7 +21,7 @@ print 'Hello World'
 ";
             using (var test = new ScriptTest(script))
             {
-                test.RunUntil(Program.ProgramState.COMPLETE);
+                test.RunUntilDone();
 
                 Assert.AreEqual(1, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);
@@ -39,7 +39,7 @@ print 'Hello World'
 
             using (var test = new ScriptTest(script))
             {
-                test.RunUntil(Program.ProgramState.COMPLETE);
+                test.RunUntilDone();
 
                 Assert.AreEqual(1, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);

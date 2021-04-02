@@ -35,7 +35,7 @@ namespace EasyCommands.Tests.ScriptTests
                 test.MockBlocksOfType("rover cockpit", mockRoverCockpit);
                 test.MockBlocksInGroup("reverse sirens", mockReverseSirens);
 
-                test.RunUntil(Program.ProgramState.COMPLETE);
+                test.RunUntilDone();
 
                 mockReverseSirens.Verify(b => b.Play(), Times.Once);
             }

@@ -133,6 +133,7 @@
     <Compile Include="ScriptTests\SimpleBlockCommandTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
+    <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Instructions.readme" />

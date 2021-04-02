@@ -1,4 +1,5 @@
-﻿using IngameScript;
+﻿using EasyCommands.Tests.Util;
+using IngameScript;
 using Malware.MDKUtilities;
 using Moq;
 using Sandbox.ModAPI.Ingame;
@@ -25,6 +26,14 @@ namespace EasyCommands.Tests.ScriptTests
         private Mock<IMyGridTerminalSystem> gridMock;
         private Program program;
 
+        /// <summary>
+        /// Counter of how many times the given script has been invoked by the test engine.
+        /// </summary>
+        public int RunCounter { get; private set; }
+
+        /// <summary>
+        /// Logger that acts as a replacement for the program's ECHO behavior.
+        /// </summary>
         public List<String> Logger { get; private set; }
 
         public ScriptTest(String script)
@@ -33,19 +42,19 @@ namespace EasyCommands.Tests.ScriptTests
             mockedGroups = new List<IMyBlockGroup>();
             Logger = new List<String>();
 
-            // Init static fields that may have been modified from other tests, prepare for testing
-            Program.STATE = ProgramState.STOPPED;
-            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
             gridMock = new Mock<IMyGridTerminalSystem>();
             var me = new Mock<IMyProgrammableBlock>();
+            me.Setup(b => b.CustomData).Returns(script);
             MDKFactory.ProgramConfig config = default;
             config.GridTerminalSystem = gridMock.Object;
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             program = MDKFactory.CreateProgram<Program>(config);
-            me.Setup(b => b.CustomData).Returns(script);
+            // Init static fields that may have been modified from other tests, prepare for testing
+            Program.STATE = ProgramState.STOPPED;
+            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
 
             // Default behavior for broadcast messages
             // TODO: Replace this with mock objects passed to config setup in Program
@@ -59,19 +68,25 @@ namespace EasyCommands.Tests.ScriptTests
         }
 
         /// <summary>
-        /// Run the script until the program reaches the specified state, or until a limited
-        /// number of runs has been reached. The default number of runs before exit is 100.
+        /// Run the script until the given predicate is satisfied.
         /// </summary>
-        /// <param name="state">The desired end-state.</param>
-        /// <param name="runLimit">The limited number of runs. Defaults to 100</param>
-        public void RunUntil(ProgramState state, int runLimit = 100)
+        public void RunUntil(Predicate<ScriptTest> runUntilPredicate)
         {
-            int runCounter = 0;
+            RunCounter = 0;
             do
             {
                 MDKFactory.Run(program);
-                runCounter++;
-            } while (Program.STATE != state && runCounter < runLimit);
+                RunCounter++;
+            } while (runUntilPredicate.Invoke(this) != true);
+        }
+
+        /// <summary>
+        /// Run the script with a default predicate of the program state being considered COMPLETE,
+        /// or the run counter exceeding 100 attempts.
+        /// </summary>
+        public void RunUntilDone()
+        {
+            RunUntil(t => Program.ProgramState.COMPLETE == Program.STATE || t.RunCounter >= 100);
         }
 
         /// <summary>
@@ -150,33 +165,42 @@ namespace EasyCommands.Tests.ScriptTests
                 return b.Object;
             }).ToList();
             // Store the mock block objects by their type
-            mockedBlocksByName.Add(typeof(T), blockObjects);
+            mockedBlocksByName.Add(blockObjects);
         }
 
         private void SetupMockBlocksByType<T>(Mock<T>[] blockMocks) where T: class, IMyTerminalBlock
         {
             // Store the mock block objects by their type
-            mockedBlocksByName.Add(typeof(T), blockMocks.Select(b => b.Object).ToList());
+            mockedBlocksByName.Add(blockMocks.Select(b => b.Object).ToList());
         }
 
         public class GenericListDictionary
         {
-            private Dictionary<Type, List<Object>> dictionary = new Dictionary<Type, List<object>>();
+            private Dictionary<Type, HashSet<Object>> dictionary = new Dictionary<Type, HashSet<object>>();
 
-            public void Add<T>(Type type, List<T> values)
+            public void Add<T>(List<T> values)
             {
-                dictionary.Add(type, values.Select(x => (Object)x).ToList());
+                Type key = typeof(T);
+                HashSet<object> valueObjects = values.Select(x => (Object)x).ToHashSet();
+                if (dictionary.ContainsKey(key))
+                {
+                    dictionary[key].UnionWith(valueObjects);
+                } else
+                {
+                    dictionary.Add(key, valueObjects);
+                }
             }
 
-            public List<T> GetValue<T>(Type type)
+            public HashSet<T> GetValue<T>(Type type)
             {
                 if (!dictionary.ContainsKey(type))
                 {
-                    return new List<T>();
+                    return new HashSet<T>();
                 }
 
-                return dictionary[type].Select(x => (T)x).ToList();
+                return dictionary[type].Select(x => (T)x).ToHashSet();
             }
         }
+
     }
 }
