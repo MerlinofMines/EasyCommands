@@ -58,7 +58,6 @@ namespace IngameScript {
         public interface PrimitiveCommandParameter : CommandParameter { }
         public class IndexCommandParameter : CommandParameter { }
         public class GroupCommandParameter : CommandParameter { }
-        public class AsyncCommandParameter : CommandParameter { }
         public class NotCommandParameter : CommandParameter { }
         public class AndCommandParameter : CommandParameter { }
         public class OrCommandParameter : CommandParameter { }
@@ -74,6 +73,11 @@ namespace IngameScript {
         public class ElseCommandParameter : CommandParameter { }
         public class PrintCommandParameter : CommandParameter { }
         public class SelfCommandParameter : CommandParameter { }
+
+        public class QueueCommandParameter : ValueCommandParameter<bool> {
+            public QueueCommandParameter(bool value) : base(value) {
+            }
+        }
 
         public class UniOperationCommandParameter : ValueCommandParameter<UniOperandType> {
             public UniOperationCommandParameter(UniOperandType value) : base(value) {

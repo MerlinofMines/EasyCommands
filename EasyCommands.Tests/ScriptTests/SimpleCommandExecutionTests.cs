@@ -46,5 +46,64 @@ print 'Hello World'
             }
 
         }
+
+        [TestMethod]
+        public void multipleSimpleCommandsGetProcessedInSameTick() {
+            List<String> logger = new List<String>();
+            var me = new Mock<IMyProgrammableBlock>();
+
+            MDKFactory.ProgramConfig config = default;
+            config.Echo = (message) => logger.Add(message);
+            config.ProgrammableBlock = me.Object;
+
+            var program = MDKFactory.CreateProgram<Program>(config);
+            String script = @"
+:main
+print 'Hello World'
+print 'I Got Printed'
+";
+            me.Setup(b => b.CustomData).Returns(script);
+            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
+            //TODO: Replace this with mock objects passed to config setup in Program.
+            Program.BROADCAST_MESSAGE_PROVIDER = (x) => new List<MyIGCMessage>();
+
+            MDKFactory.Run(program);
+
+            Assert.AreEqual(2, logger.Count);
+            Assert.AreEqual("Hello World", logger[0]);
+            Assert.AreEqual("I Got Printed", logger[1]);
+        }
+
+        [TestMethod]
+        public void blockingCommandsAreStillHonored() {
+            List<String> logger = new List<String>();
+            var me = new Mock<IMyProgrammableBlock>();
+
+            MDKFactory.ProgramConfig config = default;
+            config.Echo = (message) => logger.Add(message);
+            config.ProgrammableBlock = me.Object;
+
+            var program = MDKFactory.CreateProgram<Program>(config);
+            String script = @"
+:main
+print 'Hello World'
+wait
+print 'I Got Printed'
+";
+            me.Setup(b => b.CustomData).Returns(script);
+            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
+            //TODO: Replace this with mock objects passed to config setup in Program.
+            Program.BROADCAST_MESSAGE_PROVIDER = (x) => new List<MyIGCMessage>();
+
+            MDKFactory.Run(program);
+
+            Assert.AreEqual(1, logger.Count);
+            Assert.AreEqual("Hello World", logger[0]);
+
+            MDKFactory.Run(program);
+
+            Assert.AreEqual(2, logger.Count);
+            Assert.AreEqual("I Got Printed", logger[1]);
+        }
     }
 }

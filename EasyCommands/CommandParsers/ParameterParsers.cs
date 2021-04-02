@@ -56,7 +56,8 @@ namespace IngameScript {
         static String[] whileWords = { "while" };
         static String[] untilWords = { "until" };
         static String[] whenWords = { "when" };
-        static String[] asyncWords = { "async" };
+        static String[] asyncWords = { "async", "background", "parallel" };
+        static String[] queueWords = { "queue", "schedule" };
         static String[] withWords = { "that", "with", "which", "whose" };
         static String[] withoutWords = { "without" };
 
@@ -90,7 +91,6 @@ namespace IngameScript {
 
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
-        static String[] switchKeywords = { "switch" };
 
         static String[] listenKeywords = { "listen", "channel" };
         static String[] sendKeywords = { "send", "broadcast" };
@@ -282,13 +282,10 @@ namespace IngameScript {
             { "restart", ControlType.RESTART },
             { "reset", ControlType.RESTART },
             { "reboot", ControlType.RESTART },
-            { "loop", ControlType.LOOP },
-            { "iterate", ControlType.LOOP },
-            { "repeat", ControlType.LOOP },
-            { "rerun", ControlType.LOOP },
-            { "replay", ControlType.LOOP },
+            { "repeat", ControlType.REPEAT },
+            { "rerun", ControlType.REPEAT },
+            { "replay", ControlType.REPEAT },
             { "stop", ControlType.STOP },
-            { "parse", ControlType.PARSE },
             { "pause", ControlType.PAUSE },
             { "resume", ControlType.RESUME },
         };
@@ -308,7 +305,6 @@ namespace IngameScript {
 
         public static void InitializeParsers() {
             if (Initialized) return;
-
             AddWords(groupWords, new GroupCommandParameter());
             AddWords(activateWords, new BooleanCommandParameter(true));
             AddWords(deactivateWords, new BooleanCommandParameter(false));
@@ -340,7 +336,8 @@ namespace IngameScript {
             AddWords(whileWords, new IfCommandParameter(false, true, false));
             AddWords(untilWords, new IfCommandParameter(true, true, false));
             AddWords(whenWords, new IfCommandParameter(true, true, true));
-            AddWords(asyncWords, new AsyncCommandParameter());
+            AddWords(queueWords, new QueueCommandParameter(false));
+            AddWords(asyncWords, new QueueCommandParameter(true));
             AddWords(elseWords, new ElseCommandParameter());
             AddWords(withWords, new WithCommandParameter(false));
             AddWords(withoutWords, new WithCommandParameter(true));
@@ -367,7 +364,6 @@ namespace IngameScript {
             AddWords(closeWords, new PropertyCommandParameter(PropertyType.OPEN), new BooleanCommandParameter(false));
             AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
             AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
-            AddWords(switchKeywords, new FunctionCommandParameter(FunctionType.SWITCH));
             AddWords(listenKeywords, new ListenCommandParameter());
             AddWords(sendKeywords, new SendCommandParameter());
             AddWords(fontKeywords, new PropertyCommandParameter(PropertyType.FONT_SIZE));

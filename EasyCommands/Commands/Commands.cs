@@ -20,18 +20,39 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        public abstract class Command {
-            public bool Async = false;
-            public virtual void Reset() { }
-            protected virtual Command Clone() { return this; }
-            public Command Copy() {
-                Command copy = Clone();
-                if (Async) copy.Async = true;
-                return copy;
+        public class InterruptException : Exception {
+            public ProgramState ProgramState;
+
+            public InterruptException(ProgramState programState) {
+                ProgramState = programState;
             }
+        }
+
+        public abstract class Command {
+            public virtual void Reset() { }
+            public virtual Command Clone() { return this; }
 
             //Returns true if the program has finished execution.
             public abstract bool Execute();
+        }
+
+        public class QueueCommand : Command {
+            public Command command;
+            bool Async;
+
+            public QueueCommand(Command command, bool Async) {
+                this.command = command;
+                this.Async = Async;
+            }
+
+            public override bool Execute() {
+                if(Async) {
+                    AddAsyncCommand(command);
+                } else {
+                    AddQueuedCommand(command);
+                }
+                return true;
+            }
         }
 
         public class PrintCommand : Command {
@@ -45,8 +66,6 @@ namespace IngameScript {
                 Print(CastString(variable.GetValue()).GetStringValue());
                 return true;
             }
-
-            protected override Command Clone() { return new PrintCommand(variable); }
         }
 
         public class FunctionCommand : Command {
@@ -65,7 +84,7 @@ namespace IngameScript {
 
             public override bool Execute() {
                 if (function == null) {
-                    function = (MultiActionCommand)FUNCTIONS[functionDefinition.functionName].function.Copy();
+                    function = (MultiActionCommand)FUNCTIONS[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
                         Program.memoryVariables[key] = new StaticVariable(inputParameters[key].GetValue());
                     }
@@ -75,19 +94,13 @@ namespace IngameScript {
                     case FunctionType.GOSUB:
                         return function.Execute();
                     case FunctionType.GOTO:
-                        RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionDefinition.functionName;
+                        SetCurrentCommand(function);
                         return false;
-                    case FunctionType.SWITCH:
-                        RUNNING_COMMANDS = function;
-                        RUNNING_FUNCTION = functionDefinition.functionName;
-                        STATE = ProgramState.STOPPED;
-                        return true;
                     default:
                         throw new Exception("Unsupported Function Type: " + type);
                 }
             }
-            protected override Command Clone() { return new FunctionCommand(type, functionDefinition, inputParameters); }
+            public override Command Clone() { return new FunctionCommand(type, functionDefinition, inputParameters); }
         }
 
         public class VariableAssignmentCommand : Command {
@@ -107,53 +120,50 @@ namespace IngameScript {
                 return true;
             }
 
-            protected override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference); }
+            public override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference); }
         }
 
         public class ControlCommand : Command {
-            Variable loopAmount = new StaticVariable(new NumberPrimitive(1));
             ControlType controlType;
             public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
-                int loopIndex = parameters.FindIndex(p => p is VariableCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
                 controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
-                if (loopIndex >=0) loopAmount = ((VariableCommandParameter)parameters[controlIndex]).Value;
             }
 
-            public ControlCommand(ControlType controlType, Variable loopAmount) {
+            public ControlCommand(ControlType controlType) {
                 this.controlType = controlType;
-                this.loopAmount = loopAmount;
             }
 
             public override bool Execute() {
                 switch (controlType) {
                     case ControlType.STOP:
-                        RUNNING_COMMANDS = null; STATE = ProgramState.STOPPED; break;
-                    case ControlType.PARSE:
-                        RUNNING_COMMANDS = null; ParseCommands(); STATE = ProgramState.STOPPED; break;
+                        COMMAND_QUEUE.Clear();
+                        ASYNC_COMMAND_QUEUE.Clear();
+                        throw new InterruptException(ProgramState.STOPPED);
                     case ControlType.START:
-                        RUNNING_COMMANDS = null; STATE = ProgramState.RUNNING; break;
                     case ControlType.RESTART:
-                        RUNNING_COMMANDS.Reset(); RUNNING_COMMANDS.Loop(1); STATE = ProgramState.RUNNING; break;
+                        COMMAND_QUEUE.Clear();
+                        ASYNC_COMMAND_QUEUE.Clear();
+                        throw new InterruptException(ProgramState.RUNNING);
                     case ControlType.PAUSE:
-                        STATE = ProgramState.PAUSED; break;
+                        throw new InterruptException(ProgramState.PAUSED);
                     case ControlType.RESUME:
-                        STATE = ProgramState.RUNNING; break;
-                    case ControlType.LOOP:
-                        float loops = CastNumber(loopAmount.GetValue()).GetNumericValue();
-                        RUNNING_COMMANDS.Loop((int)loops); STATE = ProgramState.RUNNING; break;
-                    default: throw new Exception("Unsupported Control Type");
+                        STATE = ProgramState.RUNNING; return true;
+                    case ControlType.REPEAT:
+                        Command command = GetCurrentCommand();
+                        SetCurrentCommand(command.Clone());
+                        return false;
+                    default: throw new Exception("Unsupported Control Type: " + controlType);
                 }
-                return true;
             }
-            protected override Command Clone() { return new ControlCommand(controlType, loopAmount); }
+            public override Command Clone() { return new ControlCommand(controlType); }
         }
 
         public class WaitCommand : Command {
             public Variable waitInterval;
             public UnitType units;
-            int ticksLeft = 0;
+            int ticksLeft = -1;
             public WaitCommand(List<CommandParameter> parameters) {
                 int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
                 int timeIndex = parameters.FindIndex(param => param is VariableCommandParameter);
@@ -171,13 +181,14 @@ namespace IngameScript {
                 this.units = units;
             }
 
-            protected override Command Clone() { return new WaitCommand(waitInterval,units); }
-            public override void Reset() { ticksLeft = 0; }
+            public override Command Clone() { return new WaitCommand(waitInterval,units); }
+            public override void Reset() { ticksLeft = -1; }
             public override bool Execute() {
-                if (ticksLeft == 0) ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetNumericValue(), units);
+                if (ticksLeft < 0) {
+                    ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetNumericValue(), units);
+                }
                 Debug("Waiting for " + ticksLeft + " ticks");
-                ticksLeft--;
-                return ticksLeft == 0;
+                return ticksLeft-- <= 0;
             }
 
             int getTicks(float numeric, UnitType unitType) {
@@ -308,7 +319,7 @@ namespace IngameScript {
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
-            protected override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
+            public override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {
@@ -330,7 +341,6 @@ namespace IngameScript {
 
             public override bool Execute() {
                 Debug("Executing Conditional Command");
-                Debug("Async: " + Async);
                 Debug("Condition: " + Condition.ToString());
                 Trace("Action Command: " + conditionMetCommand.ToString());
                 Trace("Other Command: " + conditionNotMetCommand.ToString());
@@ -362,7 +372,7 @@ namespace IngameScript {
                 evaluated = false;
                 isExecuting = false;
             }
-            protected override Command Clone() { return new ConditionalCommand(Condition, conditionMetCommand.Copy(), conditionNotMetCommand.Copy(), alwaysEvaluate); }
+            public override Command Clone() { return new ConditionalCommand(Condition, conditionMetCommand.Clone(), conditionNotMetCommand.Clone(), alwaysEvaluate); ; }
 
             private void UpdateAlwaysEvaluate() {
                 alwaysEvaluate = true;
@@ -397,7 +407,7 @@ namespace IngameScript {
 
             public override bool Execute() {
                 if (currentCommands == null || currentCommands.Count == 0) {
-                    currentCommands = commandsToExecute.Select(c => c.Copy()).ToList();//Deep Copy
+                    currentCommands = commandsToExecute.Select(c => c.Clone()).ToList();//Deep Copy
                     if (loopsLeft == 0) loopsLeft = (int)Math.Round(CastNumber(loopCount.GetValue()).GetNumericValue());
                     loopsLeft -= 1;
                 }
@@ -405,25 +415,23 @@ namespace IngameScript {
                 Debug("Commands left: " + currentCommands.Count);
                 Debug("Loops Left: " + loopsLeft);
 
-                int commandIndex = 0;
-
-                while (currentCommands != null && commandIndex < currentCommands.Count) {
-                    Command nextCommand = currentCommands[commandIndex];
-
-                    bool handled = nextCommand.Execute();
-                    if (handled && currentCommands != null) { currentCommands.RemoveAt(commandIndex); } else { commandIndex++; }
-                    if (!nextCommand.Async) break;
-                    Debug("Command is async, continuing to command at index: " + commandIndex);
+                while (currentCommands.Count > 0) {
+                    if (currentCommands[0].Execute()) {
+                        currentCommands.RemoveAt(0);
+                    } else {
+                        break;
+                    }
+                    Debug("Command is handled, continuing to next command");
                 }
 
-                if (currentCommands != null && currentCommands.Count > 0) return false;
+                if (currentCommands.Count > 0) return false;
                 if (loopsLeft == 0) return true;
 
                 Reset();
                 return false;
             }
             public override void Reset() { currentCommands = null; }
-            protected override Command Clone() { return new MultiActionCommand(commandsToExecute, loopCount); }
+            public override Command Clone() { return new MultiActionCommand(commandsToExecute, loopCount); }
             public void Loop(int times) { loopsLeft += times; }
         }
     }

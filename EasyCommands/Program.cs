@@ -25,15 +25,45 @@ namespace IngameScript {
         #region mdk preserve
         public static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
         public static LogLevel LOG_LEVEL = LogLevel.INFO;
-        public static int PARSE_AMOUNT = 1;
+        public static int FUNCTION_PARSE_AMOUNT = 1;
+        public static int MAX_ASYNC_COMMANDS = 50;
+        public static int MAX_QUEUED_COMMANDS = 50;
         #endregion
 
-        static MultiActionCommand RUNNING_COMMANDS;
+        static int ASYNC_COMMAND_QUEUE_INDEX = 0;
+        static bool IN_ASYNC_QUEUE = false;
+        static List<Command> COMMAND_QUEUE = new List<Command>();
+        static List<Command> ASYNC_COMMAND_QUEUE = new List<Command>();
+
+        public static Command GetCurrentCommand() {
+            if (IN_ASYNC_QUEUE) {
+                return ASYNC_COMMAND_QUEUE[ASYNC_COMMAND_QUEUE_INDEX];
+            } else {
+                return COMMAND_QUEUE[0];
+            }
+        }
+
+        public static void SetCurrentCommand(Command newCommand) {
+            if(IN_ASYNC_QUEUE) {
+                ASYNC_COMMAND_QUEUE[ASYNC_COMMAND_QUEUE_INDEX] = newCommand;
+            } else {
+                COMMAND_QUEUE[0] = newCommand;
+            }
+        }
+
+        public static void AddQueuedCommand(Command newCommand) {
+            COMMAND_QUEUE.Add(newCommand);
+            if (COMMAND_QUEUE.Count > MAX_QUEUED_COMMANDS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_COMMANDS + " queued commands");
+        }
+
+        public static void AddAsyncCommand(Command newCommand) {
+            ASYNC_COMMAND_QUEUE.Add(newCommand);
+            if (ASYNC_COMMAND_QUEUE.Count > MAX_ASYNC_COMMANDS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_COMMANDS + "concurrent async commands");
+        }
+
         public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
         static String DEFAULT_FUNCTION;
-        static String RUNNING_FUNCTION;
-        static String CUSTOM_DATA;
-        static String ARGUMENT;
+        static String CUSTOM_DATA = null;
         static List<String> COMMAND_STRINGS = new List<String>();
         static MyGridProgram PROGRAM;
         public static ProgramState STATE = ProgramState.STOPPED;
@@ -64,8 +94,6 @@ namespace IngameScript {
         static void Trace(String str) { if (LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
 
         public void Main(string argument) {
-            if (!String.IsNullOrEmpty(argument)) { ARGUMENT = argument; }
-
             try {
                 if (!ParseCommands()) {
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
@@ -78,28 +106,64 @@ namespace IngameScript {
                 return;
             }
 
-            Info("Running Function: " + RUNNING_FUNCTION);
             Debug("Functions: " + FUNCTIONS.Count);
-            Debug("Argument: " + ARGUMENT);
+            Debug("Argument: " + argument);
 
             List<MyIGCMessage> messages = broadcastMessageProvider();
 
             try {
                 if (messages.Count > 0) {
-                    ParseCommand((String)messages[0].Data).Execute();
-                } else if (String.IsNullOrEmpty(ARGUMENT)) {
-                    if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
-                        RUNNING_COMMANDS.Reset();
-                        STATE = ProgramState.RUNNING;
-                    }
-                    if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
-                } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
+                    List<Command> messageCommands = messages.Select(message => ParseCommand((String)message.Data)).ToList();
+                    COMMAND_QUEUE.InsertRange(0, messageCommands);
+                }
+                if (!String.IsNullOrEmpty(argument)) { COMMAND_QUEUE.Insert(0, ParseCommand(argument)); }
+
+                RunCommands();
                 UpdateState();
             } catch(Exception e) {
                 Info("Exception Occurred: ");
                 Info(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
+            }
+        }
+
+        void RunCommands() {
+            IN_ASYNC_QUEUE = false;
+            try {
+                //If no current commands, we've been asked to restart.  start at the top.
+                if(COMMAND_QUEUE.Count == 0 && ASYNC_COMMAND_QUEUE.Count == 0) {
+                    COMMAND_QUEUE.Add(FUNCTIONS[DEFAULT_FUNCTION].function.Clone());
+                }
+
+                Info("Queued Commands: " + COMMAND_QUEUE.Count());
+                Info("Async Commands: " + ASYNC_COMMAND_QUEUE.Count());
+                //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
+                if (COMMAND_QUEUE.Count > 0 && COMMAND_QUEUE[0].Execute()) {
+                    COMMAND_QUEUE.RemoveAt(0);
+                }
+
+                //Process 1 iteration of all async commands, removing from queue if processed.
+                IN_ASYNC_QUEUE = true;
+                ASYNC_COMMAND_QUEUE_INDEX = 0;
+
+                while (ASYNC_COMMAND_QUEUE_INDEX < ASYNC_COMMAND_QUEUE.Count) {
+                    if (ASYNC_COMMAND_QUEUE[ASYNC_COMMAND_QUEUE_INDEX].Execute()) {
+                        ASYNC_COMMAND_QUEUE.RemoveAt(ASYNC_COMMAND_QUEUE_INDEX);
+                    } else {
+                        ASYNC_COMMAND_QUEUE_INDEX++;
+                    }
+                }
+                if(COMMAND_QUEUE.Count == 0 && ASYNC_COMMAND_QUEUE.Count == 0) {
+                    STATE = ProgramState.COMPLETE;
+                } else {
+                    STATE = ProgramState.RUNNING;
+                }
+            //InterruptException is thrown by control commands to interrupt execution (stop, pause, restart).
+            //The command itself has set the correct state of the command queues, we just need to set the program state.
+            } catch(InterruptException interrupt) {
+                Debug("Script interrupted!");
+                STATE = interrupt.ProgramState;
             }
         }
 
@@ -127,7 +191,7 @@ namespace IngameScript {
         }
 
         static bool ParseCommands() {
-            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
+            if (!PROGRAM.Me.CustomData.Equals(CUSTOM_DATA)) {
                 CUSTOM_DATA = PROGRAM.Me.CustomData;
                 COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(line => !line.StartsWith("#"))
@@ -145,9 +209,7 @@ namespace IngameScript {
             Info("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
             ParseFunctions(COMMAND_STRINGS);
 
-            if (COMMAND_STRINGS.Count > 0) return false;
-            RUNNING_COMMANDS = (MultiActionCommand)(FUNCTIONS[DEFAULT_FUNCTION].function).Copy();
-            return true;
+            return COMMAND_STRINGS.Count == 0;
         }
 
         static void ParseFunctions(List<String> commandStrings) {
@@ -172,7 +234,7 @@ namespace IngameScript {
             }
 
             //Parse Function Commands and add to Definitions
-            int toParse = PARSE_AMOUNT;
+            int toParse = FUNCTION_PARSE_AMOUNT;
             foreach (int i in functionIndices) {
                 String functionString = commandStrings[i].Remove(0, 1).Trim();
                 List<Token> nameAndParams = ParseTokens(functionString);
