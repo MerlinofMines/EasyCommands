@@ -90,7 +90,7 @@ namespace EasyCommands.Tests.ScriptTests
         }
 
         /// <summary>
-        /// Run the script a given number of iterations, regarldess of Program State.  
+        /// Run the script a given number of iterations, regardless of Program State.  
         /// </summary>
         /// <param name="iterations"></param>
         public void RunIterations(int iterations) 

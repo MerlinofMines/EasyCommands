@@ -38,18 +38,18 @@ namespace IngameScript {
 
         public class QueueCommand : Command {
             public Command command;
-            bool Async;
+            bool async;
 
-            public QueueCommand(Command command, bool Async) {
+            public QueueCommand(Command command, bool async) {
                 this.command = command;
-                this.Async = Async;
+                this.async = async;
             }
 
             public override bool Execute() {
-                if(Async) {
-                    QueueAsyncThread(new Thread(command, "Queud", "Unknown"));
+                if(async) {
+                    PROGRAM.QueueAsyncThread(new Thread(command, "Queued", "Unknown"));
                 } else {
-                    QueueThread(new Thread(command, "Queud", "Unknown"));
+                    PROGRAM.QueueThread(new Thread(command, "Queued", "Unknown"));
                 }
                 return true;
             }
@@ -94,8 +94,8 @@ namespace IngameScript {
                     case FunctionType.GOSUB:
                         return function.Execute();
                     case FunctionType.GOTO:
-                        Thread currentThread = GetCurrentThread();
-                        currentThread.SetCommand(function);
+                        Thread currentThread = PROGRAM.GetCurrentThread();
+                        currentThread.Command = function;
                         currentThread.SetName(functionDefinition.functionName);
                         return false;
                     default:
@@ -140,21 +140,19 @@ namespace IngameScript {
             public override bool Execute() {
                 switch (controlType) {
                     case ControlType.STOP:
-                        THREAD_QUEUE.Clear();
-                        ASYNC_THREAD_QUEUE.Clear();
+                        PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.STOPPED);
                     case ControlType.START:
                     case ControlType.RESTART:
-                        THREAD_QUEUE.Clear();
-                        ASYNC_THREAD_QUEUE.Clear();
+                        PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.RUNNING);
                     case ControlType.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
                     case ControlType.RESUME:
                         STATE = ProgramState.RUNNING; return true;
                     case ControlType.REPEAT:
-                        Thread currentThread = GetCurrentThread();
-                        currentThread.SetCommand(currentThread.GetCommand().Clone());
+                        Thread currentThread = PROGRAM.GetCurrentThread();
+                        currentThread.Command = currentThread.Command.Clone();
                         return false;
                     default: throw new Exception("Unsupported Control Type: " + controlType);
                 }

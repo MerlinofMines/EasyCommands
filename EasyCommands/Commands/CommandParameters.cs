@@ -75,7 +75,7 @@ namespace IngameScript {
         public class SelfCommandParameter : CommandParameter { }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {
-            public QueueCommandParameter(bool value) : base(value) {
+            public QueueCommandParameter(bool async) : base(async) {
             }
         }
 

@@ -14,7 +14,7 @@ print 'I Got Printed'
 ";
 
             using (var test = new ScriptTest(script)) {
-                test.RunUntilDone();
+                test.RunOnce();
 
                 Assert.AreEqual(2, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);
@@ -45,7 +45,7 @@ print 'I Got Printed'
         }
 
         [TestMethod]
-        public void runArgumentIsQueudAtFront() {
+        public void runArgumentIsQueuedAtFront() {
             String script = @"
 :main
 print 'Main'
@@ -65,7 +65,7 @@ print 'Main'
         }
 
         [TestMethod]
-        public void queueCommandIsQueudAtBack() {
+        public void queueCommandIsQueuedAtBack() {
             String script = @"
 :main
 queue print 'Queued'

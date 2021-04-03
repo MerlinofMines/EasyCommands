@@ -30,34 +30,39 @@ namespace IngameScript {
         public static int MAX_QUEUED_THREADS = 50;
         #endregion
 
-        static int ASYNC_THREAD_QUEUE_INDEX = 0;
-        static bool IN_ASYNC_QUEUE = false;
-        static List<Thread> THREAD_QUEUE = new List<Thread>();
-        static List<Thread> ASYNC_THREAD_QUEUE = new List<Thread>();
+        int AsyncThreadQueueIndex = 0;
+        bool InAsyncThreadQueue = false;
+        List<Thread> ThreadQueue = new List<Thread>();
+        List<Thread> AsyncThreadQueue = new List<Thread>();
 
-        public static Thread GetCurrentThread() {
-            if (IN_ASYNC_QUEUE) {
-                return ASYNC_THREAD_QUEUE[ASYNC_THREAD_QUEUE_INDEX];
+        public void ClearAllThreads() {
+            AsyncThreadQueue.Clear();
+            ThreadQueue.Clear();
+        }
+
+        public Thread GetCurrentThread() {
+            if (InAsyncThreadQueue) {
+                return AsyncThreadQueue[AsyncThreadQueueIndex];
             } else {
-                return THREAD_QUEUE[0];
+                return ThreadQueue[0];
             }
         }
 
-        public static void QueueThread(Thread thread) {
-            THREAD_QUEUE.Add(thread);
-            if (THREAD_QUEUE.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
+        public void QueueThread(Thread thread) {
+            ThreadQueue.Add(thread);
+            if (ThreadQueue.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
         }
 
-        public static void QueueAsyncThread(Thread thread) {
-            ASYNC_THREAD_QUEUE.Add(thread);
-            if (ASYNC_THREAD_QUEUE.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
+        public void QueueAsyncThread(Thread thread) {
+            AsyncThreadQueue.Add(thread);
+            if (AsyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
         }
 
         public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
         static String DEFAULT_FUNCTION;
         static String CUSTOM_DATA = null;
         static List<String> COMMAND_STRINGS = new List<String>();
-        static MyGridProgram PROGRAM;
+        static Program PROGRAM;
         public static ProgramState STATE = ProgramState.STOPPED;
         public delegate String CustomDataProvider(MyGridProgram program);
         public delegate List<MyIGCMessage> BroadcastMessageProvider();
@@ -106,9 +111,9 @@ namespace IngameScript {
             try {
                 if (messages.Count > 0) {
                     List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data),"Message", message.Tag)).ToList();
-                    THREAD_QUEUE.InsertRange(0, messageCommands);
+                    ThreadQueue.InsertRange(0, messageCommands);
                 }
-                if (!String.IsNullOrEmpty(argument)) { THREAD_QUEUE.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
+                if (!String.IsNullOrEmpty(argument)) { ThreadQueue.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
 
                 RunThreads();
                 UpdateState();
@@ -121,39 +126,39 @@ namespace IngameScript {
         }
 
         void RunThreads() {
-            IN_ASYNC_QUEUE = false;
+            InAsyncThreadQueue = false;
             try {
                 //If no current commands, we've been asked to restart.  start at the top.
-                if(THREAD_QUEUE.Count == 0 && ASYNC_THREAD_QUEUE.Count == 0) {
+                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
                     FunctionDefinition defaultFunction = FUNCTIONS[DEFAULT_FUNCTION];
-                    THREAD_QUEUE.Add(new Thread(defaultFunction.function.Clone(), "Main", defaultFunction.functionName));
+                    ThreadQueue.Add(new Thread(defaultFunction.function.Clone(), "Main", defaultFunction.functionName));
                 }
 
-                Info("Queued Threads: " + THREAD_QUEUE.Count());
-                Info("Async Threads: " + ASYNC_THREAD_QUEUE.Count());
+                Info("Queued Threads: " + ThreadQueue.Count());
+                Info("Async Threads: " + AsyncThreadQueue.Count());
                 //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
-                if (THREAD_QUEUE.Count > 0 ) {
-                    Thread currentThread = THREAD_QUEUE[0];
+                if (ThreadQueue.Count > 0 ) {
+                    Thread currentThread = ThreadQueue[0];
                     Info("Current Thread: " + currentThread.GetName());
-                    if(currentThread.GetCommand().Execute()) {
-                        THREAD_QUEUE.RemoveAt(0);
+                    if(currentThread.Command.Execute()) {
+                        ThreadQueue.RemoveAt(0);
                     }
                 }
 
                 //Process 1 iteration of all async commands, removing from queue if processed.
-                IN_ASYNC_QUEUE = true;
-                ASYNC_THREAD_QUEUE_INDEX = 0;
+                InAsyncThreadQueue = true;
+                AsyncThreadQueueIndex = 0;
 
-                while (ASYNC_THREAD_QUEUE_INDEX < ASYNC_THREAD_QUEUE.Count) {
-                    Thread currentThread = ASYNC_THREAD_QUEUE[ASYNC_THREAD_QUEUE_INDEX];
+                while (AsyncThreadQueueIndex < AsyncThreadQueue.Count) {
+                    Thread currentThread = AsyncThreadQueue[AsyncThreadQueueIndex];
                     Info("Async Thread: " + currentThread.GetName());
-                    if (currentThread.GetCommand().Execute()) {
-                        ASYNC_THREAD_QUEUE.RemoveAt(ASYNC_THREAD_QUEUE_INDEX);
+                    if (currentThread.Command.Execute()) {
+                        AsyncThreadQueue.RemoveAt(AsyncThreadQueueIndex);
                     } else {
-                        ASYNC_THREAD_QUEUE_INDEX++;
+                        AsyncThreadQueueIndex++;
                     }
                 }
-                if(THREAD_QUEUE.Count == 0 && ASYNC_THREAD_QUEUE.Count == 0) {
+                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
                     STATE = ProgramState.COMPLETE;
                 } else {
                     STATE = ProgramState.RUNNING;
@@ -311,18 +316,16 @@ namespace IngameScript {
         }
 
         public class Thread {
+            public Command Command { get; set; }
             String prefix;
-            Command command;
-            protected String name;
+            String name;
 
             public Thread(Command command, string prefix, string name) {
-                this.command = command;
+                this.Command = command;
                 this.prefix = prefix;
                 this.name = name;
             }
 
-            public Command GetCommand() => command;
-            public void SetCommand(Command c) => command = c;
             public String GetName() => "[" + prefix + "] " + name;
             public void SetName(String s) => name = s;
         }
