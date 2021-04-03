@@ -59,7 +59,7 @@ namespace IngameScript {
                   new ControlProcessor(),
                   new IterationProcessor(),
                   new ConditionalCommandProcessor(),
-                  new AsyncCommandProcessor()
+                  new QueueCommandProcessor()
             };
 
             static Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
@@ -916,26 +916,17 @@ namespace IngameScript {
             }
         }
 
-        public class ControlProcessor : SimpleCommandProcessor<ControlCommandParameter> {
-            bool loopIndex;
+        public class ControlProcessor : SimpleParameterProcessor<ControlCommandParameter> {
+            public override bool CanConvert(List<CommandParameter> p) => true;
 
-            public override void Initialize() {
-                loopIndex = false;
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                ControlType controlType = findFirst<ControlCommandParameter>(p).Value;
+                return new CommandReferenceParameter(new ControlCommand(controlType));
             }
 
-            public override Command GetCommand(List<CommandParameter> commandParameters) {
-                return new ControlCommand(commandParameters);
-            }
-
-            public override bool CanConvert() {
-                return true;
-            }
-
-            public override bool ProcessParameterArgument(CommandParameter p) {
-                if (p is VariableCommandParameter && !loopIndex) loopIndex = true;
-                else return false;
-                return true;
-            }
+            public override void Initialize() {}
+            public override bool ProcessLeft(CommandParameter p) => false;
+            public override bool ProcessRight(CommandParameter p) => false;
         }
 
         public class SendCommandProcessor : SimpleCommandProcessor<SendCommandParameter> {
@@ -1050,28 +1041,32 @@ namespace IngameScript {
             }
         }
 
-        public class AsyncCommandProcessor : SimpleCommandProcessor<AsyncCommandParameter> {
+        public class QueueCommandProcessor : SimpleParameterProcessor<QueueCommandParameter> {
             Command command = null;
-
-            public override Command GetCommand(List<CommandParameter> commandParameters) {
-                command.Async = true;
-                return command;
-            }
 
             public override void Initialize() {
                 command = null;
             }
 
-            public override bool CanConvert() {
-                return command != null;
+            public override bool ProcessLeft(CommandParameter p) {
+                return false;
             }
 
-            public override bool ProcessParameterArgument(CommandParameter p) {
+            public override bool ProcessRight(CommandParameter p) {
                 if (p is CommandReferenceParameter && command == null) {
                     command = ((CommandReferenceParameter)p).Value;
                     return true;
                 }
                 return false;
+            }
+
+            public override bool CanConvert(List<CommandParameter> p) {
+                return command != null;
+            }
+
+            public override CommandParameter Convert(List<CommandParameter> p) {
+                bool Async = findFirst<QueueCommandParameter>(p).Value;
+                return new CommandReferenceParameter(new QueueCommand(command, Async));
             }
         }
 

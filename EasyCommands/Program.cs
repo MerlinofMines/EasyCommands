@@ -25,17 +25,44 @@ namespace IngameScript {
         #region mdk preserve
         public static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
         public static LogLevel LOG_LEVEL = LogLevel.INFO;
-        public static int PARSE_AMOUNT = 1;
+        public static int FUNCTION_PARSE_AMOUNT = 1;
+        public static int MAX_ASYNC_THREADS = 50;
+        public static int MAX_QUEUED_THREADS = 50;
         #endregion
 
-        static MultiActionCommand RUNNING_COMMANDS;
+        int AsyncThreadQueueIndex = 0;
+        bool InAsyncThreadQueue = false;
+        List<Thread> ThreadQueue = new List<Thread>();
+        List<Thread> AsyncThreadQueue = new List<Thread>();
+
+        public void ClearAllThreads() {
+            AsyncThreadQueue.Clear();
+            ThreadQueue.Clear();
+        }
+
+        public Thread GetCurrentThread() {
+            if (InAsyncThreadQueue) {
+                return AsyncThreadQueue[AsyncThreadQueueIndex];
+            } else {
+                return ThreadQueue[0];
+            }
+        }
+
+        public void QueueThread(Thread thread) {
+            ThreadQueue.Add(thread);
+            if (ThreadQueue.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
+        }
+
+        public void QueueAsyncThread(Thread thread) {
+            AsyncThreadQueue.Add(thread);
+            if (AsyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
+        }
+
         public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
         static String DEFAULT_FUNCTION;
-        static String RUNNING_FUNCTION;
-        static String CUSTOM_DATA;
-        static String ARGUMENT;
+        static String CUSTOM_DATA = null;
         static List<String> COMMAND_STRINGS = new List<String>();
-        static MyGridProgram PROGRAM;
+        static Program PROGRAM;
         public static ProgramState STATE = ProgramState.STOPPED;
         public delegate String CustomDataProvider(MyGridProgram program);
         public delegate List<MyIGCMessage> BroadcastMessageProvider();
@@ -64,8 +91,6 @@ namespace IngameScript {
         static void Trace(String str) { if (LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
 
         public void Main(string argument) {
-            if (!String.IsNullOrEmpty(argument)) { ARGUMENT = argument; }
-
             try {
                 if (!ParseCommands()) {
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
@@ -78,28 +103,71 @@ namespace IngameScript {
                 return;
             }
 
-            Info("Running Function: " + RUNNING_FUNCTION);
             Debug("Functions: " + FUNCTIONS.Count);
-            Debug("Argument: " + ARGUMENT);
+            Debug("Argument: " + argument);
 
             List<MyIGCMessage> messages = broadcastMessageProvider();
 
             try {
                 if (messages.Count > 0) {
-                    ParseCommand((String)messages[0].Data).Execute();
-                } else if (String.IsNullOrEmpty(ARGUMENT)) {
-                    if (STATE == ProgramState.STOPPED || STATE == ProgramState.COMPLETE) {
-                        RUNNING_COMMANDS.Reset();
-                        STATE = ProgramState.RUNNING;
-                    }
-                    if (RUNNING_COMMANDS.Execute()) STATE = ProgramState.COMPLETE;
-                } else { ParseCommand(ARGUMENT).Execute(); ARGUMENT = null; }
+                    List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data),"Message", message.Tag)).ToList();
+                    ThreadQueue.InsertRange(0, messageCommands);
+                }
+                if (!String.IsNullOrEmpty(argument)) { ThreadQueue.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
+
+                RunThreads();
                 UpdateState();
             } catch(Exception e) {
                 Info("Exception Occurred: ");
                 Info(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
+            }
+        }
+
+        void RunThreads() {
+            InAsyncThreadQueue = false;
+            try {
+                //If no current commands, we've been asked to restart.  start at the top.
+                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
+                    FunctionDefinition defaultFunction = FUNCTIONS[DEFAULT_FUNCTION];
+                    ThreadQueue.Add(new Thread(defaultFunction.function.Clone(), "Main", defaultFunction.functionName));
+                }
+
+                Info("Queued Threads: " + ThreadQueue.Count());
+                Info("Async Threads: " + AsyncThreadQueue.Count());
+                //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
+                if (ThreadQueue.Count > 0 ) {
+                    Thread currentThread = ThreadQueue[0];
+                    Info("Current Thread: " + currentThread.GetName());
+                    if(currentThread.Command.Execute()) {
+                        ThreadQueue.RemoveAt(0);
+                    }
+                }
+
+                //Process 1 iteration of all async commands, removing from queue if processed.
+                InAsyncThreadQueue = true;
+                AsyncThreadQueueIndex = 0;
+
+                while (AsyncThreadQueueIndex < AsyncThreadQueue.Count) {
+                    Thread currentThread = AsyncThreadQueue[AsyncThreadQueueIndex];
+                    Info("Async Thread: " + currentThread.GetName());
+                    if (currentThread.Command.Execute()) {
+                        AsyncThreadQueue.RemoveAt(AsyncThreadQueueIndex);
+                    } else {
+                        AsyncThreadQueueIndex++;
+                    }
+                }
+                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
+                    STATE = ProgramState.COMPLETE;
+                } else {
+                    STATE = ProgramState.RUNNING;
+                }
+            //InterruptException is thrown by control commands to interrupt execution (stop, pause, restart).
+            //The command itself has set the correct state of the command queues, we just need to set the program state.
+            } catch(InterruptException interrupt) {
+                Debug("Script interrupted!");
+                STATE = interrupt.ProgramState;
             }
         }
 
@@ -127,7 +195,7 @@ namespace IngameScript {
         }
 
         static bool ParseCommands() {
-            if ((RUNNING_COMMANDS == null && COMMAND_STRINGS.Count==0) || !CUSTOM_DATA.Equals(PROGRAM.Me.CustomData)) {
+            if (!PROGRAM.Me.CustomData.Equals(CUSTOM_DATA)) {
                 CUSTOM_DATA = PROGRAM.Me.CustomData;
                 COMMAND_STRINGS = CUSTOM_DATA.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(line => !line.StartsWith("#"))
@@ -145,9 +213,7 @@ namespace IngameScript {
             Info("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
             ParseFunctions(COMMAND_STRINGS);
 
-            if (COMMAND_STRINGS.Count > 0) return false;
-            RUNNING_COMMANDS = (MultiActionCommand)(FUNCTIONS[DEFAULT_FUNCTION].function).Copy();
-            return true;
+            return COMMAND_STRINGS.Count == 0;
         }
 
         static void ParseFunctions(List<String> commandStrings) {
@@ -172,7 +238,7 @@ namespace IngameScript {
             }
 
             //Parse Function Commands and add to Definitions
-            int toParse = PARSE_AMOUNT;
+            int toParse = FUNCTION_PARSE_AMOUNT;
             foreach (int i in functionIndices) {
                 String functionString = commandStrings[i].Remove(0, 1).Trim();
                 List<Token> nameAndParams = ParseTokens(functionString);
@@ -247,6 +313,21 @@ namespace IngameScript {
                 CommandParameters = ParseCommandParameters(ParseTokens(commandString));
                 CommandString = commandString;
             }
+        }
+
+        public class Thread {
+            public Command Command { get; set; }
+            String prefix;
+            String name;
+
+            public Thread(Command command, string prefix, string name) {
+                this.Command = command;
+                this.prefix = prefix;
+                this.name = name;
+            }
+
+            public String GetName() => "[" + prefix + "] " + name;
+            public void SetName(String s) => name = s;
         }
 
         public class FunctionDefinition {

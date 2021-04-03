@@ -12,7 +12,6 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SimpleCommandExecutionTests {
 
-
         [TestMethod]
         public void printCommandTest() {
             String script = @"
@@ -44,7 +43,6 @@ print 'Hello World'
                 Assert.AreEqual(1, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);
             }
-
         }
     }
 }

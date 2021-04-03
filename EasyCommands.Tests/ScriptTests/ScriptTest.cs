@@ -41,6 +41,7 @@ namespace EasyCommands.Tests.ScriptTests
             mockedBlocksByName = new GenericListDictionary();
             mockedGroups = new List<IMyBlockGroup>();
             Logger = new List<String>();
+            RunCounter = 0;
 
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
@@ -72,7 +73,6 @@ namespace EasyCommands.Tests.ScriptTests
         /// </summary>
         public void RunUntil(Predicate<ScriptTest> runUntilPredicate)
         {
-            RunCounter = 0;
             do
             {
                 MDKFactory.Run(program);
@@ -87,6 +87,31 @@ namespace EasyCommands.Tests.ScriptTests
         public void RunUntilDone()
         {
             RunUntil(t => Program.ProgramState.COMPLETE == Program.STATE || t.RunCounter >= 100);
+        }
+
+        /// <summary>
+        /// Run the script a given number of iterations, regardless of Program State.  
+        /// </summary>
+        /// <param name="iterations"></param>
+        public void RunIterations(int iterations) 
+        {
+            int EndCounter = RunCounter + iterations;
+            RunUntil(t => t.RunCounter >= EndCounter);
+        }
+
+        /// <summary>
+        /// Run the script one iteration
+        /// </summary>
+        public void RunOnce() 
+        {
+            RunIterations(1);
+        }
+        /// <summary>
+        /// Runs the program with the given argument.  This only invokes the program one iteration.
+        /// </summary>
+        /// <param name="argument"></param>
+        public void RunWithArgument(string argument) {
+            MDKFactory.Run(program, argument);
         }
 
         /// <summary>
