@@ -114,9 +114,9 @@ namespace IngameScript {
         public static StringPrimitive CastString(Primitive p) {
             switch (p.GetPrimitiveType()) {
                 case PrimitiveType.VECTOR:
-                    return new StringPrimitive(ToString(CastVector(p).GetVectorValue()));
+                    return new StringPrimitive(VectorToString(CastVector(p).GetVectorValue()));
                 case PrimitiveType.COLOR:
-                    return new StringPrimitive(ToString(CastColor(p).GetColorValue()));
+                    return new StringPrimitive(ColorToString(CastColor(p).GetColorValue()));
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
         }
@@ -170,11 +170,11 @@ namespace IngameScript {
             return true;
         }
 
-        static string ToString(Vector3D vector) {
+        static string VectorToString(Vector3D vector) {
             return vector.X + ":" + vector.Y + ":" + vector.Z;
         }
 
-        static string ToString(Color color) {
+        static string ColorToString(Color color) {
             return "#" + IntToHex(color.R) + IntToHex(color.G) + IntToHex(color.B);
         }
 

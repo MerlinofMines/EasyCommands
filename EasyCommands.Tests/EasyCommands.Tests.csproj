@@ -120,6 +120,7 @@
     <Compile Include="ParameterParsingTests\OperatorParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\SimpleVariableParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
+    <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ConditionalBlockExecutionTests.cs" />
     <Compile Include="ParameterParsingTests\BlockCommandProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\BooleanLogicParameterProcessorTests.cs" />
@@ -132,6 +133,8 @@
     <Compile Include="ScriptTests\SimpleCommandExecutionTests.cs" />
     <Compile Include="ScriptTests\SimpleBlockCommandTests.cs" />
     <Compile Include="ScriptTests\MultiThreadingTests.cs" />
+    <Compile Include="ScriptTests\CameraBlockTests.cs" />
+    <Compile Include="ScriptTests\SensorBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
