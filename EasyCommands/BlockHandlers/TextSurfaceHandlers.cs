@@ -31,7 +31,7 @@ namespace IngameScript {
             }
 
             public override List<IMyTextSurface> GetBlocksOfType(String name) {
-                List<IMyFunctionalBlock> blocks = new List<IMyFunctionalBlock>();
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.Equals(name));
 
                 List<IMyTextSurface> surfaces = new List<IMyTextSurface>();

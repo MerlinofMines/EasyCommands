@@ -44,5 +44,18 @@ print 'Hello World'
                 Assert.AreEqual("Hello World", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void emptyScriptPrintsWelcomeMessage() {
+            String script = "";
+
+            using (var test = new ScriptTest(script)) {
+                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.RunOnce();
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Welcome to EasyCommands!", test.Logger[0]);
+                Assert.AreEqual("Add Commands to Custom Data", test.Logger[1]);
+            }
+        }
     }
 }
