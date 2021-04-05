@@ -279,6 +279,7 @@ namespace IngameScript {
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
         {
             { "start", ControlType.START },
+            { "resume", ControlType.START },
             { "restart", ControlType.RESTART },
             { "reset", ControlType.RESTART },
             { "reboot", ControlType.RESTART },
@@ -287,7 +288,6 @@ namespace IngameScript {
             { "replay", ControlType.REPEAT },
             { "stop", ControlType.STOP },
             { "pause", ControlType.PAUSE },
-            { "resume", ControlType.RESUME },
         };
 
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
