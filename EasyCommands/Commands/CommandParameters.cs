@@ -133,6 +133,10 @@ namespace IngameScript {
             }
         }
 
+        public class ExplicitStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+            public ExplicitStringCommandParameter(string value) : base(value) {}
+        }
+
         public class NumericCommandParameter : ValueCommandParameter<float>, PrimitiveCommandParameter {
             public NumericCommandParameter(float value) : base(value) {}
         }

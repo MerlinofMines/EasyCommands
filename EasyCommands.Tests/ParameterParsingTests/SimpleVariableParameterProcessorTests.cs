@@ -8,6 +8,51 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class SimpleVariableParameterProcessorTests {
 
         [TestMethod]
+        public void AssignVariable() {
+            var command = ParseCommand("assign \"a\" to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+
+        [TestMethod]
+        public void AssignVariableFromExplicitString() {
+            var command = ParseCommand("assign 'a' to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+        [TestMethod]
+        public void AssignVariableCaseIsPreserved() {
+            var command = ParseCommand("assign \"a\" to {variableName}");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.IsTrue(assignCommand.variable is InMemoryVariable);
+            InMemoryVariable memoryVariable = (InMemoryVariable)assignCommand.variable;
+            Assert.AreEqual("variableName", memoryVariable.variableName);
+        }
+
+        [TestMethod]
+        public void LockVariable() {
+            var command = ParseCommand("bind \"a\" to {b} is 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.IsTrue(assignCommand.variable is ComparisonVariable);
+            Assert.IsTrue(assignCommand.useReference);
+
+            ComparisonVariable comparison = (ComparisonVariable)assignCommand.variable;
+            Assert.IsTrue(comparison.a is InMemoryVariable);
+        }
+
+        [TestMethod]
         public void ParseSimpleVector() {
             var command = ParseCommand("assign a to \"53573.9750085028:-26601.8512032533:12058.8229348438\"");
             Assert.IsTrue(command is VariableAssignmentCommand);

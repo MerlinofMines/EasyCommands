@@ -3,7 +3,7 @@ using System;
 using VRageMath;
 using static IngameScript.Program;
 
-namespace EasyCommands.Tests {
+namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class OperatorParameterProcessorTests {
 

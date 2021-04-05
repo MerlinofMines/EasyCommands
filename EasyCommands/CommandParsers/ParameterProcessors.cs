@@ -34,10 +34,20 @@ namespace IngameScript {
                         if(!FUNCTIONS.TryGetValue(name.GetValue().Value, out definition)) throw new Exception("Unknown function: " + name.GetValue().Value);
                         return new FunctionDefinitionCommandParameter(p.Value, definition);
                     }),
+                OneValueRule<FunctionCommandParameter,ExplicitStringCommandParameter>(
+                    requiredRight<ExplicitStringCommandParameter>(),
+                    (p,name) => {
+                        FunctionDefinition definition;
+                        if(!FUNCTIONS.TryGetValue(name.GetValue().Value, out definition)) throw new Exception("Unknown function: " + name.GetValue().Value);
+                        return new FunctionDefinitionCommandParameter(p.Value, definition);
+                    }),
 
                 //AssignmentProcessor
                 OneValueRule<AssignmentCommandParameter,StringCommandParameter>(
                     requiredRight<StringCommandParameter>(),
+                    (p,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference)),
+                OneValueRule<AssignmentCommandParameter,ExplicitStringCommandParameter>(
+                    requiredRight<ExplicitStringCommandParameter>(),
                     (p,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference)),
 
                 //SelfSelectorProcessor
@@ -496,18 +506,12 @@ namespace IngameScript {
 
         public class PrimitiveProcessor : ParameterProcessor<PrimitiveCommandParameter> {
             public override List<Type> GetProcessedTypes() {
-                return new List<Type>() { typeof(StringCommandParameter), typeof(NumericCommandParameter), typeof(BooleanCommandParameter) };
+                return new List<Type>() { typeof(StringCommandParameter), typeof(NumericCommandParameter), typeof(BooleanCommandParameter), typeof(ExplicitStringCommandParameter) };
             }
 
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
-                if (p[i] is StringCommandParameter) {
-                    String value = ((StringCommandParameter)p[i]).Value;
-                    Primitive primitive = new StringPrimitive(value);
-                    Vector3D vector;
-                    if (GetVector(value, out vector)) primitive = new VectorPrimitive(vector);
-                    Color color;
-                    if (GetColor(value, out color)) primitive = new ColorPrimitive(color);
-                    p[i] = new VariableCommandParameter(new StaticVariable(primitive));
+                if (p[i] is ValueCommandParameter<String>) {
+                    p[i] = GetParameter(((ValueCommandParameter<String>)p[i]).Value);
                 } else if (p[i] is NumericCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).Value)));
                 } else if (p[i] is BooleanCommandParameter) {
@@ -518,6 +522,15 @@ namespace IngameScript {
                 }
                 finalParameters = new List<CommandParameter>() { p[i] };
                 return true;
+            }
+
+            VariableCommandParameter GetParameter(String value) {
+                Primitive primitive = new StringPrimitive(value);
+                Vector3D vector;
+                if (GetVector(value, out vector)) primitive = new VectorPrimitive(vector);
+                Color color;
+                if (GetColor(value, out color)) primitive = new ColorPrimitive(color);
+                return new VariableCommandParameter(new StaticVariable(primitive));
             }
         }
 
