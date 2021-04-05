@@ -408,7 +408,7 @@ namespace IngameScript {
                 String t = token.token;
 
                 if(token.isExplicitString) {
-                    commandParameters.Add(new VariableCommandParameter(new StaticVariable(new StringPrimitive(token.original))));
+                    commandParameters.Add(new ExplicitStringCommandParameter(token.original));
                     continue;
                 }
 
