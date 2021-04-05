@@ -2,7 +2,7 @@
 using System;
 using static IngameScript.Program;
 
-namespace EasyCommands.Tests {
+namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class AggregateBlockPropertyProcessorTests {
         [TestMethod]
