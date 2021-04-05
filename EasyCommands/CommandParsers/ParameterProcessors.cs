@@ -273,7 +273,7 @@ namespace IngameScript {
 
                 for (int i = 0; i < parameterProcessors.Count; i++) {
                     ParameterProcessor processor = parameterProcessors[i];
-                    processor.SetRank(i);
+                    processor.Rank = i;
 
                     List<Type> types = processor.GetProcessedTypes();
                     foreach (Type t in types) {
@@ -314,21 +314,8 @@ namespace IngameScript {
             }
 
             static void AddProcessors(List<CommandParameter> types, List<ParameterProcessor> sortedParameterProcessors) {
-                //how awefully inefficient
-                for (int i = 0; i < types.Count; i++) {
-                    List<ParameterProcessor> processors;
-                    if (!parameterProcessorsByParameterType.TryGetValue(types[i].GetType(), out processors)) continue;
-                    foreach (ParameterProcessor processor in processors) {
-                        if (!sortedParameterProcessors.Contains(processor)) InsertProcessor(processor, sortedParameterProcessors);
-                    }
-                }
-            }
-
-            static void InsertProcessor(ParameterProcessor processor, List<ParameterProcessor> parameterProcessors) {
-                int priority = processor.GetRank();
-                int i = 0;
-                while (i < parameterProcessors.Count() && parameterProcessors[i].GetRank() < priority) i++;
-                parameterProcessors.Insert(i, processor);
+                sortedParameterProcessors.AddRange(types.SelectMany(t => parameterProcessorsByParameterType.ContainsKey(t.GetType()) ? parameterProcessorsByParameterType[t.GetType()] : new List<ParameterProcessor>()).ToList());
+                sortedParameterProcessors.Sort();
             }
         }
 
@@ -456,25 +443,19 @@ namespace IngameScript {
         }
 
         //ParameterProcessors
-        public interface ParameterProcessor {
+        public interface ParameterProcessor : IComparable<ParameterProcessor> {
+            int Rank { get; set; }
             List<Type> GetProcessedTypes();
             bool CanProcess(CommandParameter p); 
             bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
-            int GetRank();
-            void SetRank(int rank);
         }
 
         public abstract class ParameterProcessor<T> : ParameterProcessor where T : class, CommandParameter {
-            int rank;
+            public int Rank { get; set; }
             public virtual List<Type> GetProcessedTypes() { return new List<Type>() { typeof(T) }; }
-            public virtual int GetRank() => rank;
-            public virtual void SetRank(int r) => rank = r;
-            public bool CanProcess(CommandParameter p) {
-                return p is T;
-            }
+            public int CompareTo(ParameterProcessor other) => Rank.CompareTo(other.Rank);
+            public bool CanProcess(CommandParameter p) => p is T;
             public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
-
-
         }
 
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
