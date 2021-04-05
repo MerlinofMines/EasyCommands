@@ -126,7 +126,7 @@ namespace IngameScript {
         }
 
         public class ControlCommand : Command {
-            ControlType controlType;
+            public ControlType controlType;
             public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
@@ -142,13 +142,12 @@ namespace IngameScript {
                     case ControlType.STOP:
                         PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.STOPPED);
-                    case ControlType.START:
                     case ControlType.RESTART:
                         PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.RUNNING);
                     case ControlType.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
-                    case ControlType.RESUME:
+                    case ControlType.START:
                         STATE = ProgramState.RUNNING; return true;
                     case ControlType.REPEAT:
                         Thread currentThread = PROGRAM.GetCurrentThread();
@@ -164,17 +163,6 @@ namespace IngameScript {
             public Variable waitInterval;
             public UnitType units;
             int ticksLeft = -1;
-            public WaitCommand(List<CommandParameter> parameters) {
-                int unitIndex = parameters.FindIndex(param => param is UnitCommandParameter);
-                int timeIndex = parameters.FindIndex(param => param is VariableCommandParameter);
-
-                if (unitIndex < 0 && timeIndex < 0) {
-                    units = UnitType.TICKS;
-                } else {
-                    units = (unitIndex < 0 ? UnitType.SECONDS : ((UnitCommandParameter)parameters[unitIndex]).Value);
-                }
-                waitInterval = (timeIndex < 0 ? new StaticVariable(new NumberPrimitive(1)) : ((VariableCommandParameter)parameters[timeIndex]).Value);
-            }
 
             public WaitCommand(Variable waitInterval, UnitType units) {
                 this.waitInterval = waitInterval;
@@ -205,11 +193,11 @@ namespace IngameScript {
 
         public class ListenCommand : Command {
             public Variable tag;
-            public ListenCommand(List<CommandParameter> commandParameters) {
-                int tagIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
-                if (tagIndex < 0) throw new Exception("Tag is required");
-                tag = ((VariableCommandParameter)commandParameters[tagIndex]).Value;
+
+            public ListenCommand(Variable tag) {
+                this.tag = tag;
             }
+
             public override bool Execute() {
                 PROGRAM.IGC.RegisterBroadcastListener(CastString(tag.GetValue()).GetStringValue());
                 return true;
@@ -218,13 +206,12 @@ namespace IngameScript {
 
         public class SendCommand : Command {
             public Variable message, tag;
-            public SendCommand(List<CommandParameter> commandParameters) {
-                int messageIndex = commandParameters.FindIndex(p => p is VariableCommandParameter);
-                int tagIndex = commandParameters.FindLastIndex(p => p is VariableCommandParameter);
-                if (tagIndex < 0 || messageIndex == tagIndex) throw new Exception("Both Message and Tag must be present");
-                message = ((VariableCommandParameter)commandParameters[messageIndex]).Value;
-                tag = ((VariableCommandParameter)commandParameters[tagIndex]).Value;
+
+            public SendCommand(Variable message, Variable tag) {
+                this.message = message;
+                this.tag = tag;
             }
+
             public override bool Execute() {
                 PROGRAM.IGC.SendBroadcastMessage(CastString(tag.GetValue()).GetStringValue(), CastString(message.GetValue()).GetStringValue());
                 return true; 
@@ -391,9 +378,9 @@ namespace IngameScript {
         }
 
         public class MultiActionCommand : Command {
-            List<Command> commandsToExecute;
+            public List<Command> commandsToExecute;
+            public Variable loopCount;
             List<Command> currentCommands = null;
-            Variable loopCount;
             int loopsLeft;
 
             public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) : this(commandsToExecute, new StaticVariable(new NumberPrimitive(loops))) {

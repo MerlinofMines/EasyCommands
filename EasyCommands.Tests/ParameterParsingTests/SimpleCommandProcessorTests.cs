@@ -125,5 +125,79 @@ namespace EasyCommands.Tests {
             ComparisonVariable comparison = (ComparisonVariable)assignCommand.variable;
             Assert.IsTrue(comparison.a is InMemoryVariable);
         }
+
+        [TestMethod]
+        public void IterateSimpleCommand() {
+            var command = ParseCommand("print \"hello world\" 3 times");
+            Assert.IsTrue(command is MultiActionCommand);
+            MultiActionCommand iterateCommand = (MultiActionCommand)command;
+            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
+            List<Command> commands = iterateCommand.commandsToExecute;
+            Assert.AreEqual(1, commands.Count);
+            Assert.IsTrue(commands[0] is PrintCommand);
+            PrintCommand printCommand = (PrintCommand)commands[0];
+            Assert.AreEqual("hello world", printCommand.variable.GetValue().GetValue());
+        }
+
+        [TestMethod]
+        public void IterateSimpleCommandAfter() {
+            var command = ParseCommand("for 3 times print \"hello world\"");
+            Assert.IsTrue(command is MultiActionCommand);
+            MultiActionCommand iterateCommand = (MultiActionCommand)command;
+            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
+            List<Command> commands = iterateCommand.commandsToExecute;
+            Assert.AreEqual(1, commands.Count);
+            Assert.IsTrue(commands[0] is PrintCommand);
+            PrintCommand printCommand = (PrintCommand)commands[0];
+            Assert.AreEqual("hello world", printCommand.variable.GetValue().GetValue());
+        }
+
+        [TestMethod]
+        public void StopCommand() {
+            var command = ParseCommand("stop");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.STOP, controlCommand.controlType);
+        }
+
+        [TestMethod]
+        public void StartCommand() {
+            var command = ParseCommand("start");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.START, controlCommand.controlType);
+        }
+
+        [TestMethod]
+        public void RestartCommand() {
+            var command = ParseCommand("restart");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.RESTART, controlCommand.controlType);
+        }
+
+        [TestMethod]
+        public void RepeatCommand() {
+            var command = ParseCommand("repeat");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.REPEAT, controlCommand.controlType);
+        }
+
+        [TestMethod]
+        public void PauseCommand() {
+            var command = ParseCommand("pause");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.PAUSE, controlCommand.controlType);
+        }
+
+        [TestMethod]
+        public void ResumeCommand() {
+            var command = ParseCommand("resume");
+            Assert.IsTrue(command is ControlCommand);
+            ControlCommand controlCommand = (ControlCommand)command;
+            Assert.AreEqual(ControlType.START, controlCommand.controlType);
+        }
     }
 }
