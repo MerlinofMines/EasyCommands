@@ -25,6 +25,7 @@ namespace EasyCommands.Tests.ScriptTests
         private List<IMyBlockGroup> mockedGroups;
         private Mock<IMyGridTerminalSystem> gridMock;
         private Program program;
+        private Mock<IMyProgrammableBlock> me;
 
         /// <summary>
         /// Counter of how many times the given script has been invoked by the test engine.
@@ -46,8 +47,8 @@ namespace EasyCommands.Tests.ScriptTests
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
             gridMock = new Mock<IMyGridTerminalSystem>();
-            var me = new Mock<IMyProgrammableBlock>();
-            me.Setup(b => b.CustomData).Returns(script);
+            me = new Mock<IMyProgrammableBlock>();
+
             MDKFactory.ProgramConfig config = default;
             config.GridTerminalSystem = gridMock.Object;
             config.ProgrammableBlock = me.Object;
@@ -65,7 +66,13 @@ namespace EasyCommands.Tests.ScriptTests
             gridMock.Setup(g => g.GetBlockGroups(It.IsAny<List<IMyBlockGroup>>(), It.IsAny<Func<IMyBlockGroup, bool>>()))
                 .Callback((Action<List<IMyBlockGroup>, Func<IMyBlockGroup, bool>>)GetBlockGroupsCallback);
 
+            setScript(script);
+
             // TODO: Handle custom logic in TextSurfaceHandler
+        }
+
+        public void setScript(String script) {
+            me.Setup(b => b.CustomData).Returns(script);
         }
 
         /// <summary>

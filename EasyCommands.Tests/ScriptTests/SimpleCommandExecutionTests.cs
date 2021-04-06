@@ -57,5 +57,33 @@ print 'Hello World'
                 Assert.AreEqual("Add Commands to Custom Data", test.Logger[1]);
             }
         }
+
+        [TestMethod]
+        public void updatedScriptAutoParsesAndRestarts() {
+            String script = @"
+:main
+#This is a comment
+print 'Hello World'
+replay
+";
+
+            String newScript = @"
+:main
+#This is a comment
+print 'Hello New World'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+                test.setScript(newScript);
+                test.Logger.Clear();
+                test.RunOnce();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello New World", test.Logger[0]);
+            }
+        }
+
     }
 }

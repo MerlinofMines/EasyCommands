@@ -207,6 +207,7 @@ namespace IngameScript {
                 }
                 Info("Parsing Custom Data");
                 FUNCTIONS.Clear();
+                PROGRAM.ClearAllThreads();
             }
 
             if (COMMAND_STRINGS.Count == 0) return true;
