@@ -22,6 +22,13 @@ namespace IngameScript {
         public class SensorBlockHandler : FunctionalBlockHandler<IMySensorBlock> {
             public SensorBlockHandler() {
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsActive);
+                AddVectorHandler(PropertyType.TARGET, (b) => {
+                    MyDetectedEntityInfo lastDetectedEntity = b.LastDetectedEntity;
+                    Vector3D hitPosition = Vector3D.Zero;
+                    if (!lastDetectedEntity.IsEmpty()) hitPosition = lastDetectedEntity.HitPosition.Value;
+                    return hitPosition;
+                });
+
                 defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
             }
         }

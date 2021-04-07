@@ -92,12 +92,12 @@ namespace IngameScript {
             AddBiOperation<string, string>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<string, bool>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<string, float>(BiOperandType.ADD, (a, b) => a + b);
-            AddBiOperation<string, Vector3D>(BiOperandType.ADD, (a, b) => a + ToString(b));
+            AddBiOperation<string, Vector3D>(BiOperandType.ADD, (a, b) => a + VectorToString(b));
             AddBiOperation<string, Color>(BiOperandType.ADD, (a, b) => b + a.ToString());
             AddBiOperation<bool, string>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<float, string>(BiOperandType.ADD, (a, b) => a + b);
             AddBiOperation<Color, string>(BiOperandType.ADD, (a, b) => a.ToString() + b);
-            AddBiOperation<Vector3D, string>(BiOperandType.ADD, (a, b) => ToString(a) + b);
+            AddBiOperation<Vector3D, string>(BiOperandType.ADD, (a, b) => VectorToString(a) + b);
             AddBiOperation<string, string>(BiOperandType.SUBTACT, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, string>(BiOperandType.MOD, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, float>(BiOperandType.SUBTACT, (a, b) => a.Substring(Convert.ToInt32(b)));

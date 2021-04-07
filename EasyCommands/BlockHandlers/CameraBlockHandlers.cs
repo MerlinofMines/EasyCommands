@@ -21,8 +21,25 @@ namespace IngameScript {
     partial class Program {
         public class CameraBlockHandler : FunctionalBlockHandler<IMyCameraBlock> {
             public CameraBlockHandler() {
-                AddBooleanHandler(PropertyType.TRIGGER, (b) => { var range = (double)GetRange(b); return b.CanScan(range) && !b.Raycast(range).IsEmpty(); }, (b, v) => b.EnableRaycast = v);
+                AddBooleanHandler(PropertyType.TRIGGER, (b) => CastVector(GetPropertyValue(b, PropertyType.TARGET)).GetVectorValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(PropertyType.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
+
+                //TODO: Use setter to scan specific vector?
+                AddVectorHandler(PropertyType.TARGET, (b) => {
+                    var range = (double)GetRange(b);
+                    b.EnableRaycast = true;
+                    if (b.CanScan(range)) {
+                        MyDetectedEntityInfo detectedEntity = b.Raycast(range);
+                        if (!detectedEntity.IsEmpty()) {
+                            SetCustomProperty(b, "Target", VectorToString(detectedEntity.HitPosition.Value));
+                        } else {
+                            DeleteCustomProperty(b, "Target");
+                        }
+                    }
+                    Vector3D hitPosition;
+                    if (!GetVector(GetCustomProperty(b, "Target") ?? "", out hitPosition)) hitPosition = Vector3D.Zero;
+                    return hitPosition;
+                });
                 defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
                 defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
                 defaultDirection = DirectionType.UP;
