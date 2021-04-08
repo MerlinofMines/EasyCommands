@@ -132,6 +132,7 @@
     <Compile Include="ScriptTests\SimpleCommandExecutionTests.cs" />
     <Compile Include="ScriptTests\SimpleBlockCommandTests.cs" />
     <Compile Include="ScriptTests\MultiThreadingTests.cs" />
+    <Compile Include="ScriptTests\RotorBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />

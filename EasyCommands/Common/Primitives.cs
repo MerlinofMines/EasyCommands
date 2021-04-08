@@ -38,7 +38,7 @@ namespace IngameScript {
             }
 
             public Primitive Minus(Primitive p) {
-                return PerformOperation(BiOperandType.ADD, this, p);
+                return PerformOperation(BiOperandType.SUBTACT, this, p);
             }
 
             public Primitive Multiply(Primitive p) {

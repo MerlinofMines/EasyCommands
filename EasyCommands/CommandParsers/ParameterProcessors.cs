@@ -606,7 +606,6 @@ namespace IngameScript {
                 if (relativeProcessor.f.HasValue()) commandParameters.Add(relativeProcessor.f.GetValue());
                 if (variableProcessor.f.HasValue()) commandParameters.Add(variableProcessor.f.GetValue());
                 if (propertyProcessor.f.HasValue()) commandParameters.Add(propertyProcessor.f.GetValue());
-                if (relativeProcessor.f.HasValue()) commandParameters.Add(relativeProcessor.f.GetValue());
                 if (directionProcessor.f.HasValue()) commandParameters.Add(directionProcessor.f.GetValue());
                 if (reverseProcessor.f.HasValue()) commandParameters.Add(reverseProcessor.f.GetValue());
                 BlockCommand command = new BlockCommand(commandParameters);

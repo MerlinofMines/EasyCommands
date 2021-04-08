@@ -282,7 +282,7 @@ namespace IngameScript {
                     }),
                     new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
                         PropertyType property = b.GetDefaultProperty(d.Value);
-                        b.SetPropertyValue(e, property, v.Value.GetValue());
+                        b.SetPropertyValue(e, property, d.Value, v.Value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
                         b.SetPropertyValue(e,p.Value,d.Value,v.Value.GetValue());
