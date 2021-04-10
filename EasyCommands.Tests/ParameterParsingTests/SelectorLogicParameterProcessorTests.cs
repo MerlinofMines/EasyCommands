@@ -96,5 +96,57 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(iep.provider is SelfEntityProvider);
             Assert.AreEqual(BlockType.DISPLAY, iep.provider.GetBlockType());
         }
+
+        [TestMethod]
+        public void AllSelector() {
+            var command = ParseCommand("set all piston height to 0");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
+            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.AreEqual(BlockType.PISTON, aep.GetBlockType());
+        }
+
+        [TestMethod]
+        public void AllSelectorGroup() {
+            var command = ParseCommand("set the height of all pistons to 0");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
+            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.AreEqual(BlockType.PISTON, aep.GetBlockType());
+        }
+
+        [TestMethod]
+        public void AllSelectorGroupWithCondition() {
+            var command = ParseCommand("recharge all batteries whose ratio < 0.25");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
+            ConditionalEntityProvider cep = (ConditionalEntityProvider)bc.entityProvider;
+            Assert.IsTrue(cep.provider is AllEntityProvider);
+            AllEntityProvider aep = (AllEntityProvider)cep.provider;
+            Assert.AreEqual(BlockType.BATTERY, aep.GetBlockType());
+        }
+
+        [TestMethod]
+        public void ImplicitAllSelector() {
+            var command = ParseCommand("turn on the light");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
+            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.AreEqual(BlockType.LIGHT, aep.GetBlockType());
+        }
+
+        [TestMethod]
+        public void ImplicitAllGroupSelector() {
+            var command = ParseCommand("turn on the lights");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
+            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.AreEqual(BlockType.LIGHT, aep.GetBlockType());
+        }
     }
 }

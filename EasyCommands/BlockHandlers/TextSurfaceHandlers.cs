@@ -30,9 +30,9 @@ namespace IngameScript {
                 defaultDirection = DirectionType.UP;
             }
 
-            public override List<IMyTextSurface> GetBlocksOfType(String name) {
+            public override List<IMyTextSurface> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, block => block.CustomName.Equals(name));
+                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, selector);
 
                 List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
                 blocks.ForEach((b)=>Add(b, surfaces));

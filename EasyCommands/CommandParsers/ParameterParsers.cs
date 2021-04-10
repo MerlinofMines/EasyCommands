@@ -68,7 +68,7 @@ namespace IngameScript {
         static String[] greaterWords = { "greater", ">", "above", "more" };
 
         static String[] anyWords = { "any" };
-        static String[] allWords = { "all" };
+        static String[] allWords = { "all", "every", "each" };
         static String[] noneWords = { "none" };
 
         static String[] andWords = { "and", "&", "&&", "but", "yet" };
