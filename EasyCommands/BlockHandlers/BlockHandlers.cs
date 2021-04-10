@@ -256,13 +256,18 @@ namespace IngameScript {
 
             protected override string Name(T block) { return block.CustomName; }
 
-            protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key); }
+            protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
             protected void SetCustomProperty(T block, String key, String value) {
                 Dictionary<String, String> d = GetCustomData(block);
                 d[key] = value;SaveCustomData(block, d);
             }
+            protected void DeleteCustomProperty(T block, String key) {
+                Dictionary<String, String> d = GetCustomData(block);
+                if(d.ContainsKey(key)) d.Remove(key);
+                SaveCustomData(block, d);
+            }
             protected void SaveCustomData(T block, Dictionary<String, String> data) {
-                block.CustomData = String.Join("\n",data.Keys.Select(k => k + "=" + data[k] + '\n').ToList());
+                block.CustomData = String.Join("\n",data.Keys.Select(k => k + "=" + data[k]).ToList());
             }
             protected Dictionary<String, String> GetCustomData(T block) {
                 List<String> keys = block.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -353,6 +358,10 @@ namespace IngameScript {
 
             protected void AddNumericHandler(PropertyType property, GetNumericProperty<T> Get, SetNumericProperty<T> Set, float delta) {
                 propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, Set, delta);
+            }
+
+            protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get) {
+                propertyHandlers[property] = new SimpleVectorPropertyHandler<T>(Get, (b,v) => { });
             }
 
             protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
