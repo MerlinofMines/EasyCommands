@@ -38,10 +38,10 @@ namespace IngameScript {
                 Get = block => new NumberPrimitive(block.Angle * (float)(180 / Math.PI));
                 GetDirection = (b, d) => Get(b);
                 Set = RotateToValue;
-                SetDirection = (b, d, v) => RotateToValue(b, v);//Bug, we're ignoring direction
+                SetDirection = (b, d, v) => RotateToValue(b, v, d);
                 IncrementDirection = (b, d, v) => {
-                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) RotateToValue(b, Get(b).Plus(v));
-                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) RotateToValue(b, Get(b).Minus(v));
+                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) RotateToValue(b, Get(b).Plus(v), d);
+                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) RotateToValue(b, Get(b).Minus(v), d);
                 };
                 Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
                 Move = (b, d) => {
@@ -52,20 +52,13 @@ namespace IngameScript {
             }
         }
 
-        //TODO: Directions may become important.  Below needs a lot of work
         static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
             if(primitive.GetPrimitiveType()!=PrimitiveType.NUMERIC) {
                 throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 
             float value = (float)primitive.GetValue();
-            float newValue = value;
-
-            if (newValue > 360) newValue %= 360;
-
-            if (newValue < -360) {
-                newValue = -((-newValue) % 360);
-            }
+            float newValue = GetCorrectedAngle(value);
 
             //TODO: We might find that in some cases, it's faster to go the other way.
             if (rotor.Angle * (180 / Math.PI) < value) {
@@ -75,6 +68,40 @@ namespace IngameScript {
                 rotor.LowerLimitDeg = newValue;
                 rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);
             }
+        }
+
+        static void RotateToValue(IMyMotorStator rotor, Primitive primitive, DirectionType direction) {
+            if (primitive.GetPrimitiveType() != PrimitiveType.NUMERIC) {
+                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
+            }
+
+            float value = GetCorrectedAngle((float)primitive.GetValue());
+            float currentAngle = rotor.Angle * (180 / (float)Math.PI);
+
+            switch (direction) {
+                case DirectionType.CLOCKWISE:
+                    if (value < currentAngle) value = GetCorrectedAngle(value + 360);
+                    rotor.UpperLimitDeg = value;
+                    rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
+                    break;
+                case DirectionType.COUNTERCLOCKWISE:
+                    if (value > currentAngle) value = GetCorrectedAngle(value - 360);
+                    rotor.LowerLimitDeg = value;
+                    rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);
+                    break;
+                default:
+                    RotateToValue(rotor, primitive);
+                    break;
+            }
+        }
+
+        static float GetCorrectedAngle(float angle) {
+            float newAngle = angle;
+            if (newAngle > 360) newAngle %= 360;
+            else if (newAngle < -360) {
+                newAngle = -((-newAngle) % 360);
+            }
+            return newAngle;
         }
     }
 }
