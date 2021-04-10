@@ -4,11 +4,21 @@ using System.Linq;
 using System.Text;
 using Moq;
 using System.Threading.Tasks;
+using Moq;
 using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI.Interfaces;
 using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     class MockEntityUtility {
+
+        public static Mock<ITerminalAction> MockCalledAction<T>(Mock<T> mockBlock, String actionName) where T : class, IMyTerminalBlock {
+            Mock<ITerminalAction> terminalAction = new Mock<ITerminalAction>();
+
+            mockBlock.Setup(b => b.GetActionWithName(actionName)).Returns(terminalAction.Object);
+
+            return terminalAction;
+        }
 
         public static MyDetectedEntityInfo MockDetectedEntity(Vector3D position) {
             return MockDetectedEntity(position, Vector3D.Zero);

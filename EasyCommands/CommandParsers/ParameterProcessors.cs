@@ -666,16 +666,18 @@ namespace IngameScript {
             var propertyProcessor = requiredEither<PropertyCommandParameter>();
             var directionProcessor = requiredEither<DirectionCommandParameter>();
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
+            var notProcessor = requiredRight<NotCommandParameter>();
             List<DataProcessor> processors = new List<DataProcessor> {
                 actionProcessor,
                 relativeProcessor,
                 variableProcessor,
                 propertyProcessor,
                 directionProcessor,
-                reverseProcessor
+                reverseProcessor,
+                notProcessor,
             };
 
-            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor);
+            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor && x != notProcessor);
             //TODO: Get rid of block handlers altogether
             Convert<SelectorCommandParameter> convert = (p) => {
                 List<CommandParameter> commandParameters = new List<CommandParameter> { p };
@@ -684,6 +686,11 @@ namespace IngameScript {
                 if (propertyProcessor.f.HasValue()) commandParameters.Add(propertyProcessor.f.GetValue());
                 if (directionProcessor.f.HasValue()) commandParameters.Add(directionProcessor.f.GetValue());
                 if (reverseProcessor.f.HasValue()) commandParameters.Add(reverseProcessor.f.GetValue());
+                if (notProcessor.f.HasValue()) {
+                    VariableCommandParameter value = extractFirst<VariableCommandParameter>(commandParameters) ?? new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(true)));
+                    commandParameters.Add(new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, value.Value)));
+                }
+
                 BlockCommand command = new BlockCommand(commandParameters);
                 return new CommandReferenceParameter(command);
             };

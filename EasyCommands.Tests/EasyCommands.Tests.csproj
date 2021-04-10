@@ -140,6 +140,7 @@
     <Compile Include="ScriptTests\ShipProximityTests.cs" />
     <Compile Include="ScriptTests\TextSurfaceBlockTests.cs" />
     <Compile Include="ScriptTests\SubclassBlockTests.cs" />
+    <Compile Include="ScriptTests\RocketVolleyTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
