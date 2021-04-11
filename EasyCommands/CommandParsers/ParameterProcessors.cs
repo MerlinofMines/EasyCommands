@@ -43,12 +43,12 @@ namespace IngameScript {
                     }),
 
                 //AssignmentProcessor
-                OneValueRule<AssignmentCommandParameter,StringCommandParameter>(
-                    requiredRight<StringCommandParameter>(),
-                    (p,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference)),
-                OneValueRule<AssignmentCommandParameter,ExplicitStringCommandParameter>(
-                    requiredRight<ExplicitStringCommandParameter>(),
-                    (p,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference)),
+                TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(
+                    optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
+                    (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference, g.HasValue())),
+                TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,ExplicitStringCommandParameter>(
+                    optionalRight<GlobalCommandParameter>(), requiredRight<ExplicitStringCommandParameter>(),
+                    (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().Value, p.useReference, g.HasValue())),
 
                 //SelfSelectorProcessor
                 OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
@@ -241,7 +241,7 @@ namespace IngameScript {
                 //VariableAssignmentProcessor
                 OneValueRule<VariableAssignmentCommandParameter,VariableCommandParameter>(
                     requiredRight<VariableCommandParameter>(),
-                    (p,var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().Value, p.useReference))),
+                    (p,var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().Value, p.useReference, p.isGlobal))),
 
                 //SendCommandProcessor
                 //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
