@@ -80,6 +80,13 @@ namespace IngameScript {
             AddUniOperation<float>(UniOperandType.NOT, a => -a);
             AddUniOperation<float>(UniOperandType.ABS, a => Math.Abs(a));
             AddUniOperation<float>(UniOperandType.SQRT, a => Math.Sqrt(a));
+            AddUniOperation<float>(UniOperandType.SIN, a => Math.Sin(a));
+            AddUniOperation<float>(UniOperandType.COS, a => Math.Cos(a));
+            AddUniOperation<float>(UniOperandType.TAN, a => Math.Tan(a));
+            AddUniOperation<float>(UniOperandType.ASIN, a => Math.Asin(a));
+            AddUniOperation<float>(UniOperandType.ACOS, a => Math.Acos(a));
+            AddUniOperation<float>(UniOperandType.ATAN, a => Math.Atan(a));
+            AddUniOperation<float>(UniOperandType.ROUND, a => Math.Round(a));
             AddUniOperation<Vector3D>(UniOperandType.ABS, a => a.Length());
             AddUniOperation<Vector3D>(UniOperandType.SQRT, a => Math.Sqrt(a.Length()));
             AddBiOperation<float, float>(BiOperandType.ADD, (a, b) => a + b);
@@ -87,6 +94,7 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperandType.MULTIPLY, (a, b) => a * b);
             AddBiOperation<float, float>(BiOperandType.DIVIDE, (a, b) => a / b);
             AddBiOperation<float, float>(BiOperandType.MOD, (a, b) => a % b);
+            AddBiOperation<Vector3D, Vector3D>(BiOperandType.DOT, (a, b) => a.Dot(b));
 
             //String
             AddBiOperation<string, string>(BiOperandType.ADD, (a, b) => a + b);

@@ -88,6 +88,7 @@ namespace IngameScript {
         static String[] openWords = { "open", "opened" };
         static String[] closeWords = { "close", "closed", "shut" };
         static String[] targetWords = { "target", "destination", "waypoint" };
+        static String[] targetVelocityWords = { "targetvelocity" };
 
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
@@ -141,6 +142,16 @@ namespace IngameScript {
             { "abs", UniOperandType.ABS },
             { "absolute", UniOperandType.ABS },
             { "sqrt", UniOperandType.SQRT },
+            { "sin", UniOperandType.SIN },
+            { "cos", UniOperandType.COS },
+            { "tan", UniOperandType.TAN },
+            { "arcsin", UniOperandType.ASIN},
+            { "asin", UniOperandType.ASIN },
+            { "arccos", UniOperandType.ACOS },
+            { "acos", UniOperandType.ACOS },
+            { "arctan", UniOperandType.ATAN },
+            { "atan", UniOperandType.ATAN },
+            { "round", UniOperandType.ROUND },
         };
 
         static Dictionary<String, BiOperandType> biOperandWords = new Dictionary<String, BiOperandType> {
@@ -153,7 +164,9 @@ namespace IngameScript {
             { "divide", BiOperandType.DIVIDE },
             { "/", BiOperandType.DIVIDE },
             { "mod", BiOperandType.MOD },
-            { "%", BiOperandType.MOD }
+            { "%", BiOperandType.MOD },
+            { "dot", BiOperandType.DOT },
+            { ".", BiOperandType.DOT },
         };
 
         static Dictionary<String, PropertyAggregatorType> aggregationWords = new Dictionary<String, PropertyAggregatorType> {
@@ -389,6 +402,7 @@ namespace IngameScript {
             AddWords(directionWords, new PropertyCommandParameter(PropertyType.DIRECTION));
             AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
             AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));
+            AddWords(targetVelocityWords, new PropertyCommandParameter(PropertyType.TARGET_VELOCITY));
             AddWords(assignWords, new AssignmentCommandParameter(false));
             AddWords(bindWords, new AssignmentCommandParameter(true));
             AddWords(printWords, new PrintCommandParameter());
