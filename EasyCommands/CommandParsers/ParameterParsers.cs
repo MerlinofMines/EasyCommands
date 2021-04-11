@@ -26,9 +26,9 @@ namespace IngameScript {
         static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
         static String[] reverseWords = { "reverse" };
         static String[] increaseWords = { "increase", "raise", "extend", "expand" };
-        static String[] decreaseWords = { "decrease", "lower", "retract", "reduce" };
-        static String[] upWords = { "up", "upward" };
-        static String[] downWords = { "down", "downward" };
+        static String[] decreaseWords = { "decrease", "retract", "reduce" };
+        static String[] upWords = { "up", "upward", "upper" };
+        static String[] downWords = { "down", "downward", "lower" };
         static String[] leftWords = { "left", "lefthand" };
         static String[] rightWords = { "right", "righthand" };
         static String[] forwardWords = { "forward", "forwards", "front" };

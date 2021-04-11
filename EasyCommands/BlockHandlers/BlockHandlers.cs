@@ -74,6 +74,7 @@ namespace IngameScript {
         public delegate bool GetBooleanProperty<T>(T block);
         public delegate string GetStringProperty<T>(T block);
         public delegate float GetNumericProperty<T>(T block);
+        public delegate float GetNumericPropertyDirection<T>(T block, DirectionType direction);
         public delegate Vector3D GetVectorProperty<T>(T block);
         public delegate Color GetColorProperty<T>(T block);
 
@@ -81,6 +82,7 @@ namespace IngameScript {
         public delegate void SetBooleanProperty<T>(T block, bool value);
         public delegate void SetStringProperty<T>(T block, String value);
         public delegate void SetNumericProperty<T>(T block, float value);
+        public delegate void SetNumericPropertyDirection<T>(T block, DirectionType direction, float value);
         public delegate void SetVectorProperty<T>(T block, Vector3D value);
         public delegate void SetColorProperty<T>(T block, Color value);
 
@@ -115,6 +117,18 @@ namespace IngameScript {
                 }, new NumberPrimitive(delta)) {
             }
         }
+
+        public class SimpleNumericDirectionPropertyHandler<T> : PropertyHandler<T> {
+            public SimpleNumericDirectionPropertyHandler(GetNumericPropertyDirection<T> GetValue, SetNumericPropertyDirection<T> SetValue, DirectionType defaultDirection) {
+                Get = b => GetDirection(b, defaultDirection);
+                GetDirection = (b,d) => new NumberPrimitive(GetValue(b,d));
+                Set = (b, v) => SetDirection(b, defaultDirection, v);
+                SetDirection = (b, d, v) => SetValue(b, d, CastNumber(v).GetNumericValue());
+                IncrementDirection = (b, d, v) => SetDirection(b, d, GetDirection(b, d).Plus(v));
+                Increment = (b, v) => IncrementDirection(b, defaultDirection, v);
+            }
+        }
+
 
         public class SimpleStringPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleStringPropertyHandler(GetStringProperty<T> GetValue, SetStringProperty<T> SetValue)

@@ -22,6 +22,7 @@ namespace IngameScript {
         public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             public RotorBlockHandler() {
                 AddPropertyHandler(PropertyType.ANGLE, new RotorAngleHandler());
+                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericDirectionPropertyHandler<IMyMotorStator>(GetLimit, SetLimit, DirectionType.UP));
                 AddNumericHandler(PropertyType.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
                 AddNumericHandler(PropertyType.HEIGHT, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.ANGLE;
@@ -49,6 +50,38 @@ namespace IngameScript {
                     if (d == DirectionType.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
                 };
                 Reverse = (b) => b.TargetVelocityRPM *= -1;
+            }
+        }
+
+        static float GetLimit(IMyMotorStator rotor, DirectionType direction) {
+            switch (direction) {
+                case DirectionType.UP:
+                case DirectionType.CLOCKWISE:
+                case DirectionType.FORWARD:
+                    return rotor.UpperLimitDeg;
+                case DirectionType.DOWN:
+                case DirectionType.COUNTERCLOCKWISE:
+                case DirectionType.BACKWARD:
+                    return rotor.LowerLimitDeg;
+                default:
+                    throw new Exception("Unsupported direction: " + direction);
+            }
+        }
+
+        static void SetLimit(IMyMotorStator rotor, DirectionType direction, float value) {
+            switch (direction) {
+                case DirectionType.UP:
+                case DirectionType.CLOCKWISE:
+                case DirectionType.FORWARD:
+                    rotor.UpperLimitDeg = value;
+                    break;
+                case DirectionType.DOWN:
+                case DirectionType.COUNTERCLOCKWISE:
+                case DirectionType.BACKWARD:
+                    rotor.LowerLimitDeg = value;
+                    break;
+                default:
+                    throw new Exception("Unsupported direction: " + direction);
             }
         }
 

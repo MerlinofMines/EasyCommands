@@ -21,6 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
+                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericDirectionPropertyHandler<IMyPistonBase>(GetLimit, SetLimit, DirectionType.UP));
                 AddPropertyHandler(PropertyType.HEIGHT, new PistonHeightHandler());
                 AddNumericHandler(PropertyType.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
                 defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.HEIGHT;
@@ -37,6 +38,36 @@ namespace IngameScript {
                     if (d == DirectionType.DOWN) b.Retract();
                 };
                 Reverse = (b) => b.Reverse();
+            }
+        }
+
+        static float GetLimit(IMyPistonBase piston, DirectionType direction) {
+            switch (direction) {
+                case DirectionType.UP:
+                case DirectionType.CLOCKWISE:
+                case DirectionType.FORWARD:
+                    return piston.MaxLimit;
+                case DirectionType.DOWN:
+                case DirectionType.COUNTERCLOCKWISE:
+                case DirectionType.BACKWARD:
+                    return piston.MinLimit;
+                default:
+                    throw new Exception("Unknown direction: " + direction);
+            }
+        }
+
+        static void SetLimit(IMyPistonBase piston, DirectionType direction, float value) {
+            switch (direction) {
+                case DirectionType.UP:
+                case DirectionType.FORWARD:
+                    piston.MaxLimit = value;
+                    break;
+                case DirectionType.DOWN:
+                case DirectionType.BACKWARD:
+                    piston.MinLimit = value;
+                    break;
+                default:
+                    throw new Exception("Unsupported direction: " + direction);
             }
         }
 
