@@ -43,6 +43,7 @@ namespace EasyCommands.Tests.ScriptTests
             mockedGroups = new List<IMyBlockGroup>();
             Logger = new List<String>();
             RunCounter = 0;
+            Program.FUNCTION_PARSE_AMOUNT = 1000;
 
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking

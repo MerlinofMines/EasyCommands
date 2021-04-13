@@ -118,6 +118,7 @@ namespace IngameScript {
         static String[] rollInputWords = { "roll", "rollInput" };
         static String[] autoWords = { "auto", "refill" };
         static String[] assignWords = { "assign", "allocate", "designate" };
+        static String[] globalWords = { "global" };
         static String[] bindWords = { "bind", "tie", "link" };
         static String[] printWords = { "print", "log", "echo", "write" };
         static String[] selfWords = { "my", "self", "this" };
@@ -390,6 +391,7 @@ namespace IngameScript {
             AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
             AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));
             AddWords(assignWords, new AssignmentCommandParameter(false));
+            AddWords(globalWords, new GlobalCommandParameter());
             AddWords(bindWords, new AssignmentCommandParameter(true));
             AddWords(printWords, new PrintCommandParameter());
             Initialized = true;
