@@ -21,9 +21,7 @@ namespace EasyCommands.Tests.ScriptTests
     /// </summary>
     class ScriptTest : IDisposable
     {
-        private GenericListDictionary mockedBlocksByName;
-        private List<IMyBlockGroup> mockedGroups;
-        private Mock<IMyGridTerminalSystem> gridMock;
+        MockGridTerminalSystem mockGrid;
         private Program program;
         private Mock<IMyProgrammableBlock> me;
 
@@ -39,18 +37,16 @@ namespace EasyCommands.Tests.ScriptTests
 
         public ScriptTest(String script)
         {
-            mockedBlocksByName = new GenericListDictionary();
-            mockedGroups = new List<IMyBlockGroup>();
             Logger = new List<String>();
             RunCounter = 0;
 
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
-            gridMock = new Mock<IMyGridTerminalSystem>();
+            mockGrid = new MockGridTerminalSystem();
             me = new Mock<IMyProgrammableBlock>();
 
             MDKFactory.ProgramConfig config = default;
-            config.GridTerminalSystem = gridMock.Object;
+            config.GridTerminalSystem = mockGrid;
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             program = MDKFactory.CreateProgram<Program>(config);
@@ -62,13 +58,7 @@ namespace EasyCommands.Tests.ScriptTests
             // TODO: Replace this with mock objects passed to config setup in Program
             program.broadcastMessageProvider = () => new List<MyIGCMessage>();
 
-            // Default behavior for locating blocks on the grid
-            gridMock.Setup(g => g.GetBlockGroups(It.IsAny<List<IMyBlockGroup>>(), It.IsAny<Func<IMyBlockGroup, bool>>()))
-                .Callback((Action<List<IMyBlockGroup>, Func<IMyBlockGroup, bool>>)GetBlockGroupsCallback);
-
             setScript(script);
-
-            // TODO: Handle custom logic in TextSurfaceHandler
         }
 
         public void setScript(String script) {
@@ -136,10 +126,6 @@ namespace EasyCommands.Tests.ScriptTests
         public void MockBlocksOfType<T>(String name, params Mock<T>[] blockMocks) where T : class, IMyTerminalBlock
         {
             SetupMockBlocksByType(name, blockMocks);
-
-            // Set up the mocked GridTerminalSystem to invoke the appropriate callback method for the appropriate type
-            gridMock.Setup(g => g.GetBlocksOfType(It.IsAny<List<T>>(), It.IsAny<Func<T, bool>>()))
-                .Callback((Action<List<T>, Func<T, bool>>)GetBlocksOfTypeCallback);
         }
 
         /// <summary>
@@ -154,31 +140,12 @@ namespace EasyCommands.Tests.ScriptTests
         /// <param name="blockMocks">The blocks being mocked and that will be returned later.</param>
         public void MockBlocksInGroup<T>(String groupName, params Mock<T>[] blockMocks) where T : class, IMyTerminalBlock
         {
-            var mockGroup = new Mock<IMyBlockGroup>();
-            mockGroup.Setup(g => g.Name).Returns(groupName);
-            mockGroup.Setup(g => g.GetBlocksOfType(It.IsAny<List<T>>(), It.IsAny<Func<T, bool>>()))
-                .Callback((Action<List<T>, Func<T, bool>>)GetBlocksOfTypeCallback);
-            mockedGroups.Add(mockGroup.Object);
-
-            SetupMockBlocksByType(blockMocks);
-        }
-
-        private void GetBlocksOfTypeCallback<T>(List<T> blocks, Func<T, bool> collect) where T : class, IMyTerminalBlock
-        {
-            // Find the appropriate blocks by type and then invoke the given collector function on them as a filter
-            blocks.AddRange(mockedBlocksByName.GetValue<T>(typeof(T))
-                .Select(x => x)
-                .Where(collect != null ? collect : (x) => true)
+            var mockGroup = new MockBlockGroup(groupName);
+            mockGroup.AddBlocks(blockMocks
+                .Select(block => (IMyTerminalBlock)block.Object)
                 .ToList());
-        }
 
-        private void GetBlockGroupsCallback(List<IMyBlockGroup> groups, Func<IMyBlockGroup, bool> collect)
-        {
-            // Invoke the given collector function on all groups and return those groups matching
-            groups.AddRange(mockedGroups
-                .Select(x => x)
-                .Where(collect != null ? collect : (x) => true)
-                .ToList());
+            mockGrid.AddGroup(mockGroup);
         }
 
         public void Dispose()
@@ -191,48 +158,123 @@ namespace EasyCommands.Tests.ScriptTests
         private void SetupMockBlocksByType<T>(string name, Mock<T>[] blockMocks) where T : class, IMyTerminalBlock
         {
             // Setup the mock blocks to mock their custom name to match the name provided
-            List<T> blockObjects = blockMocks.Select(b =>
-            {
-                b.Setup(x => x.CustomName).Returns(name);
-                return b.Object;
-            }).ToList();
+            foreach(Mock<T> block in blockMocks) {
+                block.Setup(x => x.CustomName).Returns(name);
+            }
+
             // Store the mock block objects by their type
-            mockedBlocksByName.Add(blockObjects);
+            SetupMockBlocksByType(blockMocks);
         }
 
         private void SetupMockBlocksByType<T>(Mock<T>[] blockMocks) where T: class, IMyTerminalBlock
         {
             // Store the mock block objects by their type
-            mockedBlocksByName.Add(blockMocks.Select(b => b.Object).ToList());
+            mockGrid.AddBlocks(blockMocks.Select(b => (IMyTerminalBlock)b.Object).ToList());
         }
 
-        public class GenericListDictionary
-        {
-            private Dictionary<Type, HashSet<Object>> dictionary = new Dictionary<Type, HashSet<object>>();
+        public class MockBlockGroup : IMyBlockGroup {
+            HashSet<IMyTerminalBlock> mockBlocks = new HashSet<IMyTerminalBlock>();
+            string name;
 
-            public void Add<T>(List<T> values)
-            {
-                Type key = typeof(T);
-                HashSet<object> valueObjects = values.Select(x => (Object)x).ToHashSet();
-                if (dictionary.ContainsKey(key))
-                {
-                    dictionary[key].UnionWith(valueObjects);
-                } else
-                {
-                    dictionary.Add(key, valueObjects);
-                }
+            public MockBlockGroup(string name) {
+                this.name = name;
             }
 
-            public HashSet<T> GetValue<T>(Type type)
-            {
-                if (!dictionary.ContainsKey(type))
-                {
-                    return new HashSet<T>();
-                }
+            public string Name => name;
 
-                return dictionary[type].Select(x => (T)x).ToHashSet();
+            public void AddBlock(IMyTerminalBlock block) {
+                mockBlocks.Add(block);
+            }
+
+            public void AddBlocks(List<IMyTerminalBlock> blocks) {
+                blocks.ForEach(block => mockBlocks.Add(block));
+            }
+
+            public void GetBlocks(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
+                blocks.AddRange(mockBlocks
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
+            }
+
+            public void GetBlocksOfType<T>(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) where T : class {
+                blocks.AddRange(mockBlocks
+                    .Where(block => block is T)
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
+            }
+
+            public void GetBlocksOfType<T>(List<T> blocks, Func<T, bool> collect = null) where T : class {
+                blocks.AddRange(mockBlocks
+                    .Where(block => block is T)
+                    .Select(block => (T) block)
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
             }
         }
 
+        public class MockGridTerminalSystem : IMyGridTerminalSystem {
+            HashSet<IMyTerminalBlock> mockBlocks = new HashSet<IMyTerminalBlock>();
+            HashSet<IMyBlockGroup> mockGroups = new HashSet<IMyBlockGroup>();
+
+            public void AddBlock(IMyTerminalBlock block) {
+                mockBlocks.Add(block);
+            }
+
+            public void AddBlocks(List<IMyTerminalBlock> blocks) {
+                blocks.ForEach(block => mockBlocks.Add(block));
+            }
+
+            public void AddGroup(IMyBlockGroup blockGroup) {
+                mockGroups.Add(blockGroup);
+            }
+
+            public void GetBlockGroups(List<IMyBlockGroup> blockGroups, Func<IMyBlockGroup, bool> collect = null) {
+                blockGroups.AddRange(mockGroups
+                    .Where(group => collect == null ? true : collect(group))
+                    .ToList());
+            }
+
+            public IMyBlockGroup GetBlockGroupWithName(string name) {
+                return mockGroups
+                    .Where(group => group.Name == name)
+                    .FirstOrDefault(null);
+            }
+
+            public void GetBlocks(List<IMyTerminalBlock> blocks) {
+                blocks.AddRange(mockBlocks.ToList());
+            }
+
+            public void GetBlocksOfType<T>(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) where T : class {
+                blocks.AddRange(mockBlocks
+                    .Where(block => block is T)
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
+            }
+
+            public void GetBlocksOfType<T>(List<T> blocks, Func<T, bool> collect = null) where T : class {
+                blocks.AddRange(mockBlocks
+                    .Where(block => block is T)
+                    .Select(block => (T) block)
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
+            }
+
+            public IMyTerminalBlock GetBlockWithId(long id) {
+                throw new NotImplementedException();
+            }
+
+            public IMyTerminalBlock GetBlockWithName(string name) {
+                return mockBlocks
+                    .Where(block => block.CustomName == name)
+                    .FirstOrDefault(null);
+            }
+
+            public void SearchBlocksOfName(string name, List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
+                blocks.AddRange(mockBlocks
+                    .Where(block => block.CustomName == name)
+                    .Where(block => collect == null ? true : collect(block))
+                    .ToList());
+            }
+        }
     }
 }
