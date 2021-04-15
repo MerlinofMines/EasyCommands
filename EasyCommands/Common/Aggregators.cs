@@ -19,6 +19,13 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public static Primitive ValueAggregator(List<Primitive> primitives) {
+            if (primitives.Count != 1) {
+                throw new Exception("Exact Value Aggregate must reference a selector with exactly one value");
+            }
+            return primitives[0];
+        }
+
         public static Primitive SumAggregator(List<Primitive> primitives) {
             if (primitives.Count==0) {
                 throw new Exception("Cannot sum an empty list");

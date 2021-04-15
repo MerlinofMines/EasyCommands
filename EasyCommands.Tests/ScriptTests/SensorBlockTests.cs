@@ -11,7 +11,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void SensorTargetReturnsZeroVectorWhenNothingDetected() {
             String script = @"
-print ""Target: "" + avg ""mock sensor"" target
+print ""Target: "" + ""mock sensor"" target
 ";
             using (var test = new ScriptTest(script)) {
                 var mockSensor = new Mock<IMySensorBlock>();
@@ -30,7 +30,7 @@ print ""Target: "" + avg ""mock sensor"" target
         public void TriggerTheSensorAndGetTarget() {
             String script = @"
 when ""mock sensor"" is triggered
-  print ""Target: "" + avg ""mock sensor"" target
+  print ""Target: "" + ""mock sensor"" target
 ";
             using (var test = new ScriptTest(script)) {
                 var mockSensor = new Mock<IMySensorBlock>();

@@ -298,10 +298,20 @@ namespace IngameScript {
             Trace("Pre Processed Parameters:");
             parameters.ForEach(param => Trace("Type: " + param.GetType()));
 
-            ParameterProcessorRegistry.Process(parameters);
+            var branches = new List<List<CommandParameter>>();
+            branches.Add(parameters);
 
-            if (parameters.Count != 1 || !(parameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
-            return ((CommandReferenceParameter)parameters[0]).Value;
+            //Branches
+            while (branches.Count > 0) {
+                branches.AddRange(ParameterProcessorRegistry.Process(branches[0]));
+                if (branches[0].Count == 1 && branches[0][0] is CommandReferenceParameter) {
+                    return ((CommandReferenceParameter)branches[0][0]).Value;
+                } else {
+                    branches.RemoveAt(0);
+                }
+            }
+
+            throw new Exception("Unable to parse command from command parameters!");
         }
 
         class CommandLine {
