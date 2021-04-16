@@ -155,6 +155,8 @@ namespace IngameScript {
                 }).ToList();
 
                 switch(aggregationType) {
+                    case PropertyAggregatorType.VALUE:
+                        return ValueAggregator(propertyValues);
                     case PropertyAggregatorType.SUM:
                         return SumAggregator(propertyValues);
                     case PropertyAggregatorType.AVG:
@@ -175,11 +177,7 @@ namespace IngameScript {
                 this.variableName = variableName;
             }
 
-            public Primitive GetValue() {
-                Variable variable;
-                if(!Program.memoryVariables.TryGetValue(variableName, out variable)) throw new Exception("No Variable exists with name: " + variableName);
-                return variable.GetValue();
-            }
+            public Primitive GetValue() => PROGRAM.GetVariable(variableName).GetValue();
         }
     }
 }

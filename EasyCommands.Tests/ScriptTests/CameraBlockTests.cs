@@ -11,7 +11,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void getCameraRange() {
             String script = @"
-assign ""a"" to avg ""mock camera"" range
+assign ""a"" to ""mock camera"" range
 print ""Range: "" + {a}
 ";
             using (var test = new ScriptTest(script)) {
@@ -61,7 +61,7 @@ trigger the ""mock camera""
         public void cameraIsTriggeredGetTarget() {
             String script = @"
 when ""mock camera"" is triggered
-  print ""Target: "" + avg ""mock camera"" target
+  print ""Target: "" + ""mock camera"" target
 ";
             using (var test = new ScriptTest(script)) {
                 var mockCamera = new Mock<IMyCameraBlock>();
@@ -94,7 +94,7 @@ when ""mock camera"" is triggered
         [TestMethod]
         public void LastTargetIsStillAvailableWhenCannotScan() {
             String script = @"
-print ""Target: "" + avg ""mock camera"" target
+print ""Target: "" + ""mock camera"" target
 ";
             using (var test = new ScriptTest(script)) {
                 var mockCamera = new Mock<IMyCameraBlock>();
@@ -114,7 +114,7 @@ print ""Target: "" + avg ""mock camera"" target
         [TestMethod]
         public void NoTargetReturnsZeroVector() {
             String script = @"
-print ""Target: "" + avg ""mock camera"" target
+print ""Target: "" + ""mock camera"" target
 ";
             using (var test = new ScriptTest(script)) {
                 var mockCamera = new Mock<IMyCameraBlock>();

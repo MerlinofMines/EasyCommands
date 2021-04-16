@@ -83,10 +83,11 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
+                Thread currentThread = PROGRAM.GetCurrentThread();
                 if (function == null) {
                     function = (MultiActionCommand)FUNCTIONS[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
-                        Program.memoryVariables[key] = new StaticVariable(inputParameters[key].GetValue());
+                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue());
                     }
                 }
                 STATE = ProgramState.RUNNING;
@@ -94,7 +95,6 @@ namespace IngameScript {
                     case FunctionType.GOSUB:
                         return function.Execute();
                     case FunctionType.GOTO:
-                        Thread currentThread = PROGRAM.GetCurrentThread();
                         currentThread.Command = function;
                         currentThread.SetName(functionDefinition.functionName);
                         return false;
@@ -108,21 +108,27 @@ namespace IngameScript {
         public class VariableAssignmentCommand : Command {
             public String variableName;
             public Variable variable;
+            public bool isGlobal;
             public bool useReference;
 
-            public VariableAssignmentCommand(string variableName, Variable variable, bool useReference) {
+            public VariableAssignmentCommand(string variableName, Variable variable, bool useReference, bool isGlobal) {
                 this.variableName = variableName;
                 this.variable = variable;
                 this.useReference = useReference;
+                this.isGlobal = isGlobal;
             }
 
             public override bool Execute() {
                 Variable value = useReference ? variable : new StaticVariable(variable.GetValue());
-                Program.memoryVariables[variableName] = value;
+                if (isGlobal) {
+                    PROGRAM.SetGlobalVariable(variableName, value);
+                } else {
+                    PROGRAM.GetCurrentThread().threadVariables[variableName] = value;
+                }
                 return true;
             }
 
-            public override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference); }
+            public override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference, isGlobal); }
         }
 
         public class ControlCommand : Command {

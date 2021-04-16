@@ -32,7 +32,7 @@ namespace IngameScript {
         public enum BiOperandType { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT };
         public enum UniOperandType { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND };
         public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }
-        public enum PropertyAggregatorType { SUM, COUNT, AVG, MIN, MAX };
+        public enum PropertyAggregatorType { VALUE, SUM, COUNT, AVG, MIN, MAX };
         #endregion
     }
 }
