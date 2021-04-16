@@ -327,7 +327,7 @@ namespace IngameScript {
             /// This method inline processes the given list of command parameters.
             /// Any ambiguous parsing branches which were found during processing are also returned as additional entries.
             /// If the desired result (typically a command) does not result from the returned parse, the returned
-            /// branches can be re-processed to see if a correct parse results from the altneratve branch.
+            /// branches can be re-processed to see if a correct parse results from the alternate branches.
             /// This can continue until no alternate branches are returned.
             /// </summary>
             /// <param name="commandParameters"></param>
