@@ -206,9 +206,21 @@ namespace IngameScript {
                     (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperandType.NOT, var.GetValue().Value) : var.GetValue().Value, p.alwaysEvaluate, p.swapCommands)),
 
                 //ActionProcessor
-                //TODO I'll be back for you
-                //new ActionProcessor(),
                 BlockCommandProcessor(),
+
+                //AmgiguousSelectorPropertyProcessor
+                new BranchingProcessor<SelectorCommandParameter>(
+                    TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                        optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                        (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.Value, p.HasValue() ? p.GetValue().Value : (PropertyType?)null, d.HasValue() ? d.GetValue().Value : (DirectionType?)null))),
+                    TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                        optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                        (s,p,d) => {
+                            List<CommandParameter> blockParameters = new List<CommandParameter>{s};
+                            if(p.HasValue()) blockParameters.Add(p.GetValue());
+                            if(d.HasValue()) blockParameters.Add(d.GetValue());
+                            return new CommandReferenceParameter(new BlockCommand(blockParameters));
+                        })),
 
                 //PrintCommandProcessor
                 OneValueRule<PrintCommandParameter,VariableCommandParameter>(
@@ -311,11 +323,21 @@ namespace IngameScript {
                 }
             }
 
-            public static void Process(List<CommandParameter> commandParameters) {
+            /// <summary>
+            /// This method inline processes the given list of command parameters.
+            /// Any ambiguous parsing branches which were found during processing are also returned as additional entries.
+            /// If the desired result (typically a command) does not result from the returned parse, the returned
+            /// branches can be re-processed to see if a correct parse results from the alternate branches.
+            /// This can continue until no alternate branches are returned.
+            /// </summary>
+            /// <param name="commandParameters"></param>
+            /// <returns></returns>
+            public static List<List<CommandParameter>> Process(List<CommandParameter> commandParameters) {
                 InitializeProcessors();
 
                 List<ParameterProcessor> sortedParameterProcessors = new List<ParameterProcessor>();
 
+                List<List<CommandParameter>> branches = new List<List<CommandParameter>>();
                 AddProcessors(commandParameters, sortedParameterProcessors);
 
                 int processorIndex = 0;
@@ -327,7 +349,7 @@ namespace IngameScript {
                     for (int i = 0; i < commandParameters.Count; i++) {
                         if (current.CanProcess(commandParameters[i])) {
                             List<CommandParameter> finalParameters;
-                            if (current.Process(commandParameters, i, out finalParameters)) {
+                            if (current.Process(commandParameters, i, out finalParameters, branches)) {
                                 AddProcessors(finalParameters, sortedParameterProcessors);
                                 processed = true;
                                 //break; TODO: -Not sure if this may be needed! But much faster processing w/o this.
@@ -338,6 +360,8 @@ namespace IngameScript {
                     if (!revisit) sortedParameterProcessors.RemoveAt(processorIndex);
                     else processorIndex++;
                 }
+
+                return branches;
             }
 
             static void AddProcessors(List<CommandParameter> types, List<ParameterProcessor> sortedParameterProcessors) {
@@ -474,7 +498,7 @@ namespace IngameScript {
             int Rank { get; set; }
             List<Type> GetProcessedTypes();
             bool CanProcess(CommandParameter p); 
-            bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
+            bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
         public abstract class ParameterProcessor<T> : ParameterProcessor where T : class, CommandParameter {
@@ -482,18 +506,25 @@ namespace IngameScript {
             public virtual List<Type> GetProcessedTypes() { return new List<Type>() { typeof(T) }; }
             public int CompareTo(ParameterProcessor other) => Rank.CompareTo(other.Rank);
             public bool CanProcess(CommandParameter p) => p is T;
-            public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters);
+            public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
-            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
                 for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
                         finalParameters = p.GetRange(i+1, j - (i+1));
-                        ParameterProcessorRegistry.Process(finalParameters);
+                        var alternateBranches = ParameterProcessorRegistry.Process(finalParameters);
                         p.RemoveRange(i, j - i + 1);
+
+                        for (int k = 0; k < alternateBranches.Count; k++) {
+                            var copy = new List<CommandParameter>(p);
+                            copy.InsertRange(i, alternateBranches[k]);
+                            branches.Add(copy);
+                        }
+
                         p.InsertRange(i, finalParameters);
                         return true;
                     }
@@ -507,7 +538,7 @@ namespace IngameScript {
                 return new List<Type>() { typeof(StringCommandParameter), typeof(NumericCommandParameter), typeof(BooleanCommandParameter), typeof(ExplicitStringCommandParameter) };
             }
 
-            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 if (p[i] is ValueCommandParameter<String>) {
                     p[i] = GetParameter(((ValueCommandParameter<String>)p[i]).Value);
                 } else if (p[i] is NumericCommandParameter) {
@@ -532,6 +563,34 @@ namespace IngameScript {
             }
         }
 
+        class BranchingProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
+            List<ParameterProcessor<T>> processors;
+
+            public BranchingProcessor(params ParameterProcessor<T>[] p) {
+                processors = new List<ParameterProcessor<T>>(p);
+            }
+
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                finalParameters = null;
+                var eligibleProcessors = processors.Where(processor => processor.CanProcess(p[i])).ToList();
+                var copy = new List<CommandParameter>(p);
+
+                bool processed = false;
+                foreach(ParameterProcessor processor in eligibleProcessors) { 
+                    if (processed) {
+                        List<CommandParameter> ignored;
+                        var additionalCopy = new List<CommandParameter>(copy);
+                        if (processor.Process(additionalCopy, i, out ignored, branches)) {
+                            branches.Insert(0, additionalCopy);
+                        }
+                    } else {
+                        processed = processor.Process(p, i, out finalParameters, branches);
+                    }
+                }
+                return processed;
+            }
+        }
+
         class RuleProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
             List<DataProcessor> processors;
             CanConvert<T> canConvert;
@@ -543,7 +602,7 @@ namespace IngameScript {
                 this.convert = convert;
             }
 
-            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters) {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
                 processors.ForEach(dp => dp.fetcher.Clear());
                 int j = i + 1;
@@ -616,7 +675,7 @@ namespace IngameScript {
                 reverseProcessor
             };
 
-            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != actionProcessor && x != relativeProcessor);
+            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor);
             //TODO: Get rid of block handlers altogether
             Convert<SelectorCommandParameter> convert = (p) => {
                 List<CommandParameter> commandParameters = new List<CommandParameter> { p };

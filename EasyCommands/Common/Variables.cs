@@ -155,6 +155,8 @@ namespace IngameScript {
                 }).ToList();
 
                 switch(aggregationType) {
+                    case PropertyAggregatorType.VALUE:
+                        return ValueAggregator(propertyValues);
                     case PropertyAggregatorType.SUM:
                         return SumAggregator(propertyValues);
                     case PropertyAggregatorType.AVG:

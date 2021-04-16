@@ -106,5 +106,54 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(aggregate.entityProvider is AllEntityProvider);
             Assert.AreEqual(BlockType.GUN, aggregate.entityProvider.GetBlockType());
         }
+
+        [TestMethod]
+        public void AssignAvgOfBlocksUsingImplicitAggregate() {
+            var command = ParseCommand("assign \"a\" to the \"test gun\" range");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregatorType.VALUE, aggregate.aggregationType);
+            Assert.IsTrue(aggregate.entityProvider is SelectorEntityProvider);
+            Assert.AreEqual(BlockType.GUN, aggregate.entityProvider.GetBlockType());
+        }
+
+        [TestMethod]
+        public void AssignAvgOfBlocksUsingImplicitAggregateInParentheses() {
+            var command = ParseCommand("assign \"a\" to the ( \"test gun\" range )" );
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregatorType.VALUE, aggregate.aggregationType);
+            Assert.IsTrue(aggregate.entityProvider is SelectorEntityProvider);
+            Assert.AreEqual(BlockType.GUN, aggregate.entityProvider.GetBlockType());
+        }
+
+        [TestMethod]
+        public void AssignAvgOfBlocksUsingImplicitAggregateAndImplicitSelector() {
+            var command = ParseCommand("assign \"a\" to the gun range");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregatorType.VALUE, aggregate.aggregationType);
+            Assert.IsTrue(aggregate.entityProvider is AllEntityProvider);
+            Assert.AreEqual(BlockType.GUN, aggregate.entityProvider.GetBlockType());
+        }
+
+        [TestMethod]
+        public void AssignAvgOfBlocksUsingImplicitAggregateAndMySelector() {
+            var command = ParseCommand("assign \"a\" to my location");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregatorType.VALUE, aggregate.aggregationType);
+            Assert.AreEqual(PropertyType.POSITION, aggregate.property);
+            Assert.IsTrue(aggregate.entityProvider is SelfEntityProvider);
+            Assert.AreEqual(BlockType.PROGRAM, aggregate.entityProvider.GetBlockType());
+        }
     }
 }
