@@ -11,8 +11,12 @@ namespace EasyCommands.Tests.ScriptTests {
     class MockEntityUtility {
 
         public static MyDetectedEntityInfo MockDetectedEntity(Vector3D position) {
+            return MockDetectedEntity(position, Vector3D.Zero);
+        }
+
+        public static MyDetectedEntityInfo MockDetectedEntity(Vector3D position, Vector3D velocity) {
             return new MyDetectedEntityInfo(123, "name", MyDetectedEntityType.LargeGrid, position,
-                new MatrixD(), Vector3D.Zero, VRage.Game.MyRelationsBetweenPlayerAndBlock.Neutral, new BoundingBoxD(), 123);
+                new MatrixD(), velocity, VRage.Game.MyRelationsBetweenPlayerAndBlock.Neutral, new BoundingBoxD(), 123);
         }
 
         public static MyDetectedEntityInfo MockNoDetectedEntity() {
