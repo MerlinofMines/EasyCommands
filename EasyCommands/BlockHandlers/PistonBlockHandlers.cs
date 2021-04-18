@@ -44,11 +44,9 @@ namespace IngameScript {
         static float GetLimit(IMyPistonBase piston, DirectionType direction) {
             switch (direction) {
                 case DirectionType.UP:
-                case DirectionType.CLOCKWISE:
                 case DirectionType.FORWARD:
                     return piston.MaxLimit;
                 case DirectionType.DOWN:
-                case DirectionType.COUNTERCLOCKWISE:
                 case DirectionType.BACKWARD:
                     return piston.MinLimit;
                 default:
