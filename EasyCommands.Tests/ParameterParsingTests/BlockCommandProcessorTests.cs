@@ -15,6 +15,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void SimpleBlockCommandWithNotProperty() {
+            var command = ParseCommand("tell the \"rockets\" not to shoot");
+            Assert.IsTrue(command is BlockCommand);
+        }
+
+        [TestMethod]
         public void SimpleBlockCommandWithValue() {
             var command = ParseCommand("set the \"pistons\" to 2");
             Assert.IsTrue(command is BlockCommand);

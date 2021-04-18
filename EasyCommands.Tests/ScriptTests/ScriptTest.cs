@@ -54,7 +54,7 @@ namespace EasyCommands.Tests.ScriptTests
             // Init static fields that may have been modified from other tests, prepare for testing
             Program.STATE = ProgramState.STOPPED;
             Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
-
+            Program.FUNCTION_PARSE_AMOUNT = 1000;
             // Default behavior for broadcast messages
             // TODO: Replace this with mock objects passed to config setup in Program
             program.broadcastMessageProvider = () => new List<MyIGCMessage>();
