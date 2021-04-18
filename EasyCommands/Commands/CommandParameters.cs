@@ -73,6 +73,7 @@ namespace IngameScript {
         public class ElseCommandParameter : CommandParameter { }
         public class PrintCommandParameter : CommandParameter { }
         public class SelfCommandParameter : CommandParameter { }
+        public class GlobalCommandParameter : CommandParameter { }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {
             public QueueCommandParameter(bool async) : base(async) {
@@ -103,10 +104,12 @@ namespace IngameScript {
         public class VariableAssignmentCommandParameter : CommandParameter {
             public string variableName;
             public bool useReference;
+            public bool isGlobal;
 
-            public VariableAssignmentCommandParameter(string variableName, bool useReference) {
+            public VariableAssignmentCommandParameter(string variableName, bool useReference, bool isGlobal) {
                 this.variableName = variableName;
                 this.useReference = useReference;
+                this.isGlobal = isGlobal;
             }
         }
 

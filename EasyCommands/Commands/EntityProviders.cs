@@ -105,7 +105,7 @@ namespace IngameScript {
             }
 
             public List<object> GetEntities() {
-                return BlockHandlerRegistry.GetBlocksInGroup(blockType, PROGRAM.Me.CustomName);
+                return BlockHandlerRegistry.GetBlocks(blockType, (b) => b.CustomName.Equals(PROGRAM.Me.CustomName));
             }
         }
 

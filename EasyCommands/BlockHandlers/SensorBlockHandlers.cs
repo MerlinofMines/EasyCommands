@@ -28,8 +28,15 @@ namespace IngameScript {
                     if (!lastDetectedEntity.IsEmpty()) hitPosition = lastDetectedEntity.HitPosition.Value;
                     return hitPosition;
                 });
+                AddVectorHandler(PropertyType.TARGET_VELOCITY, (b) => {
+                    MyDetectedEntityInfo lastDetectedEntity = b.LastDetectedEntity;
+                    Vector3D hitPosition = Vector3D.Zero;
+                    if (!lastDetectedEntity.IsEmpty()) hitPosition = lastDetectedEntity.Velocity;
+                    return hitPosition;
+                });
 
                 defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
+                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
             }
         }
     }

@@ -137,6 +137,9 @@
     <Compile Include="ScriptTests\CameraBlockTests.cs" />
     <Compile Include="ScriptTests\SensorBlockTests.cs" />
     <Compile Include="ScriptTests\PistonBlockTests.cs" />
+    <Compile Include="ScriptTests\ShipProximityTests.cs" />
+    <Compile Include="ScriptTests\TextSurfaceBlockTests.cs" />
+    <Compile Include="ScriptTests\SubclassBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />

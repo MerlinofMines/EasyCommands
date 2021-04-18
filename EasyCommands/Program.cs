@@ -34,6 +34,7 @@ namespace IngameScript {
         bool InAsyncThreadQueue = false;
         List<Thread> ThreadQueue = new List<Thread>();
         List<Thread> AsyncThreadQueue = new List<Thread>();
+        Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable>();
 
         public void ClearAllThreads() {
             AsyncThreadQueue.Clear();
@@ -58,6 +59,21 @@ namespace IngameScript {
             if (AsyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
         }
 
+        public void SetGlobalVariable(String variableName, Variable variable) {
+            globalVariables[variableName] = variable;
+        }
+
+        public Variable GetVariable(String variableName) {
+            Thread currentThread = GetCurrentThread();
+            if(currentThread.threadVariables.ContainsKey(variableName)) {
+                return currentThread.threadVariables[variableName];
+            } else if (globalVariables.ContainsKey(variableName)) {
+                return globalVariables[variableName];
+            } else {
+                throw new Exception("No Variable Exists for name: " + variableName);
+            }
+        }
+
         public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
         static String DEFAULT_FUNCTION;
         static String CUSTOM_DATA = null;
@@ -67,7 +83,6 @@ namespace IngameScript {
         public delegate String CustomDataProvider(MyGridProgram program);
         public delegate List<MyIGCMessage> BroadcastMessageProvider();
         public BroadcastMessageProvider broadcastMessageProvider;
-        static Dictionary<String, Variable> memoryVariables = new Dictionary<string, Variable>();
 
         List<MyIGCMessage> provideMessages()
         {
@@ -298,10 +313,20 @@ namespace IngameScript {
             Trace("Pre Processed Parameters:");
             parameters.ForEach(param => Trace("Type: " + param.GetType()));
 
-            ParameterProcessorRegistry.Process(parameters);
+            var branches = new List<List<CommandParameter>>();
+            branches.Add(parameters);
 
-            if (parameters.Count != 1 || !(parameters[0] is CommandReferenceParameter)) throw new Exception("Unable to parse command from command parameters!");
-            return ((CommandReferenceParameter)parameters[0]).Value;
+            //Branches
+            while (branches.Count > 0) {
+                branches.AddRange(ParameterProcessorRegistry.Process(branches[0]));
+                if (branches[0].Count == 1 && branches[0][0] is CommandReferenceParameter) {
+                    return ((CommandReferenceParameter)branches[0][0]).Value;
+                } else {
+                    branches.RemoveAt(0);
+                }
+            }
+
+            throw new Exception("Unable to parse command from command parameters!");
         }
 
         class CommandLine {
@@ -318,6 +343,7 @@ namespace IngameScript {
 
         public class Thread {
             public Command Command { get; set; }
+            public Dictionary<String, Variable> threadVariables = new Dictionary<string, Variable>();
             String prefix;
             String name;
 

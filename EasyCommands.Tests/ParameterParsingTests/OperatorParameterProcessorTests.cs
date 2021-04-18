@@ -19,6 +19,94 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignSin() {
+            var command = ParseCommand("assign a to sin 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.SIN, variable.operand);
+            Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignCos() {
+            var command = ParseCommand("assign a to cos 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.COS, variable.operand);
+            Assert.AreEqual((float)Math.Cos(1.5708f), CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignTan() {
+            var command = ParseCommand("assign a to tan 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.TAN, variable.operand);
+            Assert.AreEqual((float)Math.Tan(1.5708f), CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignASin() {
+            var command = ParseCommand("assign a to asin 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.ASIN, variable.operand);
+            Assert.AreEqual((float)Math.Asin(1.5708f), CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignACos() {
+            var command = ParseCommand("assign a to acos 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.ACOS, variable.operand);
+            Assert.AreEqual((float)Math.Acos(1.5708f), CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignATan() {
+            var command = ParseCommand("assign a to atan 1.5708");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.ATAN, variable.operand);
+            Assert.AreEqual((float)Math.Atan(1.5708f), CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignRoundDown() {
+            var command = ParseCommand("assign a to round 5.4");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.ROUND, variable.operand);
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignRoundUp() {
+            var command = ParseCommand("assign a to round 5.6");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperandType.ROUND, variable.operand);
+            Assert.AreEqual(6f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
         public void AssignAbsoluteValueVector() {
             var command = ParseCommand("assign a to abs \"1:0:0\" + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
@@ -95,6 +183,28 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVectorMultiplication() {
+            var command = ParseCommand("assign a to \"0:1:0\" * \"1:0:0\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.MULTIPLY, variable.operand);
+            Assert.AreEqual(new Vector3D(0,0,-1), CastVector(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignVectorDotProduct() {
+            var command = ParseCommand("assign a to \"0:1:0\" . \"1:0:0\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.DOT, variable.operand);
+            Assert.AreEqual(0f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
         public void AssignSimpleDivision() {
             var command = ParseCommand("assign a to 6 / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
@@ -115,6 +225,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperandType.MOD, variable.operand);
             Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+        }
+
+        [TestMethod]
+        public void AssignVectorMod() {
+            var command = ParseCommand("assign a to \"1:1:0\" % \"0:1:0\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperandType.MOD, variable.operand);
+            Assert.AreEqual(new Vector3D(1,0,0), CastVector(variable.GetValue()).GetValue());
         }
 
         [TestMethod]

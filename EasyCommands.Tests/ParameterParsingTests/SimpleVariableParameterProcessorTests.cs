@@ -17,6 +17,16 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsFalse(assignCommand.useReference);
         }
 
+        [TestMethod]
+        public void AssignGlobalVariable() {
+            var command = ParseCommand("assign global \"a\" to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.IsFalse(assignCommand.useReference);
+            Assert.IsTrue(assignCommand.isGlobal);
+        }
 
         [TestMethod]
         public void AssignVariableFromExplicitString() {

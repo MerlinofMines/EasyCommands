@@ -23,7 +23,7 @@ namespace IngameScript {
             public CameraBlockHandler() {
                 AddBooleanHandler(PropertyType.TRIGGER, (b) => CastVector(GetPropertyValue(b, PropertyType.TARGET)).GetVectorValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(PropertyType.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
-
+                AddVectorHandler(PropertyType.TARGET_VELOCITY, (b) => { Vector3D velocity; GetVector(GetCustomProperty(b, "Velocity"), out velocity); return velocity; });
                 //TODO: Use setter to scan specific vector?
                 AddVectorHandler(PropertyType.TARGET, (b) => {
                     var range = (double)GetRange(b);
@@ -32,6 +32,7 @@ namespace IngameScript {
                         MyDetectedEntityInfo detectedEntity = b.Raycast(range);
                         if (!detectedEntity.IsEmpty()) {
                             SetCustomProperty(b, "Target", VectorToString(detectedEntity.HitPosition.Value));
+                            SetCustomProperty(b, "Velocity", VectorToString(detectedEntity.Velocity));
                         } else {
                             DeleteCustomProperty(b, "Target");
                         }
@@ -41,6 +42,7 @@ namespace IngameScript {
                     return hitPosition;
                 });
                 defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
+                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
                 defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
                 defaultDirection = DirectionType.UP;
             }
