@@ -56,18 +56,20 @@ namespace IngameScript {
                     (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().Value : BlockType.PROGRAM))),
 
                 //SelectorProcessor
-                TwoValueRule<StringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                      optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                      (p,blockType,group) => {
-                        if (!blockType.HasValue()) {
-                            BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
-                            if (type != null) blockType.SetValue(type);
-                            GroupCommandParameter g = findFirst<GroupCommandParameter>(p.SubTokens);
-                            if (g != null) group.SetValue(g);
-                        }
-                        return blockType.HasValue();
-                      },
-                      (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().Value, group.HasValue(), new StaticVariable(new StringPrimitive(p.Value))))),
+                new BranchingProcessor<StringCommandParameter>(
+                    TwoValueRule<StringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
+                          optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                          (p,blockType,group) => {
+                            if (!blockType.HasValue()) {
+                                BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
+                                if (type != null) blockType.SetValue(type);
+                                GroupCommandParameter g = findFirst<GroupCommandParameter>(p.SubTokens);
+                                if (g != null) group.SetValue(g);
+                            }
+                            return blockType.HasValue();
+                          },
+                          (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().Value, group.HasValue(), new StaticVariable(new StringPrimitive(p.Value))))),
+                    NoValueRule<StringCommandParameter>(p => new ExplicitStringCommandParameter(p.Value))),
 
                 //VariableSelectorProcessor
                 TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
@@ -211,10 +213,11 @@ namespace IngameScript {
                 //AmgiguousSelectorPropertyProcessor
                 new BranchingProcessor<SelectorCommandParameter>(
                     TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
-                        optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                        (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.Value, p.HasValue() ? p.GetValue().Value : (PropertyType?)null, d.HasValue() ? d.GetValue().Value : (DirectionType?)null))),
+                        requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                        (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.Value, p.GetValue().Value, d.HasValue() ? d.GetValue().Value : (DirectionType?)null))),
                     TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                         optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                        (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!
                         (s,p,d) => {
                             List<CommandParameter> blockParameters = new List<CommandParameter>{s};
                             if(p.HasValue()) blockParameters.Add(p.GetValue());
