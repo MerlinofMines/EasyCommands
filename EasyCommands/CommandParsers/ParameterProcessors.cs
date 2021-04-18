@@ -71,8 +71,8 @@ namespace IngameScript {
 
                 //VariableSelectorProcessor
                 TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                    requiredRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                    (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().Value, group.HasValue(), p.Value))),
+                    optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                    (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().Value : (BlockType?)null, group.HasValue(), p.Value))),
 
                 //Primitive Procesor
                 new PrimitiveProcessor(),

@@ -68,11 +68,11 @@ namespace IngameScript {
         }
 
         public class SelectorEntityProvider : EntityProvider {
-            public BlockType blockType;
+            public BlockType? blockType;
             public bool isGroup;
             public Variable selector;
 
-            public SelectorEntityProvider(BlockType blockType, bool isGroup, Variable selector) {
+            public SelectorEntityProvider(BlockType? blockType, bool isGroup, Variable selector) {
                 this.blockType = blockType;
                 this.isGroup = isGroup;
                 this.selector = selector;
@@ -80,12 +80,26 @@ namespace IngameScript {
 
             public List<Object> GetEntities() {
                 String selectorString = CastString(selector.GetValue()).GetStringValue();
-                List<object> entities = isGroup ? BlockHandlerRegistry.GetBlocksInGroup(blockType, selectorString) : BlockHandlerRegistry.GetBlocks(blockType, block => block.CustomName.Equals(selectorString));
+                bool resolvedIsGroup = false;
+                BlockType bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
+                bool useGroup = isGroup || resolvedIsGroup;
+                List<object> entities = useGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, block => block.CustomName.Equals(selectorString));
                 return entities;
             }
 
             public BlockType GetBlockType() {
-                return blockType;
+                if (blockType.HasValue) return blockType.Value;
+                bool ignored;
+                return ResolveType(CastString(selector.GetValue()).GetStringValue(), out ignored);
+            }
+
+            public BlockType ResolveType(String selector, out bool isGroup) {
+                var tokens = ParseTokens(selector);
+                var parameters = ParseCommandParameters(tokens);
+                var blockType = extractFirst<BlockTypeCommandParameter>(parameters);
+                isGroup = extractFirst<GroupCommandParameter>(parameters) != null;
+                if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
+                return blockType.Value;
             }
 
             public override String ToString() {

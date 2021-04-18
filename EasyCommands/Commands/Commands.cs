@@ -245,7 +245,6 @@ namespace IngameScript {
                 foreach (BlockCommandHandler handler in GetHandlers()) {
                     if (handler.canHandle(parameters)) {
                         commandHandler = handler;
-                        commandHandler.b = blockHandler;
                         commandHandler.e = entityProvider;
                         return;
                     }
@@ -256,6 +255,8 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
+                blockHandler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
+                commandHandler.b = blockHandler;
                 commandHandler.Execute();
                 return true;
             }
@@ -264,7 +265,6 @@ namespace IngameScript {
                 extract<ActionCommandParameter>(commandParameters);//Extract and ignore
                 SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-                blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
                 entityProvider = selector.Value;
             }
 
