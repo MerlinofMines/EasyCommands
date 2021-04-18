@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Moq;
 using System.Threading.Tasks;
-using Moq;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using VRageMath;
