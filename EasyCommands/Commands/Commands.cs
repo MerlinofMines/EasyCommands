@@ -227,12 +227,10 @@ namespace IngameScript {
         public class NullCommand : Command { public override bool Execute() { return true; } }
 
         public class BlockCommand : Command {
-            public BlockHandler blockHandler;
             public EntityProvider entityProvider;
             public BlockCommandHandler commandHandler;
 
-            public BlockCommand(BlockHandler blockHandler, EntityProvider entityProvider, BlockCommandHandler commandHandler) {
-                this.blockHandler = blockHandler;
+            public BlockCommand(EntityProvider entityProvider, BlockCommandHandler commandHandler) {
                 this.entityProvider = entityProvider;
                 this.commandHandler = commandHandler;
             }
@@ -255,8 +253,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                blockHandler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
-                commandHandler.b = blockHandler;
+                commandHandler.b = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
                 commandHandler.Execute();
                 return true;
             }
@@ -312,7 +309,7 @@ namespace IngameScript {
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
-            public override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
+            public override Command Clone() { return new BlockCommand(entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {
