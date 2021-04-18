@@ -115,5 +115,46 @@ turn on the ""hangar lights""
                 mockOtherLight.VerifySet(b => b.Intensity = 10f, Times.Never);
             }
         }
+
+        [TestMethod]
+        public void UseVariableAsImplicitBlockSelector() {
+            String script = @"
+assign ""myLights"" to 'test lights'
+turn on [myLights]
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksInGroup("test lights", mockLight);
+
+                test.RunUntilDone();
+
+                mockLight.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void UseVariableAsImplicitBlockSelectorInConditionAndBlockCommand() {
+            String script = @"
+assign ""myLights"" to 'test lights'
+if [myLights] are on
+  Print 'You Left The Lights On'
+  turn off [myLights]
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksInGroup("test lights", mockLight);
+                mockLight.Setup(b => b.Enabled).Returns(true);
+
+                test.RunUntilDone();
+
+                mockLight.VerifySet(b => b.Enabled = false);
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("You Left The Lights On", test.Logger[0]);
+            }
+        }
+
     }
 }

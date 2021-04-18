@@ -227,12 +227,10 @@ namespace IngameScript {
         public class NullCommand : Command { public override bool Execute() { return true; } }
 
         public class BlockCommand : Command {
-            public BlockHandler blockHandler;
             public EntityProvider entityProvider;
             public BlockCommandHandler commandHandler;
 
-            public BlockCommand(BlockHandler blockHandler, EntityProvider entityProvider, BlockCommandHandler commandHandler) {
-                this.blockHandler = blockHandler;
+            public BlockCommand(EntityProvider entityProvider, BlockCommandHandler commandHandler) {
                 this.entityProvider = entityProvider;
                 this.commandHandler = commandHandler;
             }
@@ -245,7 +243,6 @@ namespace IngameScript {
                 foreach (BlockCommandHandler handler in GetHandlers()) {
                     if (handler.canHandle(parameters)) {
                         commandHandler = handler;
-                        commandHandler.b = blockHandler;
                         commandHandler.e = entityProvider;
                         return;
                     }
@@ -256,6 +253,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
+                commandHandler.b = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
                 commandHandler.Execute();
                 return true;
             }
@@ -264,7 +262,6 @@ namespace IngameScript {
                 extract<ActionCommandParameter>(commandParameters);//Extract and ignore
                 SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-                blockHandler = BlockHandlerRegistry.GetBlockHandler(selector.Value.GetBlockType());
                 entityProvider = selector.Value;
             }
 
@@ -312,7 +309,7 @@ namespace IngameScript {
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
-            public override Command Clone() { return new BlockCommand(blockHandler, entityProvider, commandHandler); }
+            public override Command Clone() { return new BlockCommand(entityProvider, commandHandler); }
         }
 
         public class ConditionalCommand : Command {

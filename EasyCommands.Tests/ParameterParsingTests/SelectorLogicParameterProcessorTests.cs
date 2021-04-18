@@ -76,6 +76,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ImplicitVariableSelector() {
+            var command = ParseCommand("turn on the [a]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(sep.selector is InMemoryVariable);
+            InMemoryVariable variable = (InMemoryVariable)sep.selector;
+            Assert.AreEqual("a", variable.variableName);
+        }
+
+        [TestMethod]
         public void MySelector() {
             var command = ParseCommand("assign a to my average location");
             Assert.IsTrue(command is VariableAssignmentCommand);
