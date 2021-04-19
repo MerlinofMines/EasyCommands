@@ -44,6 +44,7 @@ namespace IngameScript {
                 { BlockType.TANK, new GasTankBlockHandler() },
                 { BlockType.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
                 { BlockType.THRUSTER, new ThrusterBlockHandler()},
+                { BlockType.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
                 { BlockType.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
             };
 
@@ -388,6 +389,16 @@ namespace IngameScript {
             protected void AddColorHandler(PropertyType property, GetColorProperty<T> Get, SetColorProperty<T> Set) {
                 propertyHandlers[property] = new SimpleColorPropertyHandler<T>(Get, Set);
             }
+        }
+
+        /// <summary>
+        ///Provides a consistent way to get the most accurate position for a detected entity.
+        ///Not all detected entities will have a HitPosition.  Attempt to use HitPosition first.  If not present, use Position instead.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        static Vector3D GetPosition(MyDetectedEntityInfo entity) {
+            return entity.HitPosition.GetValueOrDefault(entity.Position);
         }
     }
 }
