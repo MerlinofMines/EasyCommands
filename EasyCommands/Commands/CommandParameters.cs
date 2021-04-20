@@ -54,26 +54,31 @@ namespace IngameScript {
             return extracted;
         }
 
-        public interface CommandParameter { }
+        public interface CommandParameter {
+            string Token { get; set; }
+        }
         public interface PrimitiveCommandParameter : CommandParameter { }
-        public class IndexCommandParameter : CommandParameter { }
-        public class GroupCommandParameter : CommandParameter { }
-        public class NotCommandParameter : CommandParameter { }
-        public class AndCommandParameter : CommandParameter { }
-        public class OrCommandParameter : CommandParameter { }
-        public class OpenParenthesisCommandParameter : CommandParameter { }
-        public class CloseParenthesisCommandParameter : CommandParameter { }
-        public class IteratorCommandParameter : CommandParameter { }
-        public class ActionCommandParameter : CommandParameter { }
-        public class ReverseCommandParameter : CommandParameter { }
-        public class RelativeCommandParameter : CommandParameter { }
-        public class WaitCommandParameter : CommandParameter { }
-        public class SendCommandParameter : CommandParameter { }
-        public class ListenCommandParameter : CommandParameter { }
-        public class ElseCommandParameter : CommandParameter { }
-        public class PrintCommandParameter : CommandParameter { }
-        public class SelfCommandParameter : CommandParameter { }
-        public class GlobalCommandParameter : CommandParameter { }
+        public abstract class SimpleCommandParameter : CommandParameter {
+            public string Token { get; set; }
+        }
+        public class IndexCommandParameter : SimpleCommandParameter { }
+        public class GroupCommandParameter : SimpleCommandParameter { }
+        public class NotCommandParameter : SimpleCommandParameter { }
+        public class AndCommandParameter : SimpleCommandParameter { }
+        public class OrCommandParameter : SimpleCommandParameter { }
+        public class OpenParenthesisCommandParameter : SimpleCommandParameter { }
+        public class CloseParenthesisCommandParameter : SimpleCommandParameter { }
+        public class IteratorCommandParameter : SimpleCommandParameter { }
+        public class ActionCommandParameter : SimpleCommandParameter { }
+        public class ReverseCommandParameter : SimpleCommandParameter { }
+        public class RelativeCommandParameter : SimpleCommandParameter { }
+        public class WaitCommandParameter : SimpleCommandParameter { }
+        public class SendCommandParameter : SimpleCommandParameter { }
+        public class ListenCommandParameter : SimpleCommandParameter { }
+        public class ElseCommandParameter : SimpleCommandParameter { }
+        public class PrintCommandParameter : SimpleCommandParameter { }
+        public class SelfCommandParameter : SimpleCommandParameter { }
+        public class GlobalCommandParameter : SimpleCommandParameter { }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {
             public QueueCommandParameter(bool async) : base(async) {
@@ -93,7 +98,7 @@ namespace IngameScript {
             public AddCommandParameter(BiOperandType value) : base(value) {}
         }
 
-        public class AssignmentCommandParameter : CommandParameter {
+        public class AssignmentCommandParameter : SimpleCommandParameter {
             public bool useReference;
 
             public AssignmentCommandParameter(bool useReference) {
@@ -101,7 +106,7 @@ namespace IngameScript {
             }
         }
 
-        public class VariableAssignmentCommandParameter : CommandParameter {
+        public class VariableAssignmentCommandParameter : SimpleCommandParameter {
             public string variableName;
             public bool useReference;
             public bool isGlobal;
@@ -122,10 +127,14 @@ namespace IngameScript {
         }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
-            public T Value;
-            public ValueCommandParameter(T value) { this.Value = value; }
-            public override string ToString() {
-                return GetType() + " : " + Value;
+            public T value;
+            public ValueCommandParameter(T v) { value = v; }
+
+            string CommandParameter.Token {
+                get {
+                    return value.ToString();
+                }
+                set {}
             }
         }
 
@@ -172,7 +181,7 @@ namespace IngameScript {
             public FunctionCommandParameter(FunctionType value) : base(value) {}
         }
 
-        public class FunctionDefinitionCommandParameter : CommandParameter {
+        public class FunctionDefinitionCommandParameter : SimpleCommandParameter {
             public FunctionType functionType;
             public FunctionDefinition functionDefinition;
 
@@ -182,14 +191,14 @@ namespace IngameScript {
             }
         }
 
-        public class WithCommandParameter : CommandParameter {
+        public class WithCommandParameter : SimpleCommandParameter {
             public bool inverseCondition;
             public WithCommandParameter(bool inverseCondition) {
                 this.inverseCondition = inverseCondition;
             }
         }
 
-        public class IfCommandParameter : CommandParameter {
+        public class IfCommandParameter : SimpleCommandParameter {
             public bool inverseCondition;
             public bool alwaysEvaluate;
             public bool swapCommands;

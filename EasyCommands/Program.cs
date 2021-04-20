@@ -320,7 +320,7 @@ namespace IngameScript {
             while (branches.Count > 0) {
                 branches.AddRange(ParameterProcessorRegistry.Process(branches[0]));
                 if (branches[0].Count == 1 && branches[0][0] is CommandReferenceParameter) {
-                    return ((CommandReferenceParameter)branches[0][0]).Value;
+                    return ((CommandReferenceParameter)branches[0][0]).value;
                 } else {
                     branches.RemoveAt(0);
                 }
