@@ -268,5 +268,27 @@ goto printVariable
                 Assert.AreEqual("Variable is: 3", test.Logger[2]);
             }
         }
+
+        [TestMethod]
+        public void asyncCommandVariablesArePassedToAsyncThread() {
+            String script = @"
+:main
+assign ""i"" to 0
+async call printLocalVariable {i}
+assign ""i"" to {i} + 1
+async call printLocalVariable {i}
+assign ""i"" to {i} + 1
+
+:printLocalVariable ""a""
+print 'Variable is: ' + {a}
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();//Execute main, add async threads which set their variable and print
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Variable is: 0", test.Logger[0]);
+                Assert.AreEqual("Variable is: 1", test.Logger[1]);
+            }
+        }
     }
 }
