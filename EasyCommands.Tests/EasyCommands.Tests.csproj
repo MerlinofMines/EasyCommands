@@ -145,6 +145,7 @@
     <Compile Include="ScriptTests\SimpleLoggingTests.cs" />
     <Compile Include="ScriptTests\TurretBlockTests.cs" />
     <Compile Include="ScriptTests\GyroscopeBlockTests.cs" />
+    <Compile Include="ScriptTests\RotorControlTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
