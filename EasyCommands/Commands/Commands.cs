@@ -46,10 +46,12 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if(async) {
-                    PROGRAM.QueueAsyncThread(new Thread(command, "Queued", "Unknown"));
+                Thread thread = new Thread(command, "Queued", "Unknown");
+                thread.threadVariables = new Dictionary<string, Variable>(PROGRAM.GetCurrentThread().threadVariables);
+                if (async) {
+                    PROGRAM.QueueAsyncThread(thread);
                 } else {
-                    PROGRAM.QueueThread(new Thread(command, "Queued", "Unknown"));
+                    PROGRAM.QueueThread(thread);
                 }
                 return true;
             }
