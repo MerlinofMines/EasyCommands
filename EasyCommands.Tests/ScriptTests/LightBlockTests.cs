@@ -10,7 +10,7 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests
 {
     [TestClass]
-    public class SimpleBlockCommandTests
+    public class LightBlockTests
     {
         [TestMethod]
         public void LightBlockHandlerTest()
