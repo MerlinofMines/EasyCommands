@@ -27,8 +27,8 @@ namespace IngameScript {
         static String[] reverseWords = { "reverse" };
         static String[] increaseWords = { "increase", "raise", "extend", "expand" };
         static String[] decreaseWords = { "decrease", "retract", "reduce" };
-        static String[] upWords = { "up", "upward", "upper" };
-        static String[] downWords = { "down", "downward", "lower" };
+        static String[] upWords = { "up", "upward", "upwards", "upper" };
+        static String[] downWords = { "down", "downward", "downwards", "lower" };
         static String[] leftWords = { "left", "lefthand" };
         static String[] rightWords = { "right", "righthand" };
         static String[] forwardWords = { "forward", "forwards", "front" };
@@ -118,6 +118,8 @@ namespace IngameScript {
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
         static String[] autoWords = { "auto", "refill", "drain", "draining" };
+        static String[] overrideWords = { "override", "overrides", "overridden" };
+
         static String[] assignWords = { "assign", "allocate", "designate" };
         static String[] globalWords = { "global" };
         static String[] bindWords = { "bind", "tie", "link" };
@@ -237,7 +239,9 @@ namespace IngameScript {
             { "detectors", BlockType.DETECTOR},
             { "drills", BlockType.DRILL},
             { "engines", BlockType.ENGINE },
-            { "sorters", BlockType.SORTER }
+            { "sorters", BlockType.SORTER },
+            { "gyros", BlockType.GYROSCOPE },
+            { "gyroscopes", BlockType.GYROSCOPE }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -293,7 +297,9 @@ namespace IngameScript {
             { "detector", BlockType.DETECTOR},
             { "drill", BlockType.DRILL},
             { "engine", BlockType.ENGINE },
-            { "sorter", BlockType.SORTER }
+            { "sorter", BlockType.SORTER },
+            { "gyro", BlockType.GYROSCOPE },
+            { "gyroscope", BlockType.GYROSCOPE }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -406,6 +412,7 @@ namespace IngameScript {
             AddWords(inputWords, new PropertyCommandParameter(PropertyType.MOVE_INPUT));
             AddWords(rollInputWords, new PropertyCommandParameter(PropertyType.ROLL_INPUT));
             AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
+            AddWords(overrideWords, new PropertyCommandParameter(PropertyType.OVERRIDE));
             AddWords(directionWords, new PropertyCommandParameter(PropertyType.DIRECTION));
             AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
             AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));

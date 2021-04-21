@@ -28,6 +28,7 @@ namespace IngameScript {
                 { BlockType.GENERATOR, new GasGeneratorHandler()},
                 { BlockType.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { BlockType.GUN, new GunBlockHandler<IMyUserControllableGun>() },
+                { BlockType.GYROSCOPE, new GyroscopeBlockHandler() },
                 { BlockType.LIGHT, new LightBlockHandler() },
                 { BlockType.MERGE, new MergeBlockHandler() },
                 { BlockType.PARACHUTE, new ParachuteBlockHandler() },
