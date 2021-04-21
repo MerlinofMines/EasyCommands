@@ -59,6 +59,7 @@
     <Compile Include="BlockHandlers\BeaconBlockHandlers.cs" />
     <Compile Include="BlockHandlers\BlockHandlers.cs" />
     <Compile Include="BlockHandlers\CameraBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\SorterBlockHandlers.cs" />
     <Compile Include="BlockHandlers\ConnectorBlockHandlers.cs" />
     <Compile Include="BlockHandlers\DoorHandlers.cs" />
     <Compile Include="BlockHandlers\GasGeneratorHandlers.cs" />

@@ -117,7 +117,7 @@ namespace IngameScript {
         static String[] ratioWords = { "ratio", "percentage", "percent" };
         static String[] inputWords = { "input", "pilot", "user" };
         static String[] rollInputWords = { "roll", "rollInput" };
-        static String[] autoWords = { "auto", "refill" };
+        static String[] autoWords = { "auto", "refill", "drain", "draining" };
         static String[] assignWords = { "assign", "allocate", "designate" };
         static String[] globalWords = { "global" };
         static String[] bindWords = { "bind", "tie", "link" };
@@ -236,7 +236,8 @@ namespace IngameScript {
             { "suspension", BlockType.SUSPENSION},
             { "detectors", BlockType.DETECTOR},
             { "drills", BlockType.DRILL},
-            { "engines", BlockType.ENGINE }
+            { "engines", BlockType.ENGINE },
+            { "sorters", BlockType.SORTER }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -291,7 +292,8 @@ namespace IngameScript {
             { "wheel", BlockType.SUSPENSION},
             { "detector", BlockType.DETECTOR},
             { "drill", BlockType.DRILL},
-            { "engine", BlockType.ENGINE }
+            { "engine", BlockType.ENGINE },
+            { "sorter", BlockType.SORTER }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
