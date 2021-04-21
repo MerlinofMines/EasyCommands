@@ -26,6 +26,8 @@ namespace IngameScript {
                 { BlockType.ENGINE, new FunctionalBlockHandler<IMyPowerProducer>() },
                 { BlockType.GEAR, new LandingGearHandler() },
                 { BlockType.GENERATOR, new GasGeneratorHandler()},
+                { BlockType.GRAVITY_GENERATOR, new GravityGeneratorBlockHandler() },
+                { BlockType.GRAVITY_SPHERE, new SphericalGravityGeneratorBlockHandler() },
                 { BlockType.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { BlockType.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { BlockType.GYROSCOPE, new GyroscopeBlockHandler() },

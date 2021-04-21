@@ -65,6 +65,7 @@
     <Compile Include="BlockHandlers\DoorHandlers.cs" />
     <Compile Include="BlockHandlers\GasGeneratorHandlers.cs" />
     <Compile Include="BlockHandlers\GasTankBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\GravityGeneratorBlockHandlers.cs" />
     <Compile Include="BlockHandlers\GunBlockHandlers.cs" />
     <Compile Include="BlockHandlers\LandingGearHandlers.cs" />
     <Compile Include="BlockHandlers\LightBlockHandlers.cs" />
