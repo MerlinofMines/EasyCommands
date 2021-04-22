@@ -31,14 +31,14 @@ namespace IngameScript {
                     requiredRight<StringCommandParameter>(),
                     (p,name) => {
                         FunctionDefinition definition;
-                        if(!FUNCTIONS.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
+                        if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
                         return new FunctionDefinitionCommandParameter(p.value, definition);
                     }),
                 OneValueRule<FunctionCommandParameter,ExplicitStringCommandParameter>(
                     requiredRight<ExplicitStringCommandParameter>(),
                     (p,name) => {
                         FunctionDefinition definition;
-                        if(!FUNCTIONS.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
+                        if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
                         return new FunctionDefinitionCommandParameter(p.value, definition);
                     }),
 

@@ -51,10 +51,10 @@ namespace EasyCommands.Tests.ScriptTests
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             program = MDKFactory.CreateProgram<Program>(config);
-            // Init static fields that may have been modified from other tests, prepare for testing
-            Program.STATE = ProgramState.STOPPED;
+
             Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
             Program.FUNCTION_PARSE_AMOUNT = 1000;
+
             // Default behavior for broadcast messages
             // TODO: Replace this with mock objects passed to config setup in Program
             program.broadcastMessageProvider = () => new List<MyIGCMessage>();
@@ -84,7 +84,7 @@ namespace EasyCommands.Tests.ScriptTests
         /// </summary>
         public void RunUntilDone()
         {
-            RunUntil(t => Program.ProgramState.COMPLETE == Program.STATE || t.RunCounter >= 100);
+            RunUntil(t => Program.ProgramState.COMPLETE == program.state || t.RunCounter >= 100);
         }
 
         /// <summary>
@@ -152,7 +152,6 @@ namespace EasyCommands.Tests.ScriptTests
         public void Dispose()
         {
             // TODO: Unset any static changes, etc
-            Program.STATE = ProgramState.STOPPED;
             Program.LOG_LEVEL = LogLevel.INFO;
         }
 

@@ -30,33 +30,43 @@ namespace IngameScript {
         public static int MAX_QUEUED_THREADS = 50;
         #endregion
 
-        int AsyncThreadQueueIndex = 0;
-        bool InAsyncThreadQueue = false;
-        List<Thread> ThreadQueue = new List<Thread>();
-        List<Thread> AsyncThreadQueue = new List<Thread>();
+        public delegate List<MyIGCMessage> BroadcastMessageProvider();
+
+        public static Program PROGRAM;
+        public BroadcastMessageProvider broadcastMessageProvider;
+        public ProgramState state = ProgramState.STOPPED;
+        public Dictionary<String, FunctionDefinition> functions = new Dictionary<string, FunctionDefinition>();
+
+        int asyncThreadQueueIndex = 0;
+        bool inAsyncThreadQueue = false;
+        List<Thread> threadQueue = new List<Thread>();
+        List<Thread> asyncThreadQueue = new List<Thread>();
         Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable>();
+        String defaultFunction;
+        String customData = null;
+        List<String> commandStrings = new List<String>();
 
         public void ClearAllThreads() {
-            AsyncThreadQueue.Clear();
-            ThreadQueue.Clear();
+            asyncThreadQueue.Clear();
+            threadQueue.Clear();
         }
 
         public Thread GetCurrentThread() {
-            if (InAsyncThreadQueue) {
-                return AsyncThreadQueue[AsyncThreadQueueIndex];
+            if (inAsyncThreadQueue) {
+                return asyncThreadQueue[asyncThreadQueueIndex];
             } else {
-                return ThreadQueue[0];
+                return threadQueue[0];
             }
         }
 
         public void QueueThread(Thread thread) {
-            ThreadQueue.Add(thread);
-            if (ThreadQueue.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
+            threadQueue.Add(thread);
+            if (threadQueue.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
         }
 
         public void QueueAsyncThread(Thread thread) {
-            AsyncThreadQueue.Add(thread);
-            if (AsyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
+            asyncThreadQueue.Add(thread);
+            if (asyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
         }
 
         public void SetGlobalVariable(String variableName, Variable variable) {
@@ -73,16 +83,6 @@ namespace IngameScript {
                 throw new Exception("No Variable Exists for name: " + variableName);
             }
         }
-
-        public static Dictionary<String, FunctionDefinition> FUNCTIONS = new Dictionary<string, FunctionDefinition>();
-        static String DEFAULT_FUNCTION;
-        static String CUSTOM_DATA = null;
-        static List<String> COMMAND_STRINGS = new List<String>();
-        static Program PROGRAM;
-        public static ProgramState STATE = ProgramState.STOPPED;
-        public delegate String CustomDataProvider(MyGridProgram program);
-        public delegate List<MyIGCMessage> BroadcastMessageProvider();
-        public BroadcastMessageProvider broadcastMessageProvider;
 
         List<MyIGCMessage> provideMessages()
         {
@@ -118,7 +118,7 @@ namespace IngameScript {
                 return;
             }
 
-            Debug("Functions: " + FUNCTIONS.Count);
+            Debug("Functions: " + functions.Count);
             Debug("Argument: " + argument);
 
             List<MyIGCMessage> messages = broadcastMessageProvider();
@@ -126,9 +126,9 @@ namespace IngameScript {
             try {
                 if (messages.Count > 0) {
                     List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data),"Message", message.Tag)).ToList();
-                    ThreadQueue.InsertRange(0, messageCommands);
+                    threadQueue.InsertRange(0, messageCommands);
                 }
-                if (!String.IsNullOrEmpty(argument)) { ThreadQueue.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
+                if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
 
                 RunThreads();
                 UpdateState();
@@ -141,53 +141,53 @@ namespace IngameScript {
         }
 
         void RunThreads() {
-            InAsyncThreadQueue = false;
+            inAsyncThreadQueue = false;
             try {
                 //If no current commands, we've been asked to restart.  start at the top.
-                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
-                    FunctionDefinition defaultFunction = FUNCTIONS[DEFAULT_FUNCTION];
-                    ThreadQueue.Add(new Thread(defaultFunction.function.Clone(), "Main", defaultFunction.functionName));
+                if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
+                    FunctionDefinition defaultFunctionDefinition = functions[defaultFunction];
+                    threadQueue.Add(new Thread(defaultFunctionDefinition.function.Clone(), "Main", defaultFunctionDefinition.functionName));
                 }
 
-                Info("Queued Threads: " + ThreadQueue.Count());
-                Info("Async Threads: " + AsyncThreadQueue.Count());
+                Info("Queued Threads: " + threadQueue.Count());
+                Info("Async Threads: " + asyncThreadQueue.Count());
                 //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
-                if (ThreadQueue.Count > 0 ) {
-                    Thread currentThread = ThreadQueue[0];
+                if (threadQueue.Count > 0 ) {
+                    Thread currentThread = threadQueue[0];
                     Info("Current Thread: " + currentThread.GetName());
                     if(currentThread.Command.Execute()) {
-                        ThreadQueue.RemoveAt(0);
+                        threadQueue.RemoveAt(0);
                     }
                 }
 
                 //Process 1 iteration of all async commands, removing from queue if processed.
-                InAsyncThreadQueue = true;
-                AsyncThreadQueueIndex = 0;
+                inAsyncThreadQueue = true;
+                asyncThreadQueueIndex = 0;
 
-                while (AsyncThreadQueueIndex < AsyncThreadQueue.Count) {
-                    Thread currentThread = AsyncThreadQueue[AsyncThreadQueueIndex];
+                while (asyncThreadQueueIndex < asyncThreadQueue.Count) {
+                    Thread currentThread = asyncThreadQueue[asyncThreadQueueIndex];
                     Info("Async Thread: " + currentThread.GetName());
                     if (currentThread.Command.Execute()) {
-                        AsyncThreadQueue.RemoveAt(AsyncThreadQueueIndex);
+                        asyncThreadQueue.RemoveAt(asyncThreadQueueIndex);
                     } else {
-                        AsyncThreadQueueIndex++;
+                        asyncThreadQueueIndex++;
                     }
                 }
-                if(ThreadQueue.Count == 0 && AsyncThreadQueue.Count == 0) {
-                    STATE = ProgramState.COMPLETE;
+                if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
+                    state = ProgramState.COMPLETE;
                 } else {
-                    STATE = ProgramState.RUNNING;
+                    state = ProgramState.RUNNING;
                 }
             //InterruptException is thrown by control commands to interrupt execution (stop, pause, restart).
             //The command itself has set the correct state of the command queues, we just need to set the program state.
             } catch(InterruptException interrupt) {
                 Debug("Script interrupted!");
-                STATE = interrupt.ProgramState;
+                state = interrupt.ProgramState;
             }
         }
 
         void UpdateState() {
-            switch (STATE) {
+            switch (state) {
                 case ProgramState.RUNNING:
                     Runtime.UpdateFrequency = UPDATE_FREQUENCY;
                     Info("Running");
@@ -209,29 +209,29 @@ namespace IngameScript {
             }
         }
 
-        static bool ParseCommands() {
+        bool ParseCommands() {
             if (String.IsNullOrWhiteSpace(PROGRAM.Me.CustomData)) {
                 Info("Welcome to EasyCommands!");
                 Info("Add Commands to Custom Data");
                 return false;
-            } else if (!PROGRAM.Me.CustomData.Equals(CUSTOM_DATA)) {
-                CUSTOM_DATA = PROGRAM.Me.CustomData;
-                COMMAND_STRINGS = CUSTOM_DATA.Trim().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+            } else if (!PROGRAM.Me.CustomData.Equals(customData)) {
+                customData = PROGRAM.Me.CustomData;
+                commandStrings = customData.Trim().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
                     .ToList();
 
                 Info("Parsing Custom Data");
-                FUNCTIONS.Clear();
-                PROGRAM.ClearAllThreads();
+                functions.Clear();
+                ClearAllThreads();
             }
 
-            if (COMMAND_STRINGS.Count == 0) return true;
-            Info("Parsing Commands.  Lines Left: " + COMMAND_STRINGS.Count);
-            ParseFunctions(COMMAND_STRINGS);
+            if (commandStrings.Count == 0) return true;
+            Info("Parsing Commands.  Lines Left: " + commandStrings.Count);
+            ParseFunctions(commandStrings);
 
-            return COMMAND_STRINGS.Count == 0;
+            return commandStrings.Count == 0;
         }
 
-        static void ParseFunctions(List<String> commandStrings) {
+        void ParseFunctions(List<String> commandStrings) {
             List<int> functionIndices = new List<int>();
             int implicitMainOffset = 1;
             if (!commandStrings[0].StartsWith(":")) {
@@ -253,7 +253,7 @@ namespace IngameScript {
                 String functionName = nameAndParams[0].original;
                 nameAndParams.RemoveAt(0);
                 FunctionDefinition definition = new FunctionDefinition(functionName, nameAndParams.Select(t => t.original).ToList());
-                FUNCTIONS[functionName] = definition;
+                functions[functionName] = definition;
             }
 
             //Parse Function Commands and add to Definitions
@@ -267,8 +267,8 @@ namespace IngameScript {
                 Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true, ref startingLineNumber);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
                 if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
-                FUNCTIONS[functionName].function = (MultiActionCommand)command;
-                DEFAULT_FUNCTION = functionName;
+                functions[functionName].function = (MultiActionCommand)command;
+                defaultFunction = functionName;
                 toParse--;
                 if (toParse == 0) break;//Exceeded # of Functions to parse for 1 tick
             }
