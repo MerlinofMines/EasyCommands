@@ -414,7 +414,36 @@ namespace IngameScript {
             AddWords(globalWords, new GlobalCommandParameter());
             AddWords(bindWords, new AssignmentCommandParameter(true));
             AddWords(printWords, new PrintCommandParameter());
+
+            //Register Special CommandParameter Output Values
+            RegisterToString<GroupCommandParameter>(p => "group");
+            RegisterToString<StringCommandParameter>(p => "\"" + p.value + "\"");
+            RegisterToString<ExplicitStringCommandParameter>(p => "'" + p.value + "'");
+            RegisterToString<VariableAssignmentCommandParameter>(p => "Assign[name=" + p.variableName + ",global=" + p.isGlobal + ",ref=" + p.useReference + "]");
+            RegisterToString<VariableCommandParameter>(p => "[Variable]");
+            RegisterToString<VariableSelectorCommandParameter>(p => "[VariableSelector]");
+            RegisterToString<IndexSelectorCommandParameter>(p => "[IndexSelector]");
+            RegisterToString<FunctionDefinitionCommandParameter>(p => "Function[type=" + p.functionType + ",name=" + p.functionDefinition.functionName + "]");
+            RegisterToString<ConditionCommandParameter>(p => "[Condition]");
+            RegisterToString<BlockConditionCommandParameter>(p => "[BlockCondition]");
+            RegisterToString<CommandReferenceParameter>(p => "[Command]");
+            RegisterToString<IterationCommandParameter>(p => "[Iteration]");
+            RegisterToString<SelectorCommandParameter>(p => "[Selector]");
             Initialized = true;
+        }
+
+        static Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = new Dictionary<Type, Func<CommandParameter, object>>();
+
+        static void RegisterToString<T>(Func<T, object> toString) where T : CommandParameter {
+            commandParameterStrings[typeof(T)] = (p) => toString((T)p);
+        }
+
+        static string CommandParameterToString(CommandParameter parameter) {
+            Func<CommandParameter, object> func;
+            if (!commandParameterStrings.TryGetValue(parameter.GetType(), out func)) {
+                func = (p) => p.Token;
+            }
+            return func(parameter).ToString();
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {
@@ -424,115 +453,79 @@ namespace IngameScript {
         static List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
             InitializeParsers();
             Trace("Command: " + String.Join(" | ", tokens));
+            var parameters = new List<CommandParameter>();
 
-            List<CommandParameter> commandParameters = new List<CommandParameter>();
             foreach (var token in tokens) {
-                String t = token.token;
+                var newParameters = ParseCommandParameters(token);
+                newParameters.ForEach(p => p.Token = token.original);
+                parameters.AddRange(newParameters);
+            }
 
-                if(token.isExplicitString) {
-                    commandParameters.Add(new ExplicitStringCommandParameter(token.original));
-                    continue;
+            return parameters;
+        }
+
+        static List<CommandParameter> ParseCommandParameters(Token token) {
+            List<CommandParameter> commandParameters = new List<CommandParameter>();
+            String t = token.token;
+            ControlType controlType;
+            BlockType blockType;
+            UnitType unitType;
+            UniOperandType uniOperandType;
+            BiOperandType biOperandType;
+            PropertyAggregatorType aggregatorType;
+            double numericValue;
+
+            if (token.isExplicitString) {
+                commandParameters.Add(new ExplicitStringCommandParameter(token.original));
+            } else if (token.isString) {
+                List<Token> subTokens = ParseTokens(t);
+                List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
+                commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
+            } else if (ignoreWords.Contains(t)) { 
+                //ignore
+            } else if (propertyWords.ContainsKey(t)) {
+                commandParameters.AddList(propertyWords[t]);
+            } else if (selfWords.Contains(t)) {
+                commandParameters.Add(new SelfCommandParameter());
+            } else if (controlTypeWords.TryGetValue(t, out controlType)) {
+                commandParameters.Add(new ControlCommandParameter(controlType));
+            } else if (blockTypeGroupWords.TryGetValue(t, out blockType)) {
+                commandParameters.Add(new BlockTypeCommandParameter(blockType));
+                commandParameters.Add(new GroupCommandParameter());
+            } else if (blockTypeWords.TryGetValue(t, out blockType)) {
+                commandParameters.Add(new BlockTypeCommandParameter(blockType));
+            } else if (unitTypeWords.TryGetValue(t, out unitType)) {
+                commandParameters.Add(new UnitCommandParameter(unitType));
+            } else if (uniOperandWords.TryGetValue(t, out uniOperandType)) {
+                commandParameters.Add(new UniOperationCommandParameter(uniOperandType));
+            } else if (biOperandWords.TryGetValue(t, out biOperandType)) {
+                if (biOperandType == BiOperandType.ADD || biOperandType == BiOperandType.SUBTACT) {
+                    commandParameters.Add(new AddCommandParameter(biOperandType));
+                } else {
+                    commandParameters.Add(new MultiplyCommandParameter(biOperandType));
                 }
-
-                if (token.isString) {
-                    List<Token> subTokens = ParseTokens(t);
-                    List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                    commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
-                    continue;
-                }
-
-                if (ignoreWords.Contains(t)) continue;
-
-                if (propertyWords.ContainsKey(t)) {
-                    commandParameters.AddList(propertyWords[t]);
-                    continue;
-                }
-
-                if (selfWords.Contains(t)) {
-                    commandParameters.Add(new SelfCommandParameter());
-                    continue;
-                }
-
-                ControlType controlType;
-                if (controlTypeWords.TryGetValue(t, out controlType)) {
-                    commandParameters.Add(new ControlCommandParameter(controlType));
-                    continue;
-                }
-
-                BlockType blockType;
-                if (blockTypeGroupWords.TryGetValue(t, out blockType)) {
-                    commandParameters.Add(new BlockTypeCommandParameter(blockType));
-                    commandParameters.Add(new GroupCommandParameter());
-                    continue;
-                } else if (blockTypeWords.TryGetValue(t, out blockType)) {
-                    commandParameters.Add(new BlockTypeCommandParameter(blockType));
-                    continue;
-                }
-
-                UnitType unitType;
-                if (unitTypeWords.TryGetValue(t, out unitType)) {
-                    commandParameters.Add(new UnitCommandParameter(unitType));
-                    continue;
-                }
-
-                UniOperandType uniOperandType;
-                if (uniOperandWords.TryGetValue(t, out uniOperandType)) {
-                    commandParameters.Add(new UniOperationCommandParameter(uniOperandType));
-                    continue;
-                }
-
-
-                BiOperandType biOperandType;
-                if (biOperandWords.TryGetValue(t, out biOperandType)) {
-                    if (biOperandType == BiOperandType.ADD || biOperandType == BiOperandType.SUBTACT) {
-                        commandParameters.Add(new AddCommandParameter(biOperandType));
+            } else if (aggregationWords.TryGetValue(t, out aggregatorType)) {
+                commandParameters.Add(new PropertyAggregationCommandParameter(aggregatorType));
+            } else if (Double.TryParse(t, out numericValue)) {
+                commandParameters.Add(new NumericCommandParameter((float)numericValue));
+            } else if (t.StartsWith("@")) {
+                if (t.Length == 1) commandParameters.Add(new IndexCommandParameter());
+                else {
+                    int indexValue;
+                    if (int.TryParse(t.Substring(1), out indexValue)) {
+                        commandParameters.Add(new IndexSelectorCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
                     } else {
-                        commandParameters.Add(new MultiplyCommandParameter(biOperandType));
+                        throw new Exception("Unable to parse index indicator: " + t);
                     }
-                    continue;
                 }
-
-                PropertyAggregatorType aggregatorType;
-                if (aggregationWords.TryGetValue(t, out aggregatorType)) {
-                    commandParameters.Add(new PropertyAggregationCommandParameter(aggregatorType));
-                    continue;
-                }
-
-                double numericValue;
-                if (Double.TryParse(t, out numericValue)) {
-                    commandParameters.Add(new NumericCommandParameter((float)numericValue));
-                    continue;
-                }
-
-                //TODO: Fix/Add support for more than hardcoded indexes
-                if (t.StartsWith("@")) {
-                    if (t.Length == 1) commandParameters.Add(new IndexCommandParameter());
-                    else {
-                        int indexValue;
-                        if (int.TryParse(t.Substring(1), out indexValue)) {
-                            commandParameters.Add(new IndexSelectorCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
-                        } else {
-                            throw new Exception("Unable to parse index indicator: " + t);
-                        }
-                    }
-                    continue;
-                }
-
-                //Variable References
-                if (t.StartsWith("{") && t.EndsWith("}")) {
-                    commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
-                    continue;
-                }
-
-                //Variable References used as Selectors
-                if (t.StartsWith("[") && t.EndsWith("]")) {
-                    commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
-                    continue;
-                }
-
-                //If nothing else matches, must be a string
+            } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
+                commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
+            } else if (t.StartsWith("[") && t.EndsWith("]")) { //Variable References used as Selectors
+                commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
+            } else { //If nothing else matches, must be a string
                 commandParameters.Add(new StringCommandParameter(token.original));
             }
+
             return commandParameters;
         }
 

@@ -138,7 +138,7 @@ namespace IngameScript {
             public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
-                controlType = ((ControlCommandParameter)parameters[controlIndex]).Value;
+                controlType = ((ControlCommandParameter)parameters[controlIndex]).value;
             }
 
             public ControlCommand(ControlType controlType) {
@@ -264,48 +264,48 @@ namespace IngameScript {
                 extract<ActionCommandParameter>(commandParameters);//Extract and ignore
                 SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
                 if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-                entityProvider = selector.Value;
+                entityProvider = selector.value;
             }
 
             public List<BlockCommandHandler> GetHandlers() {
                 return new List<BlockCommandHandler>() {
                     //Primitive Handlers
                     new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
-                        Primitive result = v.Value.GetValue();
+                        Primitive result = v.value.GetValue();
                         PropertyType propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
-                        b.SetPropertyValue(e, propertyType, v.Value.GetValue());
+                        b.SetPropertyValue(e, propertyType, v.value.GetValue());
                     }),
                     new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
-                        b.SetPropertyValue(e, p.Value, new BooleanPrimitive(true));
+                        b.SetPropertyValue(e, p.value, new BooleanPrimitive(true));
                     }),
                     new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
-                        PropertyType propertyType = b.GetDefaultProperty(d.Value);
-                        b.MoveNumericPropertyValue(e, propertyType, d.Value);
+                        PropertyType propertyType = b.GetDefaultProperty(d.value);
+                        b.MoveNumericPropertyValue(e, propertyType, d.value);
                     }),
                     new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
-                        b.SetPropertyValue(e, p.Value, v.Value.GetValue());
+                        b.SetPropertyValue(e, p.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
-                        PropertyType property = b.GetDefaultProperty(d.Value);
-                        b.SetPropertyValue(e, property, d.Value, v.Value.GetValue());
+                        PropertyType property = b.GetDefaultProperty(d.value);
+                        b.SetPropertyValue(e, property, d.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
-                        b.SetPropertyValue(e,p.Value,d.Value,v.Value.GetValue());
+                        b.SetPropertyValue(e,p.value,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,v,r)=>{
-                        b.IncrementPropertyValue(e,p.Value,v.Value.GetValue());
+                        b.IncrementPropertyValue(e,p.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
-                        PropertyType property = b.GetDefaultProperty(d.Value);
-                        b.IncrementPropertyValue(e,property,d.Value,v.Value.GetValue());
+                        PropertyType property = b.GetDefaultProperty(d.value);
+                        b.IncrementPropertyValue(e,property,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
-                        b.IncrementPropertyValue(e,p.Value,d.Value,v.Value.GetValue());
+                        b.IncrementPropertyValue(e,p.value,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler2<PropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{
-                        b.MoveNumericPropertyValue(e, p.Value, d.Value); }),
+                        b.MoveNumericPropertyValue(e, p.value, d.value); }),
                     new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
-                        b.ReverseNumericPropertyValue(e, p.Value); }),
+                        b.ReverseNumericPropertyValue(e, p.value); }),
                     new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
                         PropertyType property = b.GetDefaultProperty(b.GetDefaultDirection());
                         b.ReverseNumericPropertyValue(e, property); }),

@@ -99,7 +99,7 @@ namespace IngameScript {
                 var blockType = extractFirst<BlockTypeCommandParameter>(parameters);
                 isGroup = extractFirst<GroupCommandParameter>(parameters) != null;
                 if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
-                return blockType.Value;
+                return blockType.value;
             }
 
             public override String ToString() {
