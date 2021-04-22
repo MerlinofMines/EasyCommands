@@ -95,5 +95,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = ParseCommand("assign \"vector\" to avg \"Main Cockpit\" position");
             Assert.IsTrue(command is VariableAssignmentCommand);
         }
+
+        [TestMethod]
+        public void AssignVariableToSelectorString() {
+            var command = ParseCommand("assign \"mySelector\" to \"Main Cockpit\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("Main Cockpit", assignmentCommand.variable.GetValue().GetValue());
+        }
     }
 }
