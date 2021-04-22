@@ -19,10 +19,39 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class TurretBlockHandler<T> : GunBlockHandler<T> where T : class, IMyLargeTurretBase {
+        public class TurretBlockHandler<T> : GunBlockHandler<IMyLargeTurretBase> {
             public TurretBlockHandler() : base() {
-                AddVectorHandler(PropertyType.TARGET, b => b.GetTargetedEntity().Position, (b, v) => b.SetTarget(v));
+                AddBooleanHandler(PropertyType.LOCKED, b => b.IsAimed, (b, v) => { if (!v) ResetTarget(b); });
+                AddBooleanHandler(PropertyType.AUTO, b => b.EnableIdleRotation, (b, v) => b.EnableIdleRotation = v);
+                AddVectorHandler(PropertyType.TARGET, GetTarget, SetTarget);
+                AddVectorHandler(PropertyType.TARGET_VELOCITY, b => b.GetTargetedEntity().Velocity, (b, v) => b.TrackTarget(GetTarget(b), v));
                 defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
+            }
+
+            Vector3D GetTarget(IMyLargeTurretBase turret) {
+                Vector3D target = Vector3D.Zero;
+                var customTarget = GetCustomProperty(turret, "target");
+                if (customTarget == null || !GetVector(customTarget, out target)) {
+                    if (turret.HasTarget) {
+                        target = GetPosition(turret.GetTargetedEntity());
+                    } else {
+                        target = Vector3D.Zero;
+                    }
+                }
+                return target;
+            }
+
+            void ResetTarget(IMyLargeTurretBase turret) {
+                //Idle Movement setting gets reset when calling ResetTargetingToDefault(), so need to re-apply it.
+                bool idleMovement = turret.EnableIdleRotation;
+                turret.ResetTargetingToDefault();
+                DeleteCustomProperty(turret, "target");
+                turret.EnableIdleRotation = idleMovement;
+            }
+
+            void SetTarget(IMyLargeTurretBase turret, Vector3D target) {
+                turret.SetTarget(target);
+                SetCustomProperty(turret, "target", VectorToString(target));
             }
         }
 

@@ -31,7 +31,7 @@ namespace IngameScript {
                     if (b.CanScan(range)) {
                         MyDetectedEntityInfo detectedEntity = b.Raycast(range);
                         if (!detectedEntity.IsEmpty()) {
-                            SetCustomProperty(b, "Target", VectorToString(detectedEntity.HitPosition.Value));
+                            SetCustomProperty(b, "Target", VectorToString(GetPosition(detectedEntity)));
                             SetCustomProperty(b, "Velocity", VectorToString(detectedEntity.Velocity));
                         } else {
                             DeleteCustomProperty(b, "Target");
