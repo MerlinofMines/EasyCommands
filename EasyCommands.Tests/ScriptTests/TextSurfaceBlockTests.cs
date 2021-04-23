@@ -25,6 +25,25 @@ set the ""text panel"" display text to ""Hello World""
         }
 
         [TestMethod]
+        public void SetTextPanelTextMultiLine() {
+            String script = @"
+set the ""text panel"" display text to ""Hello World\nThis is my life""
+";
+
+            var expectedText = "Hello World\nThis is my life";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTextPanel = new Mock<IMyTextPanel>();
+                test.MockBlocksOfType("text panel", mockTextPanel);
+
+                test.RunUntilDone();
+
+                mockTextPanel.Verify(b => b.WriteText(expectedText, false));
+            }
+        }
+
+
+        [TestMethod]
         public void SetProgrammableBlockDisplayText() {
             String script = @"
 set the ""test program"" display @ 0 text to ""Hello World""
