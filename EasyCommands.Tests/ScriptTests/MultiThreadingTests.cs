@@ -290,5 +290,25 @@ print 'Variable is: ' + {a}
                 Assert.AreEqual("Variable is: 1", test.Logger[1]);
             }
         }
+
+        [TestMethod]
+        public void asyncCommandParametersAreProperlySetInAWhileLoop() {
+            String script = @"
+:main
+assign ""i"" to 0
+while {i} < 2
+  async call printLocalVariable {i}
+  assign ""i"" to {i} + 1
+
+:printLocalVariable ""a""
+print 'Variable is: ' + {a}
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+                Assert.IsTrue(test.Logger.Contains("Variable is: 0"));
+                Assert.IsTrue(test.Logger.Contains("Variable is: 1"));
+            }
+        }
     }
 }
