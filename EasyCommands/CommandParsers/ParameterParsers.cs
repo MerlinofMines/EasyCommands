@@ -89,7 +89,7 @@ namespace IngameScript {
         static String[] closeWords = { "close", "closed", "shut" };
         static String[] targetWords = { "target", "destination", "waypoint" };
         static String[] targetVelocityWords = { "targetvelocity" };
-
+        static String[] strengthWords = { "strength", "force", "gravity" };
         static String[] gosubKeywords = { "call", "gosub" };
         static String[] gotoKeywords = { "goto" };
 
@@ -109,7 +109,7 @@ namespace IngameScript {
         static String[] powerKeywords = { "power" };
         static String[] soundKeywords = { "music", "song" };
         static String[] volumeKeywords = { "volume" };
-        static String[] rangeKeywords = { "range", "distance", "limit" };
+        static String[] rangeKeywords = { "range", "distance", "limit", "radius" };
         static String[] iterationKeywords = { "times", "iterations" };
         static String[] triggerWords = { "trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot" };
         static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging" };
@@ -241,7 +241,9 @@ namespace IngameScript {
             { "engines", BlockType.ENGINE },
             { "sorters", BlockType.SORTER },
             { "gyros", BlockType.GYROSCOPE },
-            { "gyroscopes", BlockType.GYROSCOPE }
+            { "gyroscopes", BlockType.GYROSCOPE },
+            { "gravitygenerators", BlockType.GRAVITY_GENERATOR },
+            { "gravityspheres", BlockType.GRAVITY_SPHERE }
         };
 
         static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
@@ -299,7 +301,9 @@ namespace IngameScript {
             { "engine", BlockType.ENGINE },
             { "sorter", BlockType.SORTER },
             { "gyro", BlockType.GYROSCOPE },
-            { "gyroscope", BlockType.GYROSCOPE }
+            { "gyroscope", BlockType.GYROSCOPE },
+            { "gravitygenerator", BlockType.GRAVITY_GENERATOR },
+            { "gravitysphere", BlockType.GRAVITY_SPHERE }
         };
 
         static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
@@ -417,6 +421,7 @@ namespace IngameScript {
             AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
             AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));
             AddWords(targetVelocityWords, new PropertyCommandParameter(PropertyType.TARGET_VELOCITY));
+            AddWords(strengthWords, new PropertyCommandParameter(PropertyType.STRENGTH));
             AddWords(assignWords, new AssignmentCommandParameter(false));
             AddWords(globalWords, new GlobalCommandParameter());
             AddWords(bindWords, new AssignmentCommandParameter(true));

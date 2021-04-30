@@ -147,6 +147,7 @@
     <Compile Include="ScriptTests\GyroscopeBlockTests.cs" />
     <Compile Include="ScriptTests\RotorControlTests.cs" />
     <Compile Include="ScriptTests\AirLockManagerTests.cs" />
+    <Compile Include="ScriptTests\GravityBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
