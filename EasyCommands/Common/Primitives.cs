@@ -224,11 +224,11 @@ namespace IngameScript {
             }
 
             public override object GetValue() {
-                return stringValue;
+                return GetStringValue();
             }
 
             public String GetStringValue() {
-                return stringValue;
+                return stringValue.Replace("\\n", "\n");
             }
         }
 
