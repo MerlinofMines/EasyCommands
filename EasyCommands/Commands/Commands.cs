@@ -46,7 +46,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Thread thread = new Thread(command, "Queued", "Unknown");
+                Thread thread = new Thread(command.Clone(), "Queued", "Unknown");
                 thread.threadVariables = new Dictionary<string, Variable>(PROGRAM.GetCurrentThread().threadVariables);
                 if (async) {
                     PROGRAM.QueueAsyncThread(thread);
@@ -105,6 +105,7 @@ namespace IngameScript {
                 }
             }
             public override Command Clone() { return new FunctionCommand(type, functionDefinition, inputParameters); }
+            public override void Reset() => function = null;
         }
 
         public class VariableAssignmentCommand : Command {
