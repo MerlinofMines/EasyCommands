@@ -87,12 +87,11 @@ namespace IngameScript {
             public override bool Execute() {
                 Thread currentThread = PROGRAM.GetCurrentThread();
                 if (function == null) {
-                    function = (MultiActionCommand)FUNCTIONS[functionDefinition.functionName].function.Clone();
+                    function = (MultiActionCommand)PROGRAM.functions[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
                         currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue());
                     }
                 }
-                STATE = ProgramState.RUNNING;
                 switch (type) {
                     case FunctionType.GOSUB:
                         return function.Execute();
@@ -157,7 +156,7 @@ namespace IngameScript {
                     case ControlType.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
                     case ControlType.START:
-                        STATE = ProgramState.RUNNING; return true;
+                        return true;
                     case ControlType.REPEAT:
                         Thread currentThread = PROGRAM.GetCurrentThread();
                         currentThread.Command = currentThread.Command.Clone();

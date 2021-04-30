@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -45,7 +47,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommand() {
-            FUNCTIONS["listen"] = new FunctionDefinition("listen", new List<string>());
+            MDKFactory.CreateProgram<Program>();
+            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = ParseCommand("goto \"listen\"");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
@@ -55,7 +58,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandFromExplicitString() {
-            FUNCTIONS["listen"] = new FunctionDefinition("listen", new List<string>());
+            MDKFactory.CreateProgram<Program>();
+            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = ParseCommand("goto 'listen'");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
@@ -65,7 +69,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandWithParameters() {
-            FUNCTIONS["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
+            MDKFactory.CreateProgram<Program>();
+            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
             var command = ParseCommand("goto \"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
