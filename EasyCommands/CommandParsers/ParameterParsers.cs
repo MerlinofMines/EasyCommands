@@ -21,198 +21,6 @@ namespace IngameScript {
     partial class Program {
         static bool Initialized = false;
 
-        static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
-        {
-            { "second", UnitType.SECONDS },
-            { "seconds", UnitType.SECONDS },
-            { "tick", UnitType.TICKS },
-            { "ticks", UnitType.TICKS },
-            { "degree", UnitType.DEGREES },
-            { "degrees", UnitType.DEGREES },
-            { "meter", UnitType.METERS },
-            { "meters", UnitType.METERS },
-            { "rpm", UnitType.RPM }
-        };
-
-        static Dictionary<String, UniOperandType> uniOperandWords = new Dictionary<String, UniOperandType> {
-            { "abs", UniOperandType.ABS },
-            { "absolute", UniOperandType.ABS },
-            { "sqrt", UniOperandType.SQRT },
-            { "sin", UniOperandType.SIN },
-            { "cos", UniOperandType.COS },
-            { "tan", UniOperandType.TAN },
-            { "arcsin", UniOperandType.ASIN},
-            { "asin", UniOperandType.ASIN },
-            { "arccos", UniOperandType.ACOS },
-            { "acos", UniOperandType.ACOS },
-            { "arctan", UniOperandType.ATAN },
-            { "atan", UniOperandType.ATAN },
-            { "round", UniOperandType.ROUND },
-        };
-
-        static Dictionary<String, BiOperandType> biOperandWords = new Dictionary<String, BiOperandType> {
-            { "plus", BiOperandType.ADD },
-            { "+", BiOperandType.ADD },
-            { "minus", BiOperandType.SUBTACT },
-            { "-", BiOperandType.SUBTACT },
-            { "multiply", BiOperandType.MULTIPLY },
-            { "*", BiOperandType.MULTIPLY },
-            { "divide", BiOperandType.DIVIDE },
-            { "/", BiOperandType.DIVIDE },
-            { "mod", BiOperandType.MOD },
-            { "%", BiOperandType.MOD },
-            { "dot", BiOperandType.DOT },
-            { ".", BiOperandType.DOT },
-        };
-
-        static Dictionary<String, PropertyAggregatorType> aggregationWords = new Dictionary<String, PropertyAggregatorType> {
-            { "average", PropertyAggregatorType.AVG },
-            { "avg", PropertyAggregatorType.AVG },
-            { "min", PropertyAggregatorType.MIN },
-            { "minimum", PropertyAggregatorType.MIN },
-            { "max", PropertyAggregatorType.MAX },
-            { "maximum", PropertyAggregatorType.MAX},
-            { "count", PropertyAggregatorType.COUNT},
-            { "number", PropertyAggregatorType.COUNT},
-            { "sum", PropertyAggregatorType.SUM},
-            { "total", PropertyAggregatorType.SUM},
-        };
-
-        static Dictionary<String, BlockType> blockTypeGroupWords = new Dictionary<String, BlockType>() {
-            { "pistons", BlockType.PISTON },
-            { "lights", BlockType.LIGHT },
-            { "rotors", BlockType.ROTOR },
-            { "hinges", BlockType.ROTOR },
-            { "programs", BlockType.PROGRAM },
-            { "timers", BlockType.TIMER },
-            { "projectors", BlockType.PROJECTOR },
-            { "connectors", BlockType.CONNECTOR },
-            { "welders", BlockType.WELDER },
-            { "grinders", BlockType.GRINDER },
-            { "doors", BlockType.DOOR },
-            { "hangars", BlockType.DOOR },
-            { "bays", BlockType.DOOR },
-            { "gates", BlockType.DOOR },
-            { "displays", BlockType.DISPLAY },
-            { "screens", BlockType.DISPLAY },
-            { "monitors", BlockType.DISPLAY },
-            { "lcds", BlockType.DISPLAY },
-            { "speakers", BlockType.SOUND },
-            { "alarms", BlockType.SOUND },
-            { "sirens", BlockType.SOUND },
-            { "cameras", BlockType.CAMERA },
-            { "sensors", BlockType.SENSOR },
-            { "beacons", BlockType.BEACON },
-            { "antennae", BlockType.ANTENNA },
-            { "antennas", BlockType.ANTENNA },
-            { "ships", BlockType.COCKPIT },
-            { "rovers", BlockType.COCKPIT },
-            { "cockpits", BlockType.COCKPIT },
-            { "seats", BlockType.COCKPIT },
-            { "drones", BlockType.REMOTE },
-            { "remotes", BlockType.REMOTE },
-            { "robots", BlockType.REMOTE },
-            { "thrusters", BlockType.THRUSTER },
-            { "airvents", BlockType.AIRVENT },
-            { "vents", BlockType.AIRVENT },
-            { "guns", BlockType.GUN },
-            { "rockets", BlockType.GUN },
-            { "missiles", BlockType.GUN },
-            { "launchers", BlockType.GUN },
-            { "turrets", BlockType.TURRET },
-            { "reactors", BlockType.REACTOR },
-            { "generators", BlockType.GENERATOR },
-            { "tanks", BlockType.TANK },
-            { "gears", BlockType.GEAR },
-            { "batteries", BlockType.BATTERY },
-            { "chutes", BlockType.PARACHUTE},
-            { "parachutes", BlockType.PARACHUTE},
-            { "wheels", BlockType.SUSPENSION},
-            { "suspension", BlockType.SUSPENSION},
-            { "detectors", BlockType.DETECTOR},
-            { "drills", BlockType.DRILL},
-            { "engines", BlockType.ENGINE },
-            { "sorters", BlockType.SORTER },
-            { "gyros", BlockType.GYROSCOPE },
-            { "gyroscopes", BlockType.GYROSCOPE },
-            { "gravitygenerators", BlockType.GRAVITY_GENERATOR },
-            { "gravityspheres", BlockType.GRAVITY_SPHERE }
-        };
-
-        static Dictionary<String, BlockType> blockTypeWords = new Dictionary<String, BlockType>() {
-            { "piston", BlockType.PISTON },
-            { "light", BlockType.LIGHT },
-            { "rotor", BlockType.ROTOR },
-            { "hinge", BlockType.ROTOR },
-            { "program", BlockType.PROGRAM },
-            { "timer", BlockType.TIMER },
-            { "projector", BlockType.PROJECTOR },
-            { "merge", BlockType.MERGE },
-            { "connector", BlockType.CONNECTOR },
-            { "welder", BlockType.WELDER },
-            { "grinder", BlockType.GRINDER },
-            { "door", BlockType.DOOR },
-            { "hangar", BlockType.DOOR },
-            { "bay", BlockType.DOOR },
-            { "gate", BlockType.DOOR },
-            { "display", BlockType.DISPLAY },
-            { "screen", BlockType.DISPLAY },
-            { "monitor", BlockType.DISPLAY },
-            { "lcd", BlockType.DISPLAY },
-            { "speaker", BlockType.SOUND },
-            { "alarm", BlockType.SOUND },
-            { "siren", BlockType.SOUND },
-            { "camera", BlockType.CAMERA },
-            { "sensor", BlockType.SENSOR },
-            { "beacon", BlockType.BEACON },
-            { "antenna", BlockType.ANTENNA },
-            { "ship", BlockType.COCKPIT },
-            { "rover", BlockType.COCKPIT },
-            { "cockpit", BlockType.COCKPIT },
-            { "seat", BlockType.COCKPIT },
-            { "drone", BlockType.REMOTE },
-            { "remote", BlockType.REMOTE },
-            { "robot", BlockType.REMOTE },
-            { "thruster", BlockType.THRUSTER },
-            { "airvent", BlockType.AIRVENT },
-            { "vent", BlockType.AIRVENT },
-            { "gun", BlockType.GUN },
-            { "rocket", BlockType.GUN },
-            { "missile", BlockType.GUN },
-            { "launcher", BlockType.GUN },
-            { "turret", BlockType.TURRET },
-            { "reactor", BlockType.REACTOR },
-            { "generator", BlockType.GENERATOR },
-            { "tank", BlockType.TANK },
-            { "gear", BlockType.GEAR },
-            { "battery", BlockType.BATTERY },
-            { "chute", BlockType.PARACHUTE},
-            { "parachute", BlockType.PARACHUTE},
-            { "wheel", BlockType.SUSPENSION},
-            { "detector", BlockType.DETECTOR},
-            { "drill", BlockType.DRILL},
-            { "engine", BlockType.ENGINE },
-            { "sorter", BlockType.SORTER },
-            { "gyro", BlockType.GYROSCOPE },
-            { "gyroscope", BlockType.GYROSCOPE },
-            { "gravitygenerator", BlockType.GRAVITY_GENERATOR },
-            { "gravitysphere", BlockType.GRAVITY_SPHERE }
-        };
-
-        static Dictionary<String, ControlType> controlTypeWords = new Dictionary<string, ControlType>()
-        {
-            { "start", ControlType.START },
-            { "resume", ControlType.START },
-            { "restart", ControlType.RESTART },
-            { "reset", ControlType.RESTART },
-            { "reboot", ControlType.RESTART },
-            { "repeat", ControlType.REPEAT },
-            { "rerun", ControlType.REPEAT },
-            { "replay", ControlType.REPEAT },
-            { "stop", ControlType.STOP },
-            { "pause", ControlType.PAUSE },
-        };
-
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
             { "red", Color.Red },
             { "blue", Color.Blue },
@@ -258,7 +66,7 @@ namespace IngameScript {
 
             //Value Words
             AddWords(Words("on", "begin", "true"), new BooleanCommandParameter(true));
-            AddWords(Words("off", "terminate", "exit", "cancel", "end", "false"), new BooleanCommandParameter(false));
+            AddWords(Words("off", "terminate", "cancel", "end", "false"), new BooleanCommandParameter(false));
 
             //Property Words
             AddWords(Words("height", "length"), new PropertyCommandParameter(PropertyType.HEIGHT));
@@ -337,13 +145,86 @@ namespace IngameScript {
             AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));
             AddWords(Words("all", "every", "each"), new AggregationModeCommandParameter(AggregationMode.ALL));
             AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
+            AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter(PropertyAggregatorType.AVG));
+            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter(PropertyAggregatorType.MIN));
+            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter(PropertyAggregatorType.MAX));
+            AddWords(Words("count", "number"), new PropertyAggregationCommandParameter(PropertyAggregatorType.COUNT));
+            AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(PropertyAggregatorType.SUM));
 
             //Operations Words
+            AddWords(Words("("), new OpenParenthesisCommandParameter());
+            AddWords(Words(")"), new CloseParenthesisCommandParameter());
             AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
             AddWords(Words("or", "|", "||"), new OrCommandParameter());
             AddWords(Words("not", "!", "isn't", "isnt", "aren't", "arent"), new NotCommandParameter());
-            AddWords(Words("("), new OpenParenthesisCommandParameter());
-            AddWords(Words(")"), new CloseParenthesisCommandParameter());
+            AddWords(Words("absolute", "abs"), new UniOperationCommandParameter(UniOperandType.ABS));
+            AddWords(Words("sqrt"), new UniOperationCommandParameter(UniOperandType.SQRT));
+            AddWords(Words("sin"), new UniOperationCommandParameter(UniOperandType.SIN));
+            AddWords(Words("cosine", "cos"), new UniOperationCommandParameter(UniOperandType.COS));
+            AddWords(Words("tangent", "tan"), new UniOperationCommandParameter(UniOperandType.TAN));
+            AddWords(Words("arcsin", "asin"), new UniOperationCommandParameter(UniOperandType.ASIN));
+            AddWords(Words("arcos", "acos"), new UniOperationCommandParameter(UniOperandType.ACOS));
+            AddWords(Words("arctan", "atan"), new UniOperationCommandParameter(UniOperandType.ATAN));
+            AddWords(Words("round", "rnd"), new UniOperationCommandParameter(UniOperandType.ROUND));
+            AddWords(Words("plus", "+"), new AddCommandParameter(BiOperandType.ADD));
+            AddWords(Words("minus", "-"), new AddCommandParameter(BiOperandType.SUBTACT));
+            AddWords(Words("multiply", "*"), new MultiplyCommandParameter(BiOperandType.MULTIPLY));
+            AddWords(Words("divide", "/"), new MultiplyCommandParameter(BiOperandType.DIVIDE));
+            AddWords(Words("mod", "%"), new MultiplyCommandParameter(BiOperandType.MOD));
+            AddWords(Words("dot", "."), new MultiplyCommandParameter(BiOperandType.DOT));
+
+            //Unit Words
+            AddWords(Words("second", "seconds"), new UnitCommandParameter(UnitType.SECONDS));
+            AddWords(Words("tick", "ticks"), new UnitCommandParameter(UnitType.TICKS));
+            AddWords(Words("degree", "degrees"), new UnitCommandParameter(UnitType.DEGREES));
+            AddWords(Words("meter", "meters"), new UnitCommandParameter(UnitType.METERS));
+            AddWords(Words("rpm"), new UnitCommandParameter(UnitType.RPM));
+
+            //Control Types
+            AddWords(Words("start", "resume"), new ControlCommandParameter(ControlType.START));
+            AddWords(Words("restart", "reset", "reboot"), new ControlCommandParameter(ControlType.RESTART));
+            AddWords(Words("repeat", "loop", "rerun", "replay"), new ControlCommandParameter(ControlType.REPEAT));
+            AddWords(Words("stop", "halt", "exit"), new ControlCommandParameter(ControlType.STOP));
+            AddWords(Words("pause"), new ControlCommandParameter(ControlType.PAUSE));
+
+            //Blocks
+            AddBlockWords(Words("piston"), BlockType.PISTON);
+            AddBlockWords(Words("light"), BlockType.LIGHT);
+            AddBlockWords(Words("rotor", "hinge"), BlockType.ROTOR);
+            AddBlockWords(Words("program"), BlockType.PROGRAM);
+            AddBlockWords(Words("timer"), BlockType.TIMER);
+            AddBlockWords(Words("projector"), BlockType.PROJECTOR);
+            AddBlockWords(Words("merge"), Words(), BlockType.MERGE);
+            AddBlockWords(Words("connector"), BlockType.CONNECTOR);
+            AddBlockWords(Words("welder"), BlockType.WELDER);
+            AddBlockWords(Words("grinder"), BlockType.GRINDER);
+            AddBlockWords(Words("door", "hangar", "bay", "gate"), BlockType.DOOR);
+            AddBlockWords(Words("display", "screen", "lcd"), BlockType.DISPLAY);
+            AddBlockWords(Words("speaker", "alarm", "siren"), BlockType.SOUND);
+            AddBlockWords(Words("camera"), BlockType.CAMERA);
+            AddBlockWords(Words("sensor"), BlockType.SENSOR);
+            AddBlockWords(Words("beacon"), BlockType.BEACON);
+            AddBlockWords(Words("antenna"), BlockType.ANTENNA);
+            AddBlockWords(Words("ship", "rover", "cockpit", "seat"), BlockType.COCKPIT);
+            AddBlockWords(Words("drone", "remote", "robot"), BlockType.REMOTE);
+            AddBlockWords(Words("thruster"), BlockType.THRUSTER);
+            AddBlockWords(Words("airvent", "vent"), BlockType.AIRVENT);
+            AddBlockWords(Words("gun", "rocket", "missile", "launcher"), BlockType.GUN);
+            AddBlockWords(Words("turret"), BlockType.TURRET);
+            AddBlockWords(Words("reactor"), BlockType.REACTOR);
+            AddBlockWords(Words("generator"), BlockType.GENERATOR);
+            AddBlockWords(Words("tank"), BlockType.TANK);
+            AddBlockWords(Words("gear"), BlockType.GEAR);
+            AddBlockWords(Words("battery"), Words("batteries"), BlockType.BATTERY);
+            AddBlockWords(Words("chute", "parachutes"), BlockType.PARACHUTE);
+            AddBlockWords(Words("wheel"), Words("wheels", "suspension"), BlockType.SUSPENSION);
+            AddBlockWords(Words("detector"), BlockType.DETECTOR);
+            AddBlockWords(Words("drill"), BlockType.DRILL);
+            AddBlockWords(Words("engine"), BlockType.ENGINE);
+            AddBlockWords(Words("sorter"), BlockType.SORTER);
+            AddBlockWords(Words("gyro", "gyroscopes"), BlockType.GYROSCOPE);
+            AddBlockWords(Words("gravitygenerator"), BlockType.GRAVITY_GENERATOR);
+            AddBlockWords(Words("gravitysphere"), BlockType.GRAVITY_SPHERE);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
@@ -380,6 +261,14 @@ namespace IngameScript {
             return words;
         }
 
+        //Assume group words are just blockWords with "s" added to the end
+        static void AddBlockWords(String[] blockWords, BlockType blockType) => AddBlockWords(blockWords, blockWords.Select(b => b + "s").ToArray(), blockType);
+
+        static void AddBlockWords(String[] blockWords, String[] groupWords, BlockType blockType) {
+            AddWords(blockWords, new BlockTypeCommandParameter(blockType));
+            AddWords(groupWords, new BlockTypeCommandParameter(blockType), new GroupCommandParameter());
+        }
+
         static void AddWords(String[] words, params CommandParameter[] commands) {
             foreach (String word in words) propertyWords.Add(word, commands.ToList());
         }
@@ -401,12 +290,6 @@ namespace IngameScript {
         static List<CommandParameter> ParseCommandParameters(Token token) {
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             String t = token.token;
-            ControlType controlType;
-            BlockType blockType;
-            UnitType unitType;
-            UniOperandType uniOperandType;
-            BiOperandType biOperandType;
-            PropertyAggregatorType aggregatorType;
             double numericValue;
 
             if (token.isExplicitString) {
@@ -417,25 +300,6 @@ namespace IngameScript {
                 commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
-            } else if (controlTypeWords.TryGetValue(t, out controlType)) {
-                commandParameters.Add(new ControlCommandParameter(controlType));
-            } else if (blockTypeGroupWords.TryGetValue(t, out blockType)) {
-                commandParameters.Add(new BlockTypeCommandParameter(blockType));
-                commandParameters.Add(new GroupCommandParameter());
-            } else if (blockTypeWords.TryGetValue(t, out blockType)) {
-                commandParameters.Add(new BlockTypeCommandParameter(blockType));
-            } else if (unitTypeWords.TryGetValue(t, out unitType)) {
-                commandParameters.Add(new UnitCommandParameter(unitType));
-            } else if (uniOperandWords.TryGetValue(t, out uniOperandType)) {
-                commandParameters.Add(new UniOperationCommandParameter(uniOperandType));
-            } else if (biOperandWords.TryGetValue(t, out biOperandType)) {
-                if (biOperandType == BiOperandType.ADD || biOperandType == BiOperandType.SUBTACT) {
-                    commandParameters.Add(new AddCommandParameter(biOperandType));
-                } else {
-                    commandParameters.Add(new MultiplyCommandParameter(biOperandType));
-                }
-            } else if (aggregationWords.TryGetValue(t, out aggregatorType)) {
-                commandParameters.Add(new PropertyAggregationCommandParameter(aggregatorType));
             } else if (Double.TryParse(t, out numericValue)) {
                 commandParameters.Add(new NumericCommandParameter((float)numericValue));
             } else if (t.StartsWith("@")) {
