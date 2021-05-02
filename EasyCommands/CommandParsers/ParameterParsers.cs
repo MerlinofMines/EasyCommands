@@ -19,113 +19,6 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        //Configuration.  Keep all words lowercase
-        static String[] ignoreWords = { "the", "than", "turned", "block", "to", "from", "then", "of", "either", "for" };
-        static String[] groupWords = { "blocks", "group" };
-        static String[] activateWords = { "move", "go", "on", "begin", "true" };
-        static String[] deactivateWords = { "off", "terminate", "exit", "cancel", "end", "false" };
-        static String[] reverseWords = { "reverse" };
-        static String[] increaseWords = { "increase", "raise", "extend", "expand" };
-        static String[] decreaseWords = { "decrease", "retract", "reduce" };
-        static String[] upWords = { "up", "upward", "upwards", "upper" };
-        static String[] downWords = { "down", "downward", "downwards", "lower" };
-        static String[] leftWords = { "left", "lefthand" };
-        static String[] rightWords = { "right", "righthand" };
-        static String[] forwardWords = { "forward", "forwards", "front" };
-        static String[] backwardWords = { "backward", "backwards", "back" };
-        static String[] clockwiseWords = { "clockwise", "clock" };
-        static String[] counterclockwiseWords = { "counter", "counterclock", "counterclockwise" };
-        static String[] actionWords = { "tell", "turn", "rotate", "set" };
-
-        static String[] relativeWords = { "by" };
-        static String[] increaseRelativeWords = { "add" };
-        static String[] decreaseRelativeWords = { "subtact" };
-        static String[] heightWords = { "height", "length" };
-        static String[] angleWords = { "angle" };
-        static String[] speedWords = { "speed", "velocity", "rate", "pace" };
-        static String[] waitWords = { "wait", "hold" };
-        static String[] connectWords = { "connect", "join", "attach", "connected", "joined", "attached", "dock", "docked" };
-        static String[] disconnectWords = { "disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked" };
-
-        static String[] lockWords = { "lock", "locked", "freeze" };
-        static String[] unlockWords = { "unlock", "unlocked", "unfreeze" };
-
-        static String[] ifWords = { "if" };
-        static String[] elseWords = { "else", "otherwise" };
-        static String[] unlessWords = { "unless" };
-        static String[] whileWords = { "while" };
-        static String[] untilWords = { "until" };
-        static String[] whenWords = { "when" };
-        static String[] asyncWords = { "async", "background", "parallel" };
-        static String[] queueWords = { "queue", "schedule" };
-        static String[] withWords = { "that", "with", "which", "whose" };
-        static String[] withoutWords = { "without" };
-
-        static String[] lessWords = { "less", "<", "below" };
-        static String[] lessEqualWords = { "<=" };
-        static String[] equalWords = { "is", "are", "equal", "equals", "=", "==" };
-        static String[] greaterEqualWords = { ">=" };
-        static String[] greaterWords = { "greater", ">", "above", "more" };
-
-        static String[] anyWords = { "any" };
-        static String[] allWords = { "all", "every", "each" };
-        static String[] noneWords = { "none" };
-
-        static String[] andWords = { "and", "&", "&&", "but", "yet" };
-        static String[] orWords = { "or", "|", "||" };
-        static String[] notWords = { "not", "!", "isn't", "isnt", "aren't", "arent" };
-        static String[] openParenthesisWords = { "(" };
-        static String[] closeParenthesisWords = { ")" };
-
-        static String[] runWords = { "run", "execute" };
-        static String[] runningWords = { "running", "executing" };
-        static String[] stoppedWords = { "stopped", "terminated" };
-        static String[] pausedWords = { "paused", "halted" };
-        static String[] completeWords = { "done", "complete", "finished", "built" };
-        static String[] progressWords = { "progress", "completion" };
-        static String[] directionWords = { "direction" };
-        static String[] positionWords = { "coordinates", "position", "location" };
-        static String[] openWords = { "open", "opened" };
-        static String[] closeWords = { "close", "closed", "shut" };
-        static String[] targetWords = { "target", "destination", "waypoint" };
-        static String[] targetVelocityWords = { "targetvelocity" };
-        static String[] strengthWords = { "strength", "force", "gravity" };
-        static String[] gosubKeywords = { "call", "gosub" };
-        static String[] gotoKeywords = { "goto" };
-
-        static String[] listenKeywords = { "listen", "channel" };
-        static String[] sendKeywords = { "send", "broadcast" };
-
-        static String[] fontKeywords = { "fontsize", "size" };
-        static String[] colorKeywords = { "color" };
-        static String[] textKeywords = { "text", "message" };
-
-        static String[] blinkIntervalKeywords = { "blinkinterval", "blinkInterval", "interval" };
-        static String[] blinkLengthKeywords = { "blinklength", "blinkLength" };
-        static String[] blinkOffsetKeywords = { "blinkoffset", "blinkOffset" };
-        static String[] intensityKeywords = { "intensity" };
-        static String[] falloffKeywrods = { "falloff" };
-
-        static String[] powerKeywords = { "power" };
-        static String[] soundKeywords = { "music", "song" };
-        static String[] volumeKeywords = { "volume" };
-        static String[] rangeKeywords = { "range", "distance", "limit", "radius" };
-        static String[] iterationKeywords = { "times", "iterations" };
-        static String[] triggerWords = { "trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot" };
-        static String[] consumeWords = { "consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging" };
-        static String[] produceWords = { "produce", "pressurize", "pressurized", "supply", "generate", "discharge", "discharging" };
-        static String[] ratioWords = { "ratio", "percentage", "percent" };
-        static String[] inputWords = { "input", "pilot", "user" };
-        static String[] rollInputWords = { "roll", "rollInput" };
-        static String[] autoWords = { "auto", "refill", "drain", "draining" };
-        static String[] overrideWords = { "override", "overrides", "overridden" };
-
-        static String[] assignWords = { "assign", "allocate", "designate" };
-        static String[] globalWords = { "global" };
-        static String[] bindWords = { "bind", "tie", "link" };
-        static String[] printWords = { "print", "log", "echo", "write" };
-        static String[] selfWords = { "my", "self", "this" };
-
         static bool Initialized = false;
 
         static Dictionary<String, UnitType> unitTypeWords = new Dictionary<String, UnitType>()
@@ -334,98 +227,123 @@ namespace IngameScript {
         private static Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
         public static void InitializeParsers() {
+            //Configuration.  Keep all words lowercase
             if (Initialized) return;
-            AddWords(groupWords, new GroupCommandParameter());
-            AddWords(activateWords, new BooleanCommandParameter(true));
-            AddWords(deactivateWords, new BooleanCommandParameter(false));
-            AddWords(increaseWords, new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
-            AddWords(increaseRelativeWords, new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
-            AddWords(decreaseWords, new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
-            AddWords(decreaseRelativeWords, new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
-            AddWords(upWords, new DirectionCommandParameter(DirectionType.UP));
-            AddWords(downWords, new DirectionCommandParameter(DirectionType.DOWN));
-            AddWords(leftWords, new DirectionCommandParameter(DirectionType.LEFT));
-            AddWords(rightWords, new DirectionCommandParameter(DirectionType.RIGHT));
-            AddWords(forwardWords, new DirectionCommandParameter(DirectionType.FORWARD));
-            AddWords(backwardWords, new DirectionCommandParameter(DirectionType.BACKWARD));
-            AddWords(clockwiseWords, new DirectionCommandParameter(DirectionType.CLOCKWISE));
-            AddWords(counterclockwiseWords, new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
-            AddWords(actionWords, new ActionCommandParameter());
-            AddWords(reverseWords, new ReverseCommandParameter());
-            AddWords(relativeWords, new RelativeCommandParameter());
-            AddWords(heightWords, new PropertyCommandParameter(PropertyType.HEIGHT));
-            AddWords(angleWords, new PropertyCommandParameter(PropertyType.ANGLE));
-            AddWords(speedWords, new PropertyCommandParameter(PropertyType.VELOCITY));
-            AddWords(connectWords, new PropertyCommandParameter(PropertyType.CONNECTED));
-            AddWords(disconnectWords, new PropertyCommandParameter(PropertyType.CONNECTED), new BooleanCommandParameter(false));
-            AddWords(lockWords, new PropertyCommandParameter(PropertyType.LOCKED));
-            AddWords(unlockWords, new PropertyCommandParameter(PropertyType.LOCKED), new BooleanCommandParameter(false));
-            AddWords(waitWords, new WaitCommandParameter());
-            AddWords(ifWords, new IfCommandParameter(false, false, false));
-            AddWords(unlessWords, new IfCommandParameter(true, false, false));
-            AddWords(whileWords, new IfCommandParameter(false, true, false));
-            AddWords(untilWords, new IfCommandParameter(true, true, false));
-            AddWords(whenWords, new IfCommandParameter(true, true, true));
-            AddWords(queueWords, new QueueCommandParameter(false));
-            AddWords(asyncWords, new QueueCommandParameter(true));
-            AddWords(elseWords, new ElseCommandParameter());
-            AddWords(withWords, new WithCommandParameter(false));
-            AddWords(withoutWords, new WithCommandParameter(true));
-            AddWords(lessWords, new ComparisonCommandParameter(ComparisonType.LESS));
-            AddWords(lessEqualWords, new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
-            AddWords(equalWords, new ComparisonCommandParameter(ComparisonType.EQUAL));
-            AddWords(greaterEqualWords, new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL));
-            AddWords(greaterWords, new ComparisonCommandParameter(ComparisonType.GREATER));
-            AddWords(anyWords, new AggregationModeCommandParameter(AggregationMode.ANY));
-            AddWords(allWords, new AggregationModeCommandParameter(AggregationMode.ALL));
-            AddWords(noneWords, new AggregationModeCommandParameter(AggregationMode.NONE));
-            AddWords(andWords, new AndCommandParameter());
-            AddWords(orWords, new OrCommandParameter());
-            AddWords(notWords, new NotCommandParameter());
-            AddWords(openParenthesisWords, new OpenParenthesisCommandParameter());
-            AddWords(closeParenthesisWords, new CloseParenthesisCommandParameter());
-            AddWords(runWords, new PropertyCommandParameter(PropertyType.RUN));
-            AddWords(runningWords, new PropertyCommandParameter(PropertyType.RUNNING));
-            AddWords(stoppedWords, new PropertyCommandParameter(PropertyType.STOPPED));
-            AddWords(pausedWords, new PropertyCommandParameter(PropertyType.PAUSED));
-            AddWords(completeWords, new PropertyCommandParameter(PropertyType.COMPLETE));
-            AddWords(progressWords, new PropertyCommandParameter(PropertyType.RATIO));
-            AddWords(openWords, new PropertyCommandParameter(PropertyType.OPEN), new BooleanCommandParameter(true));
-            AddWords(closeWords, new PropertyCommandParameter(PropertyType.OPEN), new BooleanCommandParameter(false));
-            AddWords(gosubKeywords, new FunctionCommandParameter(FunctionType.GOSUB));
-            AddWords(gotoKeywords, new FunctionCommandParameter(FunctionType.GOTO));
-            AddWords(listenKeywords, new ListenCommandParameter());
-            AddWords(sendKeywords, new SendCommandParameter());
-            AddWords(fontKeywords, new PropertyCommandParameter(PropertyType.FONT_SIZE));
-            AddWords(textKeywords, new PropertyCommandParameter(PropertyType.TEXT));
-            AddWords(colorKeywords, new PropertyCommandParameter(PropertyType.COLOR));
-            AddWords(powerKeywords, new PropertyCommandParameter(PropertyType.POWER));
-            AddWords(soundKeywords, new PropertyCommandParameter(PropertyType.SOUND));
-            AddWords(volumeKeywords, new PropertyCommandParameter(PropertyType.VOLUME));
-            AddWords(rangeKeywords, new PropertyCommandParameter(PropertyType.RANGE));
-            AddWords(blinkIntervalKeywords, new PropertyCommandParameter(PropertyType.BLINK_INTERVAL));
-            AddWords(blinkLengthKeywords, new PropertyCommandParameter(PropertyType.BLINK_LENGTH));
-            AddWords(blinkOffsetKeywords, new PropertyCommandParameter(PropertyType.BLINK_OFFSET));
-            AddWords(intensityKeywords, new PropertyCommandParameter(PropertyType.INTENSITY));
-            AddWords(falloffKeywrods, new PropertyCommandParameter(PropertyType.FALLOFF));
-            AddWords(iterationKeywords, new IteratorCommandParameter());
-            AddWords(triggerWords, new PropertyCommandParameter(PropertyType.TRIGGER));
-            AddWords(produceWords, new PropertyCommandParameter(PropertyType.PRODUCE));
-            AddWords(consumeWords, new PropertyCommandParameter(PropertyType.PRODUCE), new BooleanCommandParameter(false));
-            AddWords(ratioWords, new PropertyCommandParameter(PropertyType.RATIO));
-            AddWords(inputWords, new PropertyCommandParameter(PropertyType.MOVE_INPUT));
-            AddWords(rollInputWords, new PropertyCommandParameter(PropertyType.ROLL_INPUT));
-            AddWords(autoWords, new PropertyCommandParameter(PropertyType.AUTO));
-            AddWords(overrideWords, new PropertyCommandParameter(PropertyType.OVERRIDE));
-            AddWords(directionWords, new PropertyCommandParameter(PropertyType.DIRECTION));
-            AddWords(positionWords, new PropertyCommandParameter(PropertyType.POSITION));
-            AddWords(targetWords, new PropertyCommandParameter(PropertyType.TARGET));
-            AddWords(targetVelocityWords, new PropertyCommandParameter(PropertyType.TARGET_VELOCITY));
-            AddWords(strengthWords, new PropertyCommandParameter(PropertyType.STRENGTH));
-            AddWords(assignWords, new AssignmentCommandParameter(false));
-            AddWords(globalWords, new GlobalCommandParameter());
-            AddWords(bindWords, new AssignmentCommandParameter(true));
-            AddWords(printWords, new PrintCommandParameter());
+
+            //Ignored words that have no command parameters
+            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for"));
+
+            //Selector Related Words
+            AddWords(Words("blocks", "group"), new GroupCommandParameter());
+            AddWords(Words("my", "self", "this"), new SelfCommandParameter());
+
+            //Direction Words
+            AddWords(Words("up", "upward", "upwards", "upper"), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(Words("down", "downward", "downwards", "lower"), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(Words("left", "lefthand"), new DirectionCommandParameter(DirectionType.LEFT));
+            AddWords(Words("right", "righthand"), new DirectionCommandParameter(DirectionType.RIGHT));
+            AddWords(Words("forward", "forwards", "front"), new DirectionCommandParameter(DirectionType.FORWARD));
+            AddWords(Words("backward", "backwards", "back"), new DirectionCommandParameter(DirectionType.BACKWARD));
+            AddWords(Words("clockwise", "clock"), new DirectionCommandParameter(DirectionType.CLOCKWISE));
+            AddWords(Words("counter", "counterclock", "counterclockwise"), new DirectionCommandParameter(DirectionType.COUNTERCLOCKWISE));
+
+            //Action Words
+            AddWords(Words("move", "go", "tell", "turn", "rotate", "set"), new ActionCommandParameter());
+            AddWords(Words("increase", "raise", "extend", "expand"), new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(Words("add"), new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.UP));
+            AddWords(Words("subtact"), new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(Words("decrease", "retract", "reduce"), new ActionCommandParameter(), new DirectionCommandParameter(DirectionType.DOWN));
+            AddWords(Words("reverse"), new ReverseCommandParameter());
+            AddWords(Words("by"), new RelativeCommandParameter());
+
+            //Value Words
+            AddWords(Words("on", "begin", "true"), new BooleanCommandParameter(true));
+            AddWords(Words("off", "terminate", "exit", "cancel", "end", "false"), new BooleanCommandParameter(false));
+
+            //Property Words
+            AddWords(Words("height", "length"), new PropertyCommandParameter(PropertyType.HEIGHT));
+            AddWords(Words("angle"), new PropertyCommandParameter(PropertyType.ANGLE));
+            AddWords(Words("speed", "velocity", "rate", "pace"), new PropertyCommandParameter(PropertyType.VELOCITY));
+            AddWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), new PropertyCommandParameter(PropertyType.CONNECTED));
+            AddWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), new PropertyCommandParameter(PropertyType.CONNECTED), new BooleanCommandParameter(false));
+            AddWords(Words("lock", "locked", "freeze"), new PropertyCommandParameter(PropertyType.LOCKED));
+            AddWords(Words("unlock", "unlocked", "unfreeze"), new PropertyCommandParameter(PropertyType.LOCKED), new BooleanCommandParameter(false));
+            AddWords(Words("run", "execute"), new PropertyCommandParameter(PropertyType.RUN));
+            AddWords(Words("running", "executing"), new PropertyCommandParameter(PropertyType.RUNNING));
+            AddWords(Words("stopped", "terminated"), new PropertyCommandParameter(PropertyType.STOPPED));
+            AddWords(Words("paused", "halted"), new PropertyCommandParameter(PropertyType.PAUSED));
+            AddWords(Words("done", "complete", "finished", "built"), new PropertyCommandParameter(PropertyType.COMPLETE));
+            AddWords(Words("progress", "completion"), new PropertyCommandParameter(PropertyType.RATIO));
+            AddWords(Words("open", "opened"), new PropertyCommandParameter(PropertyType.OPEN), new BooleanCommandParameter(true));
+            AddWords(Words("close", "closed", "shut"), new PropertyCommandParameter(PropertyType.OPEN), new BooleanCommandParameter(false));
+            AddWords(Words("fontsize", "size"), new PropertyCommandParameter(PropertyType.FONT_SIZE));
+            AddWords(Words("text", "message"), new PropertyCommandParameter(PropertyType.TEXT));
+            AddWords(Words("color"), new PropertyCommandParameter(PropertyType.COLOR));
+            AddWords(Words("power"), new PropertyCommandParameter(PropertyType.POWER));
+            AddWords(Words("music", "song"), new PropertyCommandParameter(PropertyType.SOUND));
+            AddWords(Words("volume"), new PropertyCommandParameter(PropertyType.VOLUME));
+            AddWords(Words("range", "distance", "limit", "radius"), new PropertyCommandParameter(PropertyType.RANGE));
+            AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(PropertyType.BLINK_INTERVAL));
+            AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(PropertyType.BLINK_LENGTH));
+            AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(PropertyType.BLINK_OFFSET));
+            AddWords(Words("intensity"), new PropertyCommandParameter(PropertyType.INTENSITY));
+            AddWords(Words("falloff"), new PropertyCommandParameter(PropertyType.FALLOFF));
+            AddWords(Words("times", "iterations"), new IteratorCommandParameter());
+            AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot"), new PropertyCommandParameter(PropertyType.TRIGGER));
+            AddWords(Words("produce", "pressurize", "pressurized", "supply", "generate", "discharge", "discharging"), new PropertyCommandParameter(PropertyType.PRODUCE));
+            AddWords(Words("consume", "stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging"), new PropertyCommandParameter(PropertyType.PRODUCE), new BooleanCommandParameter(false));
+            AddWords(Words("ratio", "percentage", "percent"), new PropertyCommandParameter(PropertyType.RATIO));
+            AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(PropertyType.MOVE_INPUT));
+            AddWords(Words("roll", "rollInput"), new PropertyCommandParameter(PropertyType.ROLL_INPUT));
+            AddWords(Words("auto", "refill", "drain", "draining"), new PropertyCommandParameter(PropertyType.AUTO));
+            AddWords(Words("override", "overrides", "overridden"), new PropertyCommandParameter(PropertyType.OVERRIDE));
+            AddWords(Words("direction"), new PropertyCommandParameter(PropertyType.DIRECTION));
+            AddWords(Words("coordinates", "position", "location"), new PropertyCommandParameter(PropertyType.POSITION));
+            AddWords(Words("target", "destination", "waypoint"), new PropertyCommandParameter(PropertyType.TARGET));
+            AddWords(Words("targetvelocity"), new PropertyCommandParameter(PropertyType.TARGET_VELOCITY));
+            AddWords(Words("strength", "force", "gravity"), new PropertyCommandParameter(PropertyType.STRENGTH));
+
+            //Special Command Words
+            AddWords(Words("wait", "hold"), new WaitCommandParameter());
+            AddWords(Words("call", "gosub"), new FunctionCommandParameter(FunctionType.GOSUB));
+            AddWords(Words("goto"), new FunctionCommandParameter(FunctionType.GOTO));
+            AddWords(Words("listen", "channel"), new ListenCommandParameter());
+            AddWords(Words("send", "broadcast"), new SendCommandParameter());
+            AddWords(Words("assign", "allocate", "designate"), new AssignmentCommandParameter(false));
+            AddWords(Words("global"), new GlobalCommandParameter());
+            AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
+            AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
+            AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
+            AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
+
+            //Conditional Words
+            AddWords(Words("if"), new IfCommandParameter(false, false, false));
+            AddWords(Words("unless"), new IfCommandParameter(true, false, false));
+            AddWords(Words("while"), new IfCommandParameter(false, true, false));
+            AddWords(Words("until"), new IfCommandParameter(true, true, false));
+            AddWords(Words("when"), new IfCommandParameter(true, true, true));
+            AddWords(Words("else", "otherwise"), new ElseCommandParameter());
+            AddWords(Words("that", "with", "which", "whose"), new WithCommandParameter(false));
+            AddWords(Words("without"), new WithCommandParameter(true));
+
+            //Comparison Words
+            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter(ComparisonType.LESS));
+            AddWords(Words("<="), new ComparisonCommandParameter(ComparisonType.LESS_OR_EQUAL));
+            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter(ComparisonType.EQUAL));
+            AddWords(Words(">="), new ComparisonCommandParameter(ComparisonType.GREATER_OR_EQUAL));
+            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter(ComparisonType.GREATER));
+
+            //Aggregation Words
+            AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));
+            AddWords(Words("all", "every", "each"), new AggregationModeCommandParameter(AggregationMode.ALL));
+            AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
+
+            //Operations Words
+            AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
+            AddWords(Words("or", "|", "||"), new OrCommandParameter());
+            AddWords(Words("not", "!", "isn't", "isnt", "aren't", "arent"), new NotCommandParameter());
+            AddWords(Words("("), new OpenParenthesisCommandParameter());
+            AddWords(Words(")"), new CloseParenthesisCommandParameter());
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
@@ -456,6 +374,10 @@ namespace IngameScript {
                 func = (p) => p.Token;
             }
             return func(parameter).ToString();
+        }
+
+        static String[] Words(params String[] words) {
+            return words;
         }
 
         static void AddWords(String[] words, params CommandParameter[] commands) {
@@ -493,12 +415,8 @@ namespace IngameScript {
                 List<Token> subTokens = ParseTokens(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
                 commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
-            } else if (ignoreWords.Contains(t)) { 
-                //ignore
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
-            } else if (selfWords.Contains(t)) {
-                commandParameters.Add(new SelfCommandParameter());
             } else if (controlTypeWords.TryGetValue(t, out controlType)) {
                 commandParameters.Add(new ControlCommandParameter(controlType));
             } else if (blockTypeGroupWords.TryGetValue(t, out blockType)) {
