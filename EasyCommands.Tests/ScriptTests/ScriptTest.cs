@@ -21,9 +21,9 @@ namespace EasyCommands.Tests.ScriptTests
     /// </summary>
     class ScriptTest : IDisposable
     {
+        public Program program;
         MockGridTerminalSystem mockGrid;
-        private Program program;
-        private Mock<IMyProgrammableBlock> me;
+        Mock<IMyProgrammableBlock> me;
 
         /// <summary>
         /// Counter of how many times the given script has been invoked by the test engine.
@@ -39,7 +39,6 @@ namespace EasyCommands.Tests.ScriptTests
         {
             Logger = new List<String>();
             RunCounter = 0;
-            Program.FUNCTION_PARSE_AMOUNT = 1000;
 
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
@@ -51,9 +50,8 @@ namespace EasyCommands.Tests.ScriptTests
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             program = MDKFactory.CreateProgram<Program>(config);
-
-            Program.LOG_LEVEL = Program.LogLevel.SCRIPT_ONLY;
-            Program.FUNCTION_PARSE_AMOUNT = 1000;
+            program.functionParseAmount = 1000;
+            program.logLevel = Program.LogLevel.SCRIPT_ONLY;
 
             // Default behavior for broadcast messages
             // TODO: Replace this with mock objects passed to config setup in Program
@@ -152,7 +150,6 @@ namespace EasyCommands.Tests.ScriptTests
         public void Dispose()
         {
             // TODO: Unset any static changes, etc
-            Program.LOG_LEVEL = LogLevel.INFO;
         }
 
         private void SetupMockBlocksByType<T>(string name, Mock<T>[] blockMocks) where T : class, IMyTerminalBlock

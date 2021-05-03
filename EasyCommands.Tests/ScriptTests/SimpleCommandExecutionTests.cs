@@ -50,7 +50,7 @@ print 'Hello World'
             String script = "";
 
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
                 Assert.AreEqual(2, test.Logger.Count);
                 Assert.AreEqual("Welcome to EasyCommands!", test.Logger[0]);

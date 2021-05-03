@@ -13,7 +13,7 @@ print 'Hello World'
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
 
                 test.RunOnce();
 
@@ -28,7 +28,7 @@ print 'Hello World'
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 2"));
@@ -43,7 +43,7 @@ if (true)
   'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 3"));
@@ -59,7 +59,7 @@ if (true)
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 4"));
@@ -76,7 +76,7 @@ if (true)
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 5"));
@@ -96,7 +96,7 @@ if (true)
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 8"));
@@ -115,7 +115,7 @@ if (true)
 'Hello World'
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.INFO;
+                test.program.logLevel = Program.LogLevel.INFO;
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 7"));
@@ -128,7 +128,7 @@ if (true)
 print 'Total: ' + ( 2 + 5 )
 ";
             using (var test = new ScriptTest(script)) {
-                Program.LOG_LEVEL = Program.LogLevel.DEBUG;
+                test.program.logLevel = Program.LogLevel.DEBUG;
 
                 test.RunOnce();
 
