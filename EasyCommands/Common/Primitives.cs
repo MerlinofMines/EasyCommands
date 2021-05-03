@@ -156,7 +156,6 @@ namespace IngameScript {
         }
 
         public static bool GetColor(String s, out Color color) {
-
             Color? possibleColor = null;
             if (colors.ContainsKey(s.ToLower())) possibleColor = colors[s.ToLower()];
             else if (s.StartsWith("#") && s.Length == 7) {
