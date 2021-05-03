@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using VRageMath;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -9,7 +11,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAbsoluteValue() {
-            var command = ParseCommand("assign a to abs -3 + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to abs -3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -20,7 +23,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSin() {
-            var command = ParseCommand("assign a to sin 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to sin 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -31,7 +35,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignCos() {
-            var command = ParseCommand("assign a to cos 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to cos 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -42,7 +47,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignTan() {
-            var command = ParseCommand("assign a to tan 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to tan 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -53,7 +59,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignASin() {
-            var command = ParseCommand("assign a to asin 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to asin 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -64,7 +71,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignACos() {
-            var command = ParseCommand("assign a to acos 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to acos 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -75,7 +83,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignATan() {
-            var command = ParseCommand("assign a to atan 1.5708");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to atan 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -86,7 +95,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignRoundDown() {
-            var command = ParseCommand("assign a to round 5.4");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to round 5.4");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -97,7 +107,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignRoundUp() {
-            var command = ParseCommand("assign a to round 5.6");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to round 5.6");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is UniOperandVariable);
@@ -108,7 +119,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAbsoluteValueVector() {
-            var command = ParseCommand("assign a to abs \"1:0:0\" + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to abs \"1:0:0\" + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -124,7 +136,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSquaeRootValue() {
-            var command = ParseCommand("assign a to sqrt 9 + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to sqrt 9 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -135,7 +148,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSquareRootValueVector() {
-            var command = ParseCommand("assign a to sqrt \"9:0:0\" + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to sqrt \"9:0:0\" + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -151,7 +165,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleAddition() {
-            var command = ParseCommand("assign a to 3 + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -162,7 +177,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleSubtraction() {
-            var command = ParseCommand("assign a to 3 - 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 3 - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -173,7 +189,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleMultiplication() {
-            var command = ParseCommand("assign a to 3 * 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 3 * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -184,7 +201,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVectorMultiplication() {
-            var command = ParseCommand("assign a to \"0:1:0\" * \"1:0:0\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"0:1:0\" * \"1:0:0\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -195,7 +213,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVectorDotProduct() {
-            var command = ParseCommand("assign a to \"0:1:0\" . \"1:0:0\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"0:1:0\" . \"1:0:0\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -206,7 +225,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleDivision() {
-            var command = ParseCommand("assign a to 6 / 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 6 / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -216,9 +236,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void AssignSimpleMod()
-        {
-            var command = ParseCommand("assign a to 5 % 2");
+        public void AssignSimpleMod() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 5 % 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -229,7 +249,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVectorMod() {
-            var command = ParseCommand("assign a to \"1:1:0\" % \"0:1:0\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"1:1:0\" % \"0:1:0\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -240,7 +261,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleAdditionVariable() {
-            var command = ParseCommand("assign a to {b} + 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -252,7 +274,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleSubtractionVariable() {
-            var command = ParseCommand("assign a to {b} - 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -264,7 +287,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleMultiplicationVariable() {
-            var command = ParseCommand("assign a to {b} * 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -276,7 +300,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSimpleDivisionVariable() {
-            var command = ParseCommand("assign a to {b} / 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -288,7 +313,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void MultiplicationBeforeAddition() {
-            var command = ParseCommand("assign a to 4 * 2 + 3");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 4 * 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -303,7 +329,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void DivisionBeforeAddition() {
-            var command = ParseCommand("assign a to 4 / 2 + 3");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 4 / 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -318,7 +345,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AdditionBeforeVariableComparison() {
-            var command = ParseCommand("assign a to {b} + 1 > 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} + 1 > 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is ComparisonVariable);
@@ -329,7 +357,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AdditionBeforeBooleanLogic() {
-            var command = ParseCommand("assign a to {b} + 1 and {c}");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to {b} + 1 and {c}");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
@@ -341,7 +370,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AdditionUsedAsBlockConditionVariable() {
-            var command = ParseCommand("if the \"rotor\" angle > {a} + 30 set the \"rotor\" angle to {a}");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if the \"rotor\" angle > {a} + 30 set the \"rotor\" angle to {a}");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand assignment = (ConditionalCommand)command;
             Assert.IsTrue(assignment.Condition is AggregateConditionVariable);
@@ -353,7 +383,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignColor() {
-            var command = ParseCommand("assign a to \"red\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"red\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -363,7 +394,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignColorFromHex() {
-            var command = ParseCommand("assign a to \"#ff0000\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"#ff0000\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -373,7 +405,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAddedColors() {
-            var command = ParseCommand("assign a to \"#ff0000\" + \"#00ff00\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"#ff0000\" + \"#00ff00\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -383,7 +416,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSubtractedColors() {
-            var command = ParseCommand("assign a to \"#ffff00\" - \"#00ff00\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"#ffff00\" - \"#00ff00\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -393,7 +427,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignMultipliedColor() {
-            var command = ParseCommand("assign a to \"#112233\" * 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"#112233\" * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -403,7 +438,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignDividedColor() {
-            var command = ParseCommand("assign a to \"#224466\" / 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"#224466\" / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
@@ -413,7 +449,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignNotColor() {
-            var command = ParseCommand("assign a to not \"red\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to not \"red\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();

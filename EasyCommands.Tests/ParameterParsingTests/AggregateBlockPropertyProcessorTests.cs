@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -7,7 +9,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class AggregateBlockPropertyProcessorTests {
         [TestMethod]
         public void AssignCountOfBlocks() {
-            var command = ParseCommand("assign \"a\" to count of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to count of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -17,7 +20,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSumOfBlocks() {
-            var command = ParseCommand("assign \"a\" to sum of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to sum of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -27,7 +31,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAverageOfBlocks() {
-            var command = ParseCommand("assign \"a\" to average of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to average of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -37,7 +42,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignMinimumOfBlocks() {
-            var command = ParseCommand("assign \"a\" to minimum of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to minimum of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -47,7 +53,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignMaximumOfBlocks() {
-            var command = ParseCommand("assign \"a\" to maximum of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to maximum of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -57,7 +64,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignSumOfBlocksWithProperty() {
-            var command = ParseCommand("assign \"a\" to sum of the \"forward guns\" range");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to sum of the \"forward guns\" range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -67,7 +75,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAverageOfBlocksWithPropertyFirst() {
-            var command = ParseCommand("assign \"a\" to avg range of the \"forward guns\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to avg range of the \"forward guns\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -77,7 +86,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksWithSelectorFirst() {
-            var command = ParseCommand("assign \"a\" to \"forward guns\" average range");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to \"forward guns\" average range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -87,7 +97,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksWithAggregationFirst() {
-            var command = ParseCommand("assign \"a\" to \"forward guns\" range average");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to \"forward guns\" range average");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -97,7 +108,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksUsingImplicitSelector() {
-            var command = ParseCommand("assign \"a\" to the average gun range");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to the average gun range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -109,7 +121,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksUsingImplicitAggregate() {
-            var command = ParseCommand("assign \"a\" to the \"test gun\" range");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to the \"test gun\" range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -121,7 +134,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksUsingImplicitAggregateInParentheses() {
-            var command = ParseCommand("assign \"a\" to the ( \"test gun\" range )" );
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to the ( \"test gun\" range )" );
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -133,7 +147,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksUsingImplicitAggregateAndImplicitSelector() {
-            var command = ParseCommand("assign \"a\" to the gun range");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to the gun range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -145,7 +160,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignAvgOfBlocksUsingImplicitAggregateAndMySelector() {
-            var command = ParseCommand("assign \"a\" to my location");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to my location");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);

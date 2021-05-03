@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -7,7 +9,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class SelectorLogicParameterProcessorTests {
         [TestMethod]
         public void BasicSelector() {
-            var command = ParseCommand("recharge the \"batteries\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("recharge the \"batteries\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
@@ -20,7 +23,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ConditionalSelector() {
-            var command = ParseCommand("recharge \"batteries\" whose ratio < 0.5");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("recharge \"batteries\" whose ratio < 0.5");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
@@ -28,7 +32,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void IndexSelector() {
-            var command = ParseCommand("turn on \"batteries\" @ 0");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on \"batteries\" @ 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
@@ -36,7 +41,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void InLineIndexSelector() {
-            var command = ParseCommand("turn on \"batteries\" @0");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on \"batteries\" @0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
@@ -44,7 +50,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ConditionalIndexSelector() {
-            var command = ParseCommand("set the \"batteries\" whose ratio < 0.5 @0 to recharge");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set the \"batteries\" whose ratio < 0.5 @0 to recharge");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
@@ -54,7 +61,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void LastBlockTypeImpliedIsUsed() {
-            var command = ParseCommand("turn on the \"Boom Door Program\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the \"Boom Door Program\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
@@ -64,7 +72,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void VariableSelector() {
-            var command = ParseCommand("turn on the [a] sirens");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the [a] sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
@@ -77,7 +86,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImplicitVariableSelector() {
-            var command = ParseCommand("turn on the [a]");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the [a]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
@@ -89,7 +99,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void MySelector() {
-            var command = ParseCommand("assign a to my average location");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to my average location");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
@@ -100,7 +111,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void MySelectorWithBlockType() {
-            var command = ParseCommand("set my display @0 text to \"hello world\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set my display @0 text to \"hello world\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
@@ -111,7 +123,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AllSelector() {
-            var command = ParseCommand("set all piston height to 0");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set all piston height to 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
@@ -121,7 +134,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AllSelectorGroup() {
-            var command = ParseCommand("set the height of all pistons to 0");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set the height of all pistons to 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
@@ -131,7 +145,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AllSelectorGroupWithCondition() {
-            var command = ParseCommand("recharge all batteries whose ratio < 0.25");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("recharge all batteries whose ratio < 0.25");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
@@ -143,7 +158,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImplicitAllSelector() {
-            var command = ParseCommand("turn on the light");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the light");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
@@ -153,7 +169,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImplicitAllGroupSelector() {
-            var command = ParseCommand("turn on the lights");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the lights");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);

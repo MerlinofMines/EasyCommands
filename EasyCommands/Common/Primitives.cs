@@ -68,6 +68,16 @@ namespace IngameScript {
             { typeof(Color), PrimitiveType.COLOR }
         };
 
+        static Dictionary<String, Color> colors = new Dictionary<String, Color>{
+            { "red", Color.Red },
+            { "blue", Color.Blue },
+            { "green", Color.Green },
+            { "orange", Color.Orange },
+            { "yellow", Color.Yellow },
+            { "white", Color.White },
+            { "black", Color.Black}
+        };
+
         static PrimitiveType GetType(Type type) {
             PrimitiveType primitiveType;
             if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
@@ -146,6 +156,7 @@ namespace IngameScript {
         }
 
         public static bool GetColor(String s, out Color color) {
+
             Color? possibleColor = null;
             if (colors.ContainsKey(s.ToLower())) possibleColor = colors[s.ToLower()];
             else if (s.StartsWith("#") && s.Length == 7) {

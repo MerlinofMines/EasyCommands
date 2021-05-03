@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using VRageMath;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -9,7 +11,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariable() {
-            var command = ParseCommand("assign \"a\" to 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -19,7 +22,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignGlobalVariable() {
-            var command = ParseCommand("assign global \"a\" to 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign global \"a\" to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -30,7 +34,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableFromExplicitString() {
-            var command = ParseCommand("assign 'a' to 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign 'a' to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -40,7 +45,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableCaseIsPreserved() {
-            var command = ParseCommand("assign \"a\" to {variableName}");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to {variableName}");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -51,7 +57,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void LockVariable() {
-            var command = ParseCommand("bind \"a\" to {b} is 2");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("bind \"a\" to {b} is 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -64,7 +71,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ParseSimpleVector() {
-            var command = ParseCommand("assign a to \"53573.9750085028:-26601.8512032533:12058.8229348438\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"53573.9750085028:-26601.8512032533:12058.8229348438\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is StaticVariable);
@@ -78,7 +86,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ParseVectorFromGPSCoordinate() {
-            var command = ParseCommand("assign a to \"GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is StaticVariable);
@@ -92,13 +101,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToSelectorProperty() {
-            var command = ParseCommand("assign \"vector\" to avg \"Main Cockpit\" position");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"vector\" to avg \"Main Cockpit\" position");
             Assert.IsTrue(command is VariableAssignmentCommand);
         }
 
         [TestMethod]
         public void AssignVariableToSelectorString() {
-            var command = ParseCommand("assign \"mySelector\" to \"Main Cockpit\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"mySelector\" to \"Main Cockpit\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("Main Cockpit", assignmentCommand.variable.GetValue().GetValue());
