@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.TokenParsingTests {
@@ -7,7 +9,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
     public class StringParsingTests {
         [TestMethod]
         public void BasicStrings() {
-            var tokens = ParseTokens("turn on the rotors");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("turn on the rotors");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("turn", tokens[0].original);
             Assert.AreEqual("on", tokens[1].original);
@@ -17,7 +20,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void StringWithDoubleQuotes() {
-            var tokens = ParseTokens("turn on the \"test rotors\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("turn on the \"test rotors\"");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("turn", tokens[0].original);
             Assert.AreEqual("on", tokens[1].original);
@@ -27,7 +31,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void MultipleDoubleQuotes() {
-            var tokens = ParseTokens("tell the \"test program\" to \"run gotoTest\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("tell the \"test program\" to \"run gotoTest\"");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
             Assert.AreEqual("the", tokens[1].original);
@@ -38,7 +43,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void SingleQuotes() {
-            var tokens = ParseTokens("tell the program to 'run gotoTest'");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("tell the program to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
             Assert.AreEqual("the", tokens[1].original);
@@ -49,7 +55,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void MultipleSingleQuotes() {
-            var tokens = ParseTokens("tell the 'test program' to 'run gotoTest'");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("tell the 'test program' to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
             Assert.AreEqual("the", tokens[1].original);
@@ -60,7 +67,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void SingleQuotesAndDoubleQuotes() {
-            var tokens = ParseTokens("tell the \"test program\" to 'run gotoTest'");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("tell the \"test program\" to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
             Assert.AreEqual("the", tokens[1].original);
@@ -71,7 +79,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void DoubleQuotesInsideSingleQuotes() {
-            var tokens = ParseTokens("tell the \"test program\" to 'run \"goto testFunction\"'");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("tell the \"test program\" to 'run \"goto testFunction\"'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
             Assert.AreEqual("the", tokens[1].original);

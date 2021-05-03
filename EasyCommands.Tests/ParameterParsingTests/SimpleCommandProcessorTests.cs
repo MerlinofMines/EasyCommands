@@ -12,7 +12,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class SimpleCommandProcessorTests {
         [TestMethod]
         public void PrintCommand() {
-            var command = ParseCommand("print 'Hello World'");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("print 'Hello World'");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
             Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()).GetStringValue());
@@ -20,7 +21,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void PrintCommandVariable() {
-            var command = ParseCommand("print {a}");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("print {a}");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
             Assert.IsTrue(printCommand.variable is InMemoryVariable);
@@ -30,7 +32,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ListenCommand() {
-            var command = ParseCommand("listen \"garageDoors\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("listen \"garageDoors\"");
             Assert.IsTrue(command is ListenCommand);
             ListenCommand listenCommand = (ListenCommand)command;
             Assert.AreEqual("garageDoors", CastString(listenCommand.tag.GetValue()).GetStringValue());
@@ -38,7 +41,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SendCommand() {
-            var command = ParseCommand("send \"goto openDoors\" to \"garageDoors\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("send \"goto openDoors\" to \"garageDoors\"");
             Assert.IsTrue(command is SendCommand);
             SendCommand sendCommand = (SendCommand)command;
             Assert.AreEqual("garageDoors", CastString(sendCommand.tag.GetValue()).GetStringValue());
@@ -47,9 +51,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommand() {
-            MDKFactory.CreateProgram<Program>();
-            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>());
-            var command = ParseCommand("goto \"listen\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
+            var command = program.ParseCommand("goto \"listen\"");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
@@ -58,9 +62,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandFromExplicitString() {
-            MDKFactory.CreateProgram<Program>();
-            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>());
-            var command = ParseCommand("goto 'listen'");
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
+            var command = program.ParseCommand("goto 'listen'");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
@@ -69,9 +73,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandWithParameters() {
-            MDKFactory.CreateProgram<Program>();
-            PROGRAM.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
-            var command = ParseCommand("goto \"listen\" 2 3");
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
+            var command = program.ParseCommand("goto \"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
@@ -82,7 +86,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandNoArguments() {
-            var command = ParseCommand("wait");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
@@ -91,7 +96,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandInterval() {
-            var command = ParseCommand("wait 3");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("wait 3");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
@@ -100,7 +106,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandIntervalUnits() {
-            var command = ParseCommand("wait 3 ticks");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("wait 3 ticks");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
@@ -109,7 +116,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void IterateSimpleCommand() {
-            var command = ParseCommand("print \"hello world\" 3 times");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("print \"hello world\" 3 times");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
             Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
@@ -122,7 +130,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void IterateSimpleCommandAfter() {
-            var command = ParseCommand("for 3 times print \"hello world\"");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("for 3 times print \"hello world\"");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
             Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
@@ -135,7 +144,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void StopCommand() {
-            var command = ParseCommand("stop");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("stop");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.STOP, controlCommand.controlType);
@@ -143,7 +153,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void StartCommand() {
-            var command = ParseCommand("start");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("start");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.START, controlCommand.controlType);
@@ -151,7 +162,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void RestartCommand() {
-            var command = ParseCommand("restart");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("restart");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.RESTART, controlCommand.controlType);
@@ -159,7 +171,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void RepeatCommand() {
-            var command = ParseCommand("repeat");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("repeat");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.REPEAT, controlCommand.controlType);
@@ -167,7 +180,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void PauseCommand() {
-            var command = ParseCommand("pause");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("pause");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.PAUSE, controlCommand.controlType);
@@ -175,7 +189,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ResumeCommand() {
-            var command = ParseCommand("resume");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("resume");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(ControlType.START, controlCommand.controlType);

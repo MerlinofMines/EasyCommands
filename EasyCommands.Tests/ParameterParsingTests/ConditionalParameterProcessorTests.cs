@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
@@ -7,7 +9,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class ConditionalParameterProcessorTests {
         [TestMethod]
         public void SimpleBooleanCondition() {
-            var command = ParseCommand("if true set the \"rotors\" height to 5");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if true set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.Condition is StaticVariable);
@@ -19,7 +22,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleVariableCondition() {
-            var command = ParseCommand("if {a} set the \"rotors\" height to 5");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if {a} set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.Condition is InMemoryVariable);
@@ -29,7 +33,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void VariableComparisonCondition() {
-            var command = ParseCommand("if 3 > 2 set the \"rotors\" height to 5");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if 3 > 2 set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.Condition is ComparisonVariable);
@@ -43,7 +48,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void BlockConditionWithProperty() {
-            var command = ParseCommand("if the \"batteries\" are recharging set the \"rotors\" height to 5");
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if the \"batteries\" are recharging set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.Condition is AggregateConditionVariable);

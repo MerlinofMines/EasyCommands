@@ -23,11 +23,11 @@ namespace IngameScript {
     public partial class Program : MyGridProgram {
         //Debug
         #region mdk preserve
-        public static UpdateFrequency UPDATE_FREQUENCY = UpdateFrequency.Update1;
-        public static LogLevel LOG_LEVEL = LogLevel.INFO;
-        public static int FUNCTION_PARSE_AMOUNT = 1;
-        public static int MAX_ASYNC_THREADS = 50;
-        public static int MAX_QUEUED_THREADS = 50;
+        public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
+        public LogLevel logLevel = LogLevel.INFO;
+        public int functionParseAmount = 1;
+        public int maxAsyncThreads = 50;
+        public int maxQueuedThreads = 50;
         #endregion
 
         public delegate List<MyIGCMessage> BroadcastMessageProvider();
@@ -61,12 +61,12 @@ namespace IngameScript {
 
         public void QueueThread(Thread thread) {
             threadQueue.Add(thread);
-            if (threadQueue.Count > MAX_QUEUED_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_QUEUED_THREADS + " queued commands");
+            if (threadQueue.Count > maxQueuedThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxQueuedThreads + " queued commands");
         }
 
         public void QueueAsyncThread(Thread thread) {
             asyncThreadQueue.Add(thread);
-            if (asyncThreadQueue.Count > MAX_ASYNC_THREADS) throw new Exception("Stack Overflow Exception! Cannot have more than " + MAX_ASYNC_THREADS + "concurrent async commands");
+            if (asyncThreadQueue.Count > maxAsyncThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxAsyncThreads + "concurrent async commands");
         }
 
         public void SetGlobalVariable(String variableName, Variable variable) {
@@ -94,21 +94,21 @@ namespace IngameScript {
         public Program() {
             PROGRAM = this;
             InitializeParsers();
-            ParameterProcessorRegistry.InitializeProcessors();
+            InitializeProcessors();
             InitializeOperators();
-            Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+            Runtime.UpdateFrequency = updateFrequency;
             broadcastMessageProvider = provideMessages;
         }
 
         static void Print(String str) { PROGRAM.Echo(str); }
-        static void Info(String str) { if (LOG_LEVEL != LogLevel.SCRIPT_ONLY) PROGRAM.Echo(str); }
-        static void Debug(String str) { if (LOG_LEVEL == LogLevel.DEBUG || LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
-        static void Trace(String str) { if (LOG_LEVEL == LogLevel.TRACE) PROGRAM.Echo(str); }
+        static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) PROGRAM.Echo(str); }
+        static void Debug(String str) { if (PROGRAM.logLevel == LogLevel.DEBUG || PROGRAM.logLevel == LogLevel.TRACE) PROGRAM.Echo(str); }
+        static void Trace(String str) { if (PROGRAM.logLevel == LogLevel.TRACE) PROGRAM.Echo(str); }
 
         public void Main(string argument) {
             try {
                 if (!ParseCommands()) {
-                    Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                    Runtime.UpdateFrequency = updateFrequency;
                     return;
                 }
             } catch (Exception e) {
@@ -189,7 +189,7 @@ namespace IngameScript {
         void UpdateState() {
             switch (state) {
                 case ProgramState.RUNNING:
-                    Runtime.UpdateFrequency = UPDATE_FREQUENCY;
+                    Runtime.UpdateFrequency = updateFrequency;
                     Info("Running");
                     break;
                 case ProgramState.PAUSED:
@@ -257,14 +257,14 @@ namespace IngameScript {
             }
 
             //Parse Function Commands and add to Definitions
-            int toParse = FUNCTION_PARSE_AMOUNT;
+            int toParse = functionParseAmount;
             foreach (int i in functionIndices) {
                 int startingLineNumber = i + 1 + implicitMainOffset;
                 String functionString = commandStrings[i].Remove(0, 1).Trim();
                 List<Token> nameAndParams = ParseTokens(functionString);
                 String functionName = nameAndParams[0].original;
                 Info("Parsing Function: " + functionName);
-                Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str)).ToList(), 0, true, ref startingLineNumber);
+                Command command = ParseCommand(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).Select(str => new CommandLine(str, this)).ToList(), 0, true, ref startingLineNumber);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
                 if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
                 functions[functionName].function = (MultiActionCommand)command;
@@ -274,7 +274,7 @@ namespace IngameScript {
             }
         }
 
-        static Command ParseCommand(List<CommandLine> commandStrings, int index, bool parseSiblings, ref int startingLineNumber) {
+        Command ParseCommand(List<CommandLine> commandStrings, int index, bool parseSiblings, ref int startingLineNumber) {
             List<Command> resolvedCommands = new List<Command>();
             while (index < commandStrings.Count - 1)//Parse Sibling & Child Commands, if any
             {
@@ -315,11 +315,11 @@ namespace IngameScript {
             if (resolvedCommands.Count > 1) return new MultiActionCommand(resolvedCommands); else return resolvedCommands[0];
         }
 
-        public static Command ParseCommand(String commandLine, int lineNumber = 0) {
+        public Command ParseCommand(String commandLine, int lineNumber = 0) {
             return ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
         }
 
-        private static Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
+        Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
             Trace("Parsing Command at line: " + lineNumber);
             Trace("Pre Processed Parameters:");
             parameters.ForEach(param => Trace("Type: " + param.GetType()));
@@ -329,7 +329,7 @@ namespace IngameScript {
 
             //Branches
             while (branches.Count > 0) {
-                branches.AddRange(ParameterProcessorRegistry.Process(branches[0]));
+                branches.AddRange(ProcessParameters(branches[0]));
                 if (branches[0].Count == 1 && branches[0][0] is CommandReferenceParameter) {
                     return ((CommandReferenceParameter)branches[0][0]).value;
                 } else {
@@ -345,9 +345,9 @@ namespace IngameScript {
             public List<CommandParameter> CommandParameters;
             public String CommandString;
 
-            public CommandLine(String commandString) {
+            public CommandLine(String commandString, Program program) {
                 Depth = commandString.TakeWhile(Char.IsWhiteSpace).Count();
-                CommandParameters = ParseCommandParameters(ParseTokens(commandString));
+                CommandParameters = program.ParseCommandParameters(program.ParseTokens(commandString));
                 CommandString = commandString;
             }
 

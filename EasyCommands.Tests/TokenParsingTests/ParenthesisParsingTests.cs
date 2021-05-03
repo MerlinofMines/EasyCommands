@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Malware.MDKUtilities;
+using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.TokenParsingTests {
@@ -7,7 +9,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
     public class ParenthesisParsingTests {
         [TestMethod]
         public void TestBasicParenthesis() {
-            var tokens = ParseTokens("test ( string )");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("test ( string )");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("test", tokens[0].original);
             Assert.AreEqual("(", tokens[1].original);
@@ -17,7 +20,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void TestParenthesesMissingSpaces() {
-            var tokens = ParseTokens("test (string) there");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("test (string) there");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("test", tokens[0].original);
             Assert.AreEqual("(", tokens[1].original);
@@ -28,7 +32,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void TestMissingSpaceBeforeOpeningParenthesis() {
-            var tokens = ParseTokens("test (string )there");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("test (string )there");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("test", tokens[0].original);
             Assert.AreEqual("(", tokens[1].original);
@@ -39,7 +44,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void TestMissingSpaceAfterClosingParenthesis() {
-            var tokens = ParseTokens("test( string ) there");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("test( string ) there");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("test", tokens[0].original);
             Assert.AreEqual("(", tokens[1].original);
@@ -50,7 +56,8 @@ namespace EasyCommands.Tests.TokenParsingTests {
 
         [TestMethod]
         public void TestEmbeddedParenthesesMissingSpaces() {
-            var tokens = ParseTokens("test ((string) there)");
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("test ((string) there)");
             Assert.AreEqual(7, tokens.Count);
             Assert.AreEqual("test", tokens[0].original);
             Assert.AreEqual("(", tokens[1].original);

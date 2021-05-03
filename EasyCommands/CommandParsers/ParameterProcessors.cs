@@ -19,364 +19,354 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program : MyGridProgram {
-        public static class ParameterProcessorRegistry {
-            private static bool initialized = false;
+        Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
+        List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
+        {
+            //FunctionProcessor
+            OneValueRule<FunctionCommandParameter,StringCommandParameter>(
+                requiredRight<StringCommandParameter>(),
+                (p,name) => {
+                    FunctionDefinition definition;
+                    if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
+                    return new FunctionDefinitionCommandParameter(p.value, definition);
+                }),
+            OneValueRule<FunctionCommandParameter,ExplicitStringCommandParameter>(
+                requiredRight<ExplicitStringCommandParameter>(),
+                (p,name) => {
+                    FunctionDefinition definition;
+                    if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
+                    return new FunctionDefinitionCommandParameter(p.value, definition);
+                }),
 
-            private static List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
-            {
-                new ParenthesisProcessor(),
+            //AssignmentProcessor
+            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(
+                optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
+                (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
+            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,ExplicitStringCommandParameter>(
+                optionalRight<GlobalCommandParameter>(), requiredRight<ExplicitStringCommandParameter>(),
+                (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
 
-                //FunctionProcessor
-                OneValueRule<FunctionCommandParameter,StringCommandParameter>(
-                    requiredRight<StringCommandParameter>(),
-                    (p,name) => {
-                        FunctionDefinition definition;
-                        if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
-                        return new FunctionDefinitionCommandParameter(p.value, definition);
-                    }),
-                OneValueRule<FunctionCommandParameter,ExplicitStringCommandParameter>(
-                    requiredRight<ExplicitStringCommandParameter>(),
-                    (p,name) => {
-                        FunctionDefinition definition;
-                        if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
-                        return new FunctionDefinitionCommandParameter(p.value, definition);
-                    }),
+            //SelfSelectorProcessor
+            OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
+                optionalRight<BlockTypeCommandParameter>(),
+                (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : BlockType.PROGRAM))),
 
-                //AssignmentProcessor
-                TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(
-                    optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
-                    (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
-                TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,ExplicitStringCommandParameter>(
-                    optionalRight<GlobalCommandParameter>(), requiredRight<ExplicitStringCommandParameter>(),
-                    (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
-
-                //SelfSelectorProcessor
-                OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
-                    optionalRight<BlockTypeCommandParameter>(),
-                    (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : BlockType.PROGRAM))),
-
-                //SelectorProcessor
-                new BranchingProcessor<StringCommandParameter>(
-                    TwoValueRule<StringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                          optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                          (p,blockType,group) => {
-                            if (!blockType.HasValue()) {
-                                BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
-                                if (type != null) blockType.SetValue(type);
-                                GroupCommandParameter g = findFirst<GroupCommandParameter>(p.SubTokens);
-                                if (g != null) group.SetValue(g);
-                            }
-                            return blockType.HasValue();
-                          },
-                          (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), new StaticVariable(new StringPrimitive(p.value))))),
-                    NoValueRule<StringCommandParameter>(p => new ExplicitStringCommandParameter(p.value))),
-
-                //VariableSelectorProcessor
-                TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                    optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                    (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (BlockType?)null, group.HasValue(), p.value))),
-
-                //Primitive Procesor
-                new PrimitiveProcessor(),
-
-                //RedundantComparisonProcessor
-                //"is not <" => "!<"
-                //"is <" => "<"
-                //"is not" => !=
-                // "not greater than" => <
-                OneValueRule<ComparisonCommandParameter,NotCommandParameter>(
-                    requiredEither<NotCommandParameter>(),
-                    (p,left) => new ComparisonCommandParameter(Inverse(p.value))),
-                OneValueRule<ComparisonCommandParameter,ComparisonCommandParameter>(
-                    requiredRight<ComparisonCommandParameter>(),
-                    (p,right) => new ComparisonCommandParameter(right.GetValue().value)),
-
-                //UniOperationProcessor
-                OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
-
-                //MultiplyProcessor
-                TwoValueRule<MultiplyCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                    (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
-
-                //AddProcessor
-                TwoValueRule<AddCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                    (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
-
-                //AndProcessor
-                TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                    (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.AND, left.GetValue().value, right.GetValue().value))),
-                TwoValueRule<AndCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
-                    requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                    (p,left,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
-
-                //OrProcessor
-                TwoValueRule<OrCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                    (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.OR, left.GetValue().value, right.GetValue().value))),
-                TwoValueRule<OrCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
-                    requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                    (p,left,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
-
-                //NotProcessor
-                OneValueRule<NotCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, right.GetValue().value))),
-
-                //VariableComparisonProcessor
-                TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                    (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
-
-                //BlockComparisonProcessor
-                ThreeValueRule<ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
-                    optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),optionalRight<VariableCommandParameter>(),
-                    (p,prop,dir,var) => var.HasValue() || prop.HasValue(),
-                    (p,prop,dir,var) => {
-                        Variable variable = var.HasValue() ? var.GetValue().value : new StaticVariable(new BooleanPrimitive(true));
-                        PropertyType? property = null;
-                        if(prop.HasValue()) property = prop.GetValue().value;
-                        DirectionType? direction = null;
-                        if(dir.HasValue()) direction = dir.GetValue().value;
-                        return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
-                    }),
-
-                //IndexProcessor
-                OneValueRule<IndexCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,var) => new IndexSelectorCommandParameter(var.GetValue().value)),
-
-                //ConditionalSelectorProcessor
-                TwoValueRule<WithCommandParameter,SelectorCommandParameter, BlockConditionCommandParameter>(
-                    requiredLeft<SelectorCommandParameter>(),requiredRight<BlockConditionCommandParameter>(),
-                    (p,selector,condition) => new SelectorCommandParameter(new ConditionalEntityProvider(selector.GetValue().value, condition.GetValue().value))),
-
-                //IndexSelectorProcessor
-                OneValueRule<IndexSelectorCommandParameter,SelectorCommandParameter>(
-                    requiredLeft<SelectorCommandParameter>(),
-                    (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
-
-                //PropertyAggregationProcessor
-                ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
-                    requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
-                    (p,selector,property,direction) => selector.HasValue(),
-                    (p,selector,prop,dir) => {
-                        PropertyType? property = null;
-                        if(prop.HasValue()) property = prop.GetValue().value;
-                        DirectionType? direction = null;
-                        if(dir.HasValue()) direction = dir.GetValue().value;
-                        return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
-                    }),
-
-                //AggregateConditionProcessors
-                TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(
-                    optionalLeft<AggregationModeCommandParameter>(),requiredLeft<SelectorCommandParameter>(),
-                    (p,aggregation,selector) => {
-                        AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
-                        return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, selector.GetValue().value));
-                    }),
-                TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,BlockTypeCommandParameter>(
-                    optionalLeft<AggregationModeCommandParameter>(),requiredLeft<BlockTypeCommandParameter>(),
-                    (p,aggregation,blockType) => {
-                        AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
-                        return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, new AllEntityProvider(blockType.GetValue().value)));
-                    }),
-
-                //ImplicitAllSelectorProcessor
-                OneValueRule<BlockTypeCommandParameter,GroupCommandParameter>(
-                    optionalRight<GroupCommandParameter>(),
-                    (blockType, group) => new SelectorCommandParameter(new AllEntityProvider(blockType.value))),
-
-                //AggregateSelectorProcessor
-                OneValueRule<AggregationModeCommandParameter,SelectorCommandParameter>(
-                    requiredRight<SelectorCommandParameter>(),
-                    (aggregation, selector) => aggregation.value != AggregationMode.NONE && selector.HasValue(),
-                    (aggregation, selector) => selector.GetValue()),
-
-                //IteratorProcessor
-                OneValueRule<IteratorCommandParameter,VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(),
-                    (p,var) => new IterationCommandParameter(var.GetValue().value)),
-
-                //IfProcessor
-                OneValueRule<IfCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperandType.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
-
-                //ActionProcessor
-                BlockCommandProcessor(),
-
-                //AmgiguousSelectorPropertyProcessor
-                new BranchingProcessor<SelectorCommandParameter>(
-                    TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
-                        requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                        (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (DirectionType?)null))),
-                    TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
-                        optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                        (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!
-                        (s,p,d) => {
-                            List<CommandParameter> blockParameters = new List<CommandParameter>{s};
-                            if(p.HasValue()) blockParameters.Add(p.GetValue());
-                            if(d.HasValue()) blockParameters.Add(d.GetValue());
-                            return new CommandReferenceParameter(new BlockCommand(blockParameters));
-                        })),
-
-                //PrintCommandProcessor
-                OneValueRule<PrintCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,var) => new CommandReferenceParameter(new PrintCommand(var.GetValue().value))),
-
-                //WaitProcessor
-                TwoValueRule<WaitCommandParameter,VariableCommandParameter,UnitCommandParameter>(
-                    optionalRight<VariableCommandParameter>(),optionalRight<UnitCommandParameter>(),
-                    (p,time,unit) => {
-                        UnitType units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? UnitType.SECONDS : UnitType.TICKS;
-                        Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(new NumberPrimitive(1));
-                        return new CommandReferenceParameter(new WaitCommand(var, units));
-                    }),
-
-                //FunctionCallCommandProcessor
-                OneValueRule<FunctionDefinitionCommandParameter,VariableCommandParameter>(
-                    rightList<VariableCommandParameter>(true),
-                    (p,variables) => ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues().Count == p.functionDefinition.parameterNames.Count,
-                    (p,variables) => {
-                        List<VariableCommandParameter> parameters = ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues();
-                        Dictionary<string, Variable> inputParameters = new Dictionary<string, Variable>();
-                        for (int i = 0; i < p.functionDefinition.parameterNames.Count; i++) {
-                            inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
+            //SelectorProcessor
+            new BranchingProcessor<StringCommandParameter>(
+                TwoValueRule<StringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
+                        optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                        (p,blockType,group) => {
+                        if (!blockType.HasValue()) {
+                            BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
+                            if (type != null) blockType.SetValue(type);
+                            GroupCommandParameter g = findFirst<GroupCommandParameter>(p.SubTokens);
+                            if (g != null) group.SetValue(g);
                         }
-                        Command command = new FunctionCommand(p.functionType, p.functionDefinition, inputParameters);
-                        return new CommandReferenceParameter(command);
-                    }),
+                        return blockType.HasValue();
+                        },
+                        (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), new StaticVariable(new StringPrimitive(p.value))))),
+                NoValueRule<StringCommandParameter>(p => new ExplicitStringCommandParameter(p.value))),
 
-                //VariableAssignmentProcessor
-                OneValueRule<VariableAssignmentCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().value, p.useReference, p.isGlobal))),
+            //VariableSelectorProcessor
+            TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
+                optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (BlockType?)null, group.HasValue(), p.value))),
 
-                //SendCommandProcessor
-                //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
-                TwoValueRule<SendCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),requiredRight<VariableCommandParameter>(),
-                    (p,message,tag) => new CommandReferenceParameter(new SendCommand(message.GetValue().value, tag.GetValue().value))),
+            //Primitive Procesor
+            new PrimitiveProcessor(),
 
-                //ListenCommandProcessor
-                OneValueRule<ListenCommandParameter,VariableCommandParameter>(
-                    requiredRight<VariableCommandParameter>(),
-                    (p,var) => new CommandReferenceParameter(new ListenCommand(var.GetValue().value))),
+            //RedundantComparisonProcessor
+            //"is not <" => "!<"
+            //"is <" => "<"
+            //"is not" => !=
+            // "not greater than" => <
+            OneValueRule<ComparisonCommandParameter,NotCommandParameter>(
+                requiredEither<NotCommandParameter>(),
+                (p,left) => new ComparisonCommandParameter(Inverse(p.value))),
+            OneValueRule<ComparisonCommandParameter,ComparisonCommandParameter>(
+                requiredRight<ComparisonCommandParameter>(),
+                (p,right) => new ComparisonCommandParameter(right.GetValue().value)),
 
-                //ControlProcessor 
-                NoValueRule<ControlCommandParameter>((p) => new CommandReferenceParameter(new ControlCommand(p.value))),
+            //UniOperationProcessor
+            OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
-                //IterationProcessor
-                OneValueRule<IterationCommandParameter,CommandReferenceParameter>(
-                    requiredEither<CommandReferenceParameter>(),
-                    (p,command) => new CommandReferenceParameter(new MultiActionCommand(new List<Command> {command.GetValue().value}, p.value))),
+            //MultiplyProcessor
+            TwoValueRule<MultiplyCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
-                //QueueProcessor
-                OneValueRule<QueueCommandParameter,CommandReferenceParameter>(
-                    requiredRight<CommandReferenceParameter>(),
-                    (p,command) => new CommandReferenceParameter(new QueueCommand(command.GetValue().value,p.value))),
+            //AddProcessor
+            TwoValueRule<AddCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
-                //ConditionalCommandProcessor
-                //condition command
-                //condition command otherwise command
-                ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
-                    requiredRight<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
-                    ConvertConditionalCommand),
-                //command condition
-                //command condition otherwise command
-                ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
-                    requiredLeft<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
-                    ConvertConditionalCommand),
-            };
+            //AndProcessor
+            TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.AND, left.GetValue().value, right.GetValue().value))),
+            TwoValueRule<AndCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
+                requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
+                (p,left,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
 
-            static CommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, DataFetcher<CommandReferenceParameter> metFetcher,
-                DataFetcher<ElseCommandParameter> otherwise, DataFetcher<CommandReferenceParameter> notMetFetcher) {
-                Command metCommand = metFetcher.GetValue().value;
-                Command notMetCommand = otherwise.HasValue() ? notMetFetcher.GetValue().value : new NullCommand();
-                if (condition.swapCommands) {
-                    var temp = metCommand;
-                    metCommand = notMetCommand;
-                    notMetCommand = temp;
-                }
-                Command command = new ConditionalCommand(condition.value, metCommand, notMetCommand, condition.alwaysEvaluate);
-                return new CommandReferenceParameter(command);
-            }
+            //OrProcessor
+            TwoValueRule<OrCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.OR, left.GetValue().value, right.GetValue().value))),
+            TwoValueRule<OrCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
+                requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
+                (p,left,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
 
-            static Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
+            //NotProcessor
+            OneValueRule<NotCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, right.GetValue().value))),
 
-            public static void InitializeProcessors() {
-                if (initialized) return;
+            //VariableComparisonProcessor
+            TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
 
-                for (int i = 0; i < parameterProcessors.Count; i++) {
-                    ParameterProcessor processor = parameterProcessors[i];
-                    processor.Rank = i;
+            //BlockComparisonProcessor
+            ThreeValueRule<ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
+                optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),optionalRight<VariableCommandParameter>(),
+                (p,prop,dir,var) => var.HasValue() || prop.HasValue(),
+                (p,prop,dir,var) => {
+                    Variable variable = var.HasValue() ? var.GetValue().value : new StaticVariable(new BooleanPrimitive(true));
+                    PropertyType? property = null;
+                    if(prop.HasValue()) property = prop.GetValue().value;
+                    DirectionType? direction = null;
+                    if(dir.HasValue()) direction = dir.GetValue().value;
+                    return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
+                }),
 
-                    List<Type> types = processor.GetProcessedTypes();
-                    foreach (Type t in types) {
-                        if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = new List<ParameterProcessor>();
-                        parameterProcessorsByParameterType[t].Add(processor);
+            //IndexProcessor
+            OneValueRule<IndexCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new IndexSelectorCommandParameter(var.GetValue().value)),
+
+            //ConditionalSelectorProcessor
+            TwoValueRule<WithCommandParameter,SelectorCommandParameter, BlockConditionCommandParameter>(
+                requiredLeft<SelectorCommandParameter>(),requiredRight<BlockConditionCommandParameter>(),
+                (p,selector,condition) => new SelectorCommandParameter(new ConditionalEntityProvider(selector.GetValue().value, condition.GetValue().value))),
+
+            //IndexSelectorProcessor
+            OneValueRule<IndexSelectorCommandParameter,SelectorCommandParameter>(
+                requiredLeft<SelectorCommandParameter>(),
+                (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
+
+            //PropertyAggregationProcessor
+            ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
+                (p,selector,property,direction) => selector.HasValue(),
+                (p,selector,prop,dir) => {
+                    PropertyType? property = null;
+                    if(prop.HasValue()) property = prop.GetValue().value;
+                    DirectionType? direction = null;
+                    if(dir.HasValue()) direction = dir.GetValue().value;
+                    return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
+                }),
+
+            //AggregateConditionProcessors
+            TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(
+                optionalLeft<AggregationModeCommandParameter>(),requiredLeft<SelectorCommandParameter>(),
+                (p,aggregation,selector) => {
+                    AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
+                    return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, selector.GetValue().value));
+                }),
+            TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,BlockTypeCommandParameter>(
+                optionalLeft<AggregationModeCommandParameter>(),requiredLeft<BlockTypeCommandParameter>(),
+                (p,aggregation,blockType) => {
+                    AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
+                    return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, new AllEntityProvider(blockType.GetValue().value)));
+                }),
+
+            //ImplicitAllSelectorProcessor
+            OneValueRule<BlockTypeCommandParameter,GroupCommandParameter>(
+                optionalRight<GroupCommandParameter>(),
+                (blockType, group) => new SelectorCommandParameter(new AllEntityProvider(blockType.value))),
+
+            //AggregateSelectorProcessor
+            OneValueRule<AggregationModeCommandParameter,SelectorCommandParameter>(
+                requiredRight<SelectorCommandParameter>(),
+                (aggregation, selector) => aggregation.value != AggregationMode.NONE && selector.HasValue(),
+                (aggregation, selector) => selector.GetValue()),
+
+            //IteratorProcessor
+            OneValueRule<IteratorCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(),
+                (p,var) => new IterationCommandParameter(var.GetValue().value)),
+
+            //IfProcessor
+            OneValueRule<IfCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperandType.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
+
+            //ActionProcessor
+            BlockCommandProcessor(),
+
+            //AmgiguousSelectorPropertyProcessor
+            new BranchingProcessor<SelectorCommandParameter>(
+                TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                    requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (DirectionType?)null))),
+                TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                    optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                    (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!
+                    (s,p,d) => {
+                        List<CommandParameter> blockParameters = new List<CommandParameter>{s};
+                        if(p.HasValue()) blockParameters.Add(p.GetValue());
+                        if(d.HasValue()) blockParameters.Add(d.GetValue());
+                        return new CommandReferenceParameter(new BlockCommand(blockParameters));
+                    })),
+
+            //PrintCommandProcessor
+            OneValueRule<PrintCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new CommandReferenceParameter(new PrintCommand(var.GetValue().value))),
+
+            //WaitProcessor
+            TwoValueRule<WaitCommandParameter,VariableCommandParameter,UnitCommandParameter>(
+                optionalRight<VariableCommandParameter>(),optionalRight<UnitCommandParameter>(),
+                (p,time,unit) => {
+                    UnitType units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? UnitType.SECONDS : UnitType.TICKS;
+                    Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(new NumberPrimitive(1));
+                    return new CommandReferenceParameter(new WaitCommand(var, units));
+                }),
+
+            //FunctionCallCommandProcessor
+            OneValueRule<FunctionDefinitionCommandParameter,VariableCommandParameter>(
+                rightList<VariableCommandParameter>(true),
+                (p,variables) => ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues().Count == p.functionDefinition.parameterNames.Count,
+                (p,variables) => {
+                    List<VariableCommandParameter> parameters = ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues();
+                    Dictionary<string, Variable> inputParameters = new Dictionary<string, Variable>();
+                    for (int i = 0; i < p.functionDefinition.parameterNames.Count; i++) {
+                        inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
                     }
-                    initialized = true;
+                    Command command = new FunctionCommand(p.functionType, p.functionDefinition, inputParameters);
+                    return new CommandReferenceParameter(command);
+                }),
+
+            //VariableAssignmentProcessor
+            OneValueRule<VariableAssignmentCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().value, p.useReference, p.isGlobal))),
+
+            //SendCommandProcessor
+            //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
+            TwoValueRule<SendCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),requiredRight<VariableCommandParameter>(),
+                (p,message,tag) => new CommandReferenceParameter(new SendCommand(message.GetValue().value, tag.GetValue().value))),
+
+            //ListenCommandProcessor
+            OneValueRule<ListenCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new CommandReferenceParameter(new ListenCommand(var.GetValue().value))),
+
+            //ControlProcessor 
+            NoValueRule<ControlCommandParameter>((p) => new CommandReferenceParameter(new ControlCommand(p.value))),
+
+            //IterationProcessor
+            OneValueRule<IterationCommandParameter,CommandReferenceParameter>(
+                requiredEither<CommandReferenceParameter>(),
+                (p,command) => new CommandReferenceParameter(new MultiActionCommand(new List<Command> {command.GetValue().value}, p.value))),
+
+            //QueueProcessor
+            OneValueRule<QueueCommandParameter,CommandReferenceParameter>(
+                requiredRight<CommandReferenceParameter>(),
+                (p,command) => new CommandReferenceParameter(new QueueCommand(command.GetValue().value,p.value))),
+
+            //ConditionalCommandProcessor
+            //condition command
+            //condition command otherwise command
+            ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
+                requiredRight<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
+                ConvertConditionalCommand),
+            //command condition
+            //command condition otherwise command
+            ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
+                requiredLeft<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
+                ConvertConditionalCommand),
+        };
+
+        static CommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, DataFetcher<CommandReferenceParameter> metFetcher,
+            DataFetcher<ElseCommandParameter> otherwise, DataFetcher<CommandReferenceParameter> notMetFetcher) {
+            Command metCommand = metFetcher.GetValue().value;
+            Command notMetCommand = otherwise.HasValue() ? notMetFetcher.GetValue().value : new NullCommand();
+            if (condition.swapCommands) {
+                var temp = metCommand;
+                metCommand = notMetCommand;
+                notMetCommand = temp;
+            }
+            Command command = new ConditionalCommand(condition.value, metCommand, notMetCommand, condition.alwaysEvaluate);
+            return new CommandReferenceParameter(command);
+        }
+
+        public void InitializeProcessors() {
+            parameterProcessors.Insert(0, new ParenthesisProcessor(this));
+
+            for (int i = 0; i < parameterProcessors.Count; i++) {
+                ParameterProcessor processor = parameterProcessors[i];
+                processor.Rank = i;
+
+                List<Type> types = processor.GetProcessedTypes();
+                foreach (Type t in types) {
+                    if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = new List<ParameterProcessor>();
+                    parameterProcessorsByParameterType[t].Add(processor);
                 }
             }
+        }
 
-            /// <summary>
-            /// This method inline processes the given list of command parameters.
-            /// Any ambiguous parsing branches which were found during processing are also returned as additional entries.
-            /// If the desired result (typically a command) does not result from the returned parse, the returned
-            /// branches can be re-processed to see if a correct parse results from the alternate branches.
-            /// This can continue until no alternate branches are returned.
-            /// </summary>
-            /// <param name="commandParameters"></param>
-            /// <returns></returns>
-            public static List<List<CommandParameter>> Process(List<CommandParameter> commandParameters) {
-                InitializeProcessors();
+        /// <summary>
+        /// This method inline processes the given list of command parameters.
+        /// Any ambiguous parsing branches which were found during processing are also returned as additional entries.
+        /// If the desired result (typically a command) does not result from the returned parse, the returned
+        /// branches can be re-processed to see if a correct parse results from the alternate branches.
+        /// This can continue until no alternate branches are returned.
+        /// </summary>
+        /// <param name="commandParameters"></param>
+        /// <returns></returns>
+        public List<List<CommandParameter>> ProcessParameters(List<CommandParameter> commandParameters) {
+            List<ParameterProcessor> sortedParameterProcessors = new List<ParameterProcessor>();
 
-                List<ParameterProcessor> sortedParameterProcessors = new List<ParameterProcessor>();
+            List<List<CommandParameter>> branches = new List<List<CommandParameter>>();
+            AddProcessors(commandParameters, sortedParameterProcessors);
 
-                List<List<CommandParameter>> branches = new List<List<CommandParameter>>();
-                AddProcessors(commandParameters, sortedParameterProcessors);
+            int processorIndex = 0;
 
-                int processorIndex = 0;
+            Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
 
-                Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
-
-                while (processorIndex < sortedParameterProcessors.Count) {
-                    bool revisit = false;
-                    bool processed = false;
-                    ParameterProcessor current = sortedParameterProcessors[processorIndex];
-                    for (int i = 0; i < commandParameters.Count; i++) {
-                        if (current.CanProcess(commandParameters[i])) {
-                            List<CommandParameter> finalParameters;
-                            if (current.Process(commandParameters, i, out finalParameters, branches)) {
-                                AddProcessors(finalParameters, sortedParameterProcessors);
-                                processed = true;
-                                //break; TODO: -Not sure if this may be needed! But much faster processing w/o this.
-                            } else revisit = true;
-                        }
+            while (processorIndex < sortedParameterProcessors.Count) {
+                bool revisit = false;
+                bool processed = false;
+                ParameterProcessor current = sortedParameterProcessors[processorIndex];
+                for (int i = 0; i < commandParameters.Count; i++) {
+                    if (current.CanProcess(commandParameters[i])) {
+                        List<CommandParameter> finalParameters;
+                        if (current.Process(commandParameters, i, out finalParameters, branches)) {
+                            AddProcessors(finalParameters, sortedParameterProcessors);
+                            processed = true;
+                            //break; TODO: -Not sure if this may be needed! But much faster processing w/o this.
+                        } else revisit = true;
                     }
-                    if (processed) {
-                        Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
-                        processorIndex = 0;
-                        continue;
-                    }
-                    if (!revisit) sortedParameterProcessors.RemoveAt(processorIndex);
-                    else processorIndex++;
                 }
-
-                return branches;
+                if (processed) {
+                    Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
+                    processorIndex = 0;
+                    continue;
+                }
+                if (!revisit) sortedParameterProcessors.RemoveAt(processorIndex);
+                else processorIndex++;
             }
 
-            static void AddProcessors(List<CommandParameter> types, List<ParameterProcessor> sortedParameterProcessors) {
-                sortedParameterProcessors.AddRange(types.SelectMany(t => parameterProcessorsByParameterType.ContainsKey(t.GetType()) ? parameterProcessorsByParameterType[t.GetType()] : new List<ParameterProcessor>()).ToList());
-                sortedParameterProcessors.Sort();
-            }
+            return branches;
+        }
+
+        void AddProcessors(List<CommandParameter> types, List<ParameterProcessor> sortedParameterProcessors) {
+            sortedParameterProcessors.AddRange(types.SelectMany(t => parameterProcessorsByParameterType.ContainsKey(t.GetType()) ? parameterProcessorsByParameterType[t.GetType()] : new List<ParameterProcessor>()).ToList());
+            sortedParameterProcessors.Sort();
         }
 
         delegate bool CanConvert<T>(T t);
@@ -519,13 +509,19 @@ namespace IngameScript {
         }
 
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
+            Program program;
+
+            public ParenthesisProcessor(Program program) {
+                this.program = program;
+            }
+
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
                 for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
                         finalParameters = p.GetRange(i+1, j - (i+1));
-                        var alternateBranches = ParameterProcessorRegistry.Process(finalParameters);
+                        var alternateBranches = program.ProcessParameters(finalParameters);
                         p.RemoveRange(i, j - i + 1);
 
                         for (int k = 0; k < alternateBranches.Count; k++) {
