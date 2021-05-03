@@ -21,11 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class CameraBlockHandler : FunctionalBlockHandler<IMyCameraBlock> {
             public CameraBlockHandler() {
-                AddBooleanHandler(PropertyType.TRIGGER, (b) => CastVector(GetPropertyValue(b, PropertyType.TARGET)).GetVectorValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
-                AddNumericHandler(PropertyType.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
-                AddVectorHandler(PropertyType.TARGET_VELOCITY, (b) => { Vector3D velocity; GetVector(GetCustomProperty(b, "Velocity"), out velocity); return velocity; });
+                AddBooleanHandler(Property.TRIGGER, (b) => CastVector(GetPropertyValue(b, Property.TARGET)).GetVectorValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
+                AddNumericHandler(Property.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
+                AddVectorHandler(Property.TARGET_VELOCITY, (b) => { Vector3D velocity; GetVector(GetCustomProperty(b, "Velocity"), out velocity); return velocity; });
                 //TODO: Use setter to scan specific vector?
-                AddVectorHandler(PropertyType.TARGET, (b) => {
+                AddVectorHandler(Property.TARGET, (b) => {
                     var range = (double)GetRange(b);
                     b.EnableRaycast = true;
                     if (b.CanScan(range)) {
@@ -41,10 +41,10 @@ namespace IngameScript {
                     if (!GetVector(GetCustomProperty(b, "Target") ?? "", out hitPosition)) hitPosition = Vector3D.Zero;
                     return hitPosition;
                 });
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
-                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
-                defaultDirection = DirectionType.UP;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                defaultDirection = Direction.UP;
             }
             public float GetRange(IMyCameraBlock b) { return float.Parse(GetCustomProperty(b, "Range") ?? "1000"); }
         }

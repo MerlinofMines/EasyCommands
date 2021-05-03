@@ -21,47 +21,47 @@ namespace IngameScript {
     partial class Program {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
-                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericDirectionPropertyHandler<IMyPistonBase>(GetLimit, SetLimit, DirectionType.UP));
-                AddPropertyHandler(PropertyType.HEIGHT, new PistonHeightHandler());
-                AddNumericHandler(PropertyType.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.HEIGHT;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.HEIGHT;
-                defaultPropertiesByDirection[DirectionType.DOWN] = PropertyType.HEIGHT;
-                defaultDirection = DirectionType.UP;
+                AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyPistonBase>(GetLimit, SetLimit, Direction.UP));
+                AddPropertyHandler(Property.HEIGHT, new PistonHeightHandler());
+                AddNumericHandler(Property.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.HEIGHT;
+                defaultPropertiesByDirection[Direction.UP] = Property.HEIGHT;
+                defaultPropertiesByDirection[Direction.DOWN] = Property.HEIGHT;
+                defaultDirection = Direction.UP;
             }
         }
 
         public class PistonHeightHandler : SimpleNumericPropertyHandler<IMyPistonBase> {
             public PistonHeightHandler() : base((b)=>b.CurrentPosition, ExtendPistonToValue, 1) {
                 Move = (b, d) => {
-                    if (d == DirectionType.UP) b.Extend();
-                    if (d == DirectionType.DOWN) b.Retract();
+                    if (d == Direction.UP) b.Extend();
+                    if (d == Direction.DOWN) b.Retract();
                 };
                 Reverse = (b) => b.Reverse();
             }
         }
 
-        static float GetLimit(IMyPistonBase piston, DirectionType direction) {
+        static float GetLimit(IMyPistonBase piston, Direction direction) {
             switch (direction) {
-                case DirectionType.UP:
-                case DirectionType.FORWARD:
+                case Direction.UP:
+                case Direction.FORWARD:
                     return piston.MaxLimit;
-                case DirectionType.DOWN:
-                case DirectionType.BACKWARD:
+                case Direction.DOWN:
+                case Direction.BACKWARD:
                     return piston.MinLimit;
                 default:
                     throw new Exception("Unknown direction: " + direction);
             }
         }
 
-        static void SetLimit(IMyPistonBase piston, DirectionType direction, float value) {
+        static void SetLimit(IMyPistonBase piston, Direction direction, float value) {
             switch (direction) {
-                case DirectionType.UP:
-                case DirectionType.FORWARD:
+                case Direction.UP:
+                case Direction.FORWARD:
                     piston.MaxLimit = value;
                     break;
-                case DirectionType.DOWN:
-                case DirectionType.BACKWARD:
+                case Direction.DOWN:
+                case Direction.BACKWARD:
                     piston.MinLimit = value;
                     break;
                 default:

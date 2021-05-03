@@ -57,7 +57,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
-            Assert.AreEqual(FunctionType.GOTO, functionCommand.type);
+            Assert.AreEqual(Function.GOTO, functionCommand.type);
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
-            Assert.AreEqual(FunctionType.GOTO, functionCommand.type);
+            Assert.AreEqual(Function.GOTO, functionCommand.type);
         }
 
         [TestMethod]
@@ -79,7 +79,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
-            Assert.AreEqual(FunctionType.GOTO, functionCommand.type);
+            Assert.AreEqual(Function.GOTO, functionCommand.type);
             Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetNumericValue());
             Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetNumericValue());
         }
@@ -91,7 +91,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
-            Assert.AreEqual(UnitType.TICKS, waitCommand.units);
+            Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 
         [TestMethod]
@@ -101,7 +101,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
-            Assert.AreEqual(UnitType.SECONDS, waitCommand.units);
+            Assert.AreEqual(Unit.SECONDS, waitCommand.units);
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
-            Assert.AreEqual(UnitType.TICKS, waitCommand.units);
+            Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("stop");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.STOP, controlCommand.controlType);
+            Assert.AreEqual(Control.STOP, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -157,7 +157,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("start");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.START, controlCommand.controlType);
+            Assert.AreEqual(Control.START, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("restart");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.RESTART, controlCommand.controlType);
+            Assert.AreEqual(Control.RESTART, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("repeat");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.REPEAT, controlCommand.controlType);
+            Assert.AreEqual(Control.REPEAT, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -184,7 +184,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("pause");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.PAUSE, controlCommand.controlType);
+            Assert.AreEqual(Control.PAUSE, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("resume");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(ControlType.START, controlCommand.controlType);
+            Assert.AreEqual(Control.START, controlCommand.controlType);
         }
     }
 }

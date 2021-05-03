@@ -22,10 +22,10 @@ namespace IngameScript {
         public class OreDetectorHandler : FunctionalBlockHandler<IMyOreDetector> {
             public OreDetectorHandler() {
                 //TODO: Broadcast using Antennas support
-                AddPropertyHandler(PropertyType.RANGE, new PropertyValueNumericPropertyHandler<IMyOreDetector>("Range", 50));
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RANGE;
-                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RANGE);
-                defaultDirection = DirectionType.UP;
+                AddPropertyHandler(Property.RANGE, new PropertyValueNumericPropertyHandler<IMyOreDetector>("Range", 50));
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
+                defaultDirection = Direction.UP;
             }
         }
     }

@@ -15,7 +15,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
             SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.BATTERY, sep.GetBlockType());
+            Assert.AreEqual(Block.BATTERY, sep.GetBlockType());
             Assert.IsTrue(sep.isGroup);
             Assert.IsTrue(sep.selector is StaticVariable);
             Assert.AreEqual("batteries", CastString(sep.selector.GetValue()).GetStringValue());
@@ -67,7 +67,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
             SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.PROGRAM, sep.GetBlockType());
+            Assert.AreEqual(Block.PROGRAM, sep.GetBlockType());
         }
 
         [TestMethod]
@@ -81,7 +81,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(sep.selector is InMemoryVariable);
             InMemoryVariable variable = (InMemoryVariable)sep.selector;
             Assert.AreEqual("a", variable.variableName);
-            Assert.AreEqual(BlockType.SOUND, sep.blockType);
+            Assert.AreEqual(Block.SOUND, sep.blockType);
         }
 
         [TestMethod]
@@ -106,7 +106,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable variable = (AggregatePropertyVariable)assignCommand.variable;
             Assert.IsTrue(variable.entityProvider is SelfEntityProvider);
-            Assert.AreEqual(BlockType.PROGRAM, variable.entityProvider.GetBlockType());
+            Assert.AreEqual(Block.PROGRAM, variable.entityProvider.GetBlockType());
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
             Assert.IsTrue(iep.provider is SelfEntityProvider);
-            Assert.AreEqual(BlockType.DISPLAY, iep.provider.GetBlockType());
+            Assert.AreEqual(Block.DISPLAY, iep.provider.GetBlockType());
         }
 
         [TestMethod]
@@ -129,7 +129,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
             AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.PISTON, aep.GetBlockType());
+            Assert.AreEqual(Block.PISTON, aep.GetBlockType());
         }
 
         [TestMethod]
@@ -140,7 +140,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
             AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.PISTON, aep.GetBlockType());
+            Assert.AreEqual(Block.PISTON, aep.GetBlockType());
         }
 
         [TestMethod]
@@ -153,7 +153,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ConditionalEntityProvider cep = (ConditionalEntityProvider)bc.entityProvider;
             Assert.IsTrue(cep.provider is AllEntityProvider);
             AllEntityProvider aep = (AllEntityProvider)cep.provider;
-            Assert.AreEqual(BlockType.BATTERY, aep.GetBlockType());
+            Assert.AreEqual(Block.BATTERY, aep.GetBlockType());
         }
 
         [TestMethod]
@@ -164,7 +164,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
             AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.LIGHT, aep.GetBlockType());
+            Assert.AreEqual(Block.LIGHT, aep.GetBlockType());
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is AllEntityProvider);
             AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
-            Assert.AreEqual(BlockType.LIGHT, aep.GetBlockType());
+            Assert.AreEqual(Block.LIGHT, aep.GetBlockType());
         }
     }
 }

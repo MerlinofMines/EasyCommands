@@ -21,9 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class ConnectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
             public ConnectorBlockHandler() : base() {
-                AddBooleanHandler(PropertyType.LOCKED, Connected, Connect);
-                AddBooleanHandler(PropertyType.CONNECTED, Connected, Connect);
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.CONNECTED;
+                AddBooleanHandler(Property.LOCKED, Connected, Connect);
+                AddBooleanHandler(Property.CONNECTED, Connected, Connect);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
                 //TODO: Add Strength
             }
 

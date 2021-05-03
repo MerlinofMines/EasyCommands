@@ -21,12 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class AntennaBlockHandler : FunctionalBlockHandler<IMyRadioAntenna> {
             public AntennaBlockHandler() {
-                AddStringHandler(PropertyType.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
-                AddBooleanHandler(PropertyType.CONNECTED, (b) => b.EnableBroadcasting, (b, v) => b.EnableBroadcasting = v);
-                AddNumericHandler(PropertyType.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
-                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.TEXT;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
-                defaultDirection = DirectionType.UP;
+                AddStringHandler(Property.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
+                AddBooleanHandler(Property.CONNECTED, (b) => b.EnableBroadcasting, (b, v) => b.EnableBroadcasting = v);
+                AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
+                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                defaultDirection = Direction.UP;
             }
         }
     }

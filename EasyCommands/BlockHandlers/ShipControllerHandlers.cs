@@ -21,30 +21,30 @@ namespace IngameScript {
     partial class Program {
         public class RemoteControlBlockHandler : ShipControllerHandler<IMyRemoteControl> {
             public RemoteControlBlockHandler() : base() {
-                AddPropertyHandler(PropertyType.VELOCITY, new RemoteControlVelocityHandler());
-                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericPropertyHandler<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
-                AddBooleanHandler(PropertyType.CONNECTED, b => false, (b,v) => b.SetDockingMode(v)); //TODO: Get Docking Mode?
-                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
-                AddBooleanHandler(PropertyType.AUTO, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
-                AddVectorHandler(PropertyType.TARGET, (b) => b.CurrentWaypoint.Coords, (b, v) => {
+                AddPropertyHandler(Property.VELOCITY, new RemoteControlVelocityHandler());
+                AddPropertyHandler(Property.RANGE, new SimpleNumericPropertyHandler<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
+                AddBooleanHandler(Property.CONNECTED, b => false, (b,v) => b.SetDockingMode(v)); //TODO: Get Docking Mode?
+                AddBooleanHandler(Property.TRIGGER, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
+                AddBooleanHandler(Property.AUTO, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
+                AddVectorHandler(Property.TARGET, (b) => b.CurrentWaypoint.Coords, (b, v) => {
                     b.ClearWaypoints();
                     b.AddWaypoint(new MyWaypointInfo("target", v));
                 });
-                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.AUTO;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
             }
         }
 
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
-                AddBooleanHandler(PropertyType.LOCKED, (b) => b.HandBrake, (b, v) => b.HandBrake = v);
-                AddPropertyHandler(PropertyType.VELOCITY, new ShipVelocityHandler<T>());
-                AddPropertyHandler(PropertyType.MOVE_INPUT, new ShipMoveInputHandler<T>());
-                AddPropertyHandler(PropertyType.ROLL_INPUT, new ShipRollInputHandler<T>());
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.VELOCITY;
+                AddBooleanHandler(Property.LOCKED, (b) => b.HandBrake, (b, v) => b.HandBrake = v);
+                AddPropertyHandler(Property.VELOCITY, new ShipVelocityHandler<T>());
+                AddPropertyHandler(Property.MOVE_INPUT, new ShipMoveInputHandler<T>());
+                AddPropertyHandler(Property.ROLL_INPUT, new ShipRollInputHandler<T>());
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
 //                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.LOCKED;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.VELOCITY;
-                defaultDirection = DirectionType.UP;
+                defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
+                defaultDirection = Direction.UP;
             }
         }
 
@@ -55,7 +55,7 @@ namespace IngameScript {
                 Increment = (b, v) => Set(b, v.Plus(new NumberPrimitive(b.SpeedLimit)));
                 IncrementDirection = (b, d, v) => Set(b, Get(b).Plus(Multiply(v,d)));
             }
-            private Primitive Multiply(Primitive p, DirectionType d) { return (d == DirectionType.DOWN) ? p.Not() : p; }
+            private Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
         }
 
         public class ShipVelocityHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
@@ -64,15 +64,15 @@ namespace IngameScript {
                 GetDirection = (b, d) => new NumberPrimitive(GetLinearVelocity(b, d));
             }
 
-            float GetLinearVelocity(T block, DirectionType direction) {
+            float GetLinearVelocity(T block, Direction direction) {
                 var vRel = Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));
                 switch (direction) {
-                    case DirectionType.UP: return Convert.ToSingle(vRel.Y);
-                    case DirectionType.DOWN: return Convert.ToSingle(-vRel.Y);
-                    case DirectionType.LEFT: return Convert.ToSingle(-vRel.X);
-                    case DirectionType.RIGHT: return Convert.ToSingle(vRel.X);
-                    case DirectionType.FORWARD: return Convert.ToSingle(-vRel.Z);
-                    case DirectionType.BACKWARD: return Convert.ToSingle(vRel.Z);
+                    case Direction.UP: return Convert.ToSingle(vRel.Y);
+                    case Direction.DOWN: return Convert.ToSingle(-vRel.Y);
+                    case Direction.LEFT: return Convert.ToSingle(-vRel.X);
+                    case Direction.RIGHT: return Convert.ToSingle(vRel.X);
+                    case Direction.FORWARD: return Convert.ToSingle(-vRel.Z);
+                    case Direction.BACKWARD: return Convert.ToSingle(vRel.Z);
                     default: throw new Exception("Unsupported Ship Velocity Direction Type: " + direction);
                 }
             }
@@ -85,15 +85,15 @@ namespace IngameScript {
                 GetDirection = (b,d) => new NumberPrimitive(GetPilotMovementInput(b,d));
             }
 
-            float GetPilotMovementInput(T block, DirectionType direction) {
+            float GetPilotMovementInput(T block, Direction direction) {
                 var pilotInput = block.MoveIndicator;
                 switch (direction) {
-                    case DirectionType.UP: return pilotInput.Y;
-                    case DirectionType.DOWN: return -pilotInput.Y;
-                    case DirectionType.LEFT: return -pilotInput.X;
-                    case DirectionType.RIGHT: return pilotInput.X;
-                    case DirectionType.FORWARD: return -pilotInput.Z;
-                    case DirectionType.BACKWARD: return pilotInput.Z;
+                    case Direction.UP: return pilotInput.Y;
+                    case Direction.DOWN: return -pilotInput.Y;
+                    case Direction.LEFT: return -pilotInput.X;
+                    case Direction.RIGHT: return pilotInput.X;
+                    case Direction.FORWARD: return -pilotInput.Z;
+                    case Direction.BACKWARD: return pilotInput.Z;
                     default: throw new Exception("Unsupported User Input Movement Direction Type: " + direction);
                 }
             }
@@ -105,16 +105,16 @@ namespace IngameScript {
                 GetDirection = (b, d) => new NumberPrimitive(GetPilotRollInput(b, d));
             }
 
-            float GetPilotRollInput(T block, DirectionType direction) {
+            float GetPilotRollInput(T block, Direction direction) {
                 var rotationInput = block.RotationIndicator;
                 var rollInput = block.RollIndicator;
                 switch (direction) {
-                    case DirectionType.UP: return -rotationInput.X;
-                    case DirectionType.DOWN: return rotationInput.X;
-                    case DirectionType.LEFT: return -rotationInput.Y;
-                    case DirectionType.RIGHT: return rotationInput.Y;
-                    case DirectionType.COUNTERCLOCKWISE: return -rollInput;
-                    case DirectionType.CLOCKWISE: return rollInput;
+                    case Direction.UP: return -rotationInput.X;
+                    case Direction.DOWN: return rotationInput.X;
+                    case Direction.LEFT: return -rotationInput.Y;
+                    case Direction.RIGHT: return rotationInput.Y;
+                    case Direction.COUNTERCLOCKWISE: return -rollInput;
+                    case Direction.CLOCKWISE: return rollInput;
                     default: throw new Exception("Unsupported User Input Rotation Direction Type: " + direction);
                 }
             }

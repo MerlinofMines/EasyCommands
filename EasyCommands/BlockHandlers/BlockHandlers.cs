@@ -11,75 +11,75 @@ namespace IngameScript {
     partial class Program {
         public static class BlockHandlerRegistry {
 
-            static readonly Dictionary<BlockType, BlockHandler> blockHandlers = new Dictionary<BlockType, BlockHandler> {
-                { BlockType.AIRVENT, new AirVentBlockHandler()},
-                { BlockType.ANTENNA, new AntennaBlockHandler()},
-                { BlockType.BATTERY, new BatteryBlockHandler()},
-                { BlockType.BEACON, new BeaconBlockHandler()},
-                { BlockType.CAMERA, new CameraBlockHandler() },
-                { BlockType.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
-                { BlockType.CONNECTOR, new ConnectorBlockHandler() },
-                { BlockType.DETECTOR, new OreDetectorHandler() },
-                { BlockType.DISPLAY, new TextSurfaceHandler() },
-                { BlockType.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
-                { BlockType.DOOR, new DoorBlockHandler() },
-                { BlockType.ENGINE, new FunctionalBlockHandler<IMyPowerProducer>() },
-                { BlockType.GEAR, new LandingGearHandler() },
-                { BlockType.GENERATOR, new GasGeneratorHandler()},
-                { BlockType.GRAVITY_GENERATOR, new GravityGeneratorBlockHandler() },
-                { BlockType.GRAVITY_SPHERE, new SphericalGravityGeneratorBlockHandler() },
-                { BlockType.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
-                { BlockType.GUN, new GunBlockHandler<IMyUserControllableGun>() },
-                { BlockType.GYROSCOPE, new GyroscopeBlockHandler() },
-                { BlockType.LIGHT, new LightBlockHandler() },
-                { BlockType.MERGE, new MergeBlockHandler() },
-                { BlockType.PARACHUTE, new ParachuteBlockHandler() },
-                { BlockType.PROGRAM, new ProgramBlockHandler() },
-                { BlockType.PISTON, new PistonBlockHandler() },
-                { BlockType.PROJECTOR, new ProjectorBlockHandler() },
-                { BlockType.REACTOR, new FunctionalBlockHandler<IMyReactor>()},
-                { BlockType.REMOTE, new RemoteControlBlockHandler()},
-                { BlockType.ROTOR, new RotorBlockHandler() },
-                { BlockType.SORTER, new SorterBlockerHandler() },
-                { BlockType.SOUND, new SoundBlockHandler() },
-                { BlockType.SENSOR, new SensorBlockHandler() },
-                { BlockType.SUSPENSION, new WheelSuspensionBlockHandler() },
-                { BlockType.TANK, new GasTankBlockHandler() },
-                { BlockType.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
-                { BlockType.THRUSTER, new ThrusterBlockHandler()},
-                { BlockType.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
-                { BlockType.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
+            static readonly Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
+                { Block.AIRVENT, new AirVentBlockHandler()},
+                { Block.ANTENNA, new AntennaBlockHandler()},
+                { Block.BATTERY, new BatteryBlockHandler()},
+                { Block.BEACON, new BeaconBlockHandler()},
+                { Block.CAMERA, new CameraBlockHandler() },
+                { Block.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
+                { Block.CONNECTOR, new ConnectorBlockHandler() },
+                { Block.DETECTOR, new OreDetectorHandler() },
+                { Block.DISPLAY, new TextSurfaceHandler() },
+                { Block.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
+                { Block.DOOR, new DoorBlockHandler() },
+                { Block.ENGINE, new FunctionalBlockHandler<IMyPowerProducer>() },
+                { Block.GEAR, new LandingGearHandler() },
+                { Block.GENERATOR, new GasGeneratorHandler()},
+                { Block.GRAVITY_GENERATOR, new GravityGeneratorBlockHandler() },
+                { Block.GRAVITY_SPHERE, new SphericalGravityGeneratorBlockHandler() },
+                { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
+                { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
+                { Block.GYROSCOPE, new GyroscopeBlockHandler() },
+                { Block.LIGHT, new LightBlockHandler() },
+                { Block.MERGE, new MergeBlockHandler() },
+                { Block.PARACHUTE, new ParachuteBlockHandler() },
+                { Block.PROGRAM, new ProgramBlockHandler() },
+                { Block.PISTON, new PistonBlockHandler() },
+                { Block.PROJECTOR, new ProjectorBlockHandler() },
+                { Block.REACTOR, new FunctionalBlockHandler<IMyReactor>()},
+                { Block.REMOTE, new RemoteControlBlockHandler()},
+                { Block.ROTOR, new RotorBlockHandler() },
+                { Block.SORTER, new SorterBlockerHandler() },
+                { Block.SOUND, new SoundBlockHandler() },
+                { Block.SENSOR, new SensorBlockHandler() },
+                { Block.SUSPENSION, new WheelSuspensionBlockHandler() },
+                { Block.TANK, new GasTankBlockHandler() },
+                { Block.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
+                { Block.THRUSTER, new ThrusterBlockHandler()},
+                { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
+                { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
             };
 
-            public static BlockHandler GetBlockHandler(BlockType blockType) {
+            public static BlockHandler GetBlockHandler(Block blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
                 return blockHandlers[blockType];
             }
 
-            public static List<Object> GetBlocks(BlockType blockType, Func<IMyTerminalBlock, bool> selector) {
+            public static List<Object> GetBlocks(Block blockType, Func<IMyTerminalBlock, bool> selector) {
                 return blockHandlers[blockType].GetBlocks(selector);
             }
 
-            public static List<Object> GetBlocksInGroup(BlockType blockType, String groupName) {
+            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) {
                 return blockHandlers[blockType].GetBlocksInGroup(groupName);
             }
         }
 
         //Property Getters
         public delegate Primitive GetProperty<T>(T block);
-        public delegate Primitive GetPropertyDirection<T>(T block, DirectionType direction);
+        public delegate Primitive GetPropertyDirection<T>(T block, Direction direction);
         public delegate void SetProperty<T>(T block, Primitive value);
-        public delegate void SetPropertyDirection<T>(T block, DirectionType direction, Primitive value);
+        public delegate void SetPropertyDirection<T>(T block, Direction direction, Primitive value);
         public delegate void IncrementProperty<T>(T block, Primitive deltaValue);
-        public delegate void IncrementPropertyDirection<T>(T block, DirectionType direction, Primitive deltaValue);
-        public delegate void MovePropertyValue<T>(T block, DirectionType direction);
+        public delegate void IncrementPropertyDirection<T>(T block, Direction direction, Primitive deltaValue);
+        public delegate void MovePropertyValue<T>(T block, Direction direction);
         public delegate void ReversePropertyValue<T>(T block);
 
         //Getters
         public delegate bool GetBooleanProperty<T>(T block);
         public delegate string GetStringProperty<T>(T block);
         public delegate float GetNumericProperty<T>(T block);
-        public delegate float GetNumericPropertyDirection<T>(T block, DirectionType direction);
+        public delegate float GetNumericPropertyDirection<T>(T block, Direction direction);
         public delegate Vector3D GetVectorProperty<T>(T block);
         public delegate Color GetColorProperty<T>(T block);
 
@@ -87,7 +87,7 @@ namespace IngameScript {
         public delegate void SetBooleanProperty<T>(T block, bool value);
         public delegate void SetStringProperty<T>(T block, String value);
         public delegate void SetNumericProperty<T>(T block, float value);
-        public delegate void SetNumericPropertyDirection<T>(T block, DirectionType direction, float value);
+        public delegate void SetNumericPropertyDirection<T>(T block, Direction direction, float value);
         public delegate void SetVectorProperty<T>(T block, Vector3D value);
         public delegate void SetColorProperty<T>(T block, Color value);
 
@@ -112,7 +112,7 @@ namespace IngameScript {
                 Move = (b, d) => Set(b, Get(b).Plus(Multiply(delta,d)));
                 Reverse = (b) => Set(b, Get(b).Not());
             }
-            private Primitive Multiply(Primitive p, DirectionType d) { return (d == DirectionType.DOWN) ? p.Not() : p; }
+            private Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
         }
 
         public class SimpleNumericPropertyHandler<T> : SimplePropertyHandler<T> {
@@ -124,7 +124,7 @@ namespace IngameScript {
         }
 
         public class SimpleNumericDirectionPropertyHandler<T> : PropertyHandler<T> {
-            public SimpleNumericDirectionPropertyHandler(GetNumericPropertyDirection<T> GetValue, SetNumericPropertyDirection<T> SetValue, DirectionType defaultDirection) {
+            public SimpleNumericDirectionPropertyHandler(GetNumericPropertyDirection<T> GetValue, SetNumericPropertyDirection<T> SetValue, Direction defaultDirection) {
                 Get = b => GetDirection(b, defaultDirection);
                 GetDirection = (b,d) => new NumberPrimitive(GetValue(b,d));
                 Set = (b, v) => SetDirection(b, defaultDirection, v);
@@ -174,27 +174,27 @@ namespace IngameScript {
 
         public class DirectionVectorPropertyHandler<T> : PropertyHandler<T> where T : class, IMyTerminalBlock {
             public DirectionVectorPropertyHandler() {
-                Get = (b) => GetDirection(b, DirectionType.FORWARD);
+                Get = (b) => GetDirection(b, Direction.FORWARD);
                 GetDirection = (b, d) => {
                     Vector3D vector;
                     MatrixD b2w = GetBlock2WorldTransform(b);
                     switch (d) {
-                        case DirectionType.FORWARD:
+                        case Direction.FORWARD:
                             vector = b2w.Forward;
                             break;
-                        case DirectionType.BACKWARD:
+                        case Direction.BACKWARD:
                             vector = b2w.Backward;
                             break;
-                        case DirectionType.UP:
+                        case Direction.UP:
                             vector = b2w.Up;
                             break;
-                        case DirectionType.DOWN:
+                        case Direction.DOWN:
                             vector = b2w.Down;
                             break;
-                        case DirectionType.LEFT:
+                        case Direction.LEFT:
                             vector = b2w.Left;
                             break;
-                        case DirectionType.RIGHT:
+                        case Direction.RIGHT:
                             vector = b2w.Right;
                             break;
                         default: throw new Exception("Cannot get direction value for direction: " + d);
@@ -227,36 +227,36 @@ namespace IngameScript {
         }
 
         public interface BlockHandler {
-            PropertyType GetDefaultProperty(PrimitiveType type);
-            PropertyType GetDefaultProperty(DirectionType direction);
-            DirectionType GetDefaultDirection();
+            Property GetDefaultProperty(Return type);
+            Property GetDefaultProperty(Direction direction);
+            Direction GetDefaultDirection();
             List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector);
             List<Object> GetBlocksInGroup(String groupName);
 
-            Primitive GetPropertyValue(Object block, PropertyType property);
-            Primitive GetPropertyValue(Object block, PropertyType property, DirectionType direction);
+            Primitive GetPropertyValue(Object block, Property property);
+            Primitive GetPropertyValue(Object block, Property property, Direction direction);
 
-            void SetPropertyValue(Object block, PropertyType property, Primitive value);
-            void SetPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value);
-            void IncrementPropertyValue(Object block, PropertyType property, Primitive value);
-            void IncrementPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value);
-            void MoveNumericPropertyValue(Object block, PropertyType property, DirectionType direction);
-            void ReverseNumericPropertyValue(Object block, PropertyType property);
+            void SetPropertyValue(Object block, Property property, Primitive value);
+            void SetPropertyValue(Object block, Property property, Direction direction, Primitive value);
+            void IncrementPropertyValue(Object block, Property property, Primitive value);
+            void IncrementPropertyValue(Object block, Property property, Direction direction, Primitive value);
+            void MoveNumericPropertyValue(Object block, Property property, Direction direction);
+            void ReverseNumericPropertyValue(Object block, Property property);
         }
 
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() : base() {
-                AddPropertyHandler(PropertyType.POWER, new SimpleBooleanPropertyHandler<T>((block) => block.Enabled, (block, enabled) => block.Enabled = enabled));
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.POWER;
+                AddPropertyHandler(Property.POWER, new SimpleBooleanPropertyHandler<T>((block) => block.Enabled, (block, enabled) => block.Enabled = enabled));
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.POWER;
             }
         }
 
         public abstract class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
 
             public TerminalBlockHandler() {
-                AddPropertyHandler(PropertyType.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
-                AddPropertyHandler(PropertyType.DIRECTION, new DirectionVectorPropertyHandler<T>());
-                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.POSITION;
+                AddPropertyHandler(Property.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
+                AddPropertyHandler(Property.DIRECTION, new DirectionVectorPropertyHandler<T>());
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
             }
 
             public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
@@ -297,12 +297,12 @@ namespace IngameScript {
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
-            protected Dictionary<PropertyType, PropertyHandler<T>> propertyHandlers = new Dictionary<PropertyType, PropertyHandler<T>>();
-            protected PropertyType defaultBooleanProperty = PropertyType.POWER;
-            protected PropertyType defaultStringProperty = PropertyType.NAME;
-            protected Dictionary<PrimitiveType, PropertyType> defaultPropertiesByPrimitive = new Dictionary<PrimitiveType, PropertyType>();
-            protected Dictionary<DirectionType, PropertyType> defaultPropertiesByDirection = new Dictionary<DirectionType, PropertyType>();
-            protected DirectionType? defaultDirection = null;
+            protected Dictionary<Property, PropertyHandler<T>> propertyHandlers = new Dictionary<Property, PropertyHandler<T>>();
+            protected Property defaultBooleanProperty = Property.POWER;
+            protected Property defaultStringProperty = Property.NAME;
+            protected Dictionary<Return, Property> defaultPropertiesByPrimitive = new Dictionary<Return, Property>();
+            protected Dictionary<Direction, Property> defaultPropertiesByDirection = new Dictionary<Direction, Property>();
+            protected Direction? defaultDirection = null;
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) { return GetBlocksOfType(selector).Select(t => t as object).ToList(); }
             public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
@@ -310,45 +310,45 @@ namespace IngameScript {
             public abstract List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector);
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
 
-            public DirectionType GetDefaultDirection() {
+            public Direction GetDefaultDirection() {
                 if (!defaultDirection.HasValue) throw new Exception(GetType() + " Does Not Have a Default Direction");
                 return defaultDirection.Value;
             }
-            public PropertyType GetDefaultProperty(DirectionType direction) {
+            public Property GetDefaultProperty(Direction direction) {
                 if (!defaultPropertiesByDirection.ContainsKey(direction)) throw new Exception(GetType() + " Does Not Have A Default Property for Direction: " + direction);
                 return defaultPropertiesByDirection[direction];
             }
-            public PropertyType GetDefaultProperty(PrimitiveType type) {
+            public Property GetDefaultProperty(Return type) {
                 if (!defaultPropertiesByPrimitive.ContainsKey(type)) throw new Exception(GetType() + " Does Not Have A Default Property for Primitive: " + type);
                 return defaultPropertiesByPrimitive[type];
             }
-            public Primitive GetPropertyValue(object block, PropertyType property) {
+            public Primitive GetPropertyValue(object block, Property property) {
                 return propertyHandlers[property].Get((T)block);
             }
-            public Primitive GetPropertyValue(object block, PropertyType property, DirectionType direction) {
+            public Primitive GetPropertyValue(object block, Property property, Direction direction) {
                 return propertyHandlers[property].GetDirection((T)block, direction);
             }
-            public void SetPropertyValue(Object block, PropertyType property, Primitive value) {
+            public void SetPropertyValue(Object block, Property property, Primitive value) {
                 Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue());
                 propertyHandlers[property].Set((T)block, value);
             }
-            public void SetPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value) {
+            public void SetPropertyValue(Object block, Property property, Direction direction, Primitive value) {
                 Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property].SetDirection((T)block, direction, value);
             }
-            public void IncrementPropertyValue(Object block, PropertyType property, Primitive value) {
+            public void IncrementPropertyValue(Object block, Property property, Primitive value) {
                 Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue());
                 propertyHandlers[property].Increment((T)block, value);
             }
-            public void IncrementPropertyValue(Object block, PropertyType property, DirectionType direction, Primitive value) {
+            public void IncrementPropertyValue(Object block, Property property, Direction direction, Primitive value) {
                 Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property].IncrementDirection((T)block, direction, value);
             }
-            public void MoveNumericPropertyValue(Object block, PropertyType property, DirectionType direction) {
+            public void MoveNumericPropertyValue(Object block, Property property, Direction direction) {
                 Debug("Moving " + Name(block) + " " + property + " in " + direction + " direction");
                 propertyHandlers[property].Move((T)block, direction);
             }
-            public void ReverseNumericPropertyValue(Object block, PropertyType property) {
+            public void ReverseNumericPropertyValue(Object block, Property property) {
                 Debug("Reversing " + Name(block) + " " + property);
                 propertyHandlers[property].Reverse((T)block);
             }
@@ -357,39 +357,39 @@ namespace IngameScript {
             }
             protected abstract string Name(T block);
 
-            protected void AddBooleanHandler(PropertyType property, GetBooleanProperty<T> Get) {
+            protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get) {
                 AddBooleanHandler(property, Get, (b, v) => { });
             }
 
-            protected void AddBooleanHandler(PropertyType property, GetBooleanProperty<T> Get, SetBooleanProperty<T> Set) {
+            protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get, SetBooleanProperty<T> Set) {
                 propertyHandlers[property] = new SimpleBooleanPropertyHandler<T>(Get, Set);
             }
 
-            protected void AddPropertyHandler(PropertyType property, PropertyHandler<T> handler) {
+            protected void AddPropertyHandler(Property property, PropertyHandler<T> handler) {
                 propertyHandlers[property] = handler;
             }
 
-            protected void AddStringHandler(PropertyType property, GetStringProperty<T> Get, SetStringProperty<T> Set) {
+            protected void AddStringHandler(Property property, GetStringProperty<T> Get, SetStringProperty<T> Set) {
                 propertyHandlers[property] = new SimpleStringPropertyHandler<T>(Get, Set);
             }
 
-            protected void AddNumericHandler(PropertyType property, GetNumericProperty<T> Get) {
+            protected void AddNumericHandler(Property property, GetNumericProperty<T> Get) {
                 propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, (b, v) => { }, 0);
             }
 
-            protected void AddNumericHandler(PropertyType property, GetNumericProperty<T> Get, SetNumericProperty<T> Set, float delta) {
+            protected void AddNumericHandler(Property property, GetNumericProperty<T> Get, SetNumericProperty<T> Set, float delta) {
                 propertyHandlers[property] = new SimpleNumericPropertyHandler<T>(Get, Set, delta);
             }
 
-            protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get) {
+            protected void AddVectorHandler(Property property, GetVectorProperty<T> Get) {
                 propertyHandlers[property] = new SimpleVectorPropertyHandler<T>(Get, (b,v) => { });
             }
 
-            protected void AddVectorHandler(PropertyType property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
+            protected void AddVectorHandler(Property property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
                 propertyHandlers[property] = new SimpleVectorPropertyHandler<T>(Get, Set);
             }
 
-            protected void AddColorHandler(PropertyType property, GetColorProperty<T> Get, SetColorProperty<T> Set) {
+            protected void AddColorHandler(Property property, GetColorProperty<T> Get, SetColorProperty<T> Set) {
                 propertyHandlers[property] = new SimpleColorPropertyHandler<T>(Get, Set);
             }
         }

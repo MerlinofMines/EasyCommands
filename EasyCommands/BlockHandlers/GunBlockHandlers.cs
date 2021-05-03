@@ -21,11 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class TurretBlockHandler<T> : GunBlockHandler<IMyLargeTurretBase> {
             public TurretBlockHandler() : base() {
-                AddBooleanHandler(PropertyType.LOCKED, b => b.IsAimed, (b, v) => { if (!v) ResetTarget(b); });
-                AddBooleanHandler(PropertyType.AUTO, b => b.EnableIdleRotation, (b, v) => b.EnableIdleRotation = v);
-                AddVectorHandler(PropertyType.TARGET, GetTarget, SetTarget);
-                AddVectorHandler(PropertyType.TARGET_VELOCITY, b => b.GetTargetedEntity().Velocity, (b, v) => b.TrackTarget(GetTarget(b), v));
-                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.TARGET;
+                AddBooleanHandler(Property.LOCKED, b => b.IsAimed, (b, v) => { if (!v) ResetTarget(b); });
+                AddBooleanHandler(Property.AUTO, b => b.EnableIdleRotation, (b, v) => b.EnableIdleRotation = v);
+                AddVectorHandler(Property.TARGET, GetTarget, SetTarget);
+                AddVectorHandler(Property.TARGET_VELOCITY, b => b.GetTargetedEntity().Velocity, (b, v) => b.TrackTarget(GetTarget(b), v));
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
             }
 
             Vector3D GetTarget(IMyLargeTurretBase turret) {
@@ -57,12 +57,12 @@ namespace IngameScript {
 
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
-                AddNumericHandler(PropertyType.RANGE, GetRange, SetRange, 100);
-                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.IsShooting, Shoot);
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.TRIGGER;
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.RANGE;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
-                defaultDirection = DirectionType.UP;
+                AddNumericHandler(Property.RANGE, GetRange, SetRange, 100);
+                AddBooleanHandler(Property.TRIGGER, (b) => b.IsShooting, Shoot);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                defaultDirection = Direction.UP;
             }
             void Shoot(IMyUserControllableGun gun, bool b) { if(b) gun.ApplyAction("Shoot_On"); else gun.ApplyAction("Shoot_Off"); }
             float GetRange(IMyUserControllableGun gun) { return gun.GetValueFloat("Range"); }

@@ -21,17 +21,17 @@ namespace IngameScript {
     partial class Program {
         public class SphericalGravityGeneratorBlockHandler : FunctionalBlockHandler<IMyGravityGeneratorSphere> {
             public SphericalGravityGeneratorBlockHandler() {
-                AddNumericHandler(PropertyType.STRENGTH, b => b.GravityAcceleration, (b,v) => b.GravityAcceleration = v, 0.25f);
-                AddNumericHandler(PropertyType.RANGE, b => b.Radius, (b, v) => b.Radius = v, 25);
+                AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b,v) => b.GravityAcceleration = v, 0.25f);
+                AddNumericHandler(Property.RANGE, b => b.Radius, (b, v) => b.Radius = v, 25);
             }
         }
 
         public class GravityGeneratorBlockHandler : FunctionalBlockHandler<IMyGravityGenerator> {
             public GravityGeneratorBlockHandler() {
-                AddNumericHandler(PropertyType.STRENGTH, b => b.GravityAcceleration, (b, v) => b.GravityAcceleration = v, 0.25f);
-                propertyHandlers.Add(PropertyType.RANGE, new GravityFieldHandler());
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.STRENGTH;
-                defaultPropertiesByPrimitive[PrimitiveType.VECTOR] = PropertyType.RANGE;
+                AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b, v) => b.GravityAcceleration = v, 0.25f);
+                propertyHandlers.Add(Property.RANGE, new GravityFieldHandler());
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.RANGE;
             }
         }
 
@@ -40,11 +40,11 @@ namespace IngameScript {
                 b => new VectorPrimitive(new Vector3D(b.FieldSize)),
                 (b, v) => {
                     switch (v.GetPrimitiveType()) {
-                        case PrimitiveType.NUMERIC:
+                        case Return.NUMERIC:
                             float value = CastNumber(v).GetNumericValue();
                             b.FieldSize = new Vector3(value, value, value);
                             break;
-                        case PrimitiveType.VECTOR:
+                        case Return.VECTOR:
                             b.FieldSize = CastVector(v).GetVectorValue();
                             break;
                         default:
@@ -55,14 +55,14 @@ namespace IngameScript {
 
                 GetDirection = (b,d) => {
                     switch(d) {
-                        case DirectionType.UP:
-                        case DirectionType.DOWN:
+                        case Direction.UP:
+                        case Direction.DOWN:
                             return new NumberPrimitive(b.FieldSize.Y);
-                        case DirectionType.LEFT:
-                        case DirectionType.RIGHT:
+                        case Direction.LEFT:
+                        case Direction.RIGHT:
                             return new NumberPrimitive(b.FieldSize.X);
-                        case DirectionType.FORWARD:
-                        case DirectionType.BACKWARD:
+                        case Direction.FORWARD:
+                        case Direction.BACKWARD:
                             return new NumberPrimitive(b.FieldSize.Z);
                         default:
                             throw new Exception("Bad");
@@ -75,16 +75,16 @@ namespace IngameScript {
                     float y = b.FieldSize.Y;
                     float z = b.FieldSize.Z;
                     switch (d) {
-                        case DirectionType.UP:
-                        case DirectionType.DOWN:
+                        case Direction.UP:
+                        case Direction.DOWN:
                             y = value;
                             break;
-                        case DirectionType.LEFT:
-                        case DirectionType.RIGHT:
+                        case Direction.LEFT:
+                        case Direction.RIGHT:
                             x = value;
                             break;
-                        case DirectionType.FORWARD:
-                        case DirectionType.BACKWARD:
+                        case Direction.FORWARD:
+                        case Direction.BACKWARD:
                             z = value;
                             break;
                         default:

@@ -21,11 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class BeaconBlockHandler : FunctionalBlockHandler<IMyBeacon> {
             public BeaconBlockHandler() {
-                AddStringHandler(PropertyType.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
-                AddNumericHandler(PropertyType.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
-                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.TEXT;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RANGE;
-                defaultDirection = DirectionType.UP;
+                AddStringHandler(Property.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
+                AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
+                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                defaultDirection = Direction.UP;
             }
         }
     }

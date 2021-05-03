@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public interface EntityProvider {
             List<Object> GetEntities();
-            BlockType GetBlockType();
+            Block GetBlockType();
         }
 
         public class ConditionalEntityProvider : EntityProvider {
@@ -33,7 +33,7 @@ namespace IngameScript {
                 this.condition = condition;
             }
 
-            public BlockType GetBlockType() {
+            public Block GetBlockType() {
                 return provider.GetBlockType();
             }
 
@@ -51,7 +51,7 @@ namespace IngameScript {
                 this.index = index;
             }
 
-            public BlockType GetBlockType() {
+            public Block GetBlockType() {
                 return provider.GetBlockType();
             }
 
@@ -68,11 +68,11 @@ namespace IngameScript {
         }
 
         public class SelectorEntityProvider : EntityProvider {
-            public BlockType? blockType;
+            public Block? blockType;
             public bool isGroup;
             public Variable selector;
 
-            public SelectorEntityProvider(BlockType? blockType, bool isGroup, Variable selector) {
+            public SelectorEntityProvider(Block? blockType, bool isGroup, Variable selector) {
                 this.blockType = blockType;
                 this.isGroup = isGroup;
                 this.selector = selector;
@@ -81,19 +81,19 @@ namespace IngameScript {
             public List<Object> GetEntities() {
                 String selectorString = CastString(selector.GetValue()).GetStringValue();
                 bool resolvedIsGroup = false;
-                BlockType bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
+                Block bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
                 bool useGroup = isGroup || resolvedIsGroup;
                 List<object> entities = useGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, block => block.CustomName.Equals(selectorString));
                 return entities;
             }
 
-            public BlockType GetBlockType() {
+            public Block GetBlockType() {
                 if (blockType.HasValue) return blockType.Value;
                 bool ignored;
                 return ResolveType(CastString(selector.GetValue()).GetStringValue(), out ignored);
             }
 
-            public BlockType ResolveType(String selector, out bool isGroup) {
+            public Block ResolveType(String selector, out bool isGroup) {
                 var tokens = PROGRAM.ParseTokens(selector);
                 var parameters = PROGRAM.ParseCommandParameters(tokens);
                 var blockType = extractFirst<BlockTypeCommandParameter>(parameters);
@@ -108,13 +108,13 @@ namespace IngameScript {
         }
 
         public class SelfEntityProvider : EntityProvider {
-            public BlockType blockType;
+            public Block blockType;
 
-            public SelfEntityProvider(BlockType blockType) {
+            public SelfEntityProvider(Block blockType) {
                 this.blockType = blockType;
             }
 
-            public BlockType GetBlockType() {
+            public Block GetBlockType() {
                 return blockType;
             }
 
@@ -124,13 +124,13 @@ namespace IngameScript {
         }
 
         public class AllEntityProvider : EntityProvider {
-            public BlockType blockType;
+            public Block blockType;
 
-            public AllEntityProvider(BlockType blockType) {
+            public AllEntityProvider(Block blockType) {
                 this.blockType = blockType;
             }
 
-            public BlockType GetBlockType() {
+            public Block GetBlockType() {
                 return blockType;
             }
 

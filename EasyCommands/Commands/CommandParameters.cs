@@ -85,17 +85,17 @@ namespace IngameScript {
             }
         }
 
-        public class UniOperationCommandParameter : ValueCommandParameter<UniOperandType> {
-            public UniOperationCommandParameter(UniOperandType value) : base(value) {
+        public class UniOperationCommandParameter : ValueCommandParameter<UniOperand> {
+            public UniOperationCommandParameter(UniOperand value) : base(value) {
             }
         }
 
-        public class MultiplyCommandParameter : ValueCommandParameter<BiOperandType> {
-            public MultiplyCommandParameter(BiOperandType value) : base(value) {}
+        public class MultiplyCommandParameter : ValueCommandParameter<BiOperand> {
+            public MultiplyCommandParameter(BiOperand value) : base(value) {}
         }
 
-        public class AddCommandParameter : ValueCommandParameter<BiOperandType> {
-            public AddCommandParameter(BiOperandType value) : base(value) {}
+        public class AddCommandParameter : ValueCommandParameter<BiOperand> {
+            public AddCommandParameter(BiOperand value) : base(value) {}
         }
 
         public class AssignmentCommandParameter : SimpleCommandParameter {
@@ -157,35 +157,35 @@ namespace IngameScript {
             public BooleanCommandParameter(bool value) : base(value) {}
         }
 
-        public class DirectionCommandParameter : ValueCommandParameter<DirectionType> {
-            public DirectionCommandParameter(DirectionType value) : base(value) {}
+        public class DirectionCommandParameter : ValueCommandParameter<Direction> {
+            public DirectionCommandParameter(Direction value) : base(value) {}
         }
 
-        public class PropertyCommandParameter : ValueCommandParameter<PropertyType> {
-            public PropertyCommandParameter(PropertyType value) : base(value) {}
+        public class PropertyCommandParameter : ValueCommandParameter<Property> {
+            public PropertyCommandParameter(Property value) : base(value) {}
         }
 
-        public class UnitCommandParameter : ValueCommandParameter<UnitType> {
-            public UnitCommandParameter(UnitType value) : base(value) {}
+        public class UnitCommandParameter : ValueCommandParameter<Unit> {
+            public UnitCommandParameter(Unit value) : base(value) {}
         }
 
         public class IndexSelectorCommandParameter : ValueCommandParameter<Variable> {
             public IndexSelectorCommandParameter(Variable value) : base(value) {}
         }
 
-        public class ControlCommandParameter : ValueCommandParameter<ControlType> {
-            public ControlCommandParameter(ControlType value) : base(value) {}
+        public class ControlCommandParameter : ValueCommandParameter<Control> {
+            public ControlCommandParameter(Control value) : base(value) {}
         }
 
-        public class FunctionCommandParameter : ValueCommandParameter<FunctionType> {
-            public FunctionCommandParameter(FunctionType value) : base(value) {}
+        public class FunctionCommandParameter : ValueCommandParameter<Function> {
+            public FunctionCommandParameter(Function value) : base(value) {}
         }
 
         public class FunctionDefinitionCommandParameter : SimpleCommandParameter {
-            public FunctionType functionType;
+            public Function functionType;
             public FunctionDefinition functionDefinition;
 
-            public FunctionDefinitionCommandParameter(FunctionType functionType, FunctionDefinition functionDefinition) {
+            public FunctionDefinitionCommandParameter(Function functionType, FunctionDefinition functionDefinition) {
                 this.functionType = functionType;
                 this.functionDefinition = functionDefinition;
             }
@@ -237,13 +237,13 @@ namespace IngameScript {
             }
         }
 
-        public class PropertyAggregationCommandParameter : ValueCommandParameter<PropertyAggregatorType> {
-            public PropertyAggregationCommandParameter(PropertyAggregatorType value) : base(value) {
+        public class PropertyAggregationCommandParameter : ValueCommandParameter<PropertyAggregate> {
+            public PropertyAggregationCommandParameter(PropertyAggregate value) : base(value) {
             }
         }
 
-        public class ComparisonCommandParameter : ValueCommandParameter<ComparisonType> {
-            public ComparisonCommandParameter(ComparisonType value) : base(value) {
+        public class ComparisonCommandParameter : ValueCommandParameter<Comparison> {
+            public ComparisonCommandParameter(Comparison value) : base(value) {
             }
         }
 
@@ -252,8 +252,8 @@ namespace IngameScript {
             }
         }
 
-        public class BlockTypeCommandParameter : ValueCommandParameter<BlockType> {
-            public BlockTypeCommandParameter(BlockType value) : base(value) {}
+        public class BlockTypeCommandParameter : ValueCommandParameter<Block> {
+            public BlockTypeCommandParameter(Block value) : base(value) {}
         }
     }
 }

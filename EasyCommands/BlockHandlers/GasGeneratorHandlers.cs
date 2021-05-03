@@ -21,8 +21,8 @@ namespace IngameScript {
     partial class Program {
         public class GasGeneratorHandler : FunctionalBlockHandler<IMyGasGenerator> {
             public GasGeneratorHandler() {
-                AddBooleanHandler(PropertyType.AUTO, (b) => b.AutoRefill, (b, v) => b.AutoRefill = v);
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.AUTO;
+                AddBooleanHandler(Property.AUTO, (b) => b.AutoRefill, (b, v) => b.AutoRefill = v);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
             }
         }
     }

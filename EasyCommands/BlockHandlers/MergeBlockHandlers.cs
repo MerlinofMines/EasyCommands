@@ -21,9 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class MergeBlockHandler : FunctionalBlockHandler<IMyShipMergeBlock> {
             public MergeBlockHandler() : base() {
-                AddBooleanHandler(PropertyType.LOCKED, IsMerged);
-                AddBooleanHandler(PropertyType.CONNECTED, IsMerged);
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.CONNECTED;
+                AddBooleanHandler(Property.LOCKED, IsMerged);
+                AddBooleanHandler(Property.CONNECTED, IsMerged);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
             }
 
             //https://forum.keenswh.com/threads/merge-block-lock-state-checking.7378572/

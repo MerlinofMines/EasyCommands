@@ -14,7 +14,7 @@ namespace IngameScript
         {
             public SorterBlockerHandler()
             {
-                AddBooleanHandler(PropertyType.AUTO, (b) => b.DrainAll, (b,v) => b.DrainAll = v);
+                AddBooleanHandler(Property.AUTO, (b) => b.DrainAll, (b,v) => b.DrainAll = v);
             }
         }
     }

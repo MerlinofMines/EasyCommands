@@ -21,13 +21,13 @@ namespace IngameScript {
     partial class Program {
         public class TextSurfaceHandler : BlockHandler<IMyTextSurface> {
             public TextSurfaceHandler() {
-                AddStringHandler(PropertyType.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
-                AddColorHandler(PropertyType.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
-                AddPropertyHandler(PropertyType.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
-                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.TEXT;
-                defaultPropertiesByPrimitive[PrimitiveType.COLOR] = PropertyType.COLOR;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.FONT_SIZE;
-                defaultDirection = DirectionType.UP;
+                AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
+                AddColorHandler(Property.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
+                AddPropertyHandler(Property.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
+                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
+                defaultPropertiesByDirection[Direction.UP] = Property.FONT_SIZE;
+                defaultDirection = Direction.UP;
             }
 
             public override List<IMyTextSurface> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {

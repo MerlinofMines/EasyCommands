@@ -21,51 +21,51 @@ namespace IngameScript {
     partial class Program {
 
         public abstract class Primitive {
-            PrimitiveType type;
+            Return type;
 
-            protected Primitive(PrimitiveType type) {
+            protected Primitive(Return type) {
                 this.type = type;
             }
 
             public abstract object GetValue();
 
-            public PrimitiveType GetPrimitiveType() {
+            public Return GetPrimitiveType() {
                 return type;
             }
 
             public Primitive Plus(Primitive p) {
-                return PerformOperation(BiOperandType.ADD, this, p);
+                return PerformOperation(BiOperand.ADD, this, p);
             }
 
             public Primitive Minus(Primitive p) {
-                return PerformOperation(BiOperandType.SUBTACT, this, p);
+                return PerformOperation(BiOperand.SUBTACT, this, p);
             }
 
             public Primitive Multiply(Primitive p) {
-                return PerformOperation(BiOperandType.MULTIPLY, this, p);
+                return PerformOperation(BiOperand.MULTIPLY, this, p);
             }
 
             public Primitive Divide(Primitive p) {
-                return PerformOperation(BiOperandType.DIVIDE, this, p);
+                return PerformOperation(BiOperand.DIVIDE, this, p);
             }
 
             public int Compare(Primitive p) {
-                return Convert.ToInt32(CastNumber(PerformOperation(BiOperandType.COMPARE, this, p)).GetNumericValue());
+                return Convert.ToInt32(CastNumber(PerformOperation(BiOperand.COMPARE, this, p)).GetNumericValue());
             }
 
             public Primitive Not() {
-                return PerformOperation(UniOperandType.NOT, this);
+                return PerformOperation(UniOperand.NOT, this);
             }
         }
 
-        static Dictionary<Type, PrimitiveType> PrimitiveTypeMap = new Dictionary<Type, PrimitiveType>() {
-            { typeof(bool), PrimitiveType.BOOLEAN },
-            { typeof(string), PrimitiveType.STRING},
-            { typeof(float), PrimitiveType.NUMERIC },
-            { typeof(int), PrimitiveType.NUMERIC },
-            { typeof(double), PrimitiveType.NUMERIC },
-            { typeof(Vector3D), PrimitiveType.VECTOR},
-            { typeof(Color), PrimitiveType.COLOR }
+        static Dictionary<Type, Return> PrimitiveTypeMap = new Dictionary<Type, Return>() {
+            { typeof(bool), Return.BOOLEAN },
+            { typeof(string), Return.STRING},
+            { typeof(float), Return.NUMERIC },
+            { typeof(int), Return.NUMERIC },
+            { typeof(double), Return.NUMERIC },
+            { typeof(Vector3D), Return.VECTOR},
+            { typeof(Color), Return.COLOR }
         };
 
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
@@ -78,8 +78,8 @@ namespace IngameScript {
             { "black", Color.Black}
         };
 
-        static PrimitiveType GetType(Type type) {
-            PrimitiveType primitiveType;
+        static Return GetType(Type type) {
+            Return primitiveType;
             if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
             return primitiveType;
         }
@@ -104,28 +104,28 @@ namespace IngameScript {
 
         public static BooleanPrimitive CastBoolean(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.BOOLEAN: return (BooleanPrimitive)p;
-                case PrimitiveType.NUMERIC: return new BooleanPrimitive((float)p.GetValue() > 0);
-                case PrimitiveType.STRING: return new BooleanPrimitive(bool.Parse((string)p.GetValue()));
+                case Return.BOOLEAN: return (BooleanPrimitive)p;
+                case Return.NUMERIC: return new BooleanPrimitive((float)p.GetValue() > 0);
+                case Return.STRING: return new BooleanPrimitive(bool.Parse((string)p.GetValue()));
                 default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
             }
         }
 
         public static NumberPrimitive CastNumber(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
-                case PrimitiveType.NUMERIC: return (NumberPrimitive)p;
-                case PrimitiveType.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
-                case PrimitiveType.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
+                case Return.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
+                case Return.NUMERIC: return (NumberPrimitive)p;
+                case Return.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
+                case Return.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
                 default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
             }
         }
 
         public static StringPrimitive CastString(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.VECTOR:
+                case Return.VECTOR:
                     return new StringPrimitive(VectorToString(CastVector(p).GetVectorValue()));
-                case PrimitiveType.COLOR:
+                case Return.COLOR:
                     return new StringPrimitive(ColorToString(CastColor(p).GetColorValue()));
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
@@ -133,8 +133,8 @@ namespace IngameScript {
 
         public static VectorPrimitive CastVector(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.VECTOR: return (VectorPrimitive)p;
-                case PrimitiveType.STRING:
+                case Return.VECTOR: return (VectorPrimitive)p;
+                case Return.STRING:
                     Vector3D vector;
                     if (GetVector((String)p.GetValue(), out vector)) return new VectorPrimitive(vector);
                     goto default;
@@ -144,12 +144,12 @@ namespace IngameScript {
 
         public static ColorPrimitive CastColor(Primitive p) {
             switch (p.GetPrimitiveType()) {
-                case PrimitiveType.COLOR: return (ColorPrimitive)p;
-                case PrimitiveType.STRING:
+                case Return.COLOR: return (ColorPrimitive)p;
+                case Return.STRING:
                     Color color;
                     if (GetColor((String)p.GetValue(), out color)) return new ColorPrimitive(color);
                     goto default;
-                case PrimitiveType.NUMERIC:
+                case Return.NUMERIC:
                     return new ColorPrimitive(new Color((float)p.GetValue()));
                 default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
             }
@@ -199,7 +199,7 @@ namespace IngameScript {
         public class BooleanPrimitive : Primitive {
             private bool value;
 
-            public BooleanPrimitive(bool value) : base(PrimitiveType.BOOLEAN) { this.value = value; }
+            public BooleanPrimitive(bool value) : base(Return.BOOLEAN) { this.value = value; }
 
             public override object GetValue() {
                 return value;
@@ -213,7 +213,7 @@ namespace IngameScript {
         public class NumberPrimitive : Primitive {
             float number;
 
-            public NumberPrimitive(float number) : base(PrimitiveType.NUMERIC) {
+            public NumberPrimitive(float number) : base(Return.NUMERIC) {
                 this.number = number;
             }
 
@@ -229,7 +229,7 @@ namespace IngameScript {
         public class StringPrimitive : Primitive {
             String stringValue;
 
-            public StringPrimitive(String value) : base(PrimitiveType.STRING) {
+            public StringPrimitive(String value) : base(Return.STRING) {
                 stringValue = value;
             }
 
@@ -245,7 +245,7 @@ namespace IngameScript {
         public class VectorPrimitive : Primitive {
             Vector3D vector;
 
-            public VectorPrimitive(Vector3D vector) : base(PrimitiveType.VECTOR) {
+            public VectorPrimitive(Vector3D vector) : base(Return.VECTOR) {
                 this.vector = vector;
             }
 
@@ -261,7 +261,7 @@ namespace IngameScript {
         public class ColorPrimitive : Primitive {
             public Color color;
 
-            public ColorPrimitive(Color color) : base(PrimitiveType.COLOR) {
+            public ColorPrimitive(Color color) : base(Return.COLOR) {
                 this.color = color;
             }
 

@@ -21,15 +21,15 @@ namespace IngameScript {
     partial class Program {
         public class ParachuteBlockHandler : FunctionalBlockHandler<IMyParachute> {
             public ParachuteBlockHandler() {
-                AddBooleanHandler(PropertyType.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddBooleanHandler(PropertyType.AUTO, (b) => b.GetValueBool("AutoDeploy"), (b, v) => b.SetValueBool("AutoDeploy", v));
-                AddBooleanHandler(PropertyType.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddNumericHandler(PropertyType.RATIO, (b) => 1 - b.OpenRatio);
-                AddPropertyHandler(PropertyType.HEIGHT, new PropertyValueNumericPropertyHandler<IMyParachute>("AutoDeployHeight", 500));
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.OPEN;
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.HEIGHT;
-                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.RATIO);
-                defaultDirection = DirectionType.UP;
+                AddBooleanHandler(Property.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddBooleanHandler(Property.AUTO, (b) => b.GetValueBool("AutoDeploy"), (b, v) => b.SetValueBool("AutoDeploy", v));
+                AddBooleanHandler(Property.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddNumericHandler(Property.RATIO, (b) => 1 - b.OpenRatio);
+                AddPropertyHandler(Property.HEIGHT, new PropertyValueNumericPropertyHandler<IMyParachute>("AutoDeployHeight", 500));
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.OPEN;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.HEIGHT;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
+                defaultDirection = Direction.UP;
 
             }
         }

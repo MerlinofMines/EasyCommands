@@ -21,12 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class ProgramBlockHandler : FunctionalBlockHandler<IMyProgrammableBlock> {
             public ProgramBlockHandler() : base() {
-                AddBooleanHandler(PropertyType.RUNNING, block => block.DetailedInfo.EndsWith("Running\n"));
-                AddBooleanHandler(PropertyType.STOPPED, block => block.DetailedInfo.EndsWith("Stopped\n"));
-                AddBooleanHandler(PropertyType.PAUSED, block => block.DetailedInfo.EndsWith("Paused\n"));
-                AddBooleanHandler(PropertyType.COMPLETE, block => block.DetailedInfo.EndsWith("Complete\n"));
-                AddStringHandler(PropertyType.RUN, (block) => "", (block, value) => block.TryRun(value));
-                defaultPropertiesByPrimitive[PrimitiveType.STRING] = PropertyType.RUN;
+                AddBooleanHandler(Property.RUNNING, block => block.DetailedInfo.EndsWith("Running\n"));
+                AddBooleanHandler(Property.STOPPED, block => block.DetailedInfo.EndsWith("Stopped\n"));
+                AddBooleanHandler(Property.PAUSED, block => block.DetailedInfo.EndsWith("Paused\n"));
+                AddBooleanHandler(Property.COMPLETE, block => block.DetailedInfo.EndsWith("Complete\n"));
+                AddStringHandler(Property.RUN, (block) => "", (block, value) => block.TryRun(value));
+                defaultPropertiesByPrimitive[Return.STRING] = Property.RUN;
             }
         }
     }

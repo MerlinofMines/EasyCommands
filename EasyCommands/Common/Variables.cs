@@ -64,9 +64,9 @@ namespace IngameScript {
 
         public class UniOperandVariable : Variable {
             public Variable a;
-            public UniOperandType operand;
+            public UniOperand operand;
 
-            public UniOperandVariable(UniOperandType operand, Variable a) {
+            public UniOperandVariable(UniOperand operand, Variable a) {
                 this.operand = operand;
                 this.a = a;
             }
@@ -78,9 +78,9 @@ namespace IngameScript {
 
         public class BiOperandVariable : Variable {
             public Variable a, b;
-            public BiOperandType operand;
+            public BiOperand operand;
 
-            public BiOperandVariable(BiOperandType operand, Variable a, Variable b) {
+            public BiOperandVariable(BiOperand operand, Variable a, Variable b) {
                 this.operand = operand;
                 this.a = a;
                 this.b = b;
@@ -127,12 +127,12 @@ namespace IngameScript {
         }
 
         public class AggregatePropertyVariable : Variable {
-            public PropertyAggregatorType aggregationType;
+            public PropertyAggregate aggregationType;
             public EntityProvider entityProvider;
-            public PropertyType? property;
-            public DirectionType? direction;
+            public Property? property;
+            public Direction? direction;
 
-            public AggregatePropertyVariable(PropertyAggregatorType aggregationType, EntityProvider entityProvider, PropertyType? property, DirectionType? direction) {
+            public AggregatePropertyVariable(PropertyAggregate aggregationType, EntityProvider entityProvider, Property? property, Direction? direction) {
                 this.aggregationType = aggregationType;
                 this.entityProvider = entityProvider;
                 this.property = property;
@@ -142,28 +142,28 @@ namespace IngameScript {
             public Primitive GetValue() {
                 List<Object> blocks = entityProvider.GetEntities();
 
-                if(aggregationType == PropertyAggregatorType.COUNT) {
+                if(aggregationType == PropertyAggregate.COUNT) {
                     return new NumberPrimitive(blocks.Count);
                 }
 
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
 
-                PropertyType p = property.HasValue ? property.Value : handler.GetDefaultProperty(PrimitiveType.NUMERIC);
+                Property p = property.HasValue ? property.Value : handler.GetDefaultProperty(Return.NUMERIC);
 
                 List<Primitive> propertyValues = blocks.Select(b => {
                     return direction.HasValue ? handler.GetPropertyValue(b, p, direction.Value) : handler.GetPropertyValue(b, p);
                 }).ToList();
 
                 switch(aggregationType) {
-                    case PropertyAggregatorType.VALUE:
+                    case PropertyAggregate.VALUE:
                         return ValueAggregator(propertyValues);
-                    case PropertyAggregatorType.SUM:
+                    case PropertyAggregate.SUM:
                         return SumAggregator(propertyValues);
-                    case PropertyAggregatorType.AVG:
+                    case PropertyAggregate.AVG:
                         return AverageAggregator(propertyValues);
-                    case PropertyAggregatorType.MIN:
+                    case PropertyAggregate.MIN:
                         return MinAggregator(propertyValues);
-                    case PropertyAggregatorType.MAX:
+                    case PropertyAggregate.MAX:
                         return MaxAggregator(propertyValues);
                     default: throw new Exception("Unknown Aggregation type: " + aggregationType);
                 }

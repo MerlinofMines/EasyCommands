@@ -49,7 +49,7 @@ namespace IngameScript {
             //SelfSelectorProcessor
             OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
-                (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : BlockType.PROGRAM))),
+                (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
 
             //SelectorProcessor
             new BranchingProcessor<StringCommandParameter>(
@@ -70,7 +70,7 @@ namespace IngameScript {
             //VariableSelectorProcessor
             TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (BlockType?)null, group.HasValue(), p.value))),
+                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //Primitive Procesor
             new PrimitiveProcessor(),
@@ -105,7 +105,7 @@ namespace IngameScript {
             //AndProcessor
             TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.AND, left.GetValue().value, right.GetValue().value))),
+                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.AND, left.GetValue().value, right.GetValue().value))),
             TwoValueRule<AndCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p,left,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
@@ -113,7 +113,7 @@ namespace IngameScript {
             //OrProcessor
             TwoValueRule<OrCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperandType.OR, left.GetValue().value, right.GetValue().value))),
+                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.GetValue().value, right.GetValue().value))),
             TwoValueRule<OrCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p,left,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
@@ -121,7 +121,7 @@ namespace IngameScript {
             //NotProcessor
             OneValueRule<NotCommandParameter,VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, right.GetValue().value))),
+                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
 
             //VariableComparisonProcessor
             TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
@@ -134,9 +134,9 @@ namespace IngameScript {
                 (p,prop,dir,var) => var.HasValue() || prop.HasValue(),
                 (p,prop,dir,var) => {
                     Variable variable = var.HasValue() ? var.GetValue().value : new StaticVariable(new BooleanPrimitive(true));
-                    PropertyType? property = null;
+                    Property? property = null;
                     if(prop.HasValue()) property = prop.GetValue().value;
-                    DirectionType? direction = null;
+                    Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
                     return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
                 }),
@@ -161,9 +161,9 @@ namespace IngameScript {
                 requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
                 (p,selector,property,direction) => selector.HasValue(),
                 (p,selector,prop,dir) => {
-                    PropertyType? property = null;
+                    Property? property = null;
                     if(prop.HasValue()) property = prop.GetValue().value;
-                    DirectionType? direction = null;
+                    Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
                     return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
                 }),
@@ -201,7 +201,7 @@ namespace IngameScript {
             //IfProcessor
             OneValueRule<IfCommandParameter,VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperandType.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
+                (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
 
             //ActionProcessor
             BlockCommandProcessor(),
@@ -210,7 +210,7 @@ namespace IngameScript {
             new BranchingProcessor<SelectorCommandParameter>(
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregatorType.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (DirectionType?)null))),
+                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (Direction?)null))),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!
@@ -230,7 +230,7 @@ namespace IngameScript {
             TwoValueRule<WaitCommandParameter,VariableCommandParameter,UnitCommandParameter>(
                 optionalRight<VariableCommandParameter>(),optionalRight<UnitCommandParameter>(),
                 (p,time,unit) => {
-                    UnitType units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? UnitType.SECONDS : UnitType.TICKS;
+                    Unit units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? Unit.SECONDS : Unit.TICKS;
                     Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(new NumberPrimitive(1));
                     return new CommandReferenceParameter(new WaitCommand(var, units));
                 }),
@@ -693,7 +693,7 @@ namespace IngameScript {
                 if (reverseProcessor.f.HasValue()) commandParameters.Add(reverseProcessor.f.GetValue());
                 if (notProcessor.f.HasValue()) {
                     VariableCommandParameter value = extractFirst<VariableCommandParameter>(commandParameters) ?? new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(true)));
-                    commandParameters.Add(new VariableCommandParameter(new UniOperandVariable(UniOperandType.NOT, value.value)));
+                    commandParameters.Add(new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, value.value)));
                 }
 
                 BlockCommand command = new BlockCommand(commandParameters);

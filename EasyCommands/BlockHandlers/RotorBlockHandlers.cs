@@ -21,16 +21,16 @@ namespace IngameScript {
     partial class Program {
         public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             public RotorBlockHandler() {
-                AddPropertyHandler(PropertyType.ANGLE, new RotorAngleHandler());
-                AddPropertyHandler(PropertyType.RANGE, new SimpleNumericDirectionPropertyHandler<IMyMotorStator>(GetLimit, SetLimit, DirectionType.UP));
-                AddNumericHandler(PropertyType.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
-                AddNumericHandler(PropertyType.HEIGHT, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
-                defaultPropertiesByPrimitive[PrimitiveType.NUMERIC] = PropertyType.ANGLE;
-                defaultPropertiesByDirection.Add(DirectionType.UP, PropertyType.HEIGHT);
-                defaultPropertiesByDirection.Add(DirectionType.DOWN, PropertyType.HEIGHT);
-                defaultPropertiesByDirection.Add(DirectionType.CLOCKWISE, PropertyType.ANGLE);
-                defaultPropertiesByDirection.Add(DirectionType.COUNTERCLOCKWISE, PropertyType.ANGLE);
-                defaultDirection = DirectionType.CLOCKWISE;
+                AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
+                AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyMotorStator>(GetLimit, SetLimit, Direction.UP));
+                AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
+                AddNumericHandler(Property.HEIGHT, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.ANGLE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.HEIGHT);
+                defaultPropertiesByDirection.Add(Direction.DOWN, Property.HEIGHT);
+                defaultPropertiesByDirection.Add(Direction.CLOCKWISE, Property.ANGLE);
+                defaultPropertiesByDirection.Add(Direction.COUNTERCLOCKWISE, Property.ANGLE);
+                defaultDirection = Direction.CLOCKWISE;
             }
         }
 
@@ -41,43 +41,43 @@ namespace IngameScript {
                 Set = RotateToValue;
                 SetDirection = (b, d, v) => RotateToValue(b, v, d);
                 IncrementDirection = (b, d, v) => {
-                    if (d == DirectionType.CLOCKWISE || d == DirectionType.UP) RotateToValue(b, Get(b).Plus(v), d);
-                    if (d == DirectionType.COUNTERCLOCKWISE || d == DirectionType.DOWN) RotateToValue(b, Get(b).Minus(v), d);
+                    if (d == Direction.CLOCKWISE || d == Direction.UP) RotateToValue(b, Get(b).Plus(v), d);
+                    if (d == Direction.COUNTERCLOCKWISE || d == Direction.DOWN) RotateToValue(b, Get(b).Minus(v), d);
                 };
-                Increment = (b, v) => IncrementDirection(b, DirectionType.CLOCKWISE, v);
+                Increment = (b, v) => IncrementDirection(b, Direction.CLOCKWISE, v);
                 Move = (b, d) => {
-                    if (d == DirectionType.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
-                    if (d == DirectionType.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
+                    if (d == Direction.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
+                    if (d == Direction.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
                 };
                 Reverse = (b) => b.TargetVelocityRPM *= -1;
             }
         }
 
-        static float GetLimit(IMyMotorStator rotor, DirectionType direction) {
+        static float GetLimit(IMyMotorStator rotor, Direction direction) {
             switch (direction) {
-                case DirectionType.UP:
-                case DirectionType.CLOCKWISE:
-                case DirectionType.FORWARD:
+                case Direction.UP:
+                case Direction.CLOCKWISE:
+                case Direction.FORWARD:
                     return rotor.UpperLimitDeg;
-                case DirectionType.DOWN:
-                case DirectionType.COUNTERCLOCKWISE:
-                case DirectionType.BACKWARD:
+                case Direction.DOWN:
+                case Direction.COUNTERCLOCKWISE:
+                case Direction.BACKWARD:
                     return rotor.LowerLimitDeg;
                 default:
                     throw new Exception("Unsupported direction: " + direction);
             }
         }
 
-        static void SetLimit(IMyMotorStator rotor, DirectionType direction, float value) {
+        static void SetLimit(IMyMotorStator rotor, Direction direction, float value) {
             switch (direction) {
-                case DirectionType.UP:
-                case DirectionType.CLOCKWISE:
-                case DirectionType.FORWARD:
+                case Direction.UP:
+                case Direction.CLOCKWISE:
+                case Direction.FORWARD:
                     rotor.UpperLimitDeg = value;
                     break;
-                case DirectionType.DOWN:
-                case DirectionType.COUNTERCLOCKWISE:
-                case DirectionType.BACKWARD:
+                case Direction.DOWN:
+                case Direction.COUNTERCLOCKWISE:
+                case Direction.BACKWARD:
                     rotor.LowerLimitDeg = value;
                     break;
                 default:
@@ -86,7 +86,7 @@ namespace IngameScript {
         }
 
         static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
-            if(primitive.GetPrimitiveType()!=PrimitiveType.NUMERIC) {
+            if(primitive.GetPrimitiveType()!=Return.NUMERIC) {
                 throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 
@@ -103,8 +103,8 @@ namespace IngameScript {
             }
         }
 
-        static void RotateToValue(IMyMotorStator rotor, Primitive primitive, DirectionType direction) {
-            if (primitive.GetPrimitiveType() != PrimitiveType.NUMERIC) {
+        static void RotateToValue(IMyMotorStator rotor, Primitive primitive, Direction direction) {
+            if (primitive.GetPrimitiveType() != Return.NUMERIC) {
                 throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 
@@ -112,12 +112,12 @@ namespace IngameScript {
             float currentAngle = rotor.Angle * (180 / (float)Math.PI);
 
             switch (direction) {
-                case DirectionType.CLOCKWISE:
+                case Direction.CLOCKWISE:
                     if (value < currentAngle) value = GetCorrectedAngle(value + 360);
                     rotor.UpperLimitDeg = value;
                     rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
                     break;
-                case DirectionType.COUNTERCLOCKWISE:
+                case Direction.COUNTERCLOCKWISE:
                     if (value > currentAngle) value = GetCorrectedAngle(value - 360);
                     rotor.LowerLimitDeg = value;
                     rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);

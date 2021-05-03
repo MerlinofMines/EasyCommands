@@ -21,11 +21,11 @@ namespace IngameScript {
     partial class Program {
         public class DoorBlockHandler : FunctionalBlockHandler<IMyDoor> {
             public DoorBlockHandler() : base() {
-                AddBooleanHandler(PropertyType.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddPropertyHandler(PropertyType.RATIO, new DoorRatioHandler());
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.OPEN;
-                defaultPropertiesByDirection[DirectionType.UP] = PropertyType.RATIO;
-                defaultDirection = DirectionType.UP;
+                AddBooleanHandler(Property.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddPropertyHandler(Property.RATIO, new DoorRatioHandler());
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.OPEN;
+                defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
+                defaultDirection = Direction.UP;
             }
 
             public class DoorRatioHandler : PropertyHandler<IMyDoor> {
@@ -37,8 +37,8 @@ namespace IngameScript {
                     IncrementDirection = (b, d, v) => Exception();
                     Reverse = (b) => b.ToggleDoor();
                     Move = (b, d) => {
-                        if (d == DirectionType.UP) b.OpenDoor();
-                        if (d == DirectionType.DOWN) b.CloseDoor();
+                        if (d == Direction.UP) b.OpenDoor();
+                        if (d == Direction.DOWN) b.CloseDoor();
                     };
                 }
             }

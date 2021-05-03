@@ -21,10 +21,10 @@ namespace IngameScript {
     partial class Program {
         public class LandingGearHandler : FunctionalBlockHandler<IMyLandingGear> {
             public LandingGearHandler() {
-                AddBooleanHandler(PropertyType.AUTO, (b) => b.AutoLock, (b, v) => b.AutoLock = v);
-                AddBooleanHandler(PropertyType.LOCKED, Connected, Connect);
-                AddBooleanHandler(PropertyType.CONNECTED, Connected, Connect);
-                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.LOCKED;
+                AddBooleanHandler(Property.AUTO, (b) => b.AutoLock, (b, v) => b.AutoLock = v);
+                AddBooleanHandler(Property.LOCKED, Connected, Connect);
+                AddBooleanHandler(Property.CONNECTED, Connected, Connect);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.LOCKED;
             }
 
             static bool Connected(IMyLandingGear gear) {

@@ -71,13 +71,13 @@ namespace IngameScript {
         }
 
         public class FunctionCommand : Command {
-            public FunctionType type;
+            public Function type;
             public FunctionDefinition functionDefinition;
             public Dictionary<String, Variable> inputParameters;
 
             MultiActionCommand function;
 
-            public FunctionCommand(FunctionType type, FunctionDefinition functionDefinition, Dictionary<string, Variable> inputParameters) {
+            public FunctionCommand(Function type, FunctionDefinition functionDefinition, Dictionary<string, Variable> inputParameters) {
                 this.type = type;
                 this.functionDefinition = functionDefinition;
                 this.inputParameters = inputParameters;
@@ -93,9 +93,9 @@ namespace IngameScript {
                     }
                 }
                 switch (type) {
-                    case FunctionType.GOSUB:
+                    case Function.GOSUB:
                         return function.Execute();
-                    case FunctionType.GOTO:
+                    case Function.GOTO:
                         currentThread.Command = function;
                         currentThread.SetName(functionDefinition.functionName);
                         return false;
@@ -134,30 +134,30 @@ namespace IngameScript {
         }
 
         public class ControlCommand : Command {
-            public ControlType controlType;
+            public Control controlType;
             public ControlCommand(List<CommandParameter> parameters) {
                 int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
                 if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
                 controlType = ((ControlCommandParameter)parameters[controlIndex]).value;
             }
 
-            public ControlCommand(ControlType controlType) {
+            public ControlCommand(Control controlType) {
                 this.controlType = controlType;
             }
 
             public override bool Execute() {
                 switch (controlType) {
-                    case ControlType.STOP:
+                    case Control.STOP:
                         PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.STOPPED);
-                    case ControlType.RESTART:
+                    case Control.RESTART:
                         PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.RUNNING);
-                    case ControlType.PAUSE:
+                    case Control.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
-                    case ControlType.START:
+                    case Control.START:
                         return true;
-                    case ControlType.REPEAT:
+                    case Control.REPEAT:
                         Thread currentThread = PROGRAM.GetCurrentThread();
                         currentThread.Command = currentThread.Command.Clone();
                         return false;
@@ -169,10 +169,10 @@ namespace IngameScript {
 
         public class WaitCommand : Command {
             public Variable waitInterval;
-            public UnitType units;
+            public Unit units;
             int ticksLeft = -1;
 
-            public WaitCommand(Variable waitInterval, UnitType units) {
+            public WaitCommand(Variable waitInterval, Unit units) {
                 this.waitInterval = waitInterval;
                 this.units = units;
             }
@@ -187,11 +187,11 @@ namespace IngameScript {
                 return ticksLeft-- <= 0;
             }
 
-            int getTicks(float numeric, UnitType unitType) {
+            int getTicks(float numeric, Unit unitType) {
                 switch (unitType) {
-                    case UnitType.SECONDS:
+                    case Unit.SECONDS:
                         return (int)(numeric * 60);//Assume 60 ticks / second
-                    case UnitType.TICKS:
+                    case Unit.TICKS:
                         return (int)numeric;
                     default:
                         throw new Exception("Unsupported Unit Type: " + unitType);
@@ -272,21 +272,21 @@ namespace IngameScript {
                     //Primitive Handlers
                     new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
                         Primitive result = v.value.GetValue();
-                        PropertyType propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
+                        Property propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
                         b.SetPropertyValue(e, propertyType, v.value.GetValue());
                     }),
                     new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
                         b.SetPropertyValue(e, p.value, new BooleanPrimitive(true));
                     }),
                     new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
-                        PropertyType propertyType = b.GetDefaultProperty(d.value);
+                        Property propertyType = b.GetDefaultProperty(d.value);
                         b.MoveNumericPropertyValue(e, propertyType, d.value);
                     }),
                     new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
                         b.SetPropertyValue(e, p.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
-                        PropertyType property = b.GetDefaultProperty(d.value);
+                        Property property = b.GetDefaultProperty(d.value);
                         b.SetPropertyValue(e, property, d.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
@@ -296,7 +296,7 @@ namespace IngameScript {
                         b.IncrementPropertyValue(e,p.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
-                        PropertyType property = b.GetDefaultProperty(d.value);
+                        Property property = b.GetDefaultProperty(d.value);
                         b.IncrementPropertyValue(e,property,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
@@ -307,7 +307,7 @@ namespace IngameScript {
                     new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
                         b.ReverseNumericPropertyValue(e, p.value); }),
                     new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
-                        PropertyType property = b.GetDefaultProperty(b.GetDefaultDirection());
+                        Property property = b.GetDefaultProperty(b.GetDefaultDirection());
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
