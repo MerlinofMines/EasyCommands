@@ -17,6 +17,7 @@ namespace IngameScript {
                 { Block.BATTERY, new BatteryBlockHandler()},
                 { Block.BEACON, new BeaconBlockHandler()},
                 { Block.CAMERA, new CameraBlockHandler() },
+                { Block.CARGO, new CargoHandler() },
                 { Block.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
                 { Block.CONNECTOR, new ConnectorBlockHandler() },
                 { Block.DETECTOR, new OreDetectorHandler() },
@@ -392,6 +393,10 @@ namespace IngameScript {
             }
 
             protected void AddPropertyHandler(Property property, PropertyHandler<T> handler) {
+                propertyHandlers[property + ""] = handler;
+            }
+
+            protected void AddPropertyHandler(ValueProperty property, PropertyHandler<T> handler) {
                 propertyHandlers[property + ""] = handler;
             }
 

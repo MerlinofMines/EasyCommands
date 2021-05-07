@@ -86,7 +86,6 @@ namespace IngameScript {
             public PropertySupplier property;
             public Direction? direction;
             public PrimitiveComparator comparator;
-            public Variable propertyValue;
             public Variable comparisonValue;
 
             public BlockPropertyCondition(PropertySupplier property, Direction? direction, PrimitiveComparator comparator, Variable comparisonValue) {

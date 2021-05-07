@@ -82,6 +82,11 @@ namespace IngameScript {
             //Primitive Procesor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
 
+            //ValuePropertyProcessor
+            OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(),
+                (p,v) => new PropertyCommandParameter(new PropertySupplier(() => p.value + "", v.GetValue().value))),
+
             //RedundantComparisonProcessor
             //"is not <" => "!<"
             //"is <" => "<"

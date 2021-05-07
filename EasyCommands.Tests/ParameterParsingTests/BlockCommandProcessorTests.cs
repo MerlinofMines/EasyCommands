@@ -18,6 +18,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void SimpleBlockCommandWithValueProperty() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set the \"test cargo\" \"gold ingot\" amount to 0");
+            Assert.IsTrue(command is BlockCommand);
+        }
+
+        [TestMethod]
         public void SimpleBlockCommandWithNotProperty() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("tell the \"rockets\" not to shoot");

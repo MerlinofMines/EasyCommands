@@ -96,6 +96,9 @@ namespace IngameScript {
             AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
             AddWords(Words("strength", "force", "gravity"), new PropertyCommandParameter(Property.STRENGTH));
 
+            //ValueProperty Words
+            AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
+
             //Special Command Words
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(Function.GOSUB));
@@ -210,6 +213,7 @@ namespace IngameScript {
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
             AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
+            AddBlockWords(Words("cargo", "container", "inventory"), Words("containers", "inventories"), Block.CARGO);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
