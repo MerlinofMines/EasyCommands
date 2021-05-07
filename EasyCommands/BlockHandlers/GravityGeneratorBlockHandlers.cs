@@ -29,7 +29,7 @@ namespace IngameScript {
         public class GravityGeneratorBlockHandler : FunctionalBlockHandler<IMyGravityGenerator> {
             public GravityGeneratorBlockHandler() {
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b, v) => b.GravityAcceleration = v, 0.25f);
-                propertyHandlers.Add(Property.RANGE, new GravityFieldHandler());
+                AddPropertyHandler(Property.RANGE, new GravityFieldHandler());
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.RANGE;
             }
@@ -37,8 +37,8 @@ namespace IngameScript {
 
         class GravityFieldHandler : SimplePropertyHandler<IMyGravityGenerator> {
             public GravityFieldHandler() : base(
-                b => new VectorPrimitive(new Vector3D(b.FieldSize)),
-                (b, v) => {
+                (b, p) => new VectorPrimitive(new Vector3D(b.FieldSize)),
+                (b, p, v) => {
                     switch (v.GetPrimitiveType()) {
                         case Return.NUMERIC:
                             float value = CastNumber(v).GetNumericValue();
@@ -53,7 +53,7 @@ namespace IngameScript {
                 },
                 new NumberPrimitive(25)) {
 
-                GetDirection = (b,d) => {
+                GetDirection = (b, p, d) => {
                     switch(d) {
                         case Direction.UP:
                         case Direction.DOWN:
@@ -69,7 +69,7 @@ namespace IngameScript {
                     }
                 };
 
-                SetDirection = (b, d, v) => {
+                SetDirection = (b, p, d, v) => {
                     float value = CastNumber(v).GetNumericValue();
                     float x = b.FieldSize.X;
                     float y = b.FieldSize.Y;

@@ -272,21 +272,21 @@ namespace IngameScript {
                     //Primitive Handlers
                     new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
                         Primitive result = v.value.GetValue();
-                        Property propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
+                        PropertySupplier propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
                         b.SetPropertyValue(e, propertyType, v.value.GetValue());
                     }),
                     new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
                         b.SetPropertyValue(e, p.value, new BooleanPrimitive(true));
                     }),
                     new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
-                        Property propertyType = b.GetDefaultProperty(d.value);
+                        PropertySupplier propertyType = b.GetDefaultProperty(d.value);
                         b.MoveNumericPropertyValue(e, propertyType, d.value);
                     }),
                     new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
                         b.SetPropertyValue(e, p.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
-                        Property property = b.GetDefaultProperty(d.value);
+                        PropertySupplier property = b.GetDefaultProperty(d.value);
                         b.SetPropertyValue(e, property, d.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
@@ -296,7 +296,7 @@ namespace IngameScript {
                         b.IncrementPropertyValue(e,p.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
-                        Property property = b.GetDefaultProperty(d.value);
+                        PropertySupplier property = b.GetDefaultProperty(d.value);
                         b.IncrementPropertyValue(e,property,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
@@ -307,7 +307,7 @@ namespace IngameScript {
                     new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
                         b.ReverseNumericPropertyValue(e, p.value); }),
                     new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
-                        Property property = b.GetDefaultProperty(b.GetDefaultDirection());
+                        PropertySupplier property = b.GetDefaultProperty(b.GetDefaultDirection());
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }

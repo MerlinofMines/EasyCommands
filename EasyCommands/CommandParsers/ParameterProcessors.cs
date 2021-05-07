@@ -141,7 +141,7 @@ namespace IngameScript {
                 (p,prop,dir,var) => var.HasValue() || prop.HasValue(),
                 (p,prop,dir,var) => {
                     Variable variable = var.HasValue() ? var.GetValue().value : new StaticVariable(new BooleanPrimitive(true));
-                    Property? property = null;
+                    PropertySupplier property = null;
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
@@ -168,7 +168,7 @@ namespace IngameScript {
                 requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
                 (p,selector,property,direction) => selector.HasValue(),
                 (p,selector,prop,dir) => {
-                    Property? property = null;
+                    PropertySupplier property = null;
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;

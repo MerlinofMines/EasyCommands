@@ -83,12 +83,13 @@ namespace IngameScript {
         }
 
         public class BlockPropertyCondition : BlockCondition {
-            public Property? property;
+            public PropertySupplier property;
             public Direction? direction;
             public PrimitiveComparator comparator;
+            public Variable propertyValue;
             public Variable comparisonValue;
 
-            public BlockPropertyCondition(Property? property, Direction? direction, PrimitiveComparator comparator, Variable comparisonValue) {
+            public BlockPropertyCondition(PropertySupplier property, Direction? direction, PrimitiveComparator comparator, Variable comparisonValue) {
                 this.property = property;
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
@@ -98,7 +99,7 @@ namespace IngameScript {
             public bool evaluate(Object block, Block blockType) {
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
                 Primitive value = comparisonValue.GetValue();
-                Property prop = property.HasValue ? property.Value : handler.GetDefaultProperty(value.GetPrimitiveType());
+                PropertySupplier prop = property ?? handler.GetDefaultProperty(value.GetPrimitiveType());
                 if (direction.HasValue) return comparator.compare(handler.GetPropertyValue(block, prop, direction.Value), value);
                 else return comparator.compare(handler.GetPropertyValue(block, prop), value);
             }

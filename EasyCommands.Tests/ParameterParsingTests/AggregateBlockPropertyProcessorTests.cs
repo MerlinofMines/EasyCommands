@@ -167,7 +167,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.VALUE, aggregate.aggregationType);
-            Assert.AreEqual(Property.POSITION, aggregate.property);
+            Assert.AreEqual(Property.POSITION + "", aggregate.property.propertyType());
             Assert.IsTrue(aggregate.entityProvider is SelfEntityProvider);
             Assert.AreEqual(Block.PROGRAM, aggregate.entityProvider.GetBlockType());
         }

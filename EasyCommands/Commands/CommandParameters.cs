@@ -163,8 +163,9 @@ namespace IngameScript {
             public DirectionCommandParameter(Direction value) : base(value) {}
         }
 
-        public class PropertyCommandParameter : ValueCommandParameter<Property> {
-            public PropertyCommandParameter(Property value) : base(value) {}
+        public class PropertyCommandParameter : ValueCommandParameter<PropertySupplier> {
+            public PropertyCommandParameter(PropertySupplier value) : base(value) {}
+            public PropertyCommandParameter(Property value) : base(new PropertySupplier(value)) { }
         }
 
         public class UnitCommandParameter : ValueCommandParameter<Unit> {
