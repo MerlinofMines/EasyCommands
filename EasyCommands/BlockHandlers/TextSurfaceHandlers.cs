@@ -34,7 +34,7 @@ namespace IngameScript {
                 return block.DisplayName;
             }
 
-            public override void Add(IMyTerminalBlock b, List<IMyTextSurface> surfaces) {
+            public override void GetInstances(IMyTerminalBlock b, List<IMyTextSurface> surfaces) {
                 if (b is IMyTextSurface) surfaces.Add((IMyTextSurface)b);
                 else if (b is IMyTextSurfaceProvider) Add((IMyTextSurfaceProvider)b, surfaces);
             }

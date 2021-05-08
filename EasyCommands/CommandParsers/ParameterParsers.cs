@@ -24,7 +24,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for"));
+            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for", "in"));
 
             //Selector Related Words
             AddWords(Words("blocks", "group"), new GroupCommandParameter());

@@ -151,6 +151,7 @@
     <Compile Include="ScriptTests\SimpleVariableTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
+    <Compile Include="TokenParsingTests\ItemParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>

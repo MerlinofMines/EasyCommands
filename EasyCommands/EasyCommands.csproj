@@ -90,6 +90,7 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\EntityProviders.cs" />
     <Compile Include="Common\Aggregators.cs" />
+    <Compile Include="Common\Items.cs" />
     <Compile Include="Common\Operations.cs" />
     <Compile Include="Common\Conditions.cs" />
     <Compile Include="Common\Primitives.cs" />

@@ -96,6 +96,7 @@ namespace IngameScript {
             InitializeParsers();
             InitializeProcessors();
             InitializeOperators();
+            InitializeItems();
             Runtime.UpdateFrequency = updateFrequency;
             broadcastMessageProvider = provideMessages;
         }

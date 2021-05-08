@@ -84,7 +84,7 @@ namespace IngameScript {
 
             //ValuePropertyProcessor
             OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
-                requiredLeft<VariableCommandParameter>(),
+                requiredEither<VariableCommandParameter>(),
                 (p,v) => new PropertyCommandParameter(new PropertySupplier(() => p.value + "", v.GetValue().value))),
 
             //RedundantComparisonProcessor

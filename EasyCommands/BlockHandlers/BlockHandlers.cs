@@ -251,7 +251,7 @@ namespace IngameScript {
                 PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, selector);
 
                 List<T> instances = new List<T>();
-                blocks.ForEach((b) => Add(b, instances));
+                blocks.ForEach((b) => GetInstances(b, instances));
                 return instances;
             }
 
@@ -263,11 +263,11 @@ namespace IngameScript {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 group.GetBlocksOfType<IMyTerminalBlock>(blocks);
                 List<T> instances = new List<T>();
-                blocks.ForEach((b) => Add(b, instances));
+                blocks.ForEach((b) => GetInstances(b, instances));
                 return instances;
             }
 
-            public abstract void Add(IMyTerminalBlock block, List<T> instances);
+            public abstract void GetInstances(IMyTerminalBlock block, List<T> instances);
         }
 
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
