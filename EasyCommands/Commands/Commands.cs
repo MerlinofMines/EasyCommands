@@ -314,6 +314,56 @@ namespace IngameScript {
             public override Command Clone() { return new BlockCommand(entityProvider, commandHandler); }
         }
 
+        public class TransferItemCommand : Command {
+            public EntityProvider from;//Must be Inventory
+            public EntityProvider to;//Must be Inventory
+            public Variable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
+
+            public TransferItemCommand(EntityProvider from, EntityProvider to, Variable first, Variable second) {
+                this.from = from;
+                this.to = to;
+                this.first = first;
+                this.second = second;
+            }
+
+            public override bool Execute() {
+                if (from.GetBlockType() != Block.CARGO || to.GetBlockType() != Block.CARGO) throw new Exception("Transfers can only be executed on cargo block types");
+
+                BlockHandler blockHandler = BlockHandlerRegistry.GetBlockHandler(Block.CARGO);
+
+                var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue()).GetStringValue()));
+                var items = new List<MyInventoryItem>();
+
+                var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
+                var fromInventories = from.GetEntities().Select(i => (IMyInventory)i)
+                    .Where(i => toInventories.TrueForAll(to => i.Owner.EntityId != to.Owner.EntityId)) //Don't transfer to yourself
+                    .ToList();
+
+                MyFixedPoint amountLeft = MyFixedPoint.MaxValue;
+                if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue()).GetNumericValue();
+
+                int transfers = 0;
+
+                foreach(IMyInventory fromInventory in fromInventories) {
+                    fromInventory.GetItems(items, filter);
+                    for(int i = 0; i < toInventories.Count; i++) {
+                        foreach (MyInventoryItem item in items) {
+                            var destinationInventory = toInventories[i];
+                            var startMass = fromInventory.CurrentMass;
+                            fromInventory.TransferItemTo(destinationInventory, item, amountLeft);
+                            amountLeft -= (startMass - fromInventory.CurrentMass);
+                            if (amountLeft <= MyFixedPoint.Zero || ++transfers >= PROGRAM.maxItemTransfers) return true;
+                            if (destinationInventory.IsFull) {
+                                toInventories.RemoveAt(i--);
+                                break;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
         public class ConditionalCommand : Command {
             public Variable Condition;
             public bool alwaysEvaluate = false;

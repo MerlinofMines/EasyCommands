@@ -44,6 +44,14 @@ namespace EasyCommands.Tests.ScriptTests {
             }
         }
 
+        public static void MockInventories<T>(Mock<T> inventoryProvider, params Mock<IMyInventory>[] mockInventories) where T : class, IMyTerminalBlock {
+            inventoryProvider.Setup(x => x.InventoryCount).Returns(mockInventories.Length);
+            for (int i = 0; i < mockInventories.Length; i++) {
+                mockInventories[i].Setup(owner => owner.Owner).Returns(inventoryProvider.Object);
+                inventoryProvider.Setup(x => x.GetInventory(i)).Returns(mockInventories[i].Object);
+            }
+        }
+
         public static MyInventoryItem MockOre(String subType, float amount = 1) {
             return new MyInventoryItem(MyItemType.MakeOre(subType), 0, (MyFixedPoint)amount);
         }

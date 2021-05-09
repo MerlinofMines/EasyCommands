@@ -111,6 +111,8 @@ namespace IngameScript {
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
             AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
+            AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
+            AddWords(Words("take"), new TransferCommandParameter(false));
 
             //Conditional Words
             AddWords(Words("if"), new IfCommandParameter(false, false, false));

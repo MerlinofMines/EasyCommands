@@ -98,6 +98,10 @@ namespace IngameScript {
             public AddCommandParameter(BiOperand value) : base(value) {}
         }
 
+        public class TransferCommandParameter : ValueCommandParameter<bool> {
+            public TransferCommandParameter(bool v) : base(v) {}
+        }
+
         public class AssignmentCommandParameter : SimpleCommandParameter {
             public bool useReference;
 

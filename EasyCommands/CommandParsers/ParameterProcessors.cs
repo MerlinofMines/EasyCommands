@@ -215,6 +215,14 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
 
+            //TransferCommandProcessor
+            FourValueRule<TransferCommandParameter,SelectorCommandParameter,SelectorCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (t,s1,s2,v1,v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).GetValue().value, (t.value ? s2 : s1).GetValue().value, v1.GetValue().value, v2.HasValue() ? v2.GetValue().value : null))),
+            FourValueRule<TransferCommandParameter,SelectorCommandParameter,SelectorCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (t,s1,s2,v1,v2) => new CommandReferenceParameter(new TransferItemCommand(s1.GetValue().value, s2.GetValue().value, v1.GetValue().value, v2.HasValue() ? v2.GetValue().value : null))),
+
             //ActionProcessor
             BlockCommandProcessor(),
 
@@ -385,11 +393,13 @@ namespace IngameScript {
         delegate bool OneValueCanConvert<T,U>(T t, DataFetcher<U> a);
         delegate bool TwoValueCanConvert<T,U,V>(T t, DataFetcher<U> a, DataFetcher<V> b);
         delegate bool ThreeValueCanConvert<T, U, V, W>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c);
+        delegate bool FourValueCanConvert<T, U, V, W, X>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c, DataFetcher<X> d);
 
         delegate CommandParameter Convert<T>(T t);
         delegate CommandParameter OneValueConvert<T, U>(T t, DataFetcher<U> a) where T : CommandParameter;
         delegate CommandParameter TwoValueConvert<T, U, V>(T t, DataFetcher<U> a, DataFetcher<V> b) where T : CommandParameter;
         delegate CommandParameter ThreeValueConvert<T, U, V, W>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c);
+        delegate CommandParameter FourValueConvert<T, U, V, W, X>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c, DataFetcher<X> d);
 
         delegate bool Process(CommandParameter p);
         delegate Process ProcessCommandParameter(DataFetcher dataFetcher);
@@ -678,6 +688,14 @@ namespace IngameScript {
 
         static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueCanConvert<T, U, V, W> canConvert, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter {
             return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w }, (p) => canConvert(p, u.f, v.f, w.f), (p) => convert(p, u.f, v.f, w.f));
+        }
+
+        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {
+            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w, x }, (p) => u.f.Satisfied() && v.f.Satisfied() && v.f.Satisfied() && x.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f, x.f));
+        }
+
+        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {
+            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w, x }, (p) => canConvert(p, u.f, v.f, w.f, x.f), (p) => convert(p, u.f, v.f, w.f, x.f));
         }
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
