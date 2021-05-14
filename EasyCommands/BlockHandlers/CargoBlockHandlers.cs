@@ -22,6 +22,9 @@ namespace IngameScript {
         public class CargoHandler : MultiInstanceBlockHandler<IMyInventory> {
             public CargoHandler() {
                 AddPropertyHandler(ValueProperty.AMOUNT, amountHandler);
+                AddNumericHandler(Property.RATIO, i => (float)(i.CurrentVolume.RawValue / (double)i.MaxVolume.RawValue));
+                AddNumericHandler(Property.RANGE, i => (float)i.MaxVolume * 1000); //Volumes are returned in kL, convert to L
+                AddNumericHandler(Property.VOLUME, i => (float)i.CurrentVolume * 1000); //Volumes are returned in kL, convert to L
             }
 
             public override void GetInstances(IMyTerminalBlock block, List<IMyInventory> instances) {

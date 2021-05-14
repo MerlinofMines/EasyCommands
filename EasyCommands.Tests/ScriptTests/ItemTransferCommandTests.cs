@@ -7,8 +7,6 @@ using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRage;
 using VRage.Game.ModAPI.Ingame;
-using IngameScript;
-using static IngameScript.Program;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
@@ -280,12 +278,6 @@ namespace EasyCommands.Tests.ScriptTests {
             }
         }
 
-        private void MockInventoryItems(Mock<IMyInventory> inventory, params MyInventoryItem[] items) {
-            inventory.Setup(i => i.CurrentMass).Returns(items.Select(item => item.Amount).Aggregate((sum, val) => sum + val));
-            inventory.Setup(i => i.GetItems(It.IsAny<List<MyInventoryItem>>(), It.IsAny<Func<MyInventoryItem, bool>>()))
-                .Callback(MockItems(items.ToList()));
-        }
-
         private void MockTransfer(Mock<IMyInventory> sourceInventory, Mock<IMyInventory> destinationInventory, MyInventoryItem item, MyFixedPoint transferredAmount) {
             MockTransfer(sourceInventory, destinationInventory, item, transferredAmount, transferredAmount);
         }
@@ -298,13 +290,6 @@ namespace EasyCommands.Tests.ScriptTests {
                     sourceInventory.Setup(i => i.CurrentMass).Returns(currentMass - transferredAmount);
                 })
                 .Returns(true);
-        }
-
-    private Action<List<MyInventoryItem>, Func<MyInventoryItem, bool>> MockItems(List<MyInventoryItem> items) {
-            return (i, filter) => {
-                Assert.IsTrue(items.TrueForAll(item => filter.Invoke(item)));
-                i.AddRange(items);
-            };
         }
     }
 }

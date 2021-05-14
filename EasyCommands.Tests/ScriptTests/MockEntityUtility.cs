@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 mockInventories[i].Setup(owner => owner.Owner).Returns(inventoryProvider.Object);
                 inventoryProvider.Setup(x => x.GetInventory(i)).Returns(mockInventories[i].Object);
             }
+        }
+
+        public static void MockInventoryItems(Mock<IMyInventory> inventory, params MyInventoryItem[] items) {
+            inventory.Setup(i => i.CurrentMass).Returns(items.Select(item => item.Amount).Aggregate((sum, val) => sum + val));
+            inventory.Setup(i => i.GetItems(It.IsAny<List<MyInventoryItem>>(), It.IsAny<Func<MyInventoryItem, bool>>()))
+                .Callback(MockItems(items.ToList()));
+        }
+
+        public static Action<List<MyInventoryItem>, Func<MyInventoryItem, bool>> MockItems(List<MyInventoryItem> items) {
+            return (i, filter) => {
+                Assert.IsTrue(items.TrueForAll(item => filter.Invoke(item)));
+                i.AddRange(items);
+            };
         }
 
         public static MyInventoryItem MockOre(String subType, float amount = 1) {

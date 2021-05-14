@@ -75,7 +75,7 @@ namespace IngameScript {
             AddWords(Words("power"), new PropertyCommandParameter(Property.POWER));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SOUND));
             AddWords(Words("volume"), new PropertyCommandParameter(Property.VOLUME));
-            AddWords(Words("range", "distance", "limit", "radius"), new PropertyCommandParameter(Property.RANGE));
+            AddWords(Words("range", "distance", "limit", "radius", "capacity"), new PropertyCommandParameter(Property.RANGE));
             AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
             AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
             AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(Property.BLINK_OFFSET));
