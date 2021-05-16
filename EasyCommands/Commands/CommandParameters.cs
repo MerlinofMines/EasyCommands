@@ -140,8 +140,10 @@ namespace IngameScript {
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> SubTokens = new List<CommandParameter>();
-            public StringCommandParameter(String value, params CommandParameter[] SubTokens) : base(value) {
+            public bool isImplicit;
+            public StringCommandParameter(String value, bool isImplicit, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
+                this.isImplicit = isImplicit;
             }
         }
 

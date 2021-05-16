@@ -65,7 +65,7 @@ namespace IngameScript {
                         return blockType.HasValue();
                         },
                         (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), new StaticVariable(new StringPrimitive(p.value))))),
-                NoValueRule<StringCommandParameter>(p => new ExplicitStringCommandParameter(p.value))),
+                new PrimitiveProcessor<StringCommandParameter>()),
 
             //VariableSelectorProcessor
             TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
@@ -73,7 +73,7 @@ namespace IngameScript {
                 (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //Primitive Procesor
-            new PrimitiveProcessor(),
+            new PrimitiveProcessor<PrimitiveCommandParameter>(),
 
             //RedundantComparisonProcessor
             //"is not <" => "!<"
@@ -538,14 +538,14 @@ namespace IngameScript {
             }
         }
 
-        public class PrimitiveProcessor : ParameterProcessor<PrimitiveCommandParameter> {
+        public class PrimitiveProcessor<T> : ParameterProcessor<T> where T : class, PrimitiveCommandParameter {
             public override List<Type> GetProcessedTypes() {
                 return new List<Type>() { typeof(StringCommandParameter), typeof(NumericCommandParameter), typeof(BooleanCommandParameter), typeof(ExplicitStringCommandParameter) };
             }
 
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 if (p[i] is ValueCommandParameter<String>) {
-                    p[i] = GetParameter(((ValueCommandParameter<String>)p[i]).value);
+                    p[i] = GetParameter(((ValueCommandParameter<String>)p[i]).value, p[i] is ExplicitStringCommandParameter);
                 } else if (p[i] is NumericCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).value)));
                 } else if (p[i] is BooleanCommandParameter) {
@@ -558,13 +558,17 @@ namespace IngameScript {
                 return true;
             }
 
-            VariableCommandParameter GetParameter(String value) {
-                Primitive primitive = new StringPrimitive(value);
+            VariableCommandParameter GetParameter(String value, bool isExplicit) {
+                Primitive primitive = null;
                 Vector3D vector;
                 if (GetVector(value, out vector)) primitive = new VectorPrimitive(vector);
                 Color color;
                 if (GetColor(value, out color)) primitive = new ColorPrimitive(color);
-                return new VariableCommandParameter(new StaticVariable(primitive));
+
+                Variable variable = new AmbiguousStringVariable(value);
+
+                if (primitive != null || isExplicit) variable = new StaticVariable(primitive ?? new StringPrimitive(value));
+                return new VariableCommandParameter(variable);
             }
         }
 

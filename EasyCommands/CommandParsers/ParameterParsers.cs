@@ -280,7 +280,7 @@ namespace IngameScript {
             } else if (token.isString) {
                 List<Token> subTokens = ParseTokens(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                commandParameters.Add(new StringCommandParameter(token.original, subtokenParams.ToArray()));
+                commandParameters.Add(new StringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
             } else if (Double.TryParse(t, out numericValue)) {
@@ -300,7 +300,7 @@ namespace IngameScript {
             } else if (t.StartsWith("[") && t.EndsWith("]")) { //Variable References used as Selectors
                 commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
             } else { //If nothing else matches, must be a string
-                commandParameters.Add(new StringCommandParameter(token.original));
+                commandParameters.Add(new StringCommandParameter(token.original, true));
             }
 
             return commandParameters;

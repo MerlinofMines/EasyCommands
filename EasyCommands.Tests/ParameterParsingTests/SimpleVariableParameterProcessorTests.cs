@@ -44,6 +44,30 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVariableToAmbiguousStringValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to b");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual("b", assignCommand.variable.GetValue().GetValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+        [TestMethod]
+        public void AssignVariableToImplicitVariableReference() {
+            var program = MDKFactory.CreateProgram<Program>();
+            program.QueueThread(new Thread(new NullCommand(), "test", "test"));
+            program.SetGlobalVariable("b", new StaticVariable(new NumberPrimitive(4)));
+            var command = program.ParseCommand("assign a to b");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(4, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+        [TestMethod]
         public void AssignVariableCaseIsPreserved() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to {variableName}");
