@@ -170,6 +170,22 @@ namespace IngameScript {
             }
         }
 
+        public class AmbiguousStringVariable : Variable {
+            public String value;
+
+            public AmbiguousStringVariable(String value) {
+                this.value = value;
+            }
+
+            public Primitive GetValue() {
+                try {
+                    return PROGRAM.GetVariable(value).GetValue();
+                } catch(Exception) {
+                    return new StringPrimitive(value);
+                }
+            }
+        }
+
         public class InMemoryVariable : Variable {
             public String variableName;
 
