@@ -137,7 +137,7 @@ turn on the ""hangar lights""
         public void UseVariableAsImplicitBlockSelector() {
             String script = @"
 assign ""myLights"" to 'test lights'
-turn on [myLights]
+turn on $myLights
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {
@@ -154,9 +154,9 @@ turn on [myLights]
         public void UseVariableAsImplicitBlockSelectorInConditionAndBlockCommand() {
             String script = @"
 assign ""myLights"" to 'test lights'
-if [myLights] are on
+if $myLights are on
   Print 'You Left The Lights On'
-  turn off [myLights]
+  turn off $myLights
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {

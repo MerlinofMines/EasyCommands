@@ -15,28 +15,28 @@ assign minRotorRPM to 0.02
 assign maxRotorRPM to 3.5
 assign 'rotors' to 'test rotors'
 assign i to 0
-until {i} >= count of [rotors]
+until {i} >= count of $rotors
   async call setVelocity {i}
   assign ""i"" to {i} + 1
 
 :setVelocity ""index""
-assign ""velocity"" to [rotors] @ {index} velocity
+assign ""velocity"" to $rotors @ {index} velocity
 Print {rotors} + "" "" + {index} + "": "" + {velocity}
 
 if absolute {velocity} < 0.0001 goto setVelocity {index}
 
 assign isNegative to {velocity} < 0
 assign anglesPerSecond to 6 * {velocity}
-assign currentAngle to [rotors] @ {index} angle
+assign currentAngle to $rotors @ {index} angle
 
 #Print ""IsNegative: "" + {isNegative}
 #Print ""anglePerSecond: "" + {anglesPerSecond}
 #Print ""currentAngle: "" + {currentAngle}
 
 if {isNegative}
-  assign rotorLimit to [rotors] @ {index} lower limit - {currentAngle}
+  assign rotorLimit to $rotors @ {index} lower limit - {currentAngle}
 else
-  assign rotorLimit to [rotors] @ {index} upper limit - {currentAngle}
+  assign rotorLimit to $rotors @ {index} upper limit - {currentAngle}
 
 #Print ""rotorLimit: "" + {rotorLimit}
 
@@ -64,7 +64,7 @@ else
 
 #Print ""Final New Speed: "" + {newSpeed}
 
-set [rotors] @ {index} velocity to {newSpeed}
+set $rotors @ {index} velocity to {newSpeed}
 
 goto setVelocity {index}
 

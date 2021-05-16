@@ -28,16 +28,16 @@ assign global ""firing"" to true
 assign global i to 0
 
 :stopFiring
-tell [rocketGroup] rockets to not shoot
+tell $rocketGroup rockets to not shoot
 assign global ""firing"" to false
 
 :fireLoop
 if not {firing} replay
 print ""i = "" + i
-if {i} >= count of [rocketGroup] rockets
+if {i} >= count of $rocketGroup rockets
   assign global i to 0
-tell [rocketGroup] rockets @ i to shoot
-tell [rocketGroup] rockets to not shoot
+tell $rocketGroup rockets @ i to shoot
+tell $rocketGroup rockets to not shoot
 wait {fireTickInterval} ticks
 assign global i to i + 1
 goto ""fireLoop""

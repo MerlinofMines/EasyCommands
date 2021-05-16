@@ -304,8 +304,8 @@ namespace IngameScript {
                 }
             } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
                 commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
-            } else if (t.StartsWith("[") && t.EndsWith("]")) { //Variable References used as Selectors
-                commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
+            } else if (t.StartsWith("$")) { //Variable References used as Selectors
+                commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 1))));
             } else { //If nothing else matches, must be a string
                 commandParameters.Add(new StringCommandParameter(token.original, true));
             }

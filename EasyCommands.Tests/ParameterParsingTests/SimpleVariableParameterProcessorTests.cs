@@ -57,7 +57,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignVariableFromInMemoryVariableSelectorName() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign [a] to 2");
+            var command = program.ParseCommand("assign $a to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);

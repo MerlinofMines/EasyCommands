@@ -18,27 +18,27 @@ assign airlockSensor to 'Air Lock Sensor'
 async goto runAirLock
 
 :runAirLock
-if [airlockSensor] sensor is triggered
+if $airlockSensor sensor is triggered
   call ""goOut""
 else
   call ""comeIn""
 replay
 
 :goOut
-if [interiorDoors] doors are open
-  close the [interiorDoors] doors
-else if [airlockVent] vent ratio > 0.1
-  depressurize the [airlockVent] vent
+if $interiorDoors doors are open
+  close the $interiorDoors doors
+else if $airlockVent vent ratio > 0.1
+  depressurize the $airlockVent vent
 else
-  open the [exteriorDoors] doors
+  open the $exteriorDoors doors
 
 :comeIn
-if [exteriorDoors] doors are open
-  close the [exteriorDoors] doors
-else if [airlockVent] vent ratio < 0.99
-  pressurize the [airlockVent] vent
+if $exteriorDoors doors are open
+  close the $exteriorDoors doors
+else if $airlockVent vent ratio < 0.99
+  pressurize the $airlockVent vent
 else
-  open the [interiorDoors] doors
+  open the $interiorDoors doors
 ";
 
         [TestMethod]

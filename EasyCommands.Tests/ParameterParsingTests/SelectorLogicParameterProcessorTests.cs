@@ -82,7 +82,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void VariableSelector() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("turn on the [a] sirens");
+            var command = program.ParseCommand("turn on the $a sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
@@ -96,7 +96,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void ImplicitVariableSelector() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("turn on the [a]");
+            var command = program.ParseCommand("turn on the $a");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
