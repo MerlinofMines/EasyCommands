@@ -36,20 +36,20 @@ namespace IngameScript {
 
         public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {
             public RotorAngleHandler() {
-                Get = block => new NumberPrimitive(block.Angle * (float)(180 / Math.PI));
-                GetDirection = (b, d) => Get(b);
-                Set = RotateToValue;
-                SetDirection = (b, d, v) => RotateToValue(b, v, d);
-                IncrementDirection = (b, d, v) => {
-                    if (d == Direction.CLOCKWISE || d == Direction.UP) RotateToValue(b, Get(b).Plus(v), d);
-                    if (d == Direction.COUNTERCLOCKWISE || d == Direction.DOWN) RotateToValue(b, Get(b).Minus(v), d);
+                Get = (b, p) => new NumberPrimitive(b.Angle * (float)(180 / Math.PI));
+                GetDirection = (b, p, d) => Get(b, p);
+                Set = (b, p, v) => RotateToValue(b, v);
+                SetDirection = (b, p, d, v) => RotateToValue(b, v, d);
+                IncrementDirection = (b, p, d, v) => {
+                    if (d == Direction.CLOCKWISE || d == Direction.UP) RotateToValue(b, Get(b, p).Plus(v), d);
+                    if (d == Direction.COUNTERCLOCKWISE || d == Direction.DOWN) RotateToValue(b, Get(b, p).Minus(v), d);
                 };
-                Increment = (b, v) => IncrementDirection(b, Direction.CLOCKWISE, v);
-                Move = (b, d) => {
+                Increment = (b, p, v) => IncrementDirection(b, p, Direction.CLOCKWISE, v);
+                Move = (b, p, d) => {
                     if (d == Direction.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
                     if (d == Direction.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
                 };
-                Reverse = (b) => b.TargetVelocityRPM *= -1;
+                Reverse = (b, p) => b.TargetVelocityRPM *= -1;
             }
         }
 

@@ -28,6 +28,7 @@ namespace IngameScript {
         public int functionParseAmount = 1;
         public int maxAsyncThreads = 50;
         public int maxQueuedThreads = 50;
+        public int maxItemTransfers = 10;
         #endregion
 
         public delegate List<MyIGCMessage> BroadcastMessageProvider();
@@ -96,6 +97,7 @@ namespace IngameScript {
             InitializeParsers();
             InitializeProcessors();
             InitializeOperators();
+            InitializeItems();
             Runtime.UpdateFrequency = updateFrequency;
             broadcastMessageProvider = provideMessages;
         }

@@ -24,7 +24,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for"));
+            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for", "in"));
 
             //Selector Related Words
             AddWords(Words("blocks", "group"), new GroupCommandParameter());
@@ -75,7 +75,7 @@ namespace IngameScript {
             AddWords(Words("power"), new PropertyCommandParameter(Property.POWER));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SOUND));
             AddWords(Words("volume"), new PropertyCommandParameter(Property.VOLUME));
-            AddWords(Words("range", "distance", "limit", "radius"), new PropertyCommandParameter(Property.RANGE));
+            AddWords(Words("range", "distance", "limit", "radius", "capacity"), new PropertyCommandParameter(Property.RANGE));
             AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
             AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
             AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(Property.BLINK_OFFSET));
@@ -96,6 +96,9 @@ namespace IngameScript {
             AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
             AddWords(Words("strength", "force", "gravity"), new PropertyCommandParameter(Property.STRENGTH));
 
+            //ValueProperty Words
+            AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
+
             //Special Command Words
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(Function.GOSUB));
@@ -108,6 +111,8 @@ namespace IngameScript {
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
             AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
+            AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
+            AddWords(Words("take"), new TransferCommandParameter(false));
 
             //Conditional Words
             AddWords(Words("if"), new IfCommandParameter(false, false, false));
@@ -210,6 +215,7 @@ namespace IngameScript {
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
             AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
+            AddBlockWords(Words("cargo", "container", "inventory"), Words("containers", "inventories"), Block.CARGO);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");

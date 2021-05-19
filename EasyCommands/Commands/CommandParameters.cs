@@ -98,6 +98,10 @@ namespace IngameScript {
             public AddCommandParameter(BiOperand value) : base(value) {}
         }
 
+        public class TransferCommandParameter : ValueCommandParameter<bool> {
+            public TransferCommandParameter(bool v) : base(v) {}
+        }
+
         public class AssignmentCommandParameter : SimpleCommandParameter {
             public bool useReference;
 
@@ -163,8 +167,13 @@ namespace IngameScript {
             public DirectionCommandParameter(Direction value) : base(value) {}
         }
 
-        public class PropertyCommandParameter : ValueCommandParameter<Property> {
-            public PropertyCommandParameter(Property value) : base(value) {}
+        public class ValuePropertyCommandParameter : ValueCommandParameter<ValueProperty> {
+            public ValuePropertyCommandParameter(ValueProperty value) : base(value) {}
+        }
+
+        public class PropertyCommandParameter : ValueCommandParameter<PropertySupplier> {
+            public PropertyCommandParameter(PropertySupplier value) : base(value) {}
+            public PropertyCommandParameter(Property value) : base(new PropertySupplier(value)) { }
         }
 
         public class UnitCommandParameter : ValueCommandParameter<Unit> {

@@ -24,6 +24,7 @@ namespace EasyCommands.Tests.ScriptTests
         public Program program;
         MockGridTerminalSystem mockGrid;
         Mock<IMyProgrammableBlock> me;
+        int entityIdCounter = 1000;
 
         /// <summary>
         /// Counter of how many times the given script has been invoked by the test engine.
@@ -139,6 +140,10 @@ namespace EasyCommands.Tests.ScriptTests
         /// <param name="blockMocks">The blocks being mocked and that will be returned later.</param>
         public void MockBlocksInGroup<T>(String groupName, params Mock<T>[] blockMocks) where T : class, IMyTerminalBlock
         {
+            foreach (Mock<T> block in blockMocks) {
+                block.Setup(x => x.EntityId).Returns(entityIdCounter++);
+            }
+
             var mockGroup = new MockBlockGroup(groupName);
             mockGroup.AddBlocks(blockMocks
                 .Select(block => (IMyTerminalBlock)block.Object)
@@ -157,6 +162,7 @@ namespace EasyCommands.Tests.ScriptTests
             // Setup the mock blocks to mock their custom name to match the name provided
             foreach(Mock<T> block in blockMocks) {
                 block.Setup(x => x.CustomName).Returns(name);
+                block.Setup(x => x.EntityId).Returns(entityIdCounter++);
             }
 
             // Store the mock block objects by their type
@@ -166,11 +172,14 @@ namespace EasyCommands.Tests.ScriptTests
         private void SetupMockBlocksByType<T>(Mock<T>[] blockMocks) where T: class, IMyTerminalBlock
         {
             // Store the mock block objects by their type
+            foreach(Mock<T> block in blockMocks) {
+                block.Setup(x => x.EntityId).Returns(entityIdCounter++);
+            }
             mockGrid.AddBlocks(blockMocks.Select(b => (IMyTerminalBlock)b.Object).ToList());
         }
 
         public class MockBlockGroup : IMyBlockGroup {
-            HashSet<IMyTerminalBlock> mockBlocks = new HashSet<IMyTerminalBlock>();
+            List<IMyTerminalBlock> mockBlocks = new List<IMyTerminalBlock>();
             string name;
 
             public MockBlockGroup(string name) {

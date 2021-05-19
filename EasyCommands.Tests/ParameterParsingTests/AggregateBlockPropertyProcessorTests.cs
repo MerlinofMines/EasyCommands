@@ -74,6 +74,19 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignSumOfBlocksWithVariableProperty() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign \"a\" to sum of the \"cargo containers\" \"gold ingot\" amount");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
+            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
+            Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType());
+            Assert.AreEqual("gold ingot", aggregate.property.valueAttribute.GetValue().GetValue());
+        }
+
+        [TestMethod]
         public void AssignAverageOfBlocksWithPropertyFirst() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to avg range of the \"forward guns\"");
@@ -167,7 +180,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.VALUE, aggregate.aggregationType);
-            Assert.AreEqual(Property.POSITION, aggregate.property);
+            Assert.AreEqual(Property.POSITION + "", aggregate.property.propertyType());
             Assert.IsTrue(aggregate.entityProvider is SelfEntityProvider);
             Assert.AreEqual(Block.PROGRAM, aggregate.entityProvider.GetBlockType());
         }

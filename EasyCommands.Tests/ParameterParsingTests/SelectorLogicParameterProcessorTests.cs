@@ -60,6 +60,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ConditionalIndexSelectorWithValueProperty() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("drain the \"cargo containers\" whose \"gold ingot\" amount < 0.5");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
+        }
+
+        [TestMethod]
         public void LastBlockTypeImpliedIsUsed() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the \"Boom Door Program\"");

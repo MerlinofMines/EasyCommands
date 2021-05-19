@@ -59,6 +59,7 @@
     <Compile Include="BlockHandlers\BeaconBlockHandlers.cs" />
     <Compile Include="BlockHandlers\BlockHandlers.cs" />
     <Compile Include="BlockHandlers\CameraBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\CargoBlockHandlers.cs" />
     <Compile Include="BlockHandlers\SorterBlockHandlers.cs" />
     <Compile Include="BlockHandlers\GyroscopeBlockHandlers.cs" />
     <Compile Include="BlockHandlers\ConnectorBlockHandlers.cs" />
@@ -89,9 +90,11 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\EntityProviders.cs" />
     <Compile Include="Common\Aggregators.cs" />
+    <Compile Include="Common\Items.cs" />
     <Compile Include="Common\Operations.cs" />
     <Compile Include="Common\Conditions.cs" />
     <Compile Include="Common\Primitives.cs" />
+    <Compile Include="Common\Properties.cs" />
     <Compile Include="Common\Types.cs" />
     <Compile Include="Common\Variables.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />

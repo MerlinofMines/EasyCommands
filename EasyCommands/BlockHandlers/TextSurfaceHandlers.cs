@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class TextSurfaceHandler : BlockHandler<IMyTextSurface> {
+        public class TextSurfaceHandler : MultiInstanceBlockHandler<IMyTextSurface> {
             public TextSurfaceHandler() {
                 AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
                 AddColorHandler(Property.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
@@ -30,37 +30,16 @@ namespace IngameScript {
                 defaultDirection = Direction.UP;
             }
 
-            public override List<IMyTextSurface> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, selector);
-
-                List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
-                blocks.ForEach((b)=>Add(b, surfaces));
-                return surfaces;
-            }
-
-            public override List<IMyTextSurface> GetBlocksOfTypeInGroup(String groupName) {
-                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-                IMyBlockGroup group = blockGroups.Find(g => g.Name == groupName);
-                if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-                group.GetBlocksOfType<IMyTerminalBlock>(blocks);
-                List<IMyTextSurface> surfaces = new List<IMyTextSurface>();
-                blocks.ForEach((b) => Add(b, surfaces));
-                return surfaces;
-            }
-
             protected override string Name(IMyTextSurface block) {
                 return block.DisplayName;
             }
 
-            private void Add(object b, List<IMyTextSurface> surfaces) {
+            public override void GetInstances(IMyTerminalBlock b, List<IMyTextSurface> surfaces) {
                 if (b is IMyTextSurface) surfaces.Add((IMyTextSurface)b);
                 else if (b is IMyTextSurfaceProvider) Add((IMyTextSurfaceProvider)b, surfaces);
             }
 
-            private void Add(IMyTextSurfaceProvider p, List<IMyTextSurface> surfaces) {
+            void Add(IMyTextSurfaceProvider p, List<IMyTextSurface> surfaces) {
                 for (int i = 0; i < p.SurfaceCount; i++) surfaces.Add(p.GetSurface(i));
             }
         }

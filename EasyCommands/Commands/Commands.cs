@@ -272,21 +272,21 @@ namespace IngameScript {
                     //Primitive Handlers
                     new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
                         Primitive result = v.value.GetValue();
-                        Property propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
+                        PropertySupplier propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
                         b.SetPropertyValue(e, propertyType, v.value.GetValue());
                     }),
                     new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
                         b.SetPropertyValue(e, p.value, new BooleanPrimitive(true));
                     }),
                     new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
-                        Property propertyType = b.GetDefaultProperty(d.value);
+                        PropertySupplier propertyType = b.GetDefaultProperty(d.value);
                         b.MoveNumericPropertyValue(e, propertyType, d.value);
                     }),
                     new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
                         b.SetPropertyValue(e, p.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
-                        Property property = b.GetDefaultProperty(d.value);
+                        PropertySupplier property = b.GetDefaultProperty(d.value);
                         b.SetPropertyValue(e, property, d.value, v.value.GetValue());
                     }),
                     new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
@@ -296,7 +296,7 @@ namespace IngameScript {
                         b.IncrementPropertyValue(e,p.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
-                        Property property = b.GetDefaultProperty(d.value);
+                        PropertySupplier property = b.GetDefaultProperty(d.value);
                         b.IncrementPropertyValue(e,property,d.value,v.value.GetValue());
                     }),
                     new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
@@ -307,11 +307,61 @@ namespace IngameScript {
                     new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
                         b.ReverseNumericPropertyValue(e, p.value); }),
                     new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
-                        Property property = b.GetDefaultProperty(b.GetDefaultDirection());
+                        PropertySupplier property = b.GetDefaultProperty(b.GetDefaultDirection());
                         b.ReverseNumericPropertyValue(e, property); }),
                 };
             }
             public override Command Clone() { return new BlockCommand(entityProvider, commandHandler); }
+        }
+
+        public class TransferItemCommand : Command {
+            public EntityProvider from;//Must be Inventory
+            public EntityProvider to;//Must be Inventory
+            public Variable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
+
+            public TransferItemCommand(EntityProvider from, EntityProvider to, Variable first, Variable second) {
+                this.from = from;
+                this.to = to;
+                this.first = first;
+                this.second = second;
+            }
+
+            public override bool Execute() {
+                if (from.GetBlockType() != Block.CARGO || to.GetBlockType() != Block.CARGO) throw new Exception("Transfers can only be executed on cargo block types");
+
+                BlockHandler blockHandler = BlockHandlerRegistry.GetBlockHandler(Block.CARGO);
+
+                var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue()).GetStringValue()));
+                var items = new List<MyInventoryItem>();
+
+                var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
+                var fromInventories = from.GetEntities().Select(i => (IMyInventory)i)
+                    .Where(i => toInventories.TrueForAll(to => i.Owner.EntityId != to.Owner.EntityId)) //Don't transfer to yourself
+                    .ToList();
+
+                MyFixedPoint amountLeft = MyFixedPoint.MaxValue;
+                if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue()).GetNumericValue();
+
+                int transfers = 0;
+
+                foreach(IMyInventory fromInventory in fromInventories) {
+                    fromInventory.GetItems(items, filter);
+                    for(int i = 0; i < toInventories.Count; i++) {
+                        foreach (MyInventoryItem item in items) {
+                            var destinationInventory = toInventories[i];
+                            var startMass = fromInventory.CurrentMass;
+                            fromInventory.TransferItemTo(destinationInventory, item, amountLeft);
+                            amountLeft -= (startMass - fromInventory.CurrentMass);
+                            if (amountLeft <= MyFixedPoint.Zero || ++transfers >= PROGRAM.maxItemTransfers) return true;
+                            if (destinationInventory.IsFull) {
+                                toInventories.RemoveAt(i--);
+                                break;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
         }
 
         public class ConditionalCommand : Command {
