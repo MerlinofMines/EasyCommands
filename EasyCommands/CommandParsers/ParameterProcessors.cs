@@ -45,6 +45,13 @@ namespace IngameScript {
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,ExplicitStringCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<ExplicitStringCommandParameter>(),
                 (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
+            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableCommandParameter>(
+                optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,g,name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
+                (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
+            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableSelectorCommandParameter>(
+                optionalRight<GlobalCommandParameter>(), requiredRight<VariableSelectorCommandParameter>(),
+                (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
 
             //SelfSelectorProcessor
             OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
