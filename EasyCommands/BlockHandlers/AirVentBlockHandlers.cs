@@ -22,10 +22,10 @@ namespace IngameScript {
         public class AirVentBlockHandler : FunctionalBlockHandler<IMyAirVent> {
             public AirVentBlockHandler() {
                 AddBooleanHandler(Property.COMPLETE, (b) => !InProgress(b));
-                AddBooleanHandler(Property.RUNNING, (b) => InProgress(b));
+                AddBooleanHandler(Property.RUN, (b) => InProgress(b));
                 AddBooleanHandler(Property.PRODUCE, (b) => !InProgress(b), (b, v) => b.Depressurize = !v);
                 AddNumericHandler(Property.RATIO, (b) => b.GetOxygenLevel());
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RUN;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.PRODUCE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
                 defaultDirection = Direction.UP;

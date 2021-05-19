@@ -49,6 +49,7 @@ namespace IngameScript {
                 { Block.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
                 { Block.THRUSTER, new ThrusterBlockHandler()},
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
+                { Block.WARHEAD, new WarheadBlockHandler() },
                 { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
             };
 

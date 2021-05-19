@@ -137,6 +137,7 @@
     <Compile Include="BlockHandlers\SoundBlockHandlers.cs" />
     <Compile Include="BlockHandlers\TextSurfaceHandlers.cs" />
     <Compile Include="BlockHandlers\ThrusterBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\WarheadBlockHandlers.cs" />
     <Compile Include="BlockHandlers\WheelBlockHandlers.cs" />
     <Compile Include="CommandParsers\ParameterParsers.cs" />
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
