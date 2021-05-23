@@ -162,6 +162,7 @@ namespace IngameScript {
             AddWords(Words("divide", "/"), new MultiplyCommandParameter(BiOperand.DIVIDE));
             AddWords(Words("mod", "%"), new MultiplyCommandParameter(BiOperand.MOD));
             AddWords(Words("dot", "."), new MultiplyCommandParameter(BiOperand.DOT));
+            AddWords(Words("pow", "exp", "^"), new MultiplyCommandParameter(BiOperand.EXPONENT));
 
             //Unit Words
             AddWords(Words("second", "seconds"), new UnitCommandParameter(Unit.SECONDS));

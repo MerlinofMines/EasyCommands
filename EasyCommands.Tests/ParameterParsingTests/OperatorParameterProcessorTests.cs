@@ -260,6 +260,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignSimpleExponent() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 2 ^ 4");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.AreEqual(16, CastNumber(variable.GetValue()).GetNumericValue());
+        }
+
+        [TestMethod]
         public void AssignSimpleAdditionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to {b} + 2");

@@ -94,6 +94,7 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperand.MULTIPLY, (a, b) => a * b);
             AddBiOperation<float, float>(BiOperand.DIVIDE, (a, b) => a / b);
             AddBiOperation<float, float>(BiOperand.MOD, (a, b) => a % b);
+            AddBiOperation<float, float>(BiOperand.EXPONENT, (a, b) => Math.Pow(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
 
             //String
