@@ -1,9 +1,6 @@
 name: Run Tests
 
 on: [push, pull_request]
-name: Run tests
-
-on: [push, pull_request]
 
 jobs:
   build:
