@@ -16,6 +16,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./EasyCommands/EasyCommands.csproj
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build --no-restore ./EasyCommands/EasyCommands.csproj
