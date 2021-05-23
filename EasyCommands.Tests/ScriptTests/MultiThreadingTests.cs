@@ -310,5 +310,34 @@ print 'Variable is: ' + {a}
                 Assert.IsTrue(test.Logger.Contains("Variable is: 1"));
             }
         }
+
+        [TestMethod]
+        public void threadNamesAreProperlySet() {
+            String script = @"
+:main
+async call runAsync
+print 'Main'
+
+:runAsync
+wait
+print 'Async'
+
+:handleMessage
+Print ""Message""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.INFO;
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("[Main] main"));
+                Assert.IsTrue(test.Logger.Contains("[Async] runAsync"));
+
+                test.program.Main("call handleMessage");
+
+                Assert.IsTrue(test.Logger.Contains("[Request] call handleMessage"));
+            }
+        }
+
     }
 }

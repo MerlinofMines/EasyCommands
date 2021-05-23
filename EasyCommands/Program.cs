@@ -127,10 +127,10 @@ namespace IngameScript {
 
             try {
                 if (messages.Count > 0) {
-                    List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data),"Message", message.Tag)).ToList();
+                    List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag)).ToList();
                     threadQueue.InsertRange(0, messageCommands);
                 }
-                if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument),"Request", argument)); }
+                if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument), "Request", argument)); }
 
                 RunThreads();
                 UpdateState();
@@ -156,7 +156,7 @@ namespace IngameScript {
                 //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
                 if (threadQueue.Count > 0 ) {
                     Thread currentThread = threadQueue[0];
-                    Info("Current Thread: " + currentThread.GetName());
+                    Info(currentThread.GetName());
                     if(currentThread.Command.Execute()) {
                         threadQueue.RemoveAt(0);
                     }
@@ -168,7 +168,7 @@ namespace IngameScript {
 
                 while (asyncThreadQueueIndex < asyncThreadQueue.Count) {
                     Thread currentThread = asyncThreadQueue[asyncThreadQueueIndex];
-                    Info("Async Thread: " + currentThread.GetName());
+                    Info(currentThread.GetName());
                     if (currentThread.Command.Execute()) {
                         asyncThreadQueue.RemoveAt(asyncThreadQueueIndex);
                     } else {
