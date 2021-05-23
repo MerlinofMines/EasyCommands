@@ -151,6 +151,9 @@ namespace IngameScript {
                     goto default;
                 case Return.NUMERIC:
                     return new ColorPrimitive(new Color((float)p.GetValue()));
+                case Return.VECTOR:
+                    var vector = CastVector(p).GetVectorValue();
+                    return new ColorPrimitive(new Color((int)vector.X, (int)vector.Y, (int)vector.Z));
                 default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
             }
         }
