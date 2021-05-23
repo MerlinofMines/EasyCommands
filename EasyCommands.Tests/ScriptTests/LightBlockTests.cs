@@ -44,6 +44,23 @@ turn on the ""cool light""
         }
 
         [TestMethod]
+        public void SetLightBlockColorFromVector() {
+            String script = @"
+:lightshow
+set the ""cool light"" color to ""255:128:0""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("cool light", mockLight);
+
+                test.RunUntilDone();
+
+                mockLight.VerifySet(b => b.Color = new Color(255, 128, 0));
+            }
+        }
+
+        [TestMethod]
         public void MultipleBlocksSameType()
         {
             String script = @"
