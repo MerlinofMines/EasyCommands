@@ -11,8 +11,7 @@
 *.sln.docstates
 **/Sandbox/*
 #MDK Files
-**/MDK
-**/MDK/*
+**/MDK/MDK.paths.props
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

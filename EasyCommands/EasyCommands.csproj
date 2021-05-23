@@ -40,7 +40,25 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MDKUtilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Malware.MDK-SE.1.4.7\lib\net46\MDKUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
+    <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\Sandbox.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Sandbox.Game, Version=0.1.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\Sandbox.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="Sandbox.Graphics, Version=0.1.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\Sandbox.Graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="SpaceEngineers.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\SpaceEngineers.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="SpaceEngineers.ObjectBuilders, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\SpaceEngineers.ObjectBuilders.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,8 +67,44 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Audio.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Input, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Math, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Render, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Render.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Render11, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Render11.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Scripting, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Steam, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.Steam.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.UserInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.UserInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.XmlSerializers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.0.0\lib\net46\VRage.XmlSerializers.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <Import Project="MDK/MDK.options.props" />
+  <Import Project="MDK/MDK.options.props" Condition="exists('MDK/MDK.options.props')"/>
   <Import Project="MDK/MDK.paths.props" Condition="exists('MDK/MDK.paths.props')" />
   <ItemGroup>
     <Compile Include="BlockHandlers\AirVentBlockHandlers.cs" />
@@ -98,10 +152,10 @@
     <Compile Include="Common\Types.cs" />
     <Compile Include="Common\Variables.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
-    <AdditionalFiles Include="MDK\MDK.options.props">
+    <AdditionalFiles Include="MDK\MDK.options.props" Condition="exists('MDK/MDK.options.props')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
-    <AdditionalFiles Include="MDK\MDK.paths.props">
+    <AdditionalFiles Include="MDK\MDK.paths.props" Condition="exists('MDK/MDK.paths.props')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
     <Compile Include="Program.cs" />
@@ -114,6 +168,7 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -129,7 +184,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
-    <Copy SourceFiles="MDK\MDK.options.props" DestinationFolder="$(TargetDir)\MDK" />
-    <Copy SourceFiles="MDK\MDK.paths.props" DestinationFolder="$(TargetDir)\MDK" />
+    <Copy SourceFiles="MDK\MDK.options.props" DestinationFolder="$(TargetDir)\MDK" Condition="exists('MDK/MDK.options.props')"/>
+    <Copy SourceFiles="MDK\MDK.paths.props" DestinationFolder="$(TargetDir)\MDK" Condition="exists('MDK/MDK.paths.props')"/>
   </Target>
 </Project>
