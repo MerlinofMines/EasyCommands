@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -16,7 +15,8 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Install Nuget Packages
-      run: nuget install "SpaceEngineers.ScriptingReferences"
-           nuget install "Malware.MDK-SE"
+    - run: nuget install "SpaceEngineers.ScriptingReferences"
+    - run: nuget install "Malware.MDK-SE"
+
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
