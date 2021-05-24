@@ -26,5 +26,14 @@ jobs:
     - name: Print Nuget Package Structure
       run: dir packages
 
-    - name: Build
+    - name: Build EasyCommands
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
+  
+    - name: Install EasyCommands.Tests Nuget Packages
+      run: nuget install EasyCommands.Tests/packages.config -OutputDirectory "packages"
+
+    - name: Build EasyCommands.Tests
+      run: dotnet build ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
+      
+    - name: Run EasyCommands.Tests Tests
+      run: dotnet test ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
