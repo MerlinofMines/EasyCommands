@@ -14,17 +14,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Install SpaceEngineers Nuget Packages
-      run: nuget install "SpaceEngineers.ScriptingReferences" -OutputDirectory "packages"
-      
-    - name: Install MDK Nuget Packages
-      run: nuget install "Malware.MDK-SE" -OutputDirectory "packages"
-
-    - name: Print File Structure
-      run: dir
-
-    - name: Print Nuget Package Structure
-      run: dir packages
+    - name: Install EasyCommands Nuget Packages
+      run: nuget install EasyCommands/packages.config -OutputDirectory "packages"
 
     - name: Build EasyCommands
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
@@ -36,4 +27,4 @@ jobs:
       run: dotnet build ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
       
     - name: Run EasyCommands.Tests Tests
-      run: dotnet test ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
+      run: dotnet test ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release --verbosity normal
