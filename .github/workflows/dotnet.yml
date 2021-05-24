@@ -27,4 +27,4 @@ jobs:
       run: dotnet build ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
       
     - name: Run EasyCommands.Tests Tests
-      run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj --verbosity normal
+      run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj
