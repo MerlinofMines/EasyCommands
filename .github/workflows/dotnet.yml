@@ -14,4 +14,4 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Build
-      run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release --platform x64
+      run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
