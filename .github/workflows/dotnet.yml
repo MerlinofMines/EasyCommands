@@ -26,5 +26,8 @@ jobs:
     - name: Print Package File Structure
       run: dir packages
 
+    - name: CD EasyCommands
+      run: cd EasyCommands
+
     - name: Build
-      run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
+      run: dotnet build EasyCommands.csproj --configuration Release
