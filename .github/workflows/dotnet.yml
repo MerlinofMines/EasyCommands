@@ -16,7 +16,7 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Install Nuget Packages
-      run: dotnet nuget add source "SpaceEngineers.ScriptingReferences" -n nuget.org
-
+      run: dotnet nuget install "SpaceEngineers.ScriptingReferences"
+           dotnet nuget install "Malware.MDK-SE"
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
