@@ -29,7 +29,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.PRODUCE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
                 defaultDirection = Direction.UP;
-                adsfasdfasdf;
             }
 
             bool InProgress(IMyAirVent b) { return b.Status == VentStatus.Depressurizing || b.Status == VentStatus.Pressurizing; }

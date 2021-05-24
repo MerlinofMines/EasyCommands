@@ -16,6 +16,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);
+            adsfasdfasdf;
         }
 
         [TestMethod]
