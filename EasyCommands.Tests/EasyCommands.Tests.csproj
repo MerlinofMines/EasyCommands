@@ -40,6 +40,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
