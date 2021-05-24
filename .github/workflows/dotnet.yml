@@ -27,4 +27,4 @@ jobs:
       run: dotnet build ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
       
     - name: Run EasyCommands.Tests Tests
-      run: dotnet test ./EasyCommands.Tests/EasyCommands.Tests.csproj --list-tests --no-build --test-adapter-path "packages/MSTest.TestAdapter.2.1.2/build/_common"
+      run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj --verbosity normal
