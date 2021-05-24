@@ -13,7 +13,5 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-    - name: Restore dependencies
-      run: dotnet restore ./EasyCommands/EasyCommands.csproj
     - name: Build
-      run: dotnet build --no-restore ./EasyCommands/EasyCommands.csproj
+      run: dotnet build --no-restore --configuration Release ./EasyCommands/EasyCommands.csproj
