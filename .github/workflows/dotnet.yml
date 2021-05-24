@@ -23,8 +23,5 @@ jobs:
     - name: Print File Structure
       run: dir
 
-    - name: Print Package File Structure
-      run: dir packages
-
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
