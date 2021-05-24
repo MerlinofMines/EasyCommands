@@ -9,9 +9,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+
+    - name: Install Nuget Packages
+      run: dotnet nuget add source "SpaceEngineers.ScriptingReferences" -n nuget.org
+
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
