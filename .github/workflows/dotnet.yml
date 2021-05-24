@@ -15,7 +15,7 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Install Nuget Packages
-      run: nuget install
+      run: nuget install EasyCommands/packages.config
 
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
