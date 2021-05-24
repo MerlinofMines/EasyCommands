@@ -15,13 +15,16 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Install SpaceEngineers Nuget Packages
-      run: nuget install "SpaceEngineers.ScriptingReferences" -OutputDirectory "../packages"
+      run: nuget install "SpaceEngineers.ScriptingReferences" -OutputDirectory "packages"
       
     - name: Install MDK Nuget Packages
-      run: nuget install "Malware.MDK-SE" -OutputDirectory "../packages"
+      run: nuget install "Malware.MDK-SE" -OutputDirectory "packages"
 
     - name: Print File Structure
       run: dir
+
+    - name: Print Nuget Package Structure
+      run: dir packages
 
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
