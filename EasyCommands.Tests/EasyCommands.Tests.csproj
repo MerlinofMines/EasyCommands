@@ -157,7 +157,6 @@
     <Compile Include="ScriptTests\GravityBlockTests.cs" />
     <Compile Include="ScriptTests\SimpleVariableTests.cs" />
     <Compile Include="ScriptTests\ItemTransferCommandTests.cs" />
-    <Compile Include="ScriptTests\FailingTest.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="TokenParsingTests\ItemParsingTests.cs" />
