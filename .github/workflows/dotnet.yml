@@ -14,8 +14,11 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Install Nuget Packages
-      run: nuget install EasyCommands/packages.config
+    - name: Install SpaceEngineers Nuget Packages
+      run: nuget install "SpaceEngineers.ScriptingReferences"
+      
+    - name: Install MDK Nuget Packages
+      run: nuget install "Malware.MDK-SE"
 
     - name: Build
       run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
