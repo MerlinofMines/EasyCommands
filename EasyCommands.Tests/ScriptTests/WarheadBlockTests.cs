@@ -45,9 +45,9 @@ if the ""warhead"" is triggered
         }
 
         [TestMethod]
-        public void getBombLimit() {
+        public void getBombDelay() {
             String script = @"
-Print ""Warhead Timer: "" + the ""warhead"" range
+Print ""Warhead Timer: "" + the ""warhead"" delay
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {
@@ -63,9 +63,9 @@ Print ""Warhead Timer: "" + the ""warhead"" range
         }
 
         [TestMethod]
-        public void setBombLimit() {
+        public void setBombDelay() {
             String script = @"
-set the ""warhead"" range to 10
+set the ""warhead"" delay to 10
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {
