@@ -25,7 +25,7 @@ trigger the ""timer""
         }
 
         [TestMethod]
-        public void bombIsTriggered() {
+        public void timerIsTriggered() {
             String script = @"
 if the ""timer"" is triggered
   Print ""Tick tock""
@@ -44,7 +44,7 @@ if the ""timer"" is triggered
         }
 
         [TestMethod]
-        public void getBombLimit() {
+        public void getTimerDelay() {
             String script = @"
 Print ""Timer Block Delay: "" + the ""timer"" delay
 ";
@@ -62,7 +62,7 @@ Print ""Timer Block Delay: "" + the ""timer"" delay
         }
 
         [TestMethod]
-        public void setBombLimit() {
+        public void setTimerDelay() {
             String script = @"
 set the ""timer"" delay to 10
 ";
