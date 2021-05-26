@@ -143,21 +143,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void StopCommand() {
+        public void ExitCommand() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("stop");
+            var command = program.ParseCommand("exit");
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(Control.STOP, controlCommand.controlType);
-        }
-
-        [TestMethod]
-        public void StartCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("start");
-            Assert.IsTrue(command is ControlCommand);
-            ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(Control.START, controlCommand.controlType);
         }
 
         [TestMethod]
@@ -185,15 +176,6 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is ControlCommand);
             ControlCommand controlCommand = (ControlCommand)command;
             Assert.AreEqual(Control.PAUSE, controlCommand.controlType);
-        }
-
-        [TestMethod]
-        public void ResumeCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("resume");
-            Assert.IsTrue(command is ControlCommand);
-            ControlCommand controlCommand = (ControlCommand)command;
-            Assert.AreEqual(Control.START, controlCommand.controlType);
         }
     }
 }

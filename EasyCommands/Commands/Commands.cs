@@ -160,8 +160,6 @@ namespace IngameScript {
                         throw new InterruptException(ProgramState.RUNNING);
                     case Control.PAUSE:
                         throw new InterruptException(ProgramState.PAUSED);
-                    case Control.START:
-                        return true;
                     case Control.REPEAT:
                         Thread currentThread = PROGRAM.GetCurrentThread();
                         currentThread.Command = currentThread.Command.Clone();
