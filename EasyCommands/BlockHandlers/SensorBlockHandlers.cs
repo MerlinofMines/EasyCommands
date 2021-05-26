@@ -22,6 +22,7 @@ namespace IngameScript {
         public class SensorBlockHandler : FunctionalBlockHandler<IMySensorBlock> {
             public SensorBlockHandler() {
                 AddBooleanHandler(Property.TRIGGER, (b) => b.IsActive);
+                AddBooleanHandler(Property.SILENCE, b => !b.PlayProximitySound, (b, v) => b.PlayProximitySound = !v);
                 AddVectorHandler(Property.TARGET, (b) => {
                     MyDetectedEntityInfo lastDetectedEntity = b.LastDetectedEntity;
                     Vector3D position = Vector3D.Zero;

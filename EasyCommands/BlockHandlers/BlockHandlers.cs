@@ -46,7 +46,7 @@ namespace IngameScript {
                 { Block.SENSOR, new SensorBlockHandler() },
                 { Block.SUSPENSION, new WheelSuspensionBlockHandler() },
                 { Block.TANK, new GasTankBlockHandler() },
-                { Block.TIMER, new FunctionalBlockHandler<IMyTimerBlock>() },
+                { Block.TIMER, new TimerBlockHandler() },
                 { Block.THRUSTER, new ThrusterBlockHandler()},
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
                 { Block.WARHEAD, new WarheadBlockHandler() },
