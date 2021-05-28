@@ -21,12 +21,12 @@ namespace IngameScript {
     partial class Program {
         public class BatteryBlockHandler : FunctionalBlockHandler<IMyBatteryBlock> {
             public BatteryBlockHandler() {
-                AddBooleanHandler(Property.PRODUCE, (b) => b.ChargeMode != ChargeMode.Recharge, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
+                AddBooleanHandler(Property.SUPPLY, (b) => b.ChargeMode != ChargeMode.Recharge, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
                 AddBooleanHandler(Property.AUTO, (b) => b.ChargeMode == ChargeMode.Auto, (b, v) => b.ChargeMode = (v ? ChargeMode.Auto : ChargeMode.Recharge));
                 AddNumericHandler(Property.RANGE, (b) => b.MaxStoredPower);
                 AddNumericHandler(Property.RATIO, (b) => b.CurrentStoredPower / b.MaxStoredPower);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.PRODUCE;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SUPPLY;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
                 defaultDirection = Direction.UP;
             }

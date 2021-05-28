@@ -25,7 +25,6 @@ namespace IngameScript {
                 AddBooleanHandler(Property.POWER, b => b.IsArmed, (b, v) => b.IsArmed = v);
                 AddNumericHandler(Property.RANGE, b => b.DetonationTime, (b, v) => b.DetonationTime = v, 1);
                 AddBooleanHandler(Property.COUNTDOWN, b => b.IsCountingDown, (b, v) => { if (v) b.StartCountdown(); else b.StopCountdown(); });
-                defaultBooleanProperty = Property.POWER;
             }
         }
     }
