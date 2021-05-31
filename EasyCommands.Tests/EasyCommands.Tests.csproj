@@ -159,6 +159,7 @@
     <Compile Include="ScriptTests\ItemTransferCommandTests.cs" />
     <Compile Include="ScriptTests\TimerBlockTests.cs" />
     <Compile Include="ScriptTests\AssemblerBlockTests.cs" />
+    <Compile Include="ScriptTests\EngineBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />

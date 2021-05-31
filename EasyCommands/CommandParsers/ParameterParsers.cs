@@ -72,12 +72,11 @@ namespace IngameScript {
             AddWords(Words("power", "powered", "arm", "armed"), new PropertyCommandParameter(Property.POWER));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SONG));
             AddWords(Words("silent", "silence"), new PropertyCommandParameter(Property.SILENCE));
-            AddWords(Words("volume"), new PropertyCommandParameter(Property.VOLUME));
+            AddWords(Words("volume", "level", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));
             AddWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), new PropertyCommandParameter(Property.RANGE));
             AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
             AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
             AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(Property.BLINK_OFFSET));
-            AddWords(Words("intensity"), new PropertyCommandParameter(Property.INTENSITY));
             AddWords(Words("falloff"), new PropertyCommandParameter(Property.FALLOFF));
             AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), new PropertyCommandParameter(Property.TRIGGER));
@@ -211,7 +210,7 @@ namespace IngameScript {
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
-            AddBlockWords(Words("engine"), Block.ENGINE);
+            AddBlockWords(Words("engine", "turbine"), Block.ENGINE);
             AddBlockWords(Words("sorter"), Block.SORTER);
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
