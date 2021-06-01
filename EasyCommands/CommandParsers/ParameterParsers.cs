@@ -220,6 +220,7 @@ namespace IngameScript {
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
             AddBlockWords(Words("collector"), Block.COLLECTOR);
             AddBlockWords(Words("ejector"), Block.EJECTOR);
+            AddBlockWords(Words("decoy"), Block.DECOY);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");

@@ -163,6 +163,7 @@
     <Compile Include="ScriptTests\EngineBlockTests.cs" />
     <Compile Include="ScriptTests\CollectorBlockTests.cs" />
     <Compile Include="ScriptTests\EjectorBlockTests.cs" />
+    <Compile Include="ScriptTests\DecoyBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />

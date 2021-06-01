@@ -22,6 +22,7 @@ namespace IngameScript {
                 { Block.COCKPIT, new ShipControllerHandler<IMyCockpit>() },
                 { Block.COLLECTOR, new FunctionalBlockHandler<IMyCollector>() },
                 { Block.CONNECTOR, new ConnectorBlockHandler() },
+                { Block.DECOY, new FunctionalBlockHandler<IMyDecoy>() },
                 { Block.DETECTOR, new OreDetectorHandler() },
                 { Block.DISPLAY, new TextSurfaceHandler() },
                 { Block.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
