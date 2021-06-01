@@ -51,7 +51,7 @@ namespace IngameScript {
 
             //Value Words
             AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
-            AddWords(Words("off", "terminate", "cancel", "end", "false", "stop", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
+            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
             AddWords(Words("height", "length"), new PropertyCommandParameter(Property.HEIGHT));
@@ -81,7 +81,7 @@ namespace IngameScript {
             AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), new PropertyCommandParameter(Property.TRIGGER));
             AddWords(Words("pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), new PropertyCommandParameter(Property.SUPPLY));
-            AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
+            AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
             AddWords(Words("ratio", "percentage", "percent"), new PropertyCommandParameter(Property.RATIO));
@@ -146,7 +146,7 @@ namespace IngameScript {
             AddWords(Words(")"), new CloseParenthesisCommandParameter());
             AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
             AddWords(Words("or", "|", "||"), new OrCommandParameter());
-            AddWords(Words("not", "!", "isn't", "isnt", "aren't", "arent"), new NotCommandParameter());
+            AddWords(Words("not", "!", "isnt", "arent", "stop"), new NotCommandParameter());
             AddWords(Words("absolute", "abs"), new UniOperationCommandParameter(UniOperand.ABS));
             AddWords(Words("sqrt"), new UniOperationCommandParameter(UniOperand.SQRT));
             AddWords(Words("sin"), new UniOperationCommandParameter(UniOperand.SIN));
@@ -218,6 +218,8 @@ namespace IngameScript {
             AddBlockWords(Words("cargo", "container", "inventory"), Words("containers", "inventories"), Block.CARGO);
             AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
+            AddBlockWords(Words("collector"), Block.COLLECTOR);
+            AddBlockWords(Words("ejector"), Block.EJECTOR);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");

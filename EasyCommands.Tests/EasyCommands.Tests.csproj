@@ -127,6 +127,7 @@
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\TransferCommandProcessorTests.cs" />
     <Compile Include="ScriptTests\CargoBlockTests.cs" />
+    <Compile Include="ScriptTests\ConnectorBlockTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ConditionalBlockExecutionTests.cs" />
     <Compile Include="ParameterParsingTests\BlockCommandProcessorTests.cs" />
@@ -160,6 +161,8 @@
     <Compile Include="ScriptTests\TimerBlockTests.cs" />
     <Compile Include="ScriptTests\AssemblerBlockTests.cs" />
     <Compile Include="ScriptTests\EngineBlockTests.cs" />
+    <Compile Include="ScriptTests\CollectorBlockTests.cs" />
+    <Compile Include="ScriptTests\EjectorBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />

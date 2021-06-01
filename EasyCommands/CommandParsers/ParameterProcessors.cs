@@ -705,7 +705,7 @@ namespace IngameScript {
             var propertyProcessor = requiredEither<PropertyCommandParameter>();
             var directionProcessor = requiredEither<DirectionCommandParameter>();
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
-            var notProcessor = requiredRight<NotCommandParameter>();
+            var notProcessor = requiredEither<NotCommandParameter>();
             List<DataProcessor> processors = new List<DataProcessor> {
                 actionProcessor,
                 relativeProcessor,
@@ -716,7 +716,7 @@ namespace IngameScript {
                 notProcessor,
             };
 
-            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor && x != notProcessor);
+            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor);
             //TODO: Get rid of block handlers altogether
             Convert<SelectorCommandParameter> convert = (p) => {
                 List<CommandParameter> commandParameters = new List<CommandParameter> { p };
