@@ -86,6 +86,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(0);
                 mockRotor1.Setup(b => b.TargetVelocityRPM).Returns(0);
@@ -107,6 +109,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(1);
                 mockRotor0.Setup(b => b.UpperLimitDeg).Returns(90);
@@ -128,6 +132,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(1);
                 mockRotor0.Setup(b => b.UpperLimitDeg).Returns(90);
@@ -149,6 +155,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(1);
                 mockRotor0.Setup(b => b.UpperLimitDeg).Returns(90);
@@ -170,6 +178,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(-1);
                 mockRotor0.Setup(b => b.LowerLimitDeg).Returns(0);
@@ -191,6 +201,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(-1);
                 mockRotor0.Setup(b => b.LowerLimitDeg).Returns(00);
@@ -212,6 +224,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(-1);
                 mockRotor0.Setup(b => b.LowerLimitDeg).Returns(0);
@@ -233,6 +247,8 @@ else
 
                 var mockRotor0 = new Mock<IMyMotorStator>();
                 var mockRotor1 = new Mock<IMyMotorStator>();
+                MockBlockDefinition(mockRotor0, "LargeStator");
+                MockBlockDefinition(mockRotor1, "LargeStator");
 
                 mockRotor0.Setup(b => b.TargetVelocityRPM).Returns(0);
                 mockRotor1.Setup(b => b.TargetVelocityRPM).Returns(1);

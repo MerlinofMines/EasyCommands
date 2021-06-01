@@ -10,7 +10,6 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public static class BlockHandlerRegistry {
-
             static readonly Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
@@ -36,6 +35,7 @@ namespace IngameScript {
                 { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { Block.GYROSCOPE, new GyroscopeBlockHandler() },
+                { Block.HINGE, new RotorBlockHandler(IsHinge) },
                 { Block.LIGHT, new LightBlockHandler() },
                 { Block.MERGE, new MergeBlockHandler() },
                 { Block.PARACHUTE, new ParachuteBlockHandler() },
@@ -44,7 +44,7 @@ namespace IngameScript {
                 { Block.PROJECTOR, new ProjectorBlockHandler() },
                 { Block.REACTOR, new FunctionalBlockHandler<IMyReactor>()},
                 { Block.REMOTE, new RemoteControlBlockHandler()},
-                { Block.ROTOR, new RotorBlockHandler() },
+                { Block.ROTOR, new RotorBlockHandler(b => !IsHinge(b)) },
                 { Block.SORTER, new SorterBlockerHandler() },
                 { Block.SOUND, new SoundBlockHandler() },
                 { Block.SENSOR, new SensorBlockHandler() },

@@ -93,7 +93,7 @@ namespace IngameScript {
             AddWords(Words("coordinates", "position", "location"), new PropertyCommandParameter(Property.POSITION));
             AddWords(Words("target", "destination", "waypoint"), new PropertyCommandParameter(Property.TARGET));
             AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
-            AddWords(Words("strength", "force", "gravity"), new PropertyCommandParameter(Property.STRENGTH));
+            AddWords(Words("strength", "force", "gravity", "torque"), new PropertyCommandParameter(Property.STRENGTH));
             AddWords(Words("countdown"), new PropertyCommandParameter(Property.COUNTDOWN));
 
             //ValueProperty Words
@@ -180,7 +180,8 @@ namespace IngameScript {
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);
             AddBlockWords(Words("light"), Block.LIGHT);
-            AddBlockWords(Words("rotor", "hinge"), Block.ROTOR);
+            AddBlockWords(Words("rotor"), Block.ROTOR);
+            AddBlockWords(Words("hinge"), Block.HINGE);
             AddBlockWords(Words("program"), Block.PROGRAM);
             AddBlockWords(Words("timer"), Block.TIMER);
             AddBlockWords(Words("projector"), Block.PROJECTOR);

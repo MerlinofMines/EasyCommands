@@ -3,6 +3,7 @@ using System;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
+using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -16,6 +17,7 @@ print the avg ""rotor"" upper limit
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
                 test.RunUntilDone();
@@ -35,6 +37,7 @@ print the avg ""rotor"" lower limit
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(b => b.LowerLimitDeg).Returns(30);
                 test.RunUntilDone();
@@ -54,6 +57,7 @@ set the ""rotor"" upper limit to 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 test.RunUntilDone();
 
@@ -70,6 +74,7 @@ set the ""rotor"" lower limit to 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 test.RunUntilDone();
 
@@ -86,6 +91,7 @@ rotate the ""rotor"" to 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -105,6 +111,7 @@ rotate the ""rotor"" to -30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -124,6 +131,7 @@ rotate the ""rotor"" clockwise by 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -143,6 +151,7 @@ rotate the ""rotor"" clockwise by 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(345 * (float)Math.PI / 180);
@@ -162,6 +171,7 @@ rotate the ""rotor"" counterclockwise by 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -181,6 +191,7 @@ rotate the ""rotor"" counterclockwise by 30
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(-345 * (float)Math.PI / 180);
@@ -200,6 +211,7 @@ rotate the ""rotor"" 30 clockwise
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -219,6 +231,7 @@ rotate the ""rotor"" -30 counterclockwise
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(0);
@@ -238,6 +251,7 @@ rotate the ""rotor"" -60 clockwise
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(-30 * (float)Math.PI / 180);
@@ -257,6 +271,7 @@ rotate the ""rotor"" 60 counterclockwise
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockRotor = new Mock<IMyMotorStator>();
                 test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
 
                 mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
                 mockRotor.Setup(r => r.Angle).Returns(30 * (float)Math.PI / 180);
@@ -264,6 +279,71 @@ rotate the ""rotor"" 60 counterclockwise
 
                 mockRotor.VerifySet(b => b.LowerLimitDeg= -300);
                 mockRotor.VerifySet(b => b.TargetVelocityRPM = -1);
+            }
+        }
+
+        [TestMethod]
+        public void attachTheRotor() {
+            using (ScriptTest test = new ScriptTest(@"attach the ""rotor""")) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.Verify(b => b.Attach());
+            }
+        }
+
+        [TestMethod]
+        public void detachTheRotor() {
+            using (ScriptTest test = new ScriptTest(@"detach the ""rotor""")) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.Verify(b => b.Detach());
+            }
+        }
+
+        [TestMethod]
+        public void lockTheRotor() {
+            using (ScriptTest test = new ScriptTest(@"lock the ""rotor""")) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.RotorLock = true);
+            }
+        }
+
+        [TestMethod]
+        public void unlockTheRotor() {
+            using (ScriptTest test = new ScriptTest(@"unlock the ""rotor""")) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.RotorLock = false);
+            }
+        }
+
+        [TestMethod]
+        public void setTheRotorTorque() {
+            using (ScriptTest test = new ScriptTest(@"set the ""rotor"" torque to 2000")) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.Torque = 2000f);
             }
         }
     }

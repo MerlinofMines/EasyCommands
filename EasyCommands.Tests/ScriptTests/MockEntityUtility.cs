@@ -76,6 +76,10 @@ namespace EasyCommands.Tests.ScriptTests {
             };
         }
 
+        public static void MockBlockDefinition<T>(Mock<T> mockBlock, String subtypeId) where T : class, IMyCubeBlock {
+            mockBlock.Setup(b => b.BlockDefinition).Returns(new SerializableDefinitionId(new MyObjectBuilderType(typeof(T)), subtypeId));
+        }
+
         public static MyInventoryItem MockOre(String subType, float amount = 1) {
             return new MyInventoryItem(MyItemType.MakeOre(subType), 0, (MyFixedPoint)amount);
         }
