@@ -19,12 +19,23 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public class LaserAntennaBlockHandler : FunctionalBlockHandler<IMyLaserAntenna> {
+            public LaserAntennaBlockHandler() {
+                AddVectorHandler(Property.TARGET, b => b.TargetCoords, (b, v) => b.SetTargetCoords("GPS:Target:" + VectorToString(v) + ":"));
+                AddBooleanHandler(Property.LOCKED, b => b.IsPermanent, (b,v) => b.IsPermanent = v);
+                AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v, 1000);
+                AddBooleanHandler(Property.CONNECTED, b => b.Status == MyLaserAntennaStatus.Connected, (b, v) => { if (v) b.Connect(); });
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+            }
+        }
+
         public class AntennaBlockHandler : FunctionalBlockHandler<IMyRadioAntenna> {
             public AntennaBlockHandler() {
                 AddStringHandler(Property.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
                 AddBooleanHandler(Property.CONNECTED, (b) => b.EnableBroadcasting, (b, v) => b.EnableBroadcasting = v);
                 AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
                 defaultDirection = Direction.UP;
             }

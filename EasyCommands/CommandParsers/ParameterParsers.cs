@@ -62,7 +62,7 @@ namespace IngameScript {
             AddWords(Words("lock", "locked", "freeze"), new PropertyCommandParameter(Property.LOCKED));
             AddWords(Words("unlock", "unlocked", "unfreeze"), new PropertyCommandParameter(Property.LOCKED), new BooleanCommandParameter(false));
             AddWords(Words("run", "running", "execute", "executing"), new PropertyCommandParameter(Property.RUN));
-            AddWords(Words("done", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
+            AddWords(Words("done", "ready", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
             AddWords(Words("progress", "completion"), new PropertyCommandParameter(Property.RATIO));
             AddWords(Words("open", "opened"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(true));
             AddWords(Words("close", "closed", "shut"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(false));
@@ -222,6 +222,8 @@ namespace IngameScript {
             AddBlockWords(Words("collector"), Block.COLLECTOR);
             AddBlockWords(Words("ejector"), Block.EJECTOR);
             AddBlockWords(Words("decoy"), Block.DECOY);
+            AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
+            AddBlockWords(Words("laser", "laserAntenna"), Block.LASER_ANTENNA);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
