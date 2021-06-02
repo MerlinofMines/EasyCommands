@@ -10,7 +10,6 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public static class BlockHandlerRegistry {
-
             static readonly Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
@@ -19,13 +18,16 @@ namespace IngameScript {
                 { Block.BEACON, new BeaconBlockHandler()},
                 { Block.CAMERA, new CameraBlockHandler() },
                 { Block.CARGO, new CargoHandler() },
-                { Block.COCKPIT, new ShipControllerHandler<IMyCockpit>()},
+                { Block.COCKPIT, new ShipControllerHandler<IMyCockpit>() },
+                { Block.COLLECTOR, new FunctionalBlockHandler<IMyCollector>() },
                 { Block.CONNECTOR, new ConnectorBlockHandler() },
+                { Block.DECOY, new FunctionalBlockHandler<IMyDecoy>() },
                 { Block.DETECTOR, new OreDetectorHandler() },
                 { Block.DISPLAY, new TextSurfaceHandler() },
                 { Block.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
                 { Block.DOOR, new DoorBlockHandler() },
-                { Block.ENGINE, new FunctionalBlockHandler<IMyPowerProducer>() },
+                { Block.EJECTOR, new EjectorBlockHandler() },
+                { Block.ENGINE, new EngineBlockHandler() },
                 { Block.GEAR, new LandingGearHandler() },
                 { Block.GENERATOR, new GasGeneratorHandler()},
                 { Block.GRAVITY_GENERATOR, new GravityGeneratorBlockHandler() },
@@ -33,6 +35,9 @@ namespace IngameScript {
                 { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { Block.GYROSCOPE, new GyroscopeBlockHandler() },
+                { Block.HINGE, new RotorBlockHandler(IsHinge) },
+                { Block.JUMPDRIVE, new JumpDriveBlockHandler() },
+                { Block.LASER_ANTENNA, new LaserAntennaBlockHandler() },
                 { Block.LIGHT, new LightBlockHandler() },
                 { Block.MERGE, new MergeBlockHandler() },
                 { Block.PARACHUTE, new ParachuteBlockHandler() },
@@ -41,7 +46,7 @@ namespace IngameScript {
                 { Block.PROJECTOR, new ProjectorBlockHandler() },
                 { Block.REACTOR, new FunctionalBlockHandler<IMyReactor>()},
                 { Block.REMOTE, new RemoteControlBlockHandler()},
-                { Block.ROTOR, new RotorBlockHandler() },
+                { Block.ROTOR, new RotorBlockHandler(b => !IsHinge(b)) },
                 { Block.SORTER, new SorterBlockerHandler() },
                 { Block.SOUND, new SoundBlockHandler() },
                 { Block.SENSOR, new SensorBlockHandler() },

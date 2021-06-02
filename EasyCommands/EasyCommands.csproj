@@ -116,6 +116,7 @@
     <Compile Include="BlockHandlers\CameraBlockHandlers.cs" />
     <Compile Include="BlockHandlers\CargoBlockHandlers.cs" />
     <Compile Include="BlockHandlers\AssemblerBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\JumpDriveBlockHandlers.cs" />
     <Compile Include="BlockHandlers\TimerBlockHandlers.cs" />
     <Compile Include="BlockHandlers\SorterBlockHandlers.cs" />
     <Compile Include="BlockHandlers\GyroscopeBlockHandlers.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="BlockHandlers\ThrusterBlockHandlers.cs" />
     <Compile Include="BlockHandlers\WarheadBlockHandlers.cs" />
     <Compile Include="BlockHandlers\WheelBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\EngineBlockHandlers.cs" />
     <Compile Include="CommandParsers\ParameterParsers.cs" />
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
     <Compile Include="Commands\BlockCommandHandlers.cs" />

@@ -51,7 +51,7 @@ namespace IngameScript {
 
             //Value Words
             AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
-            AddWords(Words("off", "terminate", "cancel", "end", "false", "stop", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
+            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
             AddWords(Words("height", "length"), new PropertyCommandParameter(Property.HEIGHT));
@@ -62,7 +62,7 @@ namespace IngameScript {
             AddWords(Words("lock", "locked", "freeze"), new PropertyCommandParameter(Property.LOCKED));
             AddWords(Words("unlock", "unlocked", "unfreeze"), new PropertyCommandParameter(Property.LOCKED), new BooleanCommandParameter(false));
             AddWords(Words("run", "running", "execute", "executing"), new PropertyCommandParameter(Property.RUN));
-            AddWords(Words("done", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
+            AddWords(Words("done", "ready", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
             AddWords(Words("progress", "completion"), new PropertyCommandParameter(Property.RATIO));
             AddWords(Words("open", "opened"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(true));
             AddWords(Words("close", "closed", "shut"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(false));
@@ -72,17 +72,16 @@ namespace IngameScript {
             AddWords(Words("power", "powered", "arm", "armed"), new PropertyCommandParameter(Property.POWER));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SONG));
             AddWords(Words("silent", "silence"), new PropertyCommandParameter(Property.SILENCE));
-            AddWords(Words("volume"), new PropertyCommandParameter(Property.VOLUME));
+            AddWords(Words("volume", "level", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));
             AddWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), new PropertyCommandParameter(Property.RANGE));
             AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
             AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
             AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(Property.BLINK_OFFSET));
-            AddWords(Words("intensity"), new PropertyCommandParameter(Property.INTENSITY));
             AddWords(Words("falloff"), new PropertyCommandParameter(Property.FALLOFF));
             AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), new PropertyCommandParameter(Property.TRIGGER));
             AddWords(Words("pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), new PropertyCommandParameter(Property.SUPPLY));
-            AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
+            AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
             AddWords(Words("ratio", "percentage", "percent"), new PropertyCommandParameter(Property.RATIO));
@@ -94,7 +93,7 @@ namespace IngameScript {
             AddWords(Words("coordinates", "position", "location"), new PropertyCommandParameter(Property.POSITION));
             AddWords(Words("target", "destination", "waypoint"), new PropertyCommandParameter(Property.TARGET));
             AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
-            AddWords(Words("strength", "force", "gravity"), new PropertyCommandParameter(Property.STRENGTH));
+            AddWords(Words("strength", "force", "gravity", "torque"), new PropertyCommandParameter(Property.STRENGTH));
             AddWords(Words("countdown"), new PropertyCommandParameter(Property.COUNTDOWN));
 
             //ValueProperty Words
@@ -147,7 +146,7 @@ namespace IngameScript {
             AddWords(Words(")"), new CloseParenthesisCommandParameter());
             AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
             AddWords(Words("or", "|", "||"), new OrCommandParameter());
-            AddWords(Words("not", "!", "isn't", "isnt", "aren't", "arent"), new NotCommandParameter());
+            AddWords(Words("not", "!", "isnt", "arent", "stop"), new NotCommandParameter());
             AddWords(Words("absolute", "abs"), new UniOperationCommandParameter(UniOperand.ABS));
             AddWords(Words("sqrt"), new UniOperationCommandParameter(UniOperand.SQRT));
             AddWords(Words("sin"), new UniOperationCommandParameter(UniOperand.SIN));
@@ -181,7 +180,8 @@ namespace IngameScript {
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);
             AddBlockWords(Words("light"), Block.LIGHT);
-            AddBlockWords(Words("rotor", "hinge"), Block.ROTOR);
+            AddBlockWords(Words("rotor"), Block.ROTOR);
+            AddBlockWords(Words("hinge"), Block.HINGE);
             AddBlockWords(Words("program"), Block.PROGRAM);
             AddBlockWords(Words("timer"), Block.TIMER);
             AddBlockWords(Words("projector"), Block.PROJECTOR);
@@ -211,7 +211,7 @@ namespace IngameScript {
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
-            AddBlockWords(Words("engine"), Block.ENGINE);
+            AddBlockWords(Words("engine", "turbine"), Block.ENGINE);
             AddBlockWords(Words("sorter"), Block.SORTER);
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
@@ -219,6 +219,11 @@ namespace IngameScript {
             AddBlockWords(Words("cargo", "container", "inventory"), Words("containers", "inventories"), Block.CARGO);
             AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
+            AddBlockWords(Words("collector"), Block.COLLECTOR);
+            AddBlockWords(Words("ejector"), Block.EJECTOR);
+            AddBlockWords(Words("decoy"), Block.DECOY);
+            AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
+            AddBlockWords(Words("laser", "laserAntenna"), Block.LASER_ANTENNA);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");

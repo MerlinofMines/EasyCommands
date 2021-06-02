@@ -19,12 +19,12 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class ConnectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
+        public class ConnectorBlockHandler : EjectorBlockHandler {
             public ConnectorBlockHandler() : base() {
                 AddBooleanHandler(Property.LOCKED, Connected, Connect);
                 AddBooleanHandler(Property.CONNECTED, Connected, Connect);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
-                //TODO: Add Strength
+                AddNumericHandler(Property.STRENGTH, b => b.PullStrength, (b, v) => b.PullStrength = v, 0.01f);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
             }
 
             static bool Connected(IMyShipConnector connector) {
@@ -33,6 +33,13 @@ namespace IngameScript {
 
             static void Connect(IMyShipConnector connector, bool value) {
                 if (value) { connector.Connect(); } else { connector.Disconnect(); }
+            }
+        }
+
+        public class EjectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
+            public EjectorBlockHandler() : base() {
+                AddBooleanHandler(Property.AUTO, b => b.ThrowOut, (b,v) => b.ThrowOut = v);
+                AddBooleanHandler(Property.SUPPLY, b => !b.CollectAll, (b,v) => b.CollectAll = !v);
             }
         }
     }
