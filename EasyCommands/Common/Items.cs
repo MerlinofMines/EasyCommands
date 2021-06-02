@@ -21,6 +21,7 @@ namespace IngameScript {
     partial class Program {
 
         Dictionary<String, List<ItemFilter>> itemNamesToFilters = new Dictionary<string, List<ItemFilter>>();
+        Dictionary<String, MyDefinitionId> itemNamesToBlueprints = new Dictionary<string, MyDefinitionId>();
 
         public void InitializeItems() {
             //Ores
@@ -54,41 +55,41 @@ namespace IngameScript {
 
             //Ammo
             AddItems(Words("ammo", "ammunition"), Ammo());
-            AddItems(Words("missile ammo"), Ammo("Missile200mm"));
-            AddItems(Words("gatling ammo"), Ammo("NATO_25x184mm"));
-            AddItems(Words("rifle ammo"), Ammo("NATO_5p56x45mm"), Ammo("AutomaticRifleGun_Mag_20rd"));
-            AddItems(Words("rapid rifle ammo"), Ammo("RapidFireAutomaticRifleGun_Mag_50rd"));
-            AddItems(Words("precision rifle ammo"), Ammo("PreciseAutomaticRifleGun_Mag_5rd"));
-            AddItems(Words("elite rifle ammo"), Ammo("UltimateAutomaticRifleGun_Mag_30rd"));
-            AddItems(Words("pistol ammo"), Ammo("SemiAutoPistolMagazine"));
-            AddItems(Words("rapid pistol ammo"), Ammo("FullAutoPistolMagazine"));
-            AddItems(Words("elite pistol ammo"), Ammo("ElitePistolMagazine"));
+            AddAmmo(Words("missile ammo"), "Missile200mm");
+            AddBlueprintItems(Words("gatling ammo"), "NATO_25x184mmMagazine", Ammo("NATO_25x184mm"));
+            AddBlueprintItems(Words("rifle ammo"), "AutomaticRifleGun_Mag_20rd", Ammo("NATO_5p56x45mm"), Ammo("AutomaticRifleGun_Mag_20rd"));
+            AddAmmo(Words("rapid rifle ammo"), "RapidFireAutomaticRifleGun_Mag_50rd");
+            AddAmmo(Words("precision rifle ammo"), "PreciseAutomaticRifleGun_Mag_5rd");
+            AddAmmo(Words("elite rifle ammo"), "UltimateAutomaticRifleGun_Mag_30rd");
+            AddAmmo(Words("pistol ammo"), "SemiAutoPistolMagazine");
+            AddAmmo(Words("rapid pistol ammo"), "FullAutoPistolMagazine");
+            AddAmmo(Words("elite pistol ammo"), "ElitePistolMagazine");
 
             //Components
             AddItems(Words("components"), Component());
-            AddItems(Words("bulletproof glass"), Component("BulletproofGlass"));
-            AddItems(Words("canvas"), Component("Canvas"));
-            AddItems(Words("computer"), Component("Computer"));
-            AddItems(Words("construction component"), Component("Construction"));
-            AddItems(Words("detector component"), Component("Detector"));
-            AddItems(Words("display"), Component("Display"));
-            AddItems(Words("explosives"), Component("Explosives"));
-            AddItems(Words("girder"), Component("Girder"));
-            AddItems(Words("gravity component"), Component("GravityGenerator"));
-            AddItems(Words("interior plate"), Component("InteriorPlate"));
-            AddItems(Words("large steel tube"), Component("LargeTube"));
-            AddItems(Words("medical component"), Component("Medical"));
-            AddItems(Words("metal grid"), Component("MetalGrid"));
-            AddItems(Words("motor"), Component("Motor"));
-            AddItems(Words("power cell"), Component("PowerCell"));
-            AddItems(Words("radio component"), Component("RadioCommunication"));
-            AddItems(Words("reactor component"), Component("Reactor"));
-            AddItems(Words("small steel tube"), Component("SmallTube"));
-            AddItems(Words("solar cell"), Component("SolarCell"));
-            AddItems(Words("steel plate"), Component("SteelPlate"));
-            AddItems(Words("superconductor"), Component("Superconductor"));
-            AddItems(Words("thruster component"), Component("Thrust"));
-            AddItems(Words("zone chip"), Component("ZoneChip"));
+            AddComponent(Words("bulletproof glass"), "BulletproofGlass", "");
+            AddComponent(Words("canvas"), "Canvas", "");
+            AddComponent(Words("computer"), "Computer");
+            AddComponent(Words("construction component"), "Construction");
+            AddComponent(Words("detector component"), "Detector");
+            AddComponent(Words("display"), "Display", "");
+            AddComponent(Words("explosives"), "Explosives");
+            AddComponent(Words("girder"), "Girder");
+            AddComponent(Words("gravity component"), "GravityGenerator");
+            AddComponent(Words("interior plate"), "InteriorPlate", "");
+            AddComponent(Words("large steel tube"), "LargeTube", "");
+            AddComponent(Words("medical component"), "Medical");
+            AddComponent(Words("metal grid"), "MetalGrid", "");
+            AddComponent(Words("motor"), "Motor");
+            AddComponent(Words("power cell"), "PowerCell", "");
+            AddComponent(Words("radio component"), "RadioCommunication");
+            AddComponent(Words("reactor component"), "Reactor");
+            AddComponent(Words("small steel tube"), "SmallTube", "");
+            AddComponent(Words("solar cell"), "SolarCell", "");
+            AddComponent(Words("steel plate"), "SteelPlate", "");
+            AddComponent(Words("superconductor"), "Superconductor", "");
+            AddComponent(Words("thruster component"), "Thrust");
+            AddComponent(Words("zone chip"), "ZoneChip", "");
 
             //HandTools
             AddItems(Words("tools"), ToolType("Grinder", "Drill", "Welder"));
@@ -98,22 +99,22 @@ namespace IngameScript {
 
             //Weapons
             AddItems(Words("weapons"), ToolType("Rifle", "Pistol", "HandHeldLauncher"));
-            AddItems(Words("rifle"), Tool("AutomaticRifleItem"));
-            AddItems(Words("rapid rifle"), Tool("RapidFireAutomaticRifleItem"));
-            AddItems(Words("precision rifle"), Tool("PreciseAutomaticRifleItem"));
-            AddItems(Words("elite rifle"), Tool("UltimateAutomaticRifleItem"));
-            AddItems(Words("pistol"), Tool("SemiAutoPistolItem"));
-            AddItems(Words("rapid pistol"), Tool("FullAutoPistolItem"));
-            AddItems(Words("elite pistol"), Tool("ElitePistolItem"));
-            AddItems(Words("rocket launcher"), Tool("BasicHandHeldLauncherItem"));
-            AddItems(Words("precision rocket launcher"), Tool("AdvancedHandHeldLauncherItem"));
+            AddWeapon(Words("rifle"), "AutomaticRifle");
+            AddWeapon(Words("rapid rifle"), "RapidFireAutomaticRifle");
+            AddWeapon(Words("precision rifle"), "PreciseAutomaticRifle");
+            AddWeapon(Words("elite rifle"), "UltimateAutomaticRifle");
+            AddWeapon(Words("pistol"), "SemiAutoPistol");
+            AddWeapon(Words("rapid pistol"), "FullAutoPistol");
+            AddBlueprintItems(Words("elite pistol"), "EliteAutoPistol", Tool("ElitePistolItem"));
+            AddWeapon(Words("rocket launcher"), "BasicHandHeldLauncher");
+            AddWeapon(Words("precision rocket launcher"), "AdvancedHandHeldLauncher");
 
             //Bottles
             ItemFilter oxygenBottle = IsItemType("MyObjectBuilder_OxygenContainerObject", "OxygenBottle");
             ItemFilter hydrogenBottle = IsItemType("MyObjectBuilder_GasContainerObject", "HydrogenBottle");
             AddItems(Words("bottles"), oxygenBottle, hydrogenBottle);
-            AddItems(Words("oxygen bottle"), oxygenBottle);
-            AddItems(Words("hydrogen bottle"), hydrogenBottle);
+            AddBlueprintItems(Words("oxygen bottle"), "OxygenBottle", oxygenBottle);
+            AddBlueprintItems(Words("hydrogen bottle"), "HydrogenBottle", hydrogenBottle);
 
             //Consumables 
             AddItems(Words("consumables"), Consumable());
@@ -132,11 +133,24 @@ namespace IngameScript {
 
         void AddIngot(String ingotWord) => AddItems(Words(ingotWord.ToLower() + " ingot"), Ingot(ingotWord));
 
+        void AddAmmo(String[] words, String ammoWord) => AddBlueprintItems(words, ammoWord, Ammo(ammoWord));
+
+        void AddWeapon(String[] words, String weaponWord) => AddBlueprintItems(words, weaponWord, Tool(weaponWord + "Item"));
+
+        void AddComponent(String[] words, String componentWord, String blueprintSuffix = "Component") => AddBlueprintItems(words, componentWord + blueprintSuffix, Component(componentWord));
+
         void AddTools(String toolWord, String itemWord) {
-            AddItems(Words(toolWord), Tool(itemWord + "Item"));
-            AddItems(Words("enhanced " + toolWord), Tool(itemWord + "2Item"));
-            AddItems(Words("proficient " + toolWord), Tool(itemWord + "3Item"));
-            AddItems(Words("elite " + toolWord), Tool(itemWord + "4Item"));
+            AddBlueprintItems(Words(toolWord), itemWord, Tool(itemWord + "Item"));
+            AddBlueprintItems(Words("enhanced " + toolWord), itemWord + "2", Tool(itemWord + "2Item"));
+            AddBlueprintItems(Words("proficient " + toolWord), itemWord + "3", Tool(itemWord + "3Item"));
+            AddBlueprintItems(Words("elite " + toolWord), itemWord + "4", Tool(itemWord + "4Item"));
+        }
+
+        void AddBlueprintItems(String[] words, String blueprintId, params ItemFilter[] filters) {
+            AddItems(words, filters);
+            MyDefinitionId definition;
+            MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", blueprintId, out definition);
+            foreach (String word in words) itemNamesToBlueprints.Add(word, definition);
         }
 
         void AddItems(String[] words, params ItemFilter[] filters) {
@@ -146,6 +160,8 @@ namespace IngameScript {
         public delegate bool ItemFilter(MyInventoryItem item);
 
         public List<ItemFilter> GetItemFilters(String itemString) => itemString.Split(',').SelectMany(i => itemNamesToFilters.GetValueOrDefault(i.Trim().ToLower(), new List<ItemFilter>())).ToList();
+        public List<MyDefinitionId> GetItemBluePrints(String itemString) => itemString.Split(',').Where(i => itemNamesToBlueprints.ContainsKey(i)).Select(i => itemNamesToBlueprints[i]).ToList();
+
 
         public ItemFilter Consumable(String subType = null) => IsItemType("MyObjectBuilder_ConsumableItem", subType);
         public ItemFilter Component(String subType = null) => IsItemType("MyObjectBuilder_Component", subType);

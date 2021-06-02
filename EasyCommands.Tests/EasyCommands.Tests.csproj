@@ -158,10 +158,12 @@
     <Compile Include="ScriptTests\SimpleVariableTests.cs" />
     <Compile Include="ScriptTests\ItemTransferCommandTests.cs" />
     <Compile Include="ScriptTests\TimerBlockTests.cs" />
+    <Compile Include="ScriptTests\AssemblerBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="TokenParsingTests\ItemParsingTests.cs" />
+    <Compile Include="TokenParsingTests\BlueprintParsingTests.cs" />
     <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@ namespace IngameScript {
             static readonly Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
+                { Block.ASSEMBLER, new AssemblerBlockHandler()},
                 { Block.BATTERY, new BatteryBlockHandler()},
                 { Block.BEACON, new BeaconBlockHandler()},
                 { Block.CAMERA, new CameraBlockHandler() },
@@ -325,8 +326,6 @@ namespace IngameScript {
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
             protected Dictionary<String, PropertyHandler<T>> propertyHandlers = new Dictionary<String, PropertyHandler<T>>();
-            protected Property defaultBooleanProperty = Property.POWER;
-            protected Property defaultStringProperty = Property.NAME;
             protected Dictionary<Return, Property> defaultPropertiesByPrimitive = new Dictionary<Return, Property>();
             protected Dictionary<Direction, Property> defaultPropertiesByDirection = new Dictionary<Direction, Property>();
             protected Direction? defaultDirection = null;

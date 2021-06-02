@@ -59,6 +59,16 @@ namespace EasyCommands.Tests.ScriptTests {
                 .Callback(MockItems(items.ToList()));
         }
 
+        public static void MockProductionQueue<T>(Mock<T> productionBlock, params MyProductionItem[] queue) where T : class, IMyProductionBlock {
+            productionBlock.Setup(p => p.GetQueue(It.IsAny<List<MyProductionItem>>())).Callback<List<MyProductionItem>>(
+                list => list.AddRange(queue.ToList()));
+        }
+
+        public static MyProductionItem MockProductionItem(String itemId, int amount = 1) {
+            var item = new MyProductionItem(0, MockBlueprint(itemId), amount);
+            return item;
+        }
+
         public static Action<List<MyInventoryItem>, Func<MyInventoryItem, bool>> MockItems(List<MyInventoryItem> items) {
             return (i, filter) => {
                 Assert.IsTrue(items.TrueForAll(item => filter.Invoke(item)));
@@ -97,6 +107,12 @@ namespace EasyCommands.Tests.ScriptTests {
         public static MyInventoryItem MockItem(Type itemType, String subType, float amount = 1) {
             var type = new MyItemType(new MyObjectBuilderType(itemType), MyStringHash.GetOrCompute(subType));
             return new MyInventoryItem(type, 0, (MyFixedPoint)amount);
+        }
+
+        public static MyDefinitionId MockBlueprint(String itemId) {
+            MyDefinitionId definition;
+            MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", itemId, out definition);
+            return definition;
         }
     }
 }
