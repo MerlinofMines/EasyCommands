@@ -145,7 +145,6 @@
     <Compile Include="BlockHandlers\EngineBlockHandlers.cs" />
     <Compile Include="CommandParsers\ParameterParsers.cs" />
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
-    <Compile Include="Commands\BlockCommandHandlers.cs" />
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\EntityProviders.cs" />

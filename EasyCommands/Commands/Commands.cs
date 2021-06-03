@@ -233,88 +233,18 @@ namespace IngameScript {
 
         public class BlockCommand : Command {
             public EntityProvider entityProvider;
-            public BlockCommandHandler commandHandler;
+            public Action<BlockHandler, Object> blockAction;
 
-            public BlockCommand(EntityProvider entityProvider, BlockCommandHandler commandHandler) {
-                this.entityProvider = entityProvider;
-                this.commandHandler = commandHandler;
-            }
-            public BlockCommand(List<CommandParameter> parameters) {
-                parameters = new List<CommandParameter>(parameters);
-                PreParseCommands(parameters);
-
-                Trace("Command Handler Post Parsed Command Parameters: ");
-                parameters.ForEach(param => Trace("" + param.GetType()));
-                foreach (BlockCommandHandler handler in GetHandlers()) {
-                    if (handler.canHandle(parameters)) {
-                        commandHandler = handler;
-                        commandHandler.e = entityProvider;
-                        return;
-                    }
-                }
-
-                parameters.ForEach(param => Debug("" + param.GetType()));
-                throw new Exception("Unsupported Command Parameter Combination");
+            public BlockCommand(EntityProvider provider, Action<BlockHandler, Object> action) {
+                entityProvider = provider;
+                blockAction = action;
             }
 
             public override bool Execute() {
-                commandHandler.b = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
-                commandHandler.Execute();
+                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
+                entityProvider.GetEntities().ForEach(e => blockAction(handler, e));
                 return true;
             }
-
-            public void PreParseCommands(List<CommandParameter> commandParameters) {
-                extract<ActionCommandParameter>(commandParameters);//Extract and ignore
-                SelectorCommandParameter selector = extractFirst<SelectorCommandParameter>(commandParameters);
-                if (selector == null) throw new Exception("SelectorCommandParameter is required for command: " + GetType());
-                entityProvider = selector.value;
-            }
-
-            public List<BlockCommandHandler> GetHandlers() {
-                return new List<BlockCommandHandler>() {
-                    //Primitive Handlers
-                    new BlockCommandHandler1<VariableCommandParameter>((b,e,v)=>{
-                        Primitive result = v.value.GetValue();
-                        PropertySupplier propertyType = b.GetDefaultProperty(result.GetPrimitiveType());
-                        b.SetPropertyValue(e, propertyType, v.value.GetValue());
-                    }),
-                    new BlockCommandHandler1<PropertyCommandParameter>((b,e,p)=>{
-                        b.SetPropertyValue(e, p.value, new BooleanPrimitive(true));
-                    }),
-                    new BlockCommandHandler1<DirectionCommandParameter>((b,e,d)=>{
-                        PropertySupplier propertyType = b.GetDefaultProperty(d.value);
-                        b.MoveNumericPropertyValue(e, propertyType, d.value);
-                    }),
-                    new BlockCommandHandler2<PropertyCommandParameter, VariableCommandParameter>((b,e,p,v)=>{
-                        b.SetPropertyValue(e, p.value, v.value.GetValue());
-                    }),
-                    new BlockCommandHandler2<DirectionCommandParameter, VariableCommandParameter>((b,e,d,v)=>{
-                        PropertySupplier property = b.GetDefaultProperty(d.value);
-                        b.SetPropertyValue(e, property, d.value, v.value.GetValue());
-                    }),
-                    new BlockCommandHandler3<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>((b,e,p,d,v)=>{
-                        b.SetPropertyValue(e,p.value,d.value,v.value.GetValue());
-                    }),
-                    new BlockCommandHandler3<PropertyCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,v,r)=>{
-                        b.IncrementPropertyValue(e,p.value,v.value.GetValue());
-                    }),
-                    new BlockCommandHandler3<DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,d,v,r)=>{
-                        PropertySupplier property = b.GetDefaultProperty(d.value);
-                        b.IncrementPropertyValue(e,property,d.value,v.value.GetValue());
-                    }),
-                    new BlockCommandHandler4<PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter, RelativeCommandParameter>((b,e,p,d,v,r)=>{
-                        b.IncrementPropertyValue(e,p.value,d.value,v.value.GetValue());
-                    }),
-                    new BlockCommandHandler2<PropertyCommandParameter, DirectionCommandParameter>((b,e,p,d)=>{
-                        b.MoveNumericPropertyValue(e, p.value, d.value); }),
-                    new BlockCommandHandler2<ReverseCommandParameter, PropertyCommandParameter>((b,e,r,p)=>{
-                        b.ReverseNumericPropertyValue(e, p.value); }),
-                    new BlockCommandHandler1<ReverseCommandParameter>((b,e,r)=>{
-                        PropertySupplier property = b.GetDefaultProperty(b.GetDefaultDirection());
-                        b.ReverseNumericPropertyValue(e, property); }),
-                };
-            }
-            public override Command Clone() { return new BlockCommand(entityProvider, commandHandler); }
         }
 
         public class TransferItemCommand : Command {

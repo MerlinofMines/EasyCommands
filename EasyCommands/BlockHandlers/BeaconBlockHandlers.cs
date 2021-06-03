@@ -22,8 +22,9 @@ namespace IngameScript {
         public class BeaconBlockHandler : FunctionalBlockHandler<IMyBeacon> {
             public BeaconBlockHandler() {
                 AddStringHandler(Property.TEXT, (b) => b.HudText, (b, v) => b.HudText = v);
-                AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
+                AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 1000);
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
                 defaultDirection = Direction.UP;
             }
