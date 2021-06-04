@@ -19,41 +19,6 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-
-        public static T findFirst<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
-            var i = parameters.FindIndex(p => p is T);
-            if (i < 0) return null;
-            T t = (T)parameters[i];
-            return t;
-        }
-
-        public static T findLast<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
-            var i = parameters.FindLastIndex(p => p is T);
-            if (i < 0) return null;
-            T t = (T)parameters[i];
-            return t;
-        }
-
-        public static T extractFirst<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
-            var i = parameters.FindIndex(p => p is T);
-            if (i < 0) return null;
-            T t = (T)parameters[i];
-            parameters.RemoveAt(i);
-            return t;
-        }
-
-        public static List<T> extract<T>(List<CommandParameter> parameters) where T : CommandParameter {
-            int i = 0;
-            List<T> extracted = new List<T>();
-            while (i < parameters.Count) {
-                if (parameters[i] is T) {
-                    extracted.Add((T)parameters[i]);
-                    parameters.RemoveAt(i);
-                } else { i++; };
-            }
-            return extracted;
-        }
-
         public interface CommandParameter {
             string Token { get; set; }
         }
@@ -79,6 +44,18 @@ namespace IngameScript {
         public class PrintCommandParameter : SimpleCommandParameter { }
         public class SelfCommandParameter : SimpleCommandParameter { }
         public class GlobalCommandParameter : SimpleCommandParameter { }
+
+        public abstract class ValueCommandParameter<T> : CommandParameter {
+            public T value;
+            public ValueCommandParameter(T v) { value = v; }
+
+            string CommandParameter.Token {
+                get {
+                    return value.ToString();
+                }
+                set { }
+            }
+        }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {
             public QueueCommandParameter(bool async) : base(async) {
@@ -128,18 +105,6 @@ namespace IngameScript {
 
         public class VariableSelectorCommandParameter : ValueCommandParameter<Variable> {
             public VariableSelectorCommandParameter(Variable value) : base(value) { }
-        }
-
-        public abstract class ValueCommandParameter<T> : CommandParameter {
-            public T value;
-            public ValueCommandParameter(T v) { value = v; }
-
-            string CommandParameter.Token {
-                get {
-                    return value.ToString();
-                }
-                set {}
-            }
         }
 
         public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {

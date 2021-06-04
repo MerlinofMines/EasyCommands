@@ -66,7 +66,7 @@ namespace IngameScript {
                         if (!blockType.HasValue()) {
                             BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
                             if (type != null) blockType.SetValue(type);
-                            GroupCommandParameter g = findFirst<GroupCommandParameter>(p.SubTokens);
+                            GroupCommandParameter g = findLast<GroupCommandParameter>(p.SubTokens);
                             if (g != null) group.SetValue(g);
                         }
                         return blockType.HasValue();
@@ -756,5 +756,7 @@ namespace IngameScript {
         }
 
         static bool AllSatisfied(params DataProcessor[] processors) => processors.ToList().TrueForAll(p => p.fetcher.Satisfied());
+
+        static T findLast<T>(List<CommandParameter> parameters) where T : class, CommandParameter => parameters.Where(p => p is T).Select(p => (T)p).LastOrDefault();
     }
 }

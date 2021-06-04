@@ -93,11 +93,11 @@ namespace IngameScript {
                 return ResolveType(CastString(selector.GetValue()).GetTypedValue(), out ignored);
             }
 
-            public Block ResolveType(String selector, out bool isGroup) {
+            Block ResolveType(String selector, out bool isGroup) {
                 var tokens = PROGRAM.ParseTokens(selector);
                 var parameters = PROGRAM.ParseCommandParameters(tokens);
-                var blockType = extractFirst<BlockTypeCommandParameter>(parameters);
-                isGroup = extractFirst<GroupCommandParameter>(parameters) != null;
+                var blockType = findLast<BlockTypeCommandParameter>(parameters);
+                isGroup = findLast<GroupCommandParameter>(parameters) != null;
                 if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
                 return blockType.value;
             }
