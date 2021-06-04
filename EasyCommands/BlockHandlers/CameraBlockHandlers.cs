@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class CameraBlockHandler : FunctionalBlockHandler<IMyCameraBlock> {
             public CameraBlockHandler() {
-                AddBooleanHandler(Property.TRIGGER, (b) => CastVector(GetPropertyValue(b, new PropertySupplier(Property.TARGET))).GetVectorValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
+                AddBooleanHandler(Property.TRIGGER, (b) => CastVector(GetPropertyValue(b, new PropertySupplier(Property.TARGET))).GetTypedValue() != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(Property.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
                 AddVectorHandler(Property.TARGET_VELOCITY, (b) => { Vector3D velocity; GetVector(GetCustomProperty(b, "Velocity"), out velocity); return velocity; });
                 //TODO: Use setter to scan specific vector?

@@ -126,7 +126,7 @@ namespace IngameScript {
         public class SimpleNumericPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleNumericPropertyHandler(GetNumericProperty<T> GetValue, SetNumericProperty<T> SetValue, float delta)
                 : base((b, p) => new NumberPrimitive(GetValue(b)), (b, p, v)=> {
-                    SetValue(b, CastNumber(v).GetNumericValue());
+                    SetValue(b, CastNumber(v).GetTypedValue());
                 }, new NumberPrimitive(delta)) {
             }
         }
@@ -136,7 +136,7 @@ namespace IngameScript {
                 Get = (b, p) => GetDirection(b, p, defaultDirection);
                 GetDirection = (b, p, d) => new NumberPrimitive(GetValue(b,d));
                 Set = (b, p, v) => SetDirection(b, p, defaultDirection, v);
-                SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v).GetNumericValue());
+                SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v).GetTypedValue());
                 IncrementDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(v));
                 Increment = (b, p, v) => IncrementDirection(b, p, defaultDirection, v);
             }
@@ -146,7 +146,7 @@ namespace IngameScript {
         public class SimpleStringPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleStringPropertyHandler(GetStringProperty<T> GetValue, SetStringProperty<T> SetValue)
                 : base((b, p) => new StringPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b,CastString(v).GetStringValue());
+                    SetValue(b,CastString(v).GetTypedValue());
                 }, new StringPrimitive("")) {
             }
         }
@@ -154,7 +154,7 @@ namespace IngameScript {
         public class SimpleBooleanPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleBooleanPropertyHandler(GetBooleanProperty<T> GetValue, SetBooleanProperty<T> SetValue)
                 : base((b, p) => new BooleanPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastBoolean(v).GetBooleanValue());
+                    SetValue(b, CastBoolean(v).GetTypedValue());
                 }, new BooleanPrimitive(true)) {
             }
         }
@@ -162,7 +162,7 @@ namespace IngameScript {
         public class SimpleVectorPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleVectorPropertyHandler(GetVectorProperty<T> GetValue, SetVectorProperty<T> SetValue)
                 : base((b, p) => new VectorPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastVector(v).GetVectorValue());
+                    SetValue(b, CastVector(v).GetTypedValue());
                 }, new VectorPrimitive(Vector3D.Zero)) {
             }
         }
@@ -170,7 +170,7 @@ namespace IngameScript {
         public class SimpleColorPropertyHandler<T> : SimplePropertyHandler<T> {
             public SimpleColorPropertyHandler(GetColorProperty<T> GetValue, SetColorProperty<T> SetValue)
                 : base((b, p) => new ColorPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastColor(v).GetColorValue());
+                    SetValue(b, CastColor(v).GetTypedValue());
                 }, new ColorPrimitive(new Color(10,10,10))) {
             }
         }

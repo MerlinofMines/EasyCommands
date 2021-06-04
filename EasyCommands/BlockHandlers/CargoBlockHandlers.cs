@@ -37,7 +37,7 @@ namespace IngameScript {
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {
-                    var itemString = CastString(p.valueAttribute.GetValue()).GetStringValue();
+                    var itemString = CastString(p.valueAttribute.GetValue()).GetTypedValue();
                     var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(itemString));
                     double totalAmount = 0;
                     var items = new List<MyInventoryItem>();

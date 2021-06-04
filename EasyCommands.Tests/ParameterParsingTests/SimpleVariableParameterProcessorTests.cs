@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
         }
 
@@ -27,7 +27,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
             Assert.IsTrue(assignCommand.isGlobal);
         }
@@ -39,7 +39,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
         }
 
@@ -50,7 +50,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
         }
 
@@ -61,7 +61,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
         }
 
@@ -85,7 +85,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(4, CastNumber(assignCommand.variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(4, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
             Assert.IsFalse(assignCommand.useReference);
         }
 
@@ -124,7 +124,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is StaticVariable);
             StaticVariable variable = (StaticVariable)assignCommand.variable;
             Assert.IsTrue(variable.GetValue() is VectorPrimitive);
-            Vector3D vector = CastVector(variable.GetValue()).GetVectorValue();
+            Vector3D vector = CastVector(variable.GetValue()).GetTypedValue();
             Assert.AreEqual(53573.9750085028, vector.X);
             Assert.AreEqual(-26601.8512032533, vector.Y);
             Assert.AreEqual(12058.8229348438, vector.Z);
@@ -139,7 +139,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is StaticVariable);
             StaticVariable variable = (StaticVariable)assignCommand.variable;
             Assert.IsTrue(variable.GetValue() is VectorPrimitive);
-            Vector3D vector = CastVector(variable.GetValue()).GetVectorValue();
+            Vector3D vector = CastVector(variable.GetValue()).GetTypedValue();
             Assert.AreEqual(53573.9750085028, vector.X);
             Assert.AreEqual(-26601.8512032533, vector.Y);
             Assert.AreEqual(12058.8229348438, vector.Z);

@@ -70,7 +70,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Print(CastString(variable.GetValue()).GetStringValue());
+                Print(CastString(variable.GetValue()).GetTypedValue());
                 return true;
             }
         }
@@ -184,7 +184,7 @@ namespace IngameScript {
             public override void Reset() { ticksLeft = -1; }
             public override bool Execute() {
                 if (ticksLeft < 0) {
-                    ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetNumericValue(), units);
+                    ticksLeft = getTicks(CastNumber(waitInterval.GetValue()).GetTypedValue(), units);
                 }
                 Debug("Waiting for " + ticksLeft + " ticks");
                 return ticksLeft-- <= 0;
@@ -210,7 +210,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                PROGRAM.IGC.RegisterBroadcastListener(CastString(tag.GetValue()).GetStringValue());
+                PROGRAM.IGC.RegisterBroadcastListener(CastString(tag.GetValue()).GetTypedValue());
                 return true;
             }
         }
@@ -224,7 +224,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                PROGRAM.IGC.SendBroadcastMessage(CastString(tag.GetValue()).GetStringValue(), CastString(message.GetValue()).GetStringValue());
+                PROGRAM.IGC.SendBroadcastMessage(CastString(tag.GetValue()).GetTypedValue(), CastString(message.GetValue()).GetTypedValue());
                 return true; 
             }
         }
@@ -264,7 +264,7 @@ namespace IngameScript {
 
                 BlockHandler blockHandler = BlockHandlerRegistry.GetBlockHandler(Block.CARGO);
 
-                var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue()).GetStringValue()));
+                var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue()).GetTypedValue()));
                 var items = new List<MyInventoryItem>();
 
                 var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
@@ -273,7 +273,7 @@ namespace IngameScript {
                     .ToList();
 
                 MyFixedPoint amountLeft = MyFixedPoint.MaxValue;
-                if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue()).GetNumericValue();
+                if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue()).GetTypedValue();
 
                 int transfers = 0;
 
@@ -358,7 +358,7 @@ namespace IngameScript {
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     Trace("Evaluating Value");
-                    evaluatedValue = CastBoolean(Condition.GetValue()).GetBooleanValue(); evaluated = true;
+                    evaluatedValue = CastBoolean(Condition.GetValue()).GetTypedValue(); evaluated = true;
                 }
                 Debug("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
@@ -383,7 +383,7 @@ namespace IngameScript {
             public override bool Execute() {
                 if (currentCommands == null || currentCommands.Count == 0) {
                     currentCommands = commandsToExecute.Select(c => c.Clone()).ToList();//Deep Copy
-                    if (loopsLeft == 0) loopsLeft = (int)Math.Round(CastNumber(loopCount.GetValue()).GetNumericValue());
+                    if (loopsLeft == 0) loopsLeft = (int)Math.Round(CastNumber(loopCount.GetValue()).GetTypedValue());
                     loopsLeft -= 1;
                 }
 

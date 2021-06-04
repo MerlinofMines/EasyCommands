@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("print 'Hello World'");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
-            Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()).GetStringValue());
+            Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()).GetTypedValue());
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("listen \"garageDoors\"");
             Assert.IsTrue(command is ListenCommand);
             ListenCommand listenCommand = (ListenCommand)command;
-            Assert.AreEqual("garageDoors", CastString(listenCommand.tag.GetValue()).GetStringValue());
+            Assert.AreEqual("garageDoors", CastString(listenCommand.tag.GetValue()).GetTypedValue());
         }
 
         [TestMethod]
@@ -45,8 +45,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("send \"goto openDoors\" to \"garageDoors\"");
             Assert.IsTrue(command is SendCommand);
             SendCommand sendCommand = (SendCommand)command;
-            Assert.AreEqual("garageDoors", CastString(sendCommand.tag.GetValue()).GetStringValue());
-            Assert.AreEqual("goto openDoors", CastString(sendCommand.message.GetValue()).GetStringValue());
+            Assert.AreEqual("garageDoors", CastString(sendCommand.tag.GetValue()).GetTypedValue());
+            Assert.AreEqual("goto openDoors", CastString(sendCommand.message.GetValue()).GetTypedValue());
         }
 
         [TestMethod]
@@ -80,8 +80,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
             Assert.AreEqual(Function.GOTO, functionCommand.type);
-            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetNumericValue());
-            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetNumericValue());
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetTypedValue());
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetTypedValue());
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
+            Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
             Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 
@@ -100,7 +100,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait 3");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
+            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
             Assert.AreEqual(Unit.SECONDS, waitCommand.units);
         }
 
@@ -110,7 +110,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait 3 ticks");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetNumericValue());
+            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
             Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 

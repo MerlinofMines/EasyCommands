@@ -18,7 +18,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(Block.BATTERY, sep.GetBlockType());
             Assert.IsTrue(sep.isGroup);
             Assert.IsTrue(sep.selector is StaticVariable);
-            Assert.AreEqual("batteries", CastString(sep.selector.GetValue()).GetStringValue());
+            Assert.AreEqual("batteries", CastString(sep.selector.GetValue()).GetTypedValue());
         }
 
         [TestMethod]

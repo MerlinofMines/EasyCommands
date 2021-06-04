@@ -60,7 +60,7 @@ namespace IngameScript {
                 List<object> selectedEntities = new List<Object>();
 
                 //Return empty list if index > Count
-                int i = (int)CastNumber(index.GetValue()).GetNumericValue();
+                int i = (int)CastNumber(index.GetValue()).GetTypedValue();
                 if (i < entities.Count) selectedEntities.Add(entities[i]);
 
                 return selectedEntities;
@@ -79,7 +79,7 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                String selectorString = CastString(selector.GetValue()).GetStringValue();
+                String selectorString = CastString(selector.GetValue()).GetTypedValue();
                 bool resolvedIsGroup = false;
                 Block bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
                 bool useGroup = isGroup || resolvedIsGroup;
@@ -90,7 +90,7 @@ namespace IngameScript {
             public Block GetBlockType() {
                 if (blockType.HasValue) return blockType.Value;
                 bool ignored;
-                return ResolveType(CastString(selector.GetValue()).GetStringValue(), out ignored);
+                return ResolveType(CastString(selector.GetValue()).GetTypedValue(), out ignored);
             }
 
             public Block ResolveType(String selector, out bool isGroup) {

@@ -268,7 +268,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
-            Assert.AreEqual(16, CastNumber(variable.GetValue()).GetNumericValue());
+            Assert.AreEqual(16, CastNumber(variable.GetValue()).GetTypedValue());
         }
 
         [TestMethod]
@@ -331,7 +331,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(11f, CastNumber(addVariable.GetValue()).GetNumericValue());
+            Assert.AreEqual(11f, CastNumber(addVariable.GetValue()).GetTypedValue());
             Assert.AreEqual(BiOperand.ADD, addVariable.operand);
             Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
@@ -347,7 +347,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(5f, CastNumber(addVariable.GetValue()).GetNumericValue());
+            Assert.AreEqual(5f, CastNumber(addVariable.GetValue()).GetTypedValue());
             Assert.AreEqual(BiOperand.ADD, addVariable.operand);
             Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
@@ -445,7 +445,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
             Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual("#224466", CastString(primitive).GetStringValue());
+            Assert.AreEqual("#224466", CastString(primitive).GetTypedValue());
         }
 
         [TestMethod]
@@ -456,7 +456,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
             Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual("#112233", CastString(primitive).GetStringValue());
+            Assert.AreEqual("#112233", CastString(primitive).GetTypedValue());
         }
 
         [TestMethod]

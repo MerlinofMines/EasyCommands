@@ -720,7 +720,6 @@ namespace IngameScript {
             };
 
             CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.fetcher.Satisfied() && x != directionProcessor && x != propertyProcessor);
-            //TODO: Get rid of block handlers altogether
             Convert<SelectorCommandParameter> convert = (p) => {
                 Action<BlockHandler, Object> blockAction;
                 PropertyCommandParameter property = propertyProcessor.f.GetValue();

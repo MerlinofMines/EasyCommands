@@ -17,7 +17,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             StaticVariable variable = (StaticVariable)conditionalCommand.Condition;
             Assert.IsTrue(variable.GetValue() is BooleanPrimitive);
             BooleanPrimitive boolean = (BooleanPrimitive)variable.GetValue();
-            Assert.IsTrue(boolean.GetBooleanValue());
+            Assert.IsTrue(boolean.GetTypedValue());
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ComparisonVariable variable = (ComparisonVariable)conditionalCommand.Condition;
             Assert.IsTrue(variable.GetValue() is BooleanPrimitive);
             BooleanPrimitive boolean = (BooleanPrimitive)variable.GetValue();
-            Assert.IsTrue(boolean.GetBooleanValue());
+            Assert.IsTrue(boolean.GetTypedValue());
             Assert.IsTrue(variable.a is StaticVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }

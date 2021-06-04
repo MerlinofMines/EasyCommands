@@ -41,7 +41,7 @@ namespace IngameScript {
             }
 
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
-                var definitions = PROGRAM.GetItemBluePrints(CastString(p.valueAttribute.GetValue()).GetStringValue());
+                var definitions = PROGRAM.GetItemBluePrints(CastString(p.valueAttribute.GetValue()).GetTypedValue());
                 var currentItems = new List<MyProductionItem>();
                 b.GetQueue(currentItems);
                 MyFixedPoint value = currentItems.Where(item => definitions.Contains(item.BlueprintId)).Select(item => item.Amount).Aggregate((sum, val) => sum + val);
@@ -50,14 +50,14 @@ namespace IngameScript {
 
             void AddQueueItem(IMyAssembler b, Primitive v1, Primitive v2) {
                 string itemString;
-                if (v1.GetPrimitiveType() == Return.STRING) itemString = CastString(v1).GetStringValue();
-                else itemString = CastString(v2).GetStringValue();
+                if (v1.GetPrimitiveType() == Return.STRING) itemString = CastString(v1).GetTypedValue();
+                else itemString = CastString(v2).GetTypedValue();
 
                 float amount = 1f;
                 if (v1.GetPrimitiveType() == Return.NUMERIC) {
-                    amount = CastNumber(v1).GetNumericValue();
+                    amount = CastNumber(v1).GetTypedValue();
                 } else if (v2.GetPrimitiveType() == Return.NUMERIC) {
-                    amount = CastNumber(v2).GetNumericValue();
+                    amount = CastNumber(v2).GetTypedValue();
                 }
 
                 List<MyDefinitionId> blueprints = PROGRAM.GetItemBluePrints(itemString);

@@ -41,11 +41,11 @@ namespace IngameScript {
                 (b, p, v) => {
                     switch (v.GetPrimitiveType()) {
                         case Return.NUMERIC:
-                            float value = CastNumber(v).GetNumericValue();
+                            float value = CastNumber(v).GetTypedValue();
                             b.FieldSize = new Vector3(value, value, value);
                             break;
                         case Return.VECTOR:
-                            b.FieldSize = CastVector(v).GetVectorValue();
+                            b.FieldSize = CastVector(v).GetTypedValue();
                             break;
                         default:
                             throw new Exception("Cannot set gravity field to type: " + v.GetPrimitiveType());
@@ -70,7 +70,7 @@ namespace IngameScript {
                 };
 
                 SetDirection = (b, p, d, v) => {
-                    float value = CastNumber(v).GetNumericValue();
+                    float value = CastNumber(v).GetTypedValue();
                     float x = b.FieldSize.X;
                     float y = b.FieldSize.Y;
                     float z = b.FieldSize.Z;

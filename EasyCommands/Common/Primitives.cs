@@ -50,7 +50,7 @@ namespace IngameScript {
             }
 
             public int Compare(Primitive p) {
-                return Convert.ToInt32(CastNumber(PerformOperation(BiOperand.COMPARE, this, p)).GetNumericValue());
+                return Convert.ToInt32(CastNumber(PerformOperation(BiOperand.COMPARE, this, p)).GetTypedValue());
             }
 
             public Primitive Not() {
@@ -124,9 +124,9 @@ namespace IngameScript {
         public static StringPrimitive CastString(Primitive p) {
             switch (p.GetPrimitiveType()) {
                 case Return.VECTOR:
-                    return new StringPrimitive(VectorToString(CastVector(p).GetVectorValue()));
+                    return new StringPrimitive(VectorToString(CastVector(p).GetTypedValue()));
                 case Return.COLOR:
-                    return new StringPrimitive(ColorToString(CastColor(p).GetColorValue()));
+                    return new StringPrimitive(ColorToString(CastColor(p).GetTypedValue()));
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
         }
@@ -152,7 +152,7 @@ namespace IngameScript {
                 case Return.NUMERIC:
                     return new ColorPrimitive(new Color((float)p.GetValue()));
                 case Return.VECTOR:
-                    var vector = CastVector(p).GetVectorValue();
+                    var vector = CastVector(p).GetTypedValue();
                     return new ColorPrimitive(new Color((int)vector.X, (int)vector.Y, (int)vector.Z));
                 default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
             }
@@ -199,82 +199,36 @@ namespace IngameScript {
             return hex.ToString("X");
         }
 
-        public class BooleanPrimitive : Primitive {
-            private bool value;
+        public class SimplePrimitive<T> : Primitive {
+            public T value;
 
-            public BooleanPrimitive(bool value) : base(Return.BOOLEAN) { this.value = value; }
-
-            public override object GetValue() {
-                return value;
+            public SimplePrimitive(Return type, T v) : base(type) {
+                value = v;
             }
 
-            public bool GetBooleanValue() {
-                return value;
-            }
+            public override object GetValue() => value;
+            public T GetTypedValue() => (T) GetValue();
         }
 
-        public class NumberPrimitive : Primitive {
-            float number;
-
-            public NumberPrimitive(float number) : base(Return.NUMERIC) {
-                this.number = number;
-            }
-
-            public override object GetValue() {
-                return number;
-            }
-
-            public float GetNumericValue() {
-                return number;
-            }
+        public class BooleanPrimitive : SimplePrimitive<bool> {
+            public BooleanPrimitive(bool value) : base(Return.BOOLEAN, value) {}
         }
 
-        public class StringPrimitive : Primitive {
-            String stringValue;
-
-            public StringPrimitive(String value) : base(Return.STRING) {
-                stringValue = value;
-            }
-
-            public override object GetValue() {
-                return GetStringValue();
-            }
-
-            public String GetStringValue() {
-                return stringValue.Replace("\\n", "\n");
-            }
+        public class NumberPrimitive : SimplePrimitive<float> {
+            public NumberPrimitive(float number) : base(Return.NUMERIC, number) {}
         }
 
-        public class VectorPrimitive : Primitive {
-            Vector3D vector;
-
-            public VectorPrimitive(Vector3D vector) : base(Return.VECTOR) {
-                this.vector = vector;
-            }
-
-            public override object GetValue() {
-                return vector;
-            }
-
-            public Vector3D GetVectorValue() {
-                return vector;
-            }
+        public class StringPrimitive : SimplePrimitive<string> {
+            public StringPrimitive(String value) : base(Return.STRING, value) {}
+            public override object GetValue() => value.Replace("\\n", "\n");
         }
 
-        public class ColorPrimitive : Primitive {
-            public Color color;
+        public class VectorPrimitive : SimplePrimitive<Vector3D> {
+            public VectorPrimitive(Vector3D vector) : base(Return.VECTOR, vector) {}
+        }
 
-            public ColorPrimitive(Color color) : base(Return.COLOR) {
-                this.color = color;
-            }
-
-            public override object GetValue() {
-                return color;
-            }
-
-            public Color GetColorValue() {
-                return color;
-            }
+        public class ColorPrimitive : SimplePrimitive<Color> {
+            public ColorPrimitive(Color color) : base(Return.COLOR, color) {}
         }
     }
 }
