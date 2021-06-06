@@ -47,6 +47,7 @@ namespace IngameScript {
                 (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                //TODO: Check for ListIndex type, if so than use ListIndexAssignmentCommand
                 (p,g,name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
                 (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableSelectorCommandParameter>(
@@ -328,7 +329,7 @@ namespace IngameScript {
         }
 
         public void InitializeProcessors() {
-            parameterProcessors.Insert(0, new ParenthesisProcessor(this));
+            parameterProcessors.Insert(0, new ParenthesisProcessor());
 
             for (int i = 0; i < parameterProcessors.Count; i++) {
                 ParameterProcessor processor = parameterProcessors[i];
@@ -534,19 +535,13 @@ namespace IngameScript {
         }
 
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
-            Program program;
-
-            public ParenthesisProcessor(Program program) {
-                this.program = program;
-            }
-
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
                 for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
                         finalParameters = p.GetRange(i+1, j - (i+1));
-                        var alternateBranches = program.ProcessParameters(finalParameters);
+                        var alternateBranches = PROGRAM.ProcessParameters(finalParameters);
                         p.RemoveRange(i, j - i + 1);
 
                         for (int k = 0; k < alternateBranches.Count; k++) {
@@ -560,6 +555,39 @@ namespace IngameScript {
                     }
                 }
                 throw new Exception("Missing Closing Parenthesis for Command");
+            }
+        }
+
+        public class ListProcessor : ParameterProcessor<OpenBracketCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                finalParameters = null;
+                var indexValues = new List<Variable>();
+                int startIndex = i;
+                for (int j = startIndex + 1; j < p.Count; j++) {
+                    if (p[j] is OpenBracketCommandParameter) return false;
+                    else if (p[j] is ListSpecifierCommandParameter) {
+                        indexValues.Add(ParseVariable(p, startIndex, j));
+                        startIndex = j; //set startIndex to next separator
+                    }
+                    else if (p[j] is CloseBracketCommandParameter) {
+                        if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
+                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues) };
+                        p.RemoveRange(i, j - i + 1);
+                        p.InsertRange(i, finalParameters);
+                        return true;
+                    }
+                }
+                throw new Exception("Missing Closing Bracket for List");
+            }
+
+            Variable ParseVariable(List<CommandParameter> p, int startIndex, int endIndex) {
+                var listIndex = PROGRAM.ProcessParameters(p.GetRange(startIndex + 1, endIndex - (startIndex + 1)));
+                var variable = listIndex.Where(l => l.Count == 1 && l[0] is ValueCommandParameter<Variable>)
+                    .Select(l => ((ValueCommandParameter<Variable>)l[0]).value)
+                    .FirstOrDefault(null);
+                if (variable == null) throw new Exception("List Index Values Must Resolve To Variables");
+
+                return variable;
             }
         }
 

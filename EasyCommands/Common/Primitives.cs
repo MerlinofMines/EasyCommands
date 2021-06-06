@@ -158,6 +158,13 @@ namespace IngameScript {
             }
         }
 
+        public static ListPrimitive CastList(Primitive p) {
+            switch (p.GetPrimitiveType()) {
+                case Return.LIST: return (ListPrimitive)p;
+                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
+            }
+        }
+
         public static bool GetColor(String s, out Color color) {
             Color? possibleColor = null;
             if (colors.ContainsKey(s.ToLower())) possibleColor = colors[s.ToLower()];
@@ -229,6 +236,10 @@ namespace IngameScript {
 
         public class ColorPrimitive : SimplePrimitive<Color> {
             public ColorPrimitive(Color color) : base(Return.COLOR, color) {}
+        }
+
+        public class ListPrimitive : SimplePrimitive<List<Variable>> {
+            public ListPrimitive(List<Variable> list) : base(Return.LIST, list) { }
         }
     }
 }

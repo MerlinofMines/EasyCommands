@@ -20,7 +20,9 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Internal (Don't touch!)
-        private Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
+        Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
+
+        char[] separateTokens = new[] { '(', ')', '[', ']', ',' };
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -176,6 +178,11 @@ namespace IngameScript {
             AddWords(Words("repeat", "loop", "rerun", "replay"), new ControlCommandParameter(Control.REPEAT));
             AddWords(Words("exit"), new ControlCommandParameter(Control.STOP));
             AddWords(Words("pause"), new ControlCommandParameter(Control.PAUSE));
+
+            //List Words
+            AddWords(Words("["), new OpenBracketCommandParameter());
+            AddWords(Words("]"), new CloseBracketCommandParameter());
+            AddWords(Words(","), new ListSpecifierCommandParameter());
 
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);
@@ -335,25 +342,29 @@ namespace IngameScript {
             return commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
                     ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(ParseParenthesis)
+                    .SelectMany(ParseSeparateTokens)
                     .Select(t => new Token(t, false, false))  // Split the item
                     : new Token[] { new Token(element, true, false) })  // Keep the entire item
                 .SelectMany(element => element)
                 .ToArray();
         }
 
-        String[] ParseParenthesis(String command) {
-            List<String> tokens = new List<String>();
-            if (command.StartsWith("(") || command.StartsWith(")")) {
-                tokens.Add(command.Substring(0, 1));
-                tokens.AddRange(ParseParenthesis(command.Substring(1)));
-            } else if (command.EndsWith("(") || command.EndsWith(")")) {
-                tokens.Add(command.Substring(0, command.Length - 1));
-                tokens.Add(command.Substring(command.Length - 1));
-            } else {
-                tokens.Add(command);
+        String[] ParseSeparateTokens(String command) {
+            var tokens = new List<String>();
+            var subTokens = new List<char>();
+
+            for (int i = 0; i < command.Length; i++) {
+                if (separateTokens.Contains(command[i])) {
+                    if (subTokens.Count() > 0) tokens.Add(new string(subTokens.ToArray()));
+                    tokens.Add(command[i].ToString());
+                    subTokens.Clear();
+                } else subTokens.Add(command[i]);
             }
-            return tokens.Where(t => t.Length>0).ToArray();
+
+            if (subTokens.Count() > 0) tokens.Add(new string(subTokens.ToArray()));
+            subTokens.Clear();
+
+            return tokens.ToArray();
         }
 
         public class Token {

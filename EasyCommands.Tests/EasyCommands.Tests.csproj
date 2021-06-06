@@ -170,6 +170,7 @@
     <Compile Include="ScriptTests\DecoyBlockTests.cs" />
     <Compile Include="ScriptTests\AntennaBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
+    <Compile Include="TokenParsingTests\BracketParsingTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="TokenParsingTests\ItemParsingTests.cs" />

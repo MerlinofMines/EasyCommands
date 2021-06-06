@@ -33,6 +33,10 @@ namespace IngameScript {
         public class OrCommandParameter : SimpleCommandParameter { }
         public class OpenParenthesisCommandParameter : SimpleCommandParameter { }
         public class CloseParenthesisCommandParameter : SimpleCommandParameter { }
+        public class OpenBracketCommandParameter : SimpleCommandParameter { }
+        public class ListSpecifierCommandParameter : SimpleCommandParameter { }
+        public class ListItemSeparatorCommandParameter : SimpleCommandParameter { }
+        public class CloseBracketCommandParameter : SimpleCommandParameter { }
         public class IteratorCommandParameter : SimpleCommandParameter { }
         public class ActionCommandParameter : SimpleCommandParameter { }
         public class ReverseCommandParameter : SimpleCommandParameter { }
@@ -143,6 +147,14 @@ namespace IngameScript {
 
         public class UnitCommandParameter : ValueCommandParameter<Unit> {
             public UnitCommandParameter(Unit value) : base(value) {}
+        }
+
+        public class ListCommandParameter : ValueCommandParameter<List<Variable>> {
+            public ListCommandParameter(List<Variable> v) : base(v) {}
+        }
+
+        public class ListIndexCommandParameter : ValueCommandParameter<ListIndexVariable> {
+            public ListIndexCommandParameter(ListIndexVariable v) : base(v) {}
         }
 
         public class IndexSelectorCommandParameter : ValueCommandParameter<Variable> {

@@ -134,8 +134,17 @@ namespace IngameScript {
                 }
                 return true;
             }
+        }
 
-            public override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference, isGlobal); }
+        public class ListVariableAssignmentCommand : Command {
+            public ListIndexVariable list;
+            public Variable value;
+            public bool useReference;
+
+            public override bool Execute() {
+                list.SetValue(useReference ? value : new StaticVariable(value.GetValue()));
+                return true;
+            }
         }
 
         public class ControlCommand : Command {
