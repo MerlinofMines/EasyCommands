@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        char[] separateTokens = new[] { '(', ')', '[', ']', ',', ';', '+', '*', '/', '!', '^'};//TODO: Fix '-' but make sure "-3" still works
+        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", ".." }; //TODO: Fix '-' but make sure "-3" still works
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -351,21 +351,9 @@ namespace IngameScript {
         }
 
         String[] ParseSeparateTokens(String command) {
-            var tokens = new List<String>();
-            var subTokens = new List<char>();
-
-            for (int i = 0; i < command.Length; i++) {
-                if (separateTokens.Contains(command[i])) {
-                    if (subTokens.Count() > 0) tokens.Add(new string(subTokens.ToArray()));
-                    tokens.Add(command[i].ToString());
-                    subTokens.Clear();
-                } else subTokens.Add(command[i]);
-            }
-
-            if (subTokens.Count() > 0) tokens.Add(new string(subTokens.ToArray()));
-            subTokens.Clear();
-
-            return tokens.ToArray();
+            var newCommand = command;
+            separateTokens.ForEach(s => newCommand = newCommand.Replace(s, " " + s + " "));
+            return newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public class Token {
