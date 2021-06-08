@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        char[] separateTokens = new[] { '(', ')', '[', ']', ',' };
+        char[] separateTokens = new[] { '(', ')', '[', ']', ',', ';', '+', '*', '/', '!', '^'};//TODO: Fix '-' but make sure "-3" still works
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -165,6 +165,12 @@ namespace IngameScript {
             AddWords(Words("mod", "%"), new MultiplyCommandParameter(BiOperand.MOD));
             AddWords(Words("dot", "."), new MultiplyCommandParameter(BiOperand.DOT));
             AddWords(Words("pow", "exp", "^"), new MultiplyCommandParameter(BiOperand.EXPONENT));
+            AddWords(Words(".."), new MultiplyCommandParameter(BiOperand.RANGE));
+
+            //List Words
+            AddWords(Words("["), new OpenBracketCommandParameter());
+            AddWords(Words("]"), new CloseBracketCommandParameter());
+            AddWords(Words(","), new ListSeparatorCommandParameter());
 
             //Unit Words
             AddWords(Words("second", "seconds"), new UnitCommandParameter(Unit.SECONDS));
@@ -178,11 +184,6 @@ namespace IngameScript {
             AddWords(Words("repeat", "loop", "rerun", "replay"), new ControlCommandParameter(Control.REPEAT));
             AddWords(Words("exit"), new ControlCommandParameter(Control.STOP));
             AddWords(Words("pause"), new ControlCommandParameter(Control.PAUSE));
-
-            //List Words
-            AddWords(Words("["), new OpenBracketCommandParameter());
-            AddWords(Words("]"), new CloseBracketCommandParameter());
-            AddWords(Words(","), new ListSpecifierCommandParameter());
 
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);

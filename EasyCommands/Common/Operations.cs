@@ -135,8 +135,12 @@ namespace IngameScript {
             AddBiOperation<float, Color>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(b, a));
             AddBiOperation<Color, float>(BiOperand.DIVIDE, (a, b) => Color.Multiply(a, 1/b));
 
+            //List
+            AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => Enumerable.Range((int)a, (int)(b + 1 - a)).Select(i => GetStaticVariable(i)).ToList());
             OperatorsInitialized = true;
         }
+
+        static List<Variable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
 
         static UniOperation SimpleUniOperand<T>(Func<T,object> resolver) {
             return (a) => {

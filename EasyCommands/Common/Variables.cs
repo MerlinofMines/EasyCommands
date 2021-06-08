@@ -23,6 +23,9 @@ namespace IngameScript {
             Primitive GetValue();
         }
 
+        public static Variable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
+        public static Variable EmptyList() => new StaticVariable(ResolvePrimitive(GetVariables()));
+
         public class StaticVariable : Variable {
             public Primitive primitive;
 
@@ -96,6 +99,13 @@ namespace IngameScript {
             public Variable expectedList;
             public PrimitiveComparator comparator;
             public Variable comparisonValue;
+
+            public ListAggregateConditionVariable(AggregationMode aggregation, Variable list, Comparison comparison, Variable value) {
+                aggregationMode = aggregation;
+                expectedList = list;
+                comparator = new PrimitiveComparator(comparison);
+                comparisonValue = value;
+            }
 
             public Primitive GetValue() {
                 Primitive comparison = comparisonValue.GetValue();
@@ -194,9 +204,26 @@ namespace IngameScript {
             public Primitive GetValue() => PROGRAM.GetVariable(variableName).GetValue();
         }
 
+        public class ListVariable : Variable {
+            public Variable left, right;
+
+            public ListVariable(Variable a, Variable b) {
+                left = a;
+                right = b;
+            }
+
+            public Primitive GetValue() => new ListPrimitive(AsList(left.GetValue()).Concat(AsList(right.GetValue())).ToList());
+            List<Variable> AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? CastList(p).GetTypedValue() : new List<Variable> { GetStaticVariable(p.GetValue()) };
+        }
+
         public class ListAggregateVariable : Variable {
             public Variable expectedList;
             public PropertyAggregate aggregation;
+
+            public ListAggregateVariable(Variable list, PropertyAggregate agg) {
+                expectedList = list;
+                aggregation = agg;
+            }
 
             public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetTypedValue().Select(v => v.GetValue()).ToList(), aggregation);
         }
@@ -205,20 +232,44 @@ namespace IngameScript {
             public Variable expectedList;
             public Variable index;
 
+            public ListIndexVariable(Variable list, Variable i) {
+                expectedList = list;
+                index = i;
+            }
+
             //TODO: Add Lookup by string support (Dictionary)
             //TODO: Add List support!  If index is list then return list containing at all requested indexes.  if empty, return expectedList
             public Primitive GetValue() {
-                List<Variable> list = CastList(expectedList.GetValue()).GetTypedValue();
-                int listIndex = (int)(CastNumber(index.GetValue()).GetTypedValue());
-                if (listIndex >= list.Count) throw new Exception("List Index: " + listIndex + " is greater than list size");
-                return list[listIndex].GetValue();
+                var list = GetList();
+                var values = GetIndexValues()
+                    .Where(i => i.GetPrimitiveType() == Return.NUMERIC)
+                    .Select(p => list[(int)CastNumber(p).GetTypedValue()])
+                    .ToList();
+                if (values.Count == 0) return expectedList.GetValue();
+                return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(values);
             }
 
-            //Todo: If index.GetValue() is a list then set all list indexes to provided value?
+            //TODO: Support String indexes?
             public void SetValue(Variable value) {
-                List<Variable> list = CastList(expectedList.GetValue()).GetTypedValue();
-                int listIndex = (int)(CastNumber(index.GetValue()).GetTypedValue());
-                list[listIndex] = value;
+                var list = CastList(expectedList.GetValue()).GetTypedValue();
+                GetIndexValues()
+                    .Where(i => i.GetPrimitiveType() == Return.NUMERIC)
+                    .Select(p =>CastNumber(p).GetTypedValue())
+                    .ForEach(n => list[(int)n] = value);
+            }
+
+            List<Variable> GetList() {
+                Primitive list = expectedList.GetValue();
+                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue() : new List<Variable> { expectedList };
+            }
+
+            List<Primitive> GetIndexValues() {
+                var primitives = new List<Primitive>();
+                Primitive indexValue = index.GetValue();
+                if (indexValue.GetPrimitiveType() == Return.LIST) {
+                    primitives.AddRange(CastList(indexValue).GetTypedValue().Select(i => i.GetValue()).ToList());
+                } else primitives.Add(indexValue);
+                return primitives;
             }
         }
 

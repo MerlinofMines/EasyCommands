@@ -141,6 +141,12 @@ namespace IngameScript {
             public Variable value;
             public bool useReference;
 
+            public ListVariableAssignmentCommand(ListIndexVariable list, Variable value, bool useReference) {
+                this.list = list;
+                this.value = value;
+                this.useReference = useReference;
+            }
+
             public override bool Execute() {
                 list.SetValue(useReference ? value : new StaticVariable(value.GetValue()));
                 return true;

@@ -65,7 +65,8 @@ namespace IngameScript {
             { typeof(int), Return.NUMERIC },
             { typeof(double), Return.NUMERIC },
             { typeof(Vector3D), Return.VECTOR},
-            { typeof(Color), Return.COLOR }
+            { typeof(Color), Return.COLOR },
+            { typeof(List<Variable>), Return.LIST }
         };
 
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
@@ -99,7 +100,10 @@ namespace IngameScript {
                 return new VectorPrimitive((Vector3D)o);
             } else if (o is Color) {
                 return new ColorPrimitive((Color)o);
-            } else throw new Exception("Cannot convert type: " + o.GetType() + " to primitive");
+            } else if (o is List<Variable>) {
+                return new ListPrimitive((List<Variable>)o);
+            }
+            else throw new Exception("Cannot convert type: " + o.GetType() + " to primitive");
         }
 
         public static BooleanPrimitive CastBoolean(Primitive p) {
@@ -117,7 +121,7 @@ namespace IngameScript {
                 case Return.NUMERIC: return (NumberPrimitive)p;
                 case Return.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
                 case Return.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
-                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
+                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Number");
             }
         }
 
@@ -161,7 +165,7 @@ namespace IngameScript {
         public static ListPrimitive CastList(Primitive p) {
             switch (p.GetPrimitiveType()) {
                 case Return.LIST: return (ListPrimitive)p;
-                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
+                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to List");
             }
         }
 
