@@ -47,6 +47,7 @@ namespace IngameScript {
         public class PrintCommandParameter : SimpleCommandParameter { }
         public class SelfCommandParameter : SimpleCommandParameter { }
         public class GlobalCommandParameter : SimpleCommandParameter { }
+        public class IgnoreCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T value;

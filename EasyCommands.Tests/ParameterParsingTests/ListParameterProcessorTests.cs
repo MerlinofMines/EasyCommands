@@ -78,5 +78,49 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(4, CastNumber(listIndexes[3].GetValue()).GetTypedValue());
             Assert.AreEqual("value", CastString(assignmentCommand.value.GetValue()).GetValue());
         }
+
+        [TestMethod]
+        public void AssignVariableToListIndexValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myValue to [1, 2, 3][0]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myValue", assignmentCommand.variableName);
+            Primitive value = assignmentCommand.variable.GetValue();
+            Assert.AreEqual(1f, CastNumber(value).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AssignVariableToListSubRange() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myValue to [3..10][2..4]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myValue", assignmentCommand.variableName);
+            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(3, values.Count);
+            Assert.AreEqual(5f, CastNumber(values[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(6f, CastNumber(values[1].GetValue()).GetTypedValue());
+            Assert.AreEqual(7f, CastNumber(values[2].GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AssignListAtIndexValuesToAnotherList() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myList[1, 2, 3] to [0]");
+            Assert.IsTrue(command is ListVariableAssignmentCommand);
+            ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
+            Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
+            InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
+            Assert.AreEqual("myList", listName.variableName);
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue();
+            Assert.AreEqual(3, listIndexes.Count);
+            Assert.AreEqual(1, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(2, CastNumber(listIndexes[1].GetValue()).GetTypedValue());
+            Assert.AreEqual(3, CastNumber(listIndexes[2].GetValue()).GetTypedValue());
+            List<Variable> assignedValue = CastList(assignmentCommand.value.GetValue()).GetTypedValue();
+            Assert.AreEqual(1, assignedValue.Count);
+            Assert.AreEqual(0f, assignedValue[0].GetValue().GetValue());
+        }
     }
 }

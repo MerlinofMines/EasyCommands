@@ -35,6 +35,8 @@ namespace IngameScript {
                 NoValueRule<ListCommandParameter>(
                     (list) => new ListIndexCommandParameter(new ListIndexVariable(list.value, GetVariables(new List<Variable>())[0])))),
 
+            new IgnoreProcessor(),
+
             //FunctionProcessor
             OneValueRule<FunctionCommandParameter,StringCommandParameter>(
                 requiredRight<StringCommandParameter>(),
@@ -568,6 +570,14 @@ namespace IngameScript {
             public int CompareTo(ParameterProcessor other) => Rank.CompareTo(other.Rank);
             public bool CanProcess(CommandParameter p) => p is T;
             public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
+        }
+
+        public class IgnoreProcessor : ParameterProcessor<IgnoreCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                finalParameters = new List<CommandParameter>();
+                p.RemoveAt(i);
+                return true;
+            }
         }
 
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
