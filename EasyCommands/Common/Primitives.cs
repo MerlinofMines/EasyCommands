@@ -34,27 +34,27 @@ namespace IngameScript {
             }
 
             public Primitive Plus(Primitive p) {
-                return PerformOperation(BiOperand.ADD, this, p);
+                return PROGRAM.PerformOperation(BiOperand.ADD, this, p);
             }
 
             public Primitive Minus(Primitive p) {
-                return PerformOperation(BiOperand.SUBTACT, this, p);
+                return PROGRAM.PerformOperation(BiOperand.SUBTACT, this, p);
             }
 
             public Primitive Multiply(Primitive p) {
-                return PerformOperation(BiOperand.MULTIPLY, this, p);
+                return PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
             }
 
             public Primitive Divide(Primitive p) {
-                return PerformOperation(BiOperand.DIVIDE, this, p);
+                return PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
             }
 
             public int Compare(Primitive p) {
-                return Convert.ToInt32(CastNumber(PerformOperation(BiOperand.COMPARE, this, p)).GetTypedValue());
+                return Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)).GetTypedValue());
             }
 
             public Primitive Not() {
-                return PerformOperation(UniOperand.NOT, this);
+                return PROGRAM.PerformOperation(UniOperand.NOT, this);
             }
         }
 
@@ -79,10 +79,11 @@ namespace IngameScript {
             { "black", Color.Black}
         };
 
-        static Return GetType(Type type) {
+        static List<Return> GetTypes(Type type) {
+            if (type == typeof(object)) return ((Return[])Enum.GetValues(typeof(Return))).ToList();
             Return primitiveType;
             if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
-            return primitiveType;
+            return new List<Return> { primitiveType };
         }
 
         static Primitive ResolvePrimitive(object o) {
@@ -131,6 +132,8 @@ namespace IngameScript {
                     return new StringPrimitive(VectorToString(CastVector(p).GetTypedValue()));
                 case Return.COLOR:
                     return new StringPrimitive(ColorToString(CastColor(p).GetTypedValue()));
+                case Return.LIST:
+                    return new StringPrimitive("[" + string.Join(",", CastList(p).GetTypedValue().Select(v => CastString(v.GetValue()).GetTypedValue())) + "]");
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
         }
@@ -162,12 +165,8 @@ namespace IngameScript {
             }
         }
 
-        public static ListPrimitive CastList(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.LIST: return (ListPrimitive)p;
-                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to List");
-            }
-        }
+        public static ListPrimitive CastList(Primitive p) => new ListPrimitive(AsList(p));
+        public static List<Variable> AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? (List<Variable>)p.GetValue() : new List<Variable> { GetStaticVariable(p.GetValue()) };
 
         public static bool GetColor(String s, out Color color) {
             Color? possibleColor = null;

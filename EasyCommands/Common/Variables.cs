@@ -75,7 +75,7 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                return PerformOperation(operand, a.GetValue());
+                return PROGRAM.PerformOperation(operand, a.GetValue());
             }
         }
 
@@ -90,7 +90,7 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                return PerformOperation(operand, a.GetValue(), b.GetValue());
+                return PROGRAM.PerformOperation(operand, a.GetValue(), b.GetValue());
             }
         }
 
@@ -213,7 +213,6 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() => new ListPrimitive(AsList(left.GetValue()).Concat(AsList(right.GetValue())).ToList());
-            List<Variable> AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? CastList(p).GetTypedValue() : new List<Variable> { GetStaticVariable(p.GetValue()) };
         }
 
         public class ListAggregateVariable : Variable {
