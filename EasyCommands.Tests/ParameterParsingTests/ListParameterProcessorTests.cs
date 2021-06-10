@@ -122,5 +122,50 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(1, assignedValue.Count);
             Assert.AreEqual(0f, assignedValue[0].GetValue().GetValue());
         }
+
+        [TestMethod]
+        public void AssignVariableToMultiDimensionalArray() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myList to [ [0,1,2] , [3,4,5] ]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myList", assignmentCommand.variableName);
+            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(2, values.Count);
+
+            List<Variable> myList0 = CastList(values[0].GetValue()).GetTypedValue();
+            Assert.AreEqual(0f, CastNumber(myList0[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(1f, CastNumber(myList0[1].GetValue()).GetTypedValue());
+            Assert.AreEqual(2f, CastNumber(myList0[2].GetValue()).GetTypedValue());
+
+            List<Variable> myList1 = CastList(values[1].GetValue()).GetTypedValue();
+            Assert.AreEqual(3f, CastNumber(myList1[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(4f, CastNumber(myList1[1].GetValue()).GetTypedValue());
+            Assert.AreEqual(5f, CastNumber(myList1[2].GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AssignVariableToMultiDimensionalArrayValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myValue to [ [0,1,2] , [3,4,5] ][1][2]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myValue", assignmentCommand.variableName);
+            Assert.AreEqual(5f, CastNumber(assignmentCommand.variable.GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AssignVariableToMultiDimensionalArraySubList() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myValue to [ [0,1,2] , [3,4,5] ][1]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myValue", assignmentCommand.variableName);
+            List<Variable> listValues = CastList(assignmentCommand.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(3, listValues.Count);
+            Assert.AreEqual(3f, listValues[0].GetValue().GetValue());
+            Assert.AreEqual(4f, listValues[1].GetValue().GetValue());
+            Assert.AreEqual(5f, listValues[2].GetValue().GetValue());
+        }
     }
 }
