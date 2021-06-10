@@ -241,11 +241,6 @@ namespace IngameScript {
                 (aggregation, selector) => aggregation.value != AggregationMode.NONE && selector.HasValue(),
                 (aggregation, selector) => selector.GetValue()),
 
-            //ListVariableProcessor
-            TwoValueRule<ListSeparatorCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new ListVariable(left.GetValue().value, right.GetValue().value))),
-
             //IteratorProcessor
             OneValueRule<IteratorCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(),
@@ -602,10 +597,17 @@ namespace IngameScript {
         public class ListProcessor : ParameterProcessor<OpenBracketCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
-                for (int j = i + 1; j < p.Count; j++) {
+                var indexValues = new List<Variable>();
+                int startIndex = i;
+                for (int j = startIndex + 1; j < p.Count; j++) {
                     if (p[j] is OpenBracketCommandParameter) return false;
+                    else if (p[j] is ListSeparatorCommandParameter) {
+                        indexValues.Add(ParseVariable(p, startIndex, j));
+                        startIndex = j; //set startIndex to next separator
+                    }
                     else if (p[j] is CloseBracketCommandParameter) {
-                        finalParameters = new List<CommandParameter> { new ListCommandParameter((j > i + 1) ? ParseVariable(p, i, j) : EmptyList()) };
+                        if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
+                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues.Count() == 1 ?  indexValues[0] : GetStaticVariable(indexValues)) };
                         p.RemoveRange(i, j - i + 1);
                         p.InsertRange(i, finalParameters);
                         return true;

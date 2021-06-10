@@ -204,17 +204,6 @@ namespace IngameScript {
             public Primitive GetValue() => PROGRAM.GetVariable(variableName).GetValue();
         }
 
-        public class ListVariable : Variable {
-            public Variable left, right;
-
-            public ListVariable(Variable a, Variable b) {
-                left = a;
-                right = b;
-            }
-
-            public Primitive GetValue() => new ListPrimitive(AsList(left.GetValue()).Concat(AsList(right.GetValue())).ToList());
-        }
-
         public class ListAggregateVariable : Variable {
             public Variable expectedList;
             public PropertyAggregate aggregation;
