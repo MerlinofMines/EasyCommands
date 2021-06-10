@@ -240,10 +240,11 @@ namespace IngameScript {
             //TODO: Support String indexes?
             public void SetValue(Variable value) {
                 var list = CastList(expectedList.GetValue()).GetTypedValue();
-                GetIndexValues()
-                    .Where(i => i.GetPrimitiveType() == Return.NUMERIC)
-                    .Select(p =>CastNumber(p).GetTypedValue())
-                    .ForEach(n => list[(int)n] = value);
+                var indexes = GetIndexValues();
+                if (indexes.Count == 0) indexes.AddRange(Enumerable.Range(0, list.Count).Select(i => ResolvePrimitive(i)));
+                indexes.Where(i => i.GetPrimitiveType() == Return.NUMERIC)
+                  .Select(p =>CastNumber(p).GetTypedValue())
+                  .ForEach(n => list[(int)n] = value);
             }
 
             List<Variable> GetList() {
@@ -263,6 +264,8 @@ namespace IngameScript {
 
         public static Primitive Aggregate(List<Primitive> propertyValues, PropertyAggregate aggregationType) {
             switch (aggregationType) {
+                case PropertyAggregate.COUNT:
+                    return ResolvePrimitive(propertyValues.Count);
                 case PropertyAggregate.VALUE:
                     return ValueAggregator(propertyValues);
                 case PropertyAggregate.SUM:
