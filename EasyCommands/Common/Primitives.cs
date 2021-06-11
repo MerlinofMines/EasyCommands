@@ -28,6 +28,7 @@ namespace IngameScript {
             }
 
             public abstract object GetValue();
+            public virtual object GetDeepCopyValue() => GetValue();
 
             public Return GetPrimitiveType() {
                 return type;
@@ -55,6 +56,10 @@ namespace IngameScript {
 
             public Primitive Not() {
                 return PROGRAM.PerformOperation(UniOperand.NOT, this);
+            }
+
+            public Primitive DeepCopy() {
+                return ResolvePrimitive(this.GetDeepCopyValue());
             }
         }
 
@@ -243,6 +248,7 @@ namespace IngameScript {
 
         public class ListPrimitive : SimplePrimitive<List<Variable>> {
             public ListPrimitive(List<Variable> list) : base(Return.LIST, list) { }
+            public override object GetDeepCopyValue() => GetTypedValue().Select(v => GetStaticVariable(v.GetValue().GetDeepCopyValue())).ToList();
         }
     }
 }

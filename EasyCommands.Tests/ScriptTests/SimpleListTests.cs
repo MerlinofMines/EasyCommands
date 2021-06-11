@@ -190,6 +190,77 @@ Print ""SubList: "" + mySubList
             }
         }
 
+        [TestMethod]
+        public void AssignVariableToListSetsImmutableValue() {
+            String script = @"
+:main
+assign i to 0
+assign myList to [i,1,2,3]
+assign i to 1
+Print ""List: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("List: [0,1,2,3]"));
+            }
+        }
+
+        [TestMethod]
+        public void BindVariableToListSetsMutableValue() {
+            String script = @"
+:main
+assign i to 0
+bind myList to [i,1,2,3]
+Print ""Before: "" + myList
+assign i to 1
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [0,1,2,3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,1,2,3]"));
+            }
+        }
+
+        [TestMethod]
+        public void AssignListIndexSetsImmutableValue() {
+            String script = @"
+:main
+assign myList to [0,1,2,3]
+assign i to 0
+assign myList[0] to i
+Print ""Before: "" + myList
+assign i to 1
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [0,1,2,3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [0,1,2,3]"));
+            }
+        }
+
+        [TestMethod]
+        public void BindListIndexSetsMutableValue() {
+            String script = @"
+:main
+assign myList to [0,1,2,3]
+assign i to 0
+bind myList[0] to i
+Print ""Before: "" + myList
+assign i to 1
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [0,1,2,3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,1,2,3]"));
+            }
+        }
 
         [TestMethod]
         public void PrintSimpleMultiDimensionalListValueAtIndex() {

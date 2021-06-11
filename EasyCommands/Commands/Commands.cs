@@ -94,7 +94,7 @@ namespace IngameScript {
                 if (function == null) {
                     function = (MultiActionCommand)PROGRAM.functions[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
-                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue());
+                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue().DeepCopy());
                     }
                 }
                 switch (type) {
@@ -126,7 +126,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Variable value = useReference ? variable : new StaticVariable(variable.GetValue());
+                Variable value = useReference ? variable : new StaticVariable(variable.GetValue().DeepCopy());
                 if (isGlobal) {
                     PROGRAM.SetGlobalVariable(variableName, value);
                 } else {
@@ -148,7 +148,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                list.SetValue(useReference ? value : new StaticVariable(value.GetValue()));
+                list.SetValue(useReference ? value : new StaticVariable(value.GetValue().DeepCopy()));
                 return true;
             }
         }
