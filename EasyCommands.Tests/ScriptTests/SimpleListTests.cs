@@ -20,6 +20,51 @@ Print ""myList Size: "" + count of myList[]
         }
 
         [TestMethod]
+        public void PrintSimpleListSum() {
+            String script = @"
+:main
+assign myList to [1, 2, 3]
+Print ""myList Sum: "" + sum of myList[]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("myList Sum: 6"));
+            }
+        }
+
+        [TestMethod]
+        public void CheckAllValuesAgainstValue() {
+            String script = @"
+:main
+assign myList to [1, 2, 3]
+if all myList[] > 0
+  Print ""All values are greater than 0""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("All values are greater than 0"));
+            }
+        }
+
+        [TestMethod]
+        public void CheckIfListContainsValue() {
+            String script = @"
+:main
+assign myList to [""one"", ""two"", ""three""]
+assign i to ""one""
+if any myList[] is i
+  Print ""myList contains "" + i
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("myList contains one"));
+            }
+        }
+
+        [TestMethod]
         public void PrintSimpleListValueAtIndex() {
             String script = @"
 :main
