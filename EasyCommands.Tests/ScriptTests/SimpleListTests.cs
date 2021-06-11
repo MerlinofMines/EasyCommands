@@ -162,7 +162,7 @@ assign myList to [1,2,3,4,5]
 Print ""Before: "" + myList
 assign n to count of myList[]
 assign i to 1
-assign myList to myList[0 .. i] + [6] + myList[ (i + 1) .. (n - 1)]
+assign myList to myList[0..i] + [6] + myList[i+1..n-1]
 Print ""After: "" + myList
 ";
             using (var test = new ScriptTest(script)) {

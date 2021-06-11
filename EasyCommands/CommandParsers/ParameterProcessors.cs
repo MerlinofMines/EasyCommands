@@ -128,13 +128,18 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
-            //MultiplyProcessor
-            TwoValueRule<MultiplyCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            //Tier1OperationProcessor
+            TwoValueRule<BiOperandTier1Operand,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
-            //AddProcessor
-            TwoValueRule<AddCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            //Tier2OperationProcessor
+            TwoValueRule<BiOperandTier2Operand,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
+
+            //Tier3OperationProcessor
+            TwoValueRule<BiOperandTier3Operand,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 

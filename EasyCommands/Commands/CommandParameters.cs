@@ -71,12 +71,16 @@ namespace IngameScript {
             }
         }
 
-        public class MultiplyCommandParameter : ValueCommandParameter<BiOperand> {
-            public MultiplyCommandParameter(BiOperand value) : base(value) {}
+        public class BiOperandTier1Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier1Operand(BiOperand value) : base(value) {}
         }
 
-        public class AddCommandParameter : ValueCommandParameter<BiOperand> {
-            public AddCommandParameter(BiOperand value) : base(value) {}
+        public class BiOperandTier2Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier2Operand(BiOperand value) : base(value) {}
+        }
+
+        public class BiOperandTier3Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier3Operand(BiOperand value) : base(value) { }
         }
 
         public class TransferCommandParameter : ValueCommandParameter<bool> {

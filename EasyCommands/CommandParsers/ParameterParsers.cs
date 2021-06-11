@@ -158,14 +158,14 @@ namespace IngameScript {
             AddWords(Words("arcos", "acos"), new UniOperationCommandParameter(UniOperand.ACOS));
             AddWords(Words("arctan", "atan"), new UniOperationCommandParameter(UniOperand.ATAN));
             AddWords(Words("round", "rnd"), new UniOperationCommandParameter(UniOperand.ROUND));
-            AddWords(Words("plus", "+"), new AddCommandParameter(BiOperand.ADD));
-            AddWords(Words("minus", "-"), new AddCommandParameter(BiOperand.SUBTACT));
-            AddWords(Words("multiply", "*"), new MultiplyCommandParameter(BiOperand.MULTIPLY));
-            AddWords(Words("divide", "/"), new MultiplyCommandParameter(BiOperand.DIVIDE));
-            AddWords(Words("mod", "%"), new MultiplyCommandParameter(BiOperand.MOD));
-            AddWords(Words("dot", "."), new MultiplyCommandParameter(BiOperand.DOT));
-            AddWords(Words("pow", "exp", "^"), new MultiplyCommandParameter(BiOperand.EXPONENT));
-            AddWords(Words(".."), new MultiplyCommandParameter(BiOperand.RANGE));
+            AddWords(Words("multiply", "*"), new BiOperandTier1Operand(BiOperand.MULTIPLY));
+            AddWords(Words("divide", "/"), new BiOperandTier1Operand(BiOperand.DIVIDE));
+            AddWords(Words("mod", "%"), new BiOperandTier1Operand(BiOperand.MOD));
+            AddWords(Words("dot", "."), new BiOperandTier1Operand(BiOperand.DOT));
+            AddWords(Words("pow", "exp", "^"), new BiOperandTier1Operand(BiOperand.EXPONENT));
+            AddWords(Words("plus", "+"), new BiOperandTier2Operand(BiOperand.ADD));
+            AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));
+            AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
@@ -353,7 +353,18 @@ namespace IngameScript {
         String[] ParseSeparateTokens(String command) {
             var newCommand = command;
             separateTokens.ForEach(s => newCommand = newCommand.Replace(s, " " + s + " "));
-            return newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            List<char> commandArray = newCommand.ToCharArray().ToList();
+
+            //- has to be handled specially, as " -3" should be left alone but "n-1" should be split as "n - 1"
+            // This is done by separating out any "-" that is not at the beginning of a string
+            for(int i = 1; i < commandArray.Count() - 2; i++) {
+                if(commandArray[i] == '-' && commandArray[i-1] != ' ') {
+                    if (commandArray[i + 1] != ' ') commandArray.Insert(i + 1, ' ');
+                    commandArray.Insert(i, ' ');
+                }
+            }
+
+            return new string(commandArray.ToArray()).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public class Token {
