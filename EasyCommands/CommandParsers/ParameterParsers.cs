@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", ".." }; //TODO: Fix '-' but make sure "-3" still works
+        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", ".." };
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -357,7 +357,7 @@ namespace IngameScript {
 
             //- has to be handled specially, as " -3" should be left alone but "n-1" should be split as "n - 1"
             // This is done by separating out any "-" that is not at the beginning of a string
-            for(int i = 1; i < commandArray.Count() - 2; i++) {
+            for(int i = 1; i < commandArray.Count() - 1; i++) {
                 if(commandArray[i] == '-' && commandArray[i-1] != ' ') {
                     if (commandArray[i + 1] != ' ') commandArray.Insert(i + 1, ' ');
                     commandArray.Insert(i, ' ');
