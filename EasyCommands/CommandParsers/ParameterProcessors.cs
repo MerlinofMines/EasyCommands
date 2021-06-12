@@ -114,7 +114,7 @@ namespace IngameScript {
                 requiredRight<ListIndexCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,list,variable) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.GetValue().value, variable.GetValue().value, p.useReference))),
 
-            //Primitive Procesor
+            //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
 
             //ValuePropertyProcessor
@@ -779,7 +779,7 @@ namespace IngameScript {
         }
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
-            var actionProcessor = requiredEither<ActionCommandParameter>();
+            var assignmentProcessor = requiredEither<AssignmentCommandParameter>();
             var relativeProcessor = requiredEither<RelativeCommandParameter>();
             var variableProcessor = requiredEither<VariableCommandParameter>();
             var propertyProcessor = requiredEither<PropertyCommandParameter>();
@@ -787,7 +787,7 @@ namespace IngameScript {
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
             List<DataProcessor> processors = new List<DataProcessor> {
-                actionProcessor,
+                assignmentProcessor,
                 relativeProcessor,
                 variableProcessor,
                 propertyProcessor,
@@ -822,7 +822,7 @@ namespace IngameScript {
                 else if (AllSatisfied(relativeProcessor, directionProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier(b), direction.value, variableSupplier().GetValue());
                 else if (AllSatisfied(relativeProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier(b), variableSupplier().GetValue());
                 else if (AllSatisfied(variableProcessor, directionProcessor)) blockAction = (b, e) => b.SetPropertyValue(e, propertySupplier(b), direction.value, variableSupplier().GetValue());
-                else if (AllSatisfied(actionProcessor, directionProcessor)) blockAction = (b, e) => b.MoveNumericPropertyValue(e, propertySupplier(b), direction.value);
+                else if (AllSatisfied(assignmentProcessor, directionProcessor)) blockAction = (b, e) => b.MoveNumericPropertyValue(e, propertySupplier(b), direction.value);
                 else blockAction = (b, e) => b.SetPropertyValue(e, propertySupplier(b), variableSupplier().GetValue());
 
                 BlockCommand command = new BlockCommand(p.value, blockAction);

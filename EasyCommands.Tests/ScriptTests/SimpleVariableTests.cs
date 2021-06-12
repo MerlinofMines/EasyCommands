@@ -37,5 +37,37 @@ Print ""b is: "" + b
                 Assert.IsTrue(test.Logger.Contains("b is: a1"));
             }
         }
+
+        [TestMethod]
+        public void AssignVariableWithSet() {
+            var script = @"
+set b to a + 1
+Print ""b is: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("b is: a1"));
+            }
+        }
+
+        [TestMethod]
+        public void AssignGlobalVariableWithSet() {
+            var script = @"
+set global b to a + 1
+Print ""b is: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("b is: a1"));
+            }
+        }
     }
 }

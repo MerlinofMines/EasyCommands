@@ -18,6 +18,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void SimpleBlockCommandWithPropertyUsingAssign() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign the \"pistons\" height to 10");
+            Assert.IsTrue(command is BlockCommand);
+        }
+
+        [TestMethod]
         public void SimpleBlockCommandWithValueProperty() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("set the \"test cargo\" \"gold ingot\" amount to 0");
