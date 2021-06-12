@@ -182,7 +182,49 @@ Print ""myList["" + myKey + ""] = "" + myList[myKey]
             }
         }
 
-        //TODO Add methods for getting keys, iterating over keys, getting values.
+        [TestMethod]
+        public void GetListKeys() {
+            String script = @"
+:main
+assign myList to []
+assign myList[""key1""] to ""value""
+assign myList[""key2""] to ""value""
+assign myKeys to myList keys
+Print ""Keys: "" + myKeys
+Print ""Size of Keys: "" + count of myKeys[]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Keys: [key1,key2]"));
+                Assert.IsTrue(test.Logger.Contains("Size of Keys: 2"));
+            }
+        }
+
+        [TestMethod]
+        public void IterateOverListByKeys() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+assign myList[""key1""] to ""value1""
+assign myList[""key2""] to ""value2""
+assign myKeys to myList keys
+Print ""Keys: "" + myKeys
+assign i to 0
+until i >= count of myKeys[]
+  Print ""myList["" + myKeys[i] + ""] = "" + myList[myKeys[i]]
+  assign i to i + 1
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Keys: [key1,key2]"));
+                Assert.IsTrue(test.Logger.Contains("myList[key1] = value1"));
+                Assert.IsTrue(test.Logger.Contains("myList[key2] = value2"));
+            }
+        }
+
+        //TODO: Add tests combining keyed lists, make sure merge on key values works
 
         [TestMethod]
         public void AssignListSubRangeNewValue() {

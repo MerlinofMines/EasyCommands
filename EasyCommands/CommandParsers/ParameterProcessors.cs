@@ -128,6 +128,11 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
+            //AfterUniOperationProcessor
+            OneValueRule<LeftUniOperationCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(),
+                (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
+
             //Tier1OperationProcessor
             TwoValueRule<BiOperandTier1Operand,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),

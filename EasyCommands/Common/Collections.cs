@@ -62,6 +62,10 @@ namespace IngameScript {
                 return new KeyedList(GetValues().Concat(other.GetValues()).ToArray());
             }
 
+            public KeyedList Keys() {
+                return new KeyedList(keyedValues.Where(v => !string.IsNullOrEmpty(v.Key)).Select(v => GetStaticVariable(v.Key)).ToArray());
+            }
+
             public String Print() {
                 return "[" + string.Join(",", keyedValues.Select(k => (string.IsNullOrEmpty(k.Key) ? "" : k.Key + "=") + CastString(k.Value.GetValue()).GetTypedValue())) + "]";
             }

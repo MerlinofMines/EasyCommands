@@ -158,6 +158,7 @@ namespace IngameScript {
             AddWords(Words("arcos", "acos"), new UniOperationCommandParameter(UniOperand.ACOS));
             AddWords(Words("arctan", "atan"), new UniOperationCommandParameter(UniOperand.ATAN));
             AddWords(Words("round", "rnd"), new UniOperationCommandParameter(UniOperand.ROUND));
+            AddWords(Words("keys"), new LeftUniOperationCommandParameter(UniOperand.KEYS));
             AddWords(Words("multiply", "*"), new BiOperandTier1Operand(BiOperand.MULTIPLY));
             AddWords(Words("divide", "/"), new BiOperandTier1Operand(BiOperand.DIVIDE));
             AddWords(Words("mod", "%"), new BiOperandTier1Operand(BiOperand.MOD));

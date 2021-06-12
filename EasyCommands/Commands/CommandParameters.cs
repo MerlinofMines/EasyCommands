@@ -71,6 +71,11 @@ namespace IngameScript {
             }
         }
 
+        public class LeftUniOperationCommandParameter : ValueCommandParameter<UniOperand> {
+            public LeftUniOperationCommandParameter(UniOperand value) : base(value) {
+            }
+        }
+
         public class BiOperandTier1Operand : ValueCommandParameter<BiOperand> {
             public BiOperandTier1Operand(BiOperand value) : base(value) {}
         }
