@@ -345,6 +345,61 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void RemoveFromListByIndexes() {
+            String script = @"
+:main
+assign myList to [1,2,3,4,5,6]
+Print ""Before: "" + myList
+assign myList to myList - [0,2,4]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5,6]"));
+                Assert.IsTrue(test.Logger.Contains("After: [2,4,6]"));
+            }
+        }
+
+        [TestMethod]
+        public void RemoveFromListByKey() {
+            String script = @"
+:main
+assign myList to []
+assign myList[""key1""] to ""value1""
+assign myList[""key2""] to ""value2""
+Print ""Before: "" + myList
+assign myList to myList - [""key1""]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [key1=value1,key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key2=value2]"));
+            }
+        }
+
+        [TestMethod]
+        public void RemoveFromListByIndexesAndKeys() {
+            String script = @"
+:main
+assign myList to [1,2,3,4,5,6]
+assign myList[""key1""] to ""value1""
+assign myList[""key2""] to ""value2""
+Print ""Before: "" + myList
+assign myList to myList - [0,2,4,""key1"",""key3""]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5,6,key1=value1,key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("After: [2,4,6,key2=value2]"));
+            }
+        }
+
+        [TestMethod]
         public void AddTwoKeyedListsDedupesKeysAndUsesSecondValue() {
             String script = @"
 :main

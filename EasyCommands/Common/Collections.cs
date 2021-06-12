@@ -63,6 +63,12 @@ namespace IngameScript {
                 return new KeyedList(uniqueKeyedVariables.Concat(other.GetValues()).ToArray());
             }
 
+            public KeyedList Remove(KeyedList other) {
+                KeyedList copy = DeepCopy();
+                other.keyedValues.ForEach(v => copy.SetValue(v.GetValue(), null));
+                return new KeyedList(copy.keyedValues.Where(k => k.Value != null).ToArray());
+            }
+
             public KeyedList Keys() => new KeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.Key)).ToArray());
             public KeyedList Values() => new KeyedList(keyedValues.Select(v => v.Value).ToArray());
 
