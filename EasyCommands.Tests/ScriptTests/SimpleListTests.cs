@@ -203,7 +203,7 @@ Print ""Values: "" + myList[""key1"",""key2""]
         public void GetListKeys() {
             String script = @"
 :main
-assign myList to []
+assign myList to [1,2,3]
 assign myList[""key1""] to ""value""
 assign myList[""key2""] to ""value""
 assign myKeys to myList keys
@@ -218,7 +218,24 @@ Print ""Size of Keys: "" + count of myKeys[]
             }
         }
 
-        //TODO: Add GetListValues()
+        [TestMethod]
+        public void GetListValues() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+assign myList[""key1""] to ""value1""
+assign myList[""key2""] to ""value2""
+assign myValues to myList values
+Print ""Values: "" + myValues
+Print ""Size of Values: "" + count of myValues[]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Values: [1,2,3,value1,value2]"));
+                Assert.IsTrue(test.Logger.Contains("Size of Values: 5"));
+            }
+        }
 
         [TestMethod]
         public void IterateOverListByKeys() {

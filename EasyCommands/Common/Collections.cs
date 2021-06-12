@@ -64,6 +64,7 @@ namespace IngameScript {
             }
 
             public KeyedList Keys() => new KeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.Key)).ToArray());
+            public KeyedList Values() => new KeyedList(keyedValues.Select(v => v.Value).ToArray());
 
             public KeyedList DeepCopy() => new KeyedList(keyedValues.Select(k => new KeyedVariable(k.Key, new StaticVariable(k.Value.GetValue().DeepCopy()))).ToArray());
 

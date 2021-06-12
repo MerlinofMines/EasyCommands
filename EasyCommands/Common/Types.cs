@@ -31,7 +31,7 @@ namespace IngameScript {
         public enum Function { GOTO, GOSUB, SWITCH }
         public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST }
         public enum BiOperand { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE };
-        public enum UniOperand { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS };
+        public enum UniOperand { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS, VALUES };
         public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }
         public enum PropertyAggregate { VALUE, SUM, COUNT, AVG, MIN, MAX };
         #endregion

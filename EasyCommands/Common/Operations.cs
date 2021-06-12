@@ -68,6 +68,7 @@ namespace IngameScript {
             AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
             AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => new KeyedList(Enumerable.Range((int)a, (int)(b + 1 - a)).Select(i => GetStaticVariable(i)).ToArray()));
             AddUniOperation<KeyedList>(UniOperand.KEYS, a => a.Keys());
+            AddUniOperation<KeyedList>(UniOperand.VALUES, a => a.Values());
 
             //Booleans
             AddUniOperation<bool>(UniOperand.NOT, a => !a);
