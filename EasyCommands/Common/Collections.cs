@@ -64,7 +64,7 @@ namespace IngameScript {
             }
 
             public KeyedList Remove(KeyedList other) {
-                KeyedList copy = DeepCopy();
+                KeyedList copy = new KeyedList(keyedValues.Select(v => new KeyedVariable(v.Key, v.Value)).ToArray());
                 other.keyedValues.ForEach(v => copy.SetValue(v.GetValue(), null));
                 return new KeyedList(copy.keyedValues.Where(k => k.Value != null).ToArray());
             }

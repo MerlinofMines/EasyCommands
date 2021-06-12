@@ -381,6 +381,27 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void RemoveFromBoundListByKey() {
+            String script = @"
+:main
+assign myList to []
+assign i to ""oldValue""
+assign myList[""key1""] to ""value1""
+bind myList[""key2""] to i
+Print ""Before: "" + myList
+bind subList to myList - [""key1""]
+assign i to ""newValue""
+Print ""After: "" + subList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [key1=value1,key2=oldValue]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key2=newValue]"));
+            }
+        }
+
+        [TestMethod]
         public void RemoveFromListByIndexesAndKeys() {
             String script = @"
 :main
