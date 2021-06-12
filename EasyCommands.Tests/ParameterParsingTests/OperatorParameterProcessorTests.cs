@@ -478,7 +478,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
             Assert.AreEqual(4, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
             Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
@@ -492,7 +492,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0 + [1, 2, 3]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
             Assert.AreEqual(4, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
             Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
@@ -524,7 +524,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + [3, 4, 5]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
             Assert.AreEqual(6, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
             Assert.AreEqual(1f, listValues[1].GetValue().GetValue());

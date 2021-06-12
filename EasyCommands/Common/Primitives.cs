@@ -71,7 +71,7 @@ namespace IngameScript {
             { typeof(double), Return.NUMERIC },
             { typeof(Vector3D), Return.VECTOR},
             { typeof(Color), Return.COLOR },
-            { typeof(List<Variable>), Return.LIST }
+            { typeof(KeyedList), Return.LIST }
         };
 
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
@@ -106,8 +106,8 @@ namespace IngameScript {
                 return new VectorPrimitive((Vector3D)o);
             } else if (o is Color) {
                 return new ColorPrimitive((Color)o);
-            } else if (o is List<Variable>) {
-                return new ListPrimitive((List<Variable>)o);
+            } else if (o is KeyedList) {
+                return new ListPrimitive((KeyedList)o);
             }
             else throw new Exception("Cannot convert type: " + o.GetType() + " to primitive");
         }
@@ -138,7 +138,7 @@ namespace IngameScript {
                 case Return.COLOR:
                     return new StringPrimitive(ColorToString(CastColor(p).GetTypedValue()));
                 case Return.LIST:
-                    return new StringPrimitive("[" + string.Join(",", CastList(p).GetTypedValue().Select(v => CastString(v.GetValue()).GetTypedValue())) + "]");
+                    return new StringPrimitive("[" + string.Join(",", CastList(p).GetTypedValue().GetValues().Select(v => CastString(v.GetValue()).GetTypedValue())) + "]");
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
         }
@@ -171,7 +171,7 @@ namespace IngameScript {
         }
 
         public static ListPrimitive CastList(Primitive p) => new ListPrimitive(AsList(p));
-        public static List<Variable> AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? (List<Variable>)p.GetValue() : new List<Variable> { GetStaticVariable(p.GetValue()) };
+        public static KeyedList AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? (KeyedList)p.GetValue() : new KeyedList(GetStaticVariable(p.GetValue()));
 
         public static bool GetColor(String s, out Color color) {
             Color? possibleColor = null;
@@ -246,9 +246,9 @@ namespace IngameScript {
             public ColorPrimitive(Color color) : base(Return.COLOR, color) {}
         }
 
-        public class ListPrimitive : SimplePrimitive<List<Variable>> {
-            public ListPrimitive(List<Variable> list) : base(Return.LIST, list) { }
-            public override object GetDeepCopyValue() => GetTypedValue().Select(v => GetStaticVariable(v.GetValue().GetDeepCopyValue())).ToList();
+        public class ListPrimitive : SimplePrimitive<KeyedList> {
+            public ListPrimitive(KeyedList list) : base(Return.LIST, list) { }
+            public override object GetDeepCopyValue() => new KeyedList(GetTypedValue().GetValues().Select(v => GetStaticVariable(v.GetValue().GetDeepCopyValue())).ToArray());
         }
     }
 }

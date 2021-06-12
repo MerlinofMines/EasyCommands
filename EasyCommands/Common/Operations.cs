@@ -64,9 +64,9 @@ namespace IngameScript {
 
         public void InitializeOperators() {
             //List
-            AddBiOperation<List<Variable>, object>(BiOperand.ADD, (a, b) => Combine(a, b));
-            AddBiOperation<object, List<Variable>>(BiOperand.ADD, (a, b) => Combine(a, b));
-            AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => Enumerable.Range((int)a, (int)(b + 1 - a)).Select(i => GetStaticVariable(i)).ToList());
+            AddBiOperation<KeyedList, object>(BiOperand.ADD, (a, b) => Combine(a, b));
+            AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
+            AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => new KeyedList(Enumerable.Range((int)a, (int)(b + 1 - a)).Select(i => GetStaticVariable(i)).ToArray()));
 
             //Booleans
             AddUniOperation<bool>(UniOperand.NOT, a => !a);
@@ -134,7 +134,7 @@ namespace IngameScript {
         }
 
         static List<Variable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
-        static List<Variable> Combine(object a, object b) => AsList(ResolvePrimitive(a)).Concat(AsList(ResolvePrimitive(b))).ToList();
+        static KeyedList Combine(object a, object b) => AsList(ResolvePrimitive(a)).Combine(AsList(ResolvePrimitive(b)));
 
         static UniOperation SimpleUniOperand<T>(Func<T,object> resolver) {
             return (a) => {

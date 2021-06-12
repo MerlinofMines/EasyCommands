@@ -24,7 +24,7 @@ namespace IngameScript {
         }
 
         public static Variable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
-        public static Variable EmptyList() => new StaticVariable(ResolvePrimitive(GetVariables()));
+        public static Variable EmptyList() => GetStaticVariable(new KeyedList());
 
         public class StaticVariable : Variable {
             public Primitive primitive;
@@ -109,7 +109,7 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 Primitive comparison = comparisonValue.GetValue();
-                List<Variable> list = CastList(expectedList.GetValue()).GetTypedValue();
+                List<Variable> list = CastList(expectedList.GetValue()).GetTypedValue().GetValues();
                 return new BooleanPrimitive(Evaluate(list.Count, list.Where(v => comparator.compare(v.GetValue(), comparison)).Count(), aggregationMode));
             }
         }
@@ -213,7 +213,7 @@ namespace IngameScript {
                 aggregation = agg;
             }
 
-            public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetTypedValue().Select(v => v.GetValue()).ToList(), aggregation);
+            public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetTypedValue().GetValues().Select(v => v.GetValue()).ToList(), aggregation);
         }
 
         public class ListIndexVariable : Variable {
@@ -226,7 +226,6 @@ namespace IngameScript {
             }
 
             //TODO: Add Lookup by string support (Dictionary)
-            //TODO: Add List support!  If index is list then return list containing at all requested indexes.  if empty, return expectedList
             public Primitive GetValue() {
                 var list = GetList();
                 var values = GetIndexValues()
@@ -234,33 +233,44 @@ namespace IngameScript {
                     .Select(p => list[(int)CastNumber(p).GetTypedValue()])
                     .ToList();
                 if (values.Count == 0) return expectedList.GetValue();
-                return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(values);
+                return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(new KeyedList(values.ToArray()));
             }
 
-            //TODO: Support String indexes?
             public void SetValue(Variable value) {
                 var list = CastList(expectedList.GetValue()).GetTypedValue();
                 var indexes = GetIndexValues();
-                if (indexes.Count == 0) indexes.AddRange(Enumerable.Range(0, list.Count).Select(i => ResolvePrimitive(i)));
-                indexes.Where(i => i.GetPrimitiveType() == Return.NUMERIC)
-                  .Select(p =>CastNumber(p).GetTypedValue())
-                  .ForEach(n => list[(int)n] = value);
+                if (indexes.Count == 0) indexes.AddRange(Enumerable.Range(0, list.GetValues().Count).Select(i => ResolvePrimitive(i)));
+                indexes.ForEach(index => list.SetValue(index, value));
             }
 
             List<Variable> GetList() {
                 Primitive list = expectedList.GetValue();
-                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue() : new List<Variable> { expectedList };
+                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue().GetValues() : new List<Variable> { expectedList };
             }
 
             List<Primitive> GetIndexValues() {
                 var primitives = new List<Primitive>();
                 Primitive indexValue = index.GetValue();
                 if (indexValue.GetPrimitiveType() == Return.LIST) {
-                    primitives.AddRange(CastList(indexValue).GetTypedValue().Select(i => i.GetValue()).ToList());
+                    primitives.AddRange(CastList(indexValue).GetTypedValue().GetValues().Select(i => i.GetValue()).ToList());
                 } else primitives.Add(indexValue);
                 return primitives;
             }
         }
+
+        public class KeyedVariable : Variable {
+            public String Key { get; set; }
+            public Variable Value { get; set; }
+
+            public KeyedVariable(String key, Variable value) {
+                Key = key;
+                Value = value;
+            }
+
+            public Primitive GetValue() => Value.GetValue();
+        }
+
+        public static KeyedVariable AsKeyedVariable(Variable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);
 
         public static Primitive Aggregate(List<Primitive> propertyValues, PropertyAggregate aggregationType) {
             switch (aggregationType) {
