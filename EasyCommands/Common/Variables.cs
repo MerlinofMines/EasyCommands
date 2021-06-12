@@ -225,7 +225,6 @@ namespace IngameScript {
                 index = i;
             }
 
-            //TODO: Add Lookup by string support (Dictionary)
             public Primitive GetValue() {
                 var list = GetList();
                 var values = GetIndexValues()
@@ -265,6 +264,8 @@ namespace IngameScript {
                 Key = key;
                 Value = value;
             }
+
+            public bool HasKey() => !string.IsNullOrEmpty(Key);
 
             public Primitive GetValue() => Value.GetValue();
         }

@@ -57,18 +57,17 @@ namespace IngameScript {
                 } else throw new Exception("Cannot set collection value by Primitive Type: " + key.GetPrimitiveType());
             }
 
-            //TODO: Merge and then de-dupe keyed values (last wins?)
             public KeyedList Combine(KeyedList other) {
-                return new KeyedList(GetValues().Concat(other.GetValues()).ToArray());
+                var otherKeys = new HashSet<string>(other.keyedValues.Where(k => k.HasKey()).Select(k => k.Key).Distinct());
+                var uniqueKeyedVariables = keyedValues.Where(k => !k.HasKey() || !otherKeys.Contains(k.Key)).ToList();
+                return new KeyedList(uniqueKeyedVariables.Concat(other.GetValues()).ToArray());
             }
 
-            public KeyedList Keys() {
-                return new KeyedList(keyedValues.Where(v => !string.IsNullOrEmpty(v.Key)).Select(v => GetStaticVariable(v.Key)).ToArray());
-            }
+            public KeyedList Keys() => new KeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.Key)).ToArray());
 
-            public String Print() {
-                return "[" + string.Join(",", keyedValues.Select(k => (string.IsNullOrEmpty(k.Key) ? "" : k.Key + "=") + CastString(k.Value.GetValue()).GetTypedValue())) + "]";
-            }
+            public KeyedList DeepCopy() => new KeyedList(keyedValues.Select(k => new KeyedVariable(k.Key, new StaticVariable(k.Value.GetValue().DeepCopy()))).ToArray());
+
+            public String Print() => "[" + string.Join(",", keyedValues.Select(k => (k.HasKey() ? k.Key + "=" : "") + CastString(k.Value.GetValue()).GetTypedValue())) + "]";
         }
     }
 }

@@ -59,7 +59,7 @@ namespace IngameScript {
             }
 
             public Primitive DeepCopy() {
-                return ResolvePrimitive(this.GetDeepCopyValue());
+                return ResolvePrimitive(GetDeepCopyValue());
             }
         }
 
@@ -248,7 +248,7 @@ namespace IngameScript {
 
         public class ListPrimitive : SimplePrimitive<KeyedList> {
             public ListPrimitive(KeyedList list) : base(Return.LIST, list) { }
-            public override object GetDeepCopyValue() => new KeyedList(GetTypedValue().GetValues().Select(v => GetStaticVariable(v.GetValue().GetDeepCopyValue())).ToArray());
+            public override object GetDeepCopyValue() => GetTypedValue().DeepCopy();
         }
     }
 }

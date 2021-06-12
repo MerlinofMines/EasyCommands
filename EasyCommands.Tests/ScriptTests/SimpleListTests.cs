@@ -183,6 +183,23 @@ Print ""myList["" + myKey + ""] = "" + myList[myKey]
         }
 
         [TestMethod]
+        public void GetSubListFromKeyedList() {
+            String script = @"
+:main
+assign myList to []
+assign myList[""key1""] to ""value1""
+assign myList[""key2""] to ""value2""
+assign myList[""key3""] to ""value3""
+Print ""Values: "" + myList[""key1"",""key2""]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Values: [key1=value1,key2=value2]"));
+            }
+        }
+
+        [TestMethod]
         public void GetListKeys() {
             String script = @"
 :main
@@ -200,6 +217,8 @@ Print ""Size of Keys: "" + count of myKeys[]
                 Assert.IsTrue(test.Logger.Contains("Size of Keys: 2"));
             }
         }
+
+        //TODO: Add GetListValues()
 
         [TestMethod]
         public void IterateOverListByKeys() {
@@ -223,8 +242,6 @@ until i >= count of myKeys[]
                 Assert.IsTrue(test.Logger.Contains("myList[key2] = value2"));
             }
         }
-
-        //TODO: Add tests combining keyed lists, make sure merge on key values works
 
         [TestMethod]
         public void AssignListSubRangeNewValue() {
@@ -274,6 +291,47 @@ Print ""After: "" + myList
 
                 Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4]"));
                 Assert.IsTrue(test.Logger.Contains("After: [1,2,3,4,5]"));
+            }
+        }
+
+        [TestMethod]
+        public void AddTwoLists() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+assign myList2 to [4,5,6]
+Print ""Before: "" + myList
+assign myList to myList + myList2
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,4,5,6]"));
+            }
+        }
+
+        [TestMethod]
+        public void AddTwoKeyedListsDedupesKeysAndUsesSecondValue() {
+            String script = @"
+:main
+assign myKey to ""key""
+assign myList to []
+assign myList[myKey] to ""oldValue""
+assign myList[""key1""] to ""value1""
+assign myList2 to []
+assign myList2[myKey] to ""newValue""
+assign myList2[""key2""] to ""value2""
+Print ""Before: "" + myList
+assign myList to myList + myList2
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [key=oldValue,key1=value1]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key1=value1,key=newValue,key2=value2]"));
             }
         }
 
