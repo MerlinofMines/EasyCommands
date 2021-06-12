@@ -138,7 +138,7 @@ namespace IngameScript {
                 case Return.COLOR:
                     return new StringPrimitive(ColorToString(CastColor(p).GetTypedValue()));
                 case Return.LIST:
-                    return new StringPrimitive("[" + string.Join(",", CastList(p).GetTypedValue().GetValues().Select(v => CastString(v.GetValue()).GetTypedValue())) + "]");
+                    return new StringPrimitive(CastList(p).GetTypedValue().Print());
                 default: return new StringPrimitive(p.GetValue().ToString());
             }
         }

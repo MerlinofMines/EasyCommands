@@ -229,8 +229,7 @@ namespace IngameScript {
             public Primitive GetValue() {
                 var list = GetList();
                 var values = GetIndexValues()
-                    .Where(i => i.GetPrimitiveType() == Return.NUMERIC)
-                    .Select(p => list[(int)CastNumber(p).GetTypedValue()])
+                    .Select(p => list.GetValue(p))
                     .ToList();
                 if (values.Count == 0) return expectedList.GetValue();
                 return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(new KeyedList(values.ToArray()));
@@ -243,9 +242,9 @@ namespace IngameScript {
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 
-            List<Variable> GetList() {
+            KeyedList GetList() {
                 Primitive list = expectedList.GetValue();
-                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue().GetValues() : new List<Variable> { expectedList };
+                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue() : new KeyedList(expectedList);
             }
 
             List<Primitive> GetIndexValues() {

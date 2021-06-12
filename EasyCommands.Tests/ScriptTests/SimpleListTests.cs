@@ -115,6 +115,76 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void AssignListKeyValue() {
+            String script = @"
+:main
+assign myList to []
+Print ""Before: "" + myList
+assign myList[""key""] to ""value""
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: []"));
+                Assert.IsTrue(test.Logger.Contains("After: [key=value]"));
+            }
+        }
+
+        [TestMethod]
+        public void UpdateListKeyValue() {
+            String script = @"
+:main
+assign myList to []
+assign myList[""key""] to ""value""
+Print ""Before: "" + myList
+assign myList[""key""] to ""newValue""
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [key=value]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key=newValue]"));
+            }
+        }
+
+        [TestMethod]
+        public void AddKeyValueToNonKeyedListAddsToEnd() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+Print ""Before: "" + myList
+assign myList[""key""] to ""value""
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,key=value]"));
+            }
+        }
+
+        [TestMethod]
+        public void GetItemInListByKeyedValue() {
+            String script = @"
+:main
+assign myList to []
+assign myKey to ""key""
+assign myList[myKey] to ""value""
+Print ""myList["" + myKey + ""] = "" + myList[myKey]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("myList[key] = value"));
+            }
+        }
+
+        //TODO Add methods for getting keys, iterating over keys, getting values.
+
+        [TestMethod]
         public void AssignListSubRangeNewValue() {
             String script = @"
 :main

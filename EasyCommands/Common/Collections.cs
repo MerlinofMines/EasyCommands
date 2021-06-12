@@ -34,6 +34,7 @@ namespace IngameScript {
                     case Return.NUMERIC:
                         return keyedValues[(int)CastNumber(key).GetTypedValue()];
                     case Return.STRING:
+                        var keyString = CastString(key).GetTypedValue();
                         return keyedValues.Where(v => v.Key == CastString(key).GetTypedValue())
                             .Cast<Variable>()
                             .DefaultIfEmpty(EmptyList())
@@ -59,6 +60,10 @@ namespace IngameScript {
             //TODO: Merge and then de-dupe keyed values (last wins?)
             public KeyedList Combine(KeyedList other) {
                 return new KeyedList(GetValues().Concat(other.GetValues()).ToArray());
+            }
+
+            public String Print() {
+                return "[" + string.Join(",", keyedValues.Select(k => (string.IsNullOrEmpty(k.Key) ? "" : k.Key + "=") + CastString(k.Value.GetValue()).GetTypedValue())) + "]";
             }
         }
     }
