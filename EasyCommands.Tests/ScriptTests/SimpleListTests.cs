@@ -183,6 +183,21 @@ Print ""myList["" + myKey + ""] = "" + myList[myKey]
         }
 
         [TestMethod]
+        public void GetNonExistentValueByKeyReturnsEmptyList() {
+            String script = @"
+:main
+assign myList to []
+assign myList[""key""] to ""value""
+Print ""myList[missingKey] = "" + myList[""missingKey""]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("myList[missingKey] = []"));
+            }
+        }
+
+        [TestMethod]
         public void GetSubListFromKeyedList() {
             String script = @"
 :main
