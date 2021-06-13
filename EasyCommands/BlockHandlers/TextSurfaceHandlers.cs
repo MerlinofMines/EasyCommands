@@ -30,7 +30,7 @@ namespace IngameScript {
                 defaultDirection = Direction.UP;
             }
 
-            protected override string Name(IMyTextSurface block) {
+            public override string Name(IMyTextSurface block) {
                 return block.DisplayName;
             }
 

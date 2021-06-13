@@ -240,6 +240,7 @@ namespace IngameScript {
             Direction GetDefaultDirection();
             List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector);
             List<Object> GetBlocksInGroup(String groupName);
+            String GetName(Object block);
 
             Primitive GetPropertyValue(Object block, PropertySupplier property);
             Primitive GetPropertyValue(Object block, PropertySupplier property, Direction direction);
@@ -308,7 +309,7 @@ namespace IngameScript {
                 return blocks;
             }
 
-            protected override string Name(T block) { return block.CustomName; }
+            public override string Name(T block) { return block.CustomName; }
 
             protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
             protected void SetCustomProperty(T block, String key, String value) {
@@ -337,9 +338,11 @@ namespace IngameScript {
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) { return GetBlocksOfType(selector).Select(t => t as object).ToList(); }
             public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
+            public string GetName(object block) => Name((T)block);
 
             public abstract List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector);
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
+            public abstract string Name(T block);
 
             public Direction GetDefaultDirection() {
                 if (!defaultDirection.HasValue) throw new Exception(GetType() + " Does Not Have a Default Direction");
@@ -360,34 +363,29 @@ namespace IngameScript {
                 return propertyHandlers[property.propertyType()].GetDirection((T)block, property, direction);
             }
             public void SetPropertyValue(Object block, PropertySupplier property, Primitive value) {
-                Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue());
+                Debug("Setting " + GetName(block) + " " + property + " to " + value.GetValue());
                 propertyHandlers[property.propertyType()].Set((T)block, property, value);
             }
             public void SetPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value) {
-                Debug("Setting " + Name(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
+                Debug("Setting " + GetName(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property.propertyType()].SetDirection((T)block, property, direction, value);
             }
             public void IncrementPropertyValue(Object block, PropertySupplier property, Primitive value) {
-                Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue());
+                Debug("Incrementing " + GetName(block) + " " + property + " by " + value.GetValue());
                 propertyHandlers[property.propertyType()].Increment((T)block, property, value);
             }
             public void IncrementPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value) {
-                Debug("Incrementing " + Name(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
+                Debug("Incrementing " + GetName(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
                 propertyHandlers[property.propertyType()].IncrementDirection((T)block, property, direction, value);
             }
             public void MoveNumericPropertyValue(Object block, PropertySupplier property, Direction direction) {
-                Debug("Moving " + Name(block) + " " + property + " in " + direction + " direction");
+                Debug("Moving " + GetName(block) + " " + property + " in " + direction + " direction");
                 propertyHandlers[property.propertyType()].Move((T)block, property, direction);
             }
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) {
-                Debug("Reversing " + Name(block) + " " + property);
+                Debug("Reversing " + GetName(block) + " " + property);
                 propertyHandlers[property.propertyType()].Reverse((T)block, property);
             }
-
-            private string Name(object block) {
-                return Name((T)block);
-            }
-            protected abstract string Name(T block);
 
             protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get) {
                 AddBooleanHandler(property, Get, (b, v) => { });

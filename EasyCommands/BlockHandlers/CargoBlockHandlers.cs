@@ -33,7 +33,7 @@ namespace IngameScript {
                 }
             }
 
-            protected override string Name(IMyInventory block) => block.Owner.DisplayName;
+            public override string Name(IMyInventory block) => block.Owner.DisplayName;
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {
