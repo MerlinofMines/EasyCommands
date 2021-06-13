@@ -55,17 +55,6 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void AssignVariableFromInMemoryVariableSelectorName() {
-            var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign $a to 2");
-            Assert.IsTrue(command is VariableAssignmentCommand);
-            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.AreEqual("a", assignCommand.variableName);
-            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
-            Assert.IsFalse(assignCommand.useReference);
-        }
-
-        [TestMethod]
         public void AssignVariableToAmbiguousStringValue() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to b");

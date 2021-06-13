@@ -120,17 +120,21 @@ namespace IngameScript {
             public VariableSelectorCommandParameter(Variable value) : base(value) { }
         }
 
-        public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+        public class AmbiguiousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> SubTokens = new List<CommandParameter>();
             public bool isImplicit;
-            public StringCommandParameter(String value, bool isImplicit, params CommandParameter[] SubTokens) : base(value) {
+            public AmbiguiousStringCommandParameter(String value, bool isImplicit, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
                 this.isImplicit = isImplicit;
             }
         }
 
-        public class ExplicitStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
-            public ExplicitStringCommandParameter(string value) : base(value) {}
+        public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+            public bool isExplicit;
+
+            public StringCommandParameter(string value, bool isExpl) : base(value) {
+                isExplicit = isExpl;
+            }
         }
 
         public class NumericCommandParameter : ValueCommandParameter<float>, PrimitiveCommandParameter {
