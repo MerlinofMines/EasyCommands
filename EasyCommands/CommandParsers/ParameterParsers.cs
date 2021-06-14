@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||"};
+        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||", "@"};
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -168,6 +168,7 @@ namespace IngameScript {
             AddWords(Words("plus", "+"), new BiOperandTier2Operand(BiOperand.ADD));
             AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));
             AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
+            AddWords(Words("@"), new IndexCommandParameter());
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
@@ -309,16 +310,6 @@ namespace IngameScript {
                 commandParameters.AddList(propertyWords[t]);
             } else if (Double.TryParse(t, out numericValue)) {
                 commandParameters.Add(new NumericCommandParameter((float)numericValue));
-            } else if (t.StartsWith("@")) {
-                if (t.Length == 1) commandParameters.Add(new IndexCommandParameter());
-                else {
-                    int indexValue;
-                    if (int.TryParse(t.Substring(1), out indexValue)) {
-                        commandParameters.Add(new IndexSelectorCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
-                    } else {
-                        throw new Exception("Unable to parse index indicator: " + t);
-                    }
-                }
             } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
                 commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
             } else if (t.StartsWith("$")) { //Variable References used as Selectors

@@ -71,10 +71,14 @@ namespace IngameScript {
                 requiredLeft<SelectorCommandParameter>(),
                 (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
 
+            //ListProcessors
             new BranchingProcessor<ListCommandParameter> (
                 OneValueRule<ListCommandParameter, StringCommandParameter>(
                     requiredLeft<StringCommandParameter>(),
-                    (p, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), p.value))),
+                    (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), list.value))),
+                OneValueRule<ListCommandParameter, SelectorCommandParameter>(
+                    requiredLeft<SelectorCommandParameter>(),
+                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, list.value))),
                 OneValueRule<ListCommandParameter, ListIndexCommandParameter>(
                     requiredLeft<ListIndexCommandParameter>(),
                     (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),
