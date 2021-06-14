@@ -94,7 +94,7 @@ namespace IngameScript {
                 if (function == null) {
                     function = (MultiActionCommand)PROGRAM.functions[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
-                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue());
+                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue().DeepCopy());
                     }
                 }
                 switch (type) {
@@ -126,7 +126,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Variable value = useReference ? variable : new StaticVariable(variable.GetValue());
+                Variable value = useReference ? variable : new StaticVariable(variable.GetValue().DeepCopy());
                 if (isGlobal) {
                     PROGRAM.SetGlobalVariable(variableName, value);
                 } else {
@@ -134,8 +134,23 @@ namespace IngameScript {
                 }
                 return true;
             }
+        }
 
-            public override Command Clone() { return new VariableAssignmentCommand(variableName, variable, useReference, isGlobal); }
+        public class ListVariableAssignmentCommand : Command {
+            public ListIndexVariable list;
+            public Variable value;
+            public bool useReference;
+
+            public ListVariableAssignmentCommand(ListIndexVariable list, Variable value, bool useReference) {
+                this.list = list;
+                this.value = value;
+                this.useReference = useReference;
+            }
+
+            public override bool Execute() {
+                list.SetValue(useReference ? value : new StaticVariable(value.GetValue().DeepCopy()));
+                return true;
+            }
         }
 
         public class ControlCommand : Command {

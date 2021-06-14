@@ -22,6 +22,21 @@ namespace IngameScript {
         Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
         List<ParameterProcessor> parameterProcessors = new List<ParameterProcessor>
         {
+            new ParenthesisProcessor(),
+            new ListProcessor(),
+
+            new BranchingProcessor<ListCommandParameter> (
+                OneValueRule<ListCommandParameter, StringCommandParameter>(
+                    requiredLeft<StringCommandParameter>(),
+                    (p, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), p.value))),
+                OneValueRule<ListCommandParameter, ListIndexCommandParameter>(
+                    requiredLeft<ListIndexCommandParameter>(),
+                    (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),
+                NoValueRule<ListCommandParameter>(
+                    (list) => new ListIndexCommandParameter(new ListIndexVariable(list.value, GetVariables(new List<Variable>())[0])))),
+
+            new IgnoreProcessor(),
+
             //FunctionProcessor
             OneValueRule<FunctionCommandParameter,StringCommandParameter>(
                 requiredRight<StringCommandParameter>(),
@@ -45,6 +60,10 @@ namespace IngameScript {
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,ExplicitStringCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<ExplicitStringCommandParameter>(),
                 (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
+            TwoValueRule<AssignmentCommandParameter, VariableCommandParameter, VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, list, value) => list.HasValue() && list.GetValue().value is ListIndexVariable && value.HasValue(),
+                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.GetValue().value, value.GetValue().value, p.useReference))),
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,g,name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
@@ -52,6 +71,11 @@ namespace IngameScript {
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableSelectorCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableSelectorCommandParameter>(),
                 (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
+
+            //ListAssignmentProcessor
+            TwoValueRule<AssignmentCommandParameter,ListIndexCommandParameter,VariableCommandParameter>(
+                requiredRight<ListIndexCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,list,variable) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.GetValue().value, variable.GetValue().value, p.useReference))),
 
             //SelfSelectorProcessor
             OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
@@ -104,13 +128,18 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
-            //MultiplyProcessor
-            TwoValueRule<MultiplyCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            //Tier1OperationProcessor
+            TwoValueRule<BiOperandTier1Operand,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
-            //AddProcessor
-            TwoValueRule<AddCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            //Tier2OperationProcessor
+            TwoValueRule<BiOperandTier2Operand,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
+
+            //Tier3OperationProcessor
+            TwoValueRule<BiOperandTier3Operand,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
@@ -139,6 +168,15 @@ namespace IngameScript {
             TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
+
+            //ListComparisonProcessor
+            ThreeValueRule<ListIndexCommandParameter, ComparisonCommandParameter, VariableCommandParameter, AggregationModeCommandParameter>(
+                requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
+                (list, comparison, value, aggregation) => {
+                    AggregationMode mode = AggregationMode.ALL;
+                    if(aggregation.HasValue()) mode = aggregation.GetValue().value;
+                    return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
+                }),
 
             //BlockComparisonProcessor
             ThreeValueRule<ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
@@ -179,6 +217,11 @@ namespace IngameScript {
                     if(dir.HasValue()) direction = dir.GetValue().value;
                     return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
                 }),
+
+            //ListPropertyAggregationProcessor
+            OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
+                requiredLeft<PropertyAggregationCommandParameter>(),
+                (list,aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
 
             //AggregateConditionProcessors
             TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(
@@ -243,6 +286,9 @@ namespace IngameScript {
                             else b.SetPropertyValue(e, supplier, new BooleanPrimitive(true));
                         }));
                     })),
+
+            //ListIndexAsVariableProcessor
+            NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
             //PrintCommandProcessor
             OneValueRule<PrintCommandParameter,VariableCommandParameter>(
@@ -328,8 +374,6 @@ namespace IngameScript {
         }
 
         public void InitializeProcessors() {
-            parameterProcessors.Insert(0, new ParenthesisProcessor(this));
-
             for (int i = 0; i < parameterProcessors.Count; i++) {
                 ParameterProcessor processor = parameterProcessors[i];
                 processor.Rank = i;
@@ -533,20 +577,22 @@ namespace IngameScript {
             public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
-        public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
-            Program program;
-
-            public ParenthesisProcessor(Program program) {
-                this.program = program;
+        public class IgnoreProcessor : ParameterProcessor<IgnoreCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                finalParameters = new List<CommandParameter>();
+                p.RemoveAt(i);
+                return true;
             }
+        }
 
+        public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
                 for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
                         finalParameters = p.GetRange(i+1, j - (i+1));
-                        var alternateBranches = program.ProcessParameters(finalParameters);
+                        var alternateBranches = PROGRAM.ProcessParameters(finalParameters);
                         p.RemoveRange(i, j - i + 1);
 
                         for (int k = 0; k < alternateBranches.Count; k++) {
@@ -560,6 +606,41 @@ namespace IngameScript {
                     }
                 }
                 throw new Exception("Missing Closing Parenthesis for Command");
+            }
+        }
+
+        public class ListProcessor : ParameterProcessor<OpenBracketCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                finalParameters = null;
+                var indexValues = new List<Variable>();
+                int startIndex = i;
+                for (int j = startIndex + 1; j < p.Count; j++) {
+                    if (p[j] is OpenBracketCommandParameter) return false;
+                    else if (p[j] is ListSeparatorCommandParameter) {
+                        indexValues.Add(ParseVariable(p, startIndex, j));
+                        startIndex = j; //set startIndex to next separator
+                    }
+                    else if (p[j] is CloseBracketCommandParameter) {
+                        if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
+                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues.Count() == 1 ?  indexValues[0] : GetStaticVariable(indexValues)) };
+                        p.RemoveRange(i, j - i + 1);
+                        p.InsertRange(i, finalParameters);
+                        return true;
+                    }
+                }
+                throw new Exception("Missing Closing Bracket for List");
+            }
+
+            Variable ParseVariable(List<CommandParameter> p, int startIndex, int endIndex) {
+                var range = p.GetRange(startIndex + 1, endIndex - (startIndex + 1));
+                var listIndex = PROGRAM.ProcessParameters(range);
+                listIndex.Insert(0, range);
+                Variable variable = listIndex.Where(l => l.Count == 1 && l[0] is ValueCommandParameter<Variable>)
+                    .Select(l => ((ValueCommandParameter<Variable>)l[0]).value)
+                    .First();
+                if (variable == null) throw new Exception("List Index Values Must Resolve To a Variable");
+
+                return variable;
             }
         }
 

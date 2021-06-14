@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ParameterParsingTests\OperatorParameterProcessorTests.cs" />
+    <Compile Include="ParameterParsingTests\ListParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\SimpleVariableParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\TransferCommandProcessorTests.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="ScriptTests\SensorBlockTests.cs" />
     <Compile Include="ScriptTests\PistonBlockTests.cs" />
     <Compile Include="ScriptTests\ShipProximityTests.cs" />
+    <Compile Include="ScriptTests\SimpleListTests.cs" />
     <Compile Include="ScriptTests\SorterBlockTests.cs" />
     <Compile Include="ScriptTests\TextSurfaceBlockTests.cs" />
     <Compile Include="ScriptTests\SubclassBlockTests.cs" />
@@ -170,6 +172,7 @@
     <Compile Include="ScriptTests\DecoyBlockTests.cs" />
     <Compile Include="ScriptTests\AntennaBlockTests.cs" />
     <Compile Include="ScriptTests\WarheadBlockTests.cs" />
+    <Compile Include="TokenParsingTests\BracketParsingTests.cs" />
     <Compile Include="TokenParsingTests\StringParsingTests.cs" />
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="TokenParsingTests\ItemParsingTests.cs" />

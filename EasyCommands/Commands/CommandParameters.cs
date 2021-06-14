@@ -33,6 +33,9 @@ namespace IngameScript {
         public class OrCommandParameter : SimpleCommandParameter { }
         public class OpenParenthesisCommandParameter : SimpleCommandParameter { }
         public class CloseParenthesisCommandParameter : SimpleCommandParameter { }
+        public class OpenBracketCommandParameter : SimpleCommandParameter { }
+        public class ListSeparatorCommandParameter : SimpleCommandParameter { }
+        public class CloseBracketCommandParameter : SimpleCommandParameter { }
         public class IteratorCommandParameter : SimpleCommandParameter { }
         public class ActionCommandParameter : SimpleCommandParameter { }
         public class ReverseCommandParameter : SimpleCommandParameter { }
@@ -44,6 +47,7 @@ namespace IngameScript {
         public class PrintCommandParameter : SimpleCommandParameter { }
         public class SelfCommandParameter : SimpleCommandParameter { }
         public class GlobalCommandParameter : SimpleCommandParameter { }
+        public class IgnoreCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T value;
@@ -67,12 +71,16 @@ namespace IngameScript {
             }
         }
 
-        public class MultiplyCommandParameter : ValueCommandParameter<BiOperand> {
-            public MultiplyCommandParameter(BiOperand value) : base(value) {}
+        public class BiOperandTier1Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier1Operand(BiOperand value) : base(value) {}
         }
 
-        public class AddCommandParameter : ValueCommandParameter<BiOperand> {
-            public AddCommandParameter(BiOperand value) : base(value) {}
+        public class BiOperandTier2Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier2Operand(BiOperand value) : base(value) {}
+        }
+
+        public class BiOperandTier3Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier3Operand(BiOperand value) : base(value) { }
         }
 
         public class TransferCommandParameter : ValueCommandParameter<bool> {
@@ -143,6 +151,14 @@ namespace IngameScript {
 
         public class UnitCommandParameter : ValueCommandParameter<Unit> {
             public UnitCommandParameter(Unit value) : base(value) {}
+        }
+
+        public class ListCommandParameter : ValueCommandParameter<Variable> {
+            public ListCommandParameter(Variable v) : base(v) {}
+        }
+
+        public class ListIndexCommandParameter : ValueCommandParameter<ListIndexVariable> {
+            public ListIndexCommandParameter(ListIndexVariable v) : base(v) {}
         }
 
         public class IndexSelectorCommandParameter : ValueCommandParameter<Variable> {

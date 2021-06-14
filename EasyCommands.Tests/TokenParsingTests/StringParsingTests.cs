@@ -88,5 +88,52 @@ namespace EasyCommands.Tests.TokenParsingTests {
             Assert.AreEqual("to", tokens[3].original);
             Assert.AreEqual("run \"goto testFunction\"", tokens[4].original);
         }
+
+        [TestMethod]
+        public void SeparateTokensMissingSpaces() {
+            VerifyTokensSplit(",");
+            VerifyTokensSplit("+");
+            VerifyTokensSplit("*");
+            VerifyTokensSplit("/");
+            VerifyTokensSplit("!");
+            VerifyTokensSplit("^");
+            VerifyTokensSplit("..");
+        }
+
+        [TestMethod]
+        public void SubtractionMissingSpaces() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("assign a to b-c");
+            Assert.AreEqual(6, tokens.Count);
+            Assert.AreEqual("assign", tokens[0].original);
+            Assert.AreEqual("a", tokens[1].original);
+            Assert.AreEqual("to", tokens[2].original);
+            Assert.AreEqual("b", tokens[3].original);
+            Assert.AreEqual("-", tokens[4].original);
+            Assert.AreEqual("c", tokens[5].original);
+        }
+
+        [TestMethod]
+        public void NegativeNumbersAreLeftAlone() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("assign a to -3");
+            Assert.AreEqual(4, tokens.Count);
+            Assert.AreEqual("assign", tokens[0].original);
+            Assert.AreEqual("a", tokens[1].original);
+            Assert.AreEqual("to", tokens[2].original);
+            Assert.AreEqual("-3", tokens[3].original);
+        }
+
+        void VerifyTokensSplit(string token) {
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("assign a to b" + token + "c");
+            Assert.AreEqual(6, tokens.Count);
+            Assert.AreEqual("assign", tokens[0].original);
+            Assert.AreEqual("a", tokens[1].original);
+            Assert.AreEqual("to", tokens[2].original);
+            Assert.AreEqual("b", tokens[3].original);
+            Assert.AreEqual(token, tokens[4].original);
+            Assert.AreEqual("c", tokens[5].original);
+        }
     }
 }

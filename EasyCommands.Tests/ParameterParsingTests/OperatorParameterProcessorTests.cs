@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using VRageMath;
 using Malware.MDKUtilities;
 using IngameScript;
@@ -468,6 +470,68 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Primitive primitive = assignment.variable.GetValue();
             Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
             Assert.AreEqual(Color.Cyan, primitive.GetValue());
+        }
+
+        [TestMethod]
+        public void AddNumberToList() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to [0, 1, 2] + 3");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(4, listValues.Count);
+            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
+            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
+            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
+            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
+        }
+
+        [TestMethod]
+        public void AddNumberToListInFront() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to 0 + [1, 2, 3]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(4, listValues.Count);
+            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
+            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
+            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
+            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
+        }
+
+        [TestMethod]
+        public void AddStringToList() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to [0, 1, 2] + \" three\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.AreEqual("[0,1,2] three", CastString(assignment.variable.GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AddStringToListInFront() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"zero \" + [0, 1, 2]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.AreEqual("zero [0,1,2]", CastString(assignment.variable.GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void AddTwoLists() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to [0, 1, 2] + [3, 4, 5]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue();
+            Assert.AreEqual(6, listValues.Count);
+            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
+            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
+            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
+            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
+            Assert.AreEqual(4f, listValues[4].GetValue().GetValue());
+            Assert.AreEqual(5f, listValues[5].GetValue().GetValue());
         }
     }
 }
