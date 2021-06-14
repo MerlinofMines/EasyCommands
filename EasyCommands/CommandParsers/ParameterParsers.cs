@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", ".." };
+        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||"};
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
