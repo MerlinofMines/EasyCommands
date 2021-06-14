@@ -58,11 +58,23 @@ namespace IngameScript {
             public List<object> GetEntities() {
                 List<object> entities = provider.GetEntities();
                 List<object> selectedEntities = new List<Object>();
+                BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
-                //Return empty list if index > Count
-                int i = (int)CastNumber(index.GetValue()).GetTypedValue();
-                if (i < entities.Count) selectedEntities.Add(entities[i]);
+                var indexes = CastList(index.GetValue()).GetTypedValue().GetValues()
+                    .Select(v => v.GetValue()).ToList();
 
+                foreach (Primitive p in indexes) {
+                    //Return empty list if index > Count
+                    if (p.GetPrimitiveType() == Return.NUMERIC) {
+                        int i = (int)CastNumber(index.GetValue()).GetTypedValue();
+                        if (i < entities.Count) selectedEntities.Add(entities[i]);
+                    }
+                    if (p.GetPrimitiveType() == Return.STRING) {
+                        var entityName = CastString(p).GetTypedValue();
+                        selectedEntities.AddRange(entities.Where(o => entityName == b.GetName(o)));
+                    }
+                    //Other Index types not supported
+                }
                 return selectedEntities;
             }
         }
