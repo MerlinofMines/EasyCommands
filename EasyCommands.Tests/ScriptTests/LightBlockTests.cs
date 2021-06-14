@@ -115,9 +115,9 @@ turn on the ""hangar lights""
                 // with just one of the lights when we want to
                 var mockSingleLight = new Mock<IMyLightingBlock>();
                 var mockOtherLight = new Mock<IMyLightingBlock>();
-                test.MockBlocksOfType("single light", mockSingleLight);
-                test.MockBlocksOfType("other light", mockOtherLight);
                 test.MockBlocksInGroup("hangar lights", mockSingleLight, mockOtherLight);
+                test.MockBlocksOfType("other light", mockOtherLight);
+                test.MockBlocksOfType("single light", mockSingleLight);
 
                 test.RunUntilDone();
 

@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||"};
+        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||", "@"};
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -168,6 +168,7 @@ namespace IngameScript {
             AddWords(Words("plus", "+"), new BiOperandTier2Operand(BiOperand.ADD));
             AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));
             AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
+            AddWords(Words("@"), new IndexCommandParameter());
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
@@ -237,8 +238,8 @@ namespace IngameScript {
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
-            RegisterToString<StringCommandParameter>(p => "\"" + p.value + "\"");
-            RegisterToString<ExplicitStringCommandParameter>(p => "'" + p.value + "'");
+            RegisterToString<AmbiguiousStringCommandParameter>(p => "\"" + p.value + "\"");
+            RegisterToString<StringCommandParameter>(p => "'" + p.value + "'");
             RegisterToString<VariableAssignmentCommandParameter>(p => "Assign[name=" + p.variableName + ",global=" + p.isGlobal + ",ref=" + p.useReference + "]");
             RegisterToString<VariableCommandParameter>(p => "[Variable]");
             RegisterToString<VariableSelectorCommandParameter>(p => "[VariableSelector]");
@@ -300,31 +301,21 @@ namespace IngameScript {
             double numericValue;
 
             if (token.isExplicitString) {
-                commandParameters.Add(new ExplicitStringCommandParameter(token.original));
+                commandParameters.Add(new StringCommandParameter(token.original, true));
             } else if (token.isString) {
                 List<Token> subTokens = ParseTokens(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                commandParameters.Add(new StringCommandParameter(token.original, false, subtokenParams.ToArray()));
+                commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
             } else if (Double.TryParse(t, out numericValue)) {
                 commandParameters.Add(new NumericCommandParameter((float)numericValue));
-            } else if (t.StartsWith("@")) {
-                if (t.Length == 1) commandParameters.Add(new IndexCommandParameter());
-                else {
-                    int indexValue;
-                    if (int.TryParse(t.Substring(1), out indexValue)) {
-                        commandParameters.Add(new IndexSelectorCommandParameter(new StaticVariable(new NumberPrimitive(indexValue))));
-                    } else {
-                        throw new Exception("Unable to parse index indicator: " + t);
-                    }
-                }
             } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
                 commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
             } else if (t.StartsWith("$")) { //Variable References used as Selectors
                 commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 1))));
             } else { //If nothing else matches, must be a string
-                commandParameters.Add(new StringCommandParameter(token.original, true));
+                commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, true));
             }
 
             return commandParameters;

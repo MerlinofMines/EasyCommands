@@ -40,6 +40,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ListIndexSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on \"batteries\"[0]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+        }
+
+        [TestMethod]
         public void InLineIndexSelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on \"batteries\" @0");
@@ -91,6 +102,39 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             InMemoryVariable variable = (InMemoryVariable)sep.selector;
             Assert.AreEqual("a", variable.variableName);
             Assert.AreEqual(Block.SOUND, sep.blockType);
+        }
+
+        [TestMethod]
+        public void VariableSelectorWithIndex() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the $mySirens[0]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+            Assert.IsTrue(iep.provider is SelectorEntityProvider);
+            SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(variableSelector.selector is InMemoryVariable);
+            InMemoryVariable variable = (InMemoryVariable)variableSelector.selector;
+        }
+
+        [TestMethod]
+        public void VariableSelectorWithBlockTypeAndIndex() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the $mySirens sirens [0]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+            Assert.IsTrue(iep.provider is SelectorEntityProvider);
+            SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(variableSelector.selector is InMemoryVariable);
+            InMemoryVariable variable = (InMemoryVariable)variableSelector.selector;
+            Assert.AreEqual("mySirens", variable.variableName);
+            Assert.IsTrue(variableSelector.isGroup);
+            Assert.AreEqual(Block.SOUND, variableSelector.blockType);
         }
 
         [TestMethod]
