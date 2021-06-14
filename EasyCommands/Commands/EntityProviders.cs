@@ -66,7 +66,7 @@ namespace IngameScript {
                 foreach (Primitive p in indexes) {
                     //Return empty list if index > Count
                     if (p.GetPrimitiveType() == Return.NUMERIC) {
-                        int i = (int)CastNumber(index.GetValue()).GetTypedValue();
+                        int i = (int)CastNumber(p).GetTypedValue();
                         if (i < entities.Count) selectedEntities.Add(entities[i]);
                     }
                     if (p.GetPrimitiveType() == Return.STRING) {

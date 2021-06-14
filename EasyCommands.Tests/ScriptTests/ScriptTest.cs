@@ -22,8 +22,8 @@ namespace EasyCommands.Tests.ScriptTests
     class ScriptTest : IDisposable
     {
         public Program program;
+        public Mock<IMyProgrammableBlock> me;
         MockGridTerminalSystem mockGrid;
-        Mock<IMyProgrammableBlock> me;
         int entityIdCounter = 1000;
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace EasyCommands.Tests.ScriptTests
             // And other required config for mocking
             mockGrid = new MockGridTerminalSystem();
             me = new Mock<IMyProgrammableBlock>();
+            MockBlocksOfType("Script Program", me);
 
             MDKFactory.ProgramConfig config = default;
             config.GridTerminalSystem = mockGrid;
@@ -140,8 +141,9 @@ namespace EasyCommands.Tests.ScriptTests
         /// <param name="blockMocks">The blocks being mocked and that will be returned later.</param>
         public void MockBlocksInGroup<T>(String groupName, params Mock<T>[] blockMocks) where T : class, IMyTerminalBlock
         {
-            foreach (Mock<T> block in blockMocks) {
-                block.Setup(x => x.EntityId).Returns(entityIdCounter++);
+            for(int i = 0; i < blockMocks.Length; i++ ) {
+                blockMocks[i].Setup(x => x.EntityId).Returns(entityIdCounter++);
+                blockMocks[i].Setup(x => x.CustomName).Returns(groupName + " " + i);
             }
 
             var mockGroup = new MockBlockGroup(groupName);
@@ -196,6 +198,8 @@ namespace EasyCommands.Tests.ScriptTests
                 blocks.ForEach(block => mockBlocks.Add(block));
             }
 
+            public List<IMyTerminalBlock> GetBlocks() => mockBlocks;
+
             public void GetBlocks(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
                 blocks.AddRange(mockBlocks
                     .Where(block => collect == null ? true : collect(block))
@@ -230,8 +234,9 @@ namespace EasyCommands.Tests.ScriptTests
                 blocks.ForEach(block => mockBlocks.Add(block));
             }
 
-            public void AddGroup(IMyBlockGroup blockGroup) {
+            public void AddGroup(MockBlockGroup blockGroup) {
                 mockGroups.Add(blockGroup);
+                mockBlocks.UnionWith(blockGroup.GetBlocks());
             }
 
             public void GetBlockGroups(List<IMyBlockGroup> blockGroups, Func<IMyBlockGroup, bool> collect = null) {
