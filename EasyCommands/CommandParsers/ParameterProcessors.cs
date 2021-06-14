@@ -33,7 +33,7 @@ namespace IngameScript {
                     requiredLeft<ListIndexCommandParameter>(),
                     (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),
                 NoValueRule<ListCommandParameter>(
-                    (list) => new ListIndexCommandParameter(new ListIndexVariable(list.value, GetVariables(new List<Variable>())[0])))),
+                    (list) => new ListIndexCommandParameter(new ListIndexVariable(list.value, GetVariables(new KeyedList())[0])))),
 
             new IgnoreProcessor(),
 
@@ -126,6 +126,11 @@ namespace IngameScript {
             //UniOperationProcessor
             OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
+                (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
+
+            //AfterUniOperationProcessor
+            OneValueRule<LeftUniOperationCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(),
                 (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
             //Tier1OperationProcessor
@@ -622,7 +627,7 @@ namespace IngameScript {
                     }
                     else if (p[j] is CloseBracketCommandParameter) {
                         if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
-                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues.Count() == 1 ?  indexValues[0] : GetStaticVariable(indexValues)) };
+                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues.Count() == 1 ?  indexValues[0] : GetStaticVariable(new KeyedList(indexValues.ToArray()))) };
                         p.RemoveRange(i, j - i + 1);
                         p.InsertRange(i, finalParameters);
                         return true;
