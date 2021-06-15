@@ -103,6 +103,7 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperand.MOD, (a, b) => a % b);
             AddBiOperation<float, float>(BiOperand.EXPONENT, (a, b) => Math.Pow(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
 
             //String
             AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)).GetTypedValue());

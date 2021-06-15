@@ -22,7 +22,8 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokens = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">", ">=", "<", "<=", "=", "==", "&", "&&", "|", "||", "@"};
+        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@"};
+        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", "." };
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -344,7 +345,14 @@ namespace IngameScript {
 
         String[] ParseSeparateTokens(String command) {
             var newCommand = command;
-            separateTokens.ForEach(s => newCommand = newCommand.Replace(s, " " + s + " "));
+            separateTokensFirstPass.ForEach(s => newCommand = newCommand.Replace(s, " " + s + " "));
+            newCommand = string.Join(" ", newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).SelectMany(token => {
+                var ignored = 0.0;
+                if (separateTokensFirstPass.Contains(token) || double.TryParse(token, out ignored)) return new[] { token };
+                separateTokensSecondPass.ForEach(s => token = token.Replace(s, " " + s + " "));
+                return token.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            }));
+
             List<char> commandArray = newCommand.ToCharArray().ToList();
 
             //- has to be handled specially, as " -3" should be left alone but "n-1" should be split as "n - 1"

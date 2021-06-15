@@ -98,6 +98,19 @@ namespace EasyCommands.Tests.TokenParsingTests {
             VerifyTokensSplit("!");
             VerifyTokensSplit("^");
             VerifyTokensSplit("..");
+            VerifyTokensSplit(".");
+            VerifyTokensSplit("%");
+            VerifyTokensSplit(">");
+            VerifyTokensSplit(">=");
+            VerifyTokensSplit("<");
+            VerifyTokensSplit("<=");
+            VerifyTokensSplit("==");
+            VerifyTokensSplit("=");
+            VerifyTokensSplit("&&");
+            VerifyTokensSplit("&");
+            VerifyTokensSplit("||");
+            VerifyTokensSplit("|");
+            VerifyTokensSplit("@");
         }
 
         [TestMethod]
