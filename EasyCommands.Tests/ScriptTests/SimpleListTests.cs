@@ -115,6 +115,23 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void AssignListIndexNewValueUsingSet() {
+            String script = @"
+:main
+set myList to [1,2,3,4]
+Print ""Before: "" + myList
+set myList[0] to 0
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [0,2,3,4]"));
+            }
+        }
+
+        [TestMethod]
         public void AssignListKeyValue() {
             String script = @"
 :main

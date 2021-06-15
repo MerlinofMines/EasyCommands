@@ -43,13 +43,15 @@ namespace IngameScript {
             AddWords(Words("counter", "counterclock", "counterclockwise"), new DirectionCommandParameter(Direction.COUNTERCLOCKWISE));
 
             //Action Words
-            AddWords(Words("move", "go", "tell", "turn", "rotate", "set"), new ActionCommandParameter());
-            AddWords(Words("increase", "raise", "extend", "expand"), new ActionCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("add"), new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("subtact"), new ActionCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("decrease", "retract", "reduce"), new ActionCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
+            AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
+            AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate"), new AssignmentCommandParameter());
+            AddWords(Words("increase", "raise", "extend", "expand"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
+            AddWords(Words("add"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.UP));
+            AddWords(Words("subtact"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
+            AddWords(Words("decrease", "retract", "reduce"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
             AddWords(Words("reverse"), new ReverseCommandParameter());
             AddWords(Words("by"), new RelativeCommandParameter());
+            AddWords(Words("global"), new GlobalCommandParameter());
 
             //Value Words
             AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
@@ -107,9 +109,6 @@ namespace IngameScript {
             AddWords(Words("goto"), new FunctionCommandParameter(Function.GOTO));
             AddWords(Words("listen", "channel"), new ListenCommandParameter());
             AddWords(Words("send", "broadcast"), new SendCommandParameter());
-            AddWords(Words("assign", "allocate", "designate"), new AssignmentCommandParameter(false));
-            AddWords(Words("global"), new GlobalCommandParameter());
-            AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
             AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));

@@ -37,7 +37,6 @@ namespace IngameScript {
         public class ListSeparatorCommandParameter : SimpleCommandParameter { }
         public class CloseBracketCommandParameter : SimpleCommandParameter { }
         public class IteratorCommandParameter : SimpleCommandParameter { }
-        public class ActionCommandParameter : SimpleCommandParameter { }
         public class ReverseCommandParameter : SimpleCommandParameter { }
         public class RelativeCommandParameter : SimpleCommandParameter { }
         public class WaitCommandParameter : SimpleCommandParameter { }
@@ -95,7 +94,7 @@ namespace IngameScript {
         public class AssignmentCommandParameter : SimpleCommandParameter {
             public bool useReference;
 
-            public AssignmentCommandParameter(bool useReference) {
+            public AssignmentCommandParameter(bool useReference = false) {
                 this.useReference = useReference;
             }
         }

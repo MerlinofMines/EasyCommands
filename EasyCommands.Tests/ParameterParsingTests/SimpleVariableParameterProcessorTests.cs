@@ -21,9 +21,32 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVariableWithActionKeyword() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set \"a\" to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
+            Assert.IsFalse(assignCommand.useReference);
+        }
+
+        [TestMethod]
         public void AssignGlobalVariable() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign global \"a\" to 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("a", assignCommand.variableName);
+            Assert.AreEqual(2, CastNumber(assignCommand.variable.GetValue()).GetTypedValue());
+            Assert.IsFalse(assignCommand.useReference);
+            Assert.IsTrue(assignCommand.isGlobal);
+        }
+
+        [TestMethod]
+        public void AssignGlobalVariableWithActionKeyword() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set global \"a\" to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
