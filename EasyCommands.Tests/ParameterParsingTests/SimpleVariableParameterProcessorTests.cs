@@ -165,6 +165,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVariableToMySelectorProperty() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set \"myPosition\" to my position");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
+        }
+
+        [TestMethod]
         public void AssignVariableToSelectorString() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"mySelector\" to \"Main Cockpit\"");

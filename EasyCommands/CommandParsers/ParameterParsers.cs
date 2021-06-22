@@ -23,7 +23,7 @@ namespace IngameScript {
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
         string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@"};
-        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", "." };
+        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-" };
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -298,8 +298,6 @@ namespace IngameScript {
         List<CommandParameter> ParseCommandParameters(Token token) {
             List<CommandParameter> commandParameters = new List<CommandParameter>();
             String t = token.token;
-            double numericValue;
-
             if (token.isExplicitString) {
                 commandParameters.Add(new StringCommandParameter(token.original, true));
             } else if (token.isString) {
@@ -308,8 +306,6 @@ namespace IngameScript {
                 commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
-            } else if (Double.TryParse(t, out numericValue)) {
-                commandParameters.Add(new NumericCommandParameter((float)numericValue));
             } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
                 commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
             } else if (t.StartsWith("$")) { //Variable References used as Selectors
@@ -347,24 +343,26 @@ namespace IngameScript {
             var newCommand = command;
             foreach (var token in separateTokensFirstPass) newCommand = newCommand.Replace(token, " " + token + " ");
             newCommand = string.Join(" ", newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).SelectMany(token => {
-                var ignored = 0.0;
-                if (separateTokensFirstPass.Contains(token) || double.TryParse(token, out ignored)) return new[] { token };
+                Primitive ignored;
+                if (separateTokensFirstPass.Contains(token) || ParsePrimitive(token, out ignored)) return new[] { token };
                 foreach (var s in separateTokensSecondPass) token = token.Replace(s, " " + s + " ");
                 return token.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }));
 
             List<char> commandArray = newCommand.ToCharArray().ToList();
 
-            //- has to be handled specially, as " -3" should be left alone but "n-1" should be split as "n - 1"
-            // This is done by separating out any "-" that is not at the beginning of a string
-            for(int i = 1; i < commandArray.Count() - 1; i++) {
-                if(commandArray[i] == '-' && commandArray[i-1] != ' ') {
-                    if (commandArray[i + 1] != ' ') commandArray.Insert(i + 1, ' ');
-                    commandArray.Insert(i, ' ');
-                }
-            }
-
             return new string(commandArray.ToArray()).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public static bool ParsePrimitive(String token, out Primitive primitive) {
+            primitive = null;
+            Vector3D vector;
+            Double numeric;
+            Color color;
+            if (Double.TryParse(token, out numeric)) primitive = new NumberPrimitive((float)numeric);
+            if (GetVector(token, out vector)) primitive = new VectorPrimitive(vector);
+            if (GetColor(token, out color)) primitive = new ColorPrimitive(color);
+            return primitive != null;
         }
 
         public class Token {

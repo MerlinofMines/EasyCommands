@@ -132,8 +132,8 @@ print 'Total: ' + ( 2 + 5 )
 
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("print 'Total: ' ADD ( 2 ADD 5 )"));
-                Assert.IsTrue(test.Logger.Contains("2 ADD 5"));
+                Assert.IsTrue(test.Logger.Contains("print 'Total: ' ADD ( \"2\" ADD \"5\" )"));
+                Assert.IsTrue(test.Logger.Contains("\"2\" ADD \"5\""));
                 Assert.IsTrue(test.Logger.Contains("[Variable] ADD [Variable]"));
                 Assert.IsTrue(test.Logger.Contains("[Variable]"));
                 Assert.IsTrue(test.Logger.Contains("print 'Total: ' ADD [Variable]"));

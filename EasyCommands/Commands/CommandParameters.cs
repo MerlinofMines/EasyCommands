@@ -136,10 +136,6 @@ namespace IngameScript {
             }
         }
 
-        public class NumericCommandParameter : ValueCommandParameter<float>, PrimitiveCommandParameter {
-            public NumericCommandParameter(float value) : base(value) {}
-        }
-
         public class BooleanCommandParameter : ValueCommandParameter<bool>, PrimitiveCommandParameter {
             public BooleanCommandParameter(bool value) : base(value) {}
         }

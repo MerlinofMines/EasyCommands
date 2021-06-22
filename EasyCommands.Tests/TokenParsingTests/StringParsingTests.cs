@@ -137,6 +137,17 @@ namespace EasyCommands.Tests.TokenParsingTests {
             Assert.AreEqual("-3", tokens[3].original);
         }
 
+        [TestMethod]
+        public void VectorsAreLeftAlone() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("assign a to -345.34:-3452.34:-35343.345");
+            Assert.AreEqual(4, tokens.Count);
+            Assert.AreEqual("assign", tokens[0].original);
+            Assert.AreEqual("a", tokens[1].original);
+            Assert.AreEqual("to", tokens[2].original);
+            Assert.AreEqual("-345.34:-3452.34:-35343.345", tokens[3].original);
+        }
+
         void VerifyTokensSplit(string token) {
             var program = MDKFactory.CreateProgram<Program>();
             var tokens = program.ParseTokens("assign a to b" + token + "c");

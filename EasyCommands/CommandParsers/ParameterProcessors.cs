@@ -642,14 +642,12 @@ namespace IngameScript {
 
         public class PrimitiveProcessor<T> : ParameterProcessor<T> where T : class, PrimitiveCommandParameter {
             public override List<Type> GetProcessedTypes() {
-                return new List<Type>() { typeof(NumericCommandParameter), typeof(BooleanCommandParameter), typeof(StringCommandParameter) };
+                return new List<Type>() { typeof(BooleanCommandParameter), typeof(StringCommandParameter) };
             }
 
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 if (p[i] is StringCommandParameter) {
                     p[i] = GetParameter((StringCommandParameter)p[i]);
-                } else if (p[i] is NumericCommandParameter) {
-                    p[i] = new VariableCommandParameter(new StaticVariable(new NumberPrimitive(((NumericCommandParameter)p[i]).value)));
                 } else if (p[i] is BooleanCommandParameter) {
                     p[i] = new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(((BooleanCommandParameter)p[i]).value)));
                 } else {
@@ -662,10 +660,7 @@ namespace IngameScript {
 
             VariableCommandParameter GetParameter(StringCommandParameter value) {
                 Primitive primitive = null;
-                Vector3D vector;
-                if (GetVector(value.value, out vector)) primitive = new VectorPrimitive(vector);
-                Color color;
-                if (GetColor(value.value, out color)) primitive = new ColorPrimitive(color);
+                ParsePrimitive(value.value, out primitive);
 
                 Variable variable = new AmbiguousStringVariable(value.value);
 
