@@ -344,6 +344,23 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void AppendSingleStringListToSimpleList() {
+            String script = @"
+:main
+assign myList to [1,2,3,4]
+Print ""Before: "" + myList
+assign myList to myList + [""myThing""]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,4,myThing]"));
+            }
+        }
+
+        [TestMethod]
         public void AddTwoLists() {
             String script = @"
 :main

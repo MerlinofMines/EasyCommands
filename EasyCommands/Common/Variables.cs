@@ -226,11 +226,11 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                var list = GetList();
+                var list = GetList(expectedList);
                 var values = GetIndexValues()
                     .Select(p => list.GetValue(p))
                     .ToList();
-                if (values.Count == 0) return expectedList.GetValue();
+                if (values.Count == 0) return new ListPrimitive(list);
                 return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(new KeyedList(values.ToArray()));
             }
 
@@ -241,18 +241,17 @@ namespace IngameScript {
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 
-            KeyedList GetList() {
-                Primitive list = expectedList.GetValue();
-                return list.GetPrimitiveType() == Return.LIST ? CastList(list).GetTypedValue() : new KeyedList(expectedList);
+            KeyedList GetList(Variable expectedList) {
+                KeyedList list = CastList(expectedList.GetValue()).GetTypedValue();
+                if (list.GetValues().Count == 1) {
+                    Primitive onlyValue = list.GetValue(ResolvePrimitive(0)).GetValue();
+                    if (onlyValue.GetPrimitiveType() == Return.LIST) list = CastList(onlyValue).GetTypedValue();
+                }
+                return list;
             }
 
             List<Primitive> GetIndexValues() {
-                var primitives = new List<Primitive>();
-                Primitive indexValue = index.GetValue();
-                if (indexValue.GetPrimitiveType() == Return.LIST) {
-                    primitives.AddRange(CastList(indexValue).GetTypedValue().GetValues().Select(i => i.GetValue()).ToList());
-                } else primitives.Add(indexValue);
-                return primitives;
+                return GetList(index).GetValues().Select(i => i.GetValue()).ToList();
             }
         }
 

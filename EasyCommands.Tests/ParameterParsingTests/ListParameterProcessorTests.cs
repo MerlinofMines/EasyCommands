@@ -37,7 +37,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            Assert.AreEqual(0, CastNumber(assignmentCommand.list.index.GetValue()).GetTypedValue());
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
             Primitive value = assignmentCommand.value.GetValue();
             Assert.AreEqual("value", CastString(value).GetTypedValue());
         }
@@ -51,7 +53,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            Assert.AreEqual(0, CastNumber(assignmentCommand.list.index.GetValue()).GetTypedValue());
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
             Primitive list = assignmentCommand.value.GetValue();
             Assert.AreEqual(Return.LIST, list.GetPrimitiveType());
             List<Variable> listItems = CastList(list).GetTypedValue().GetValues();
@@ -71,6 +75,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
             List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(Return.LIST, listIndexes[0].GetValue().GetPrimitiveType());
+            listIndexes = CastList(listIndexes[0].GetValue()).GetTypedValue().GetValues();
             Assert.AreEqual(4, listIndexes.Count);
             Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
             Assert.AreEqual(1, CastNumber(listIndexes[1].GetValue()).GetTypedValue());

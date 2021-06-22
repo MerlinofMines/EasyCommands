@@ -78,7 +78,7 @@ namespace IngameScript {
                     (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), list.value))),
                 OneValueRule<ListCommandParameter, SelectorCommandParameter>(
                     requiredLeft<SelectorCommandParameter>(),
-                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, list.value))),
+                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new ListIndexVariable(list.value, EmptyList())))),
                 OneValueRule<ListCommandParameter, ListIndexCommandParameter>(
                     requiredLeft<ListIndexCommandParameter>(),
                     (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),
@@ -618,7 +618,7 @@ namespace IngameScript {
                     }
                     else if (p[j] is CloseBracketCommandParameter) {
                         if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
-                        finalParameters = new List<CommandParameter> { new ListCommandParameter(indexValues.Count() == 1 ?  indexValues[0] : GetStaticVariable(new KeyedList(indexValues.ToArray()))) };
+                        finalParameters = new List<CommandParameter> { new ListCommandParameter(GetStaticVariable(new KeyedList(indexValues.ToArray()))) };
                         p.RemoveRange(i, j - i + 1);
                         p.InsertRange(i, finalParameters);
                         return true;

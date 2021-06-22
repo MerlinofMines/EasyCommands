@@ -1,5 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
@@ -47,7 +50,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
         }
 
         [TestMethod]
@@ -112,7 +117,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
             Assert.IsTrue(variableSelector.selector is InMemoryVariable);
@@ -127,7 +134,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            Assert.AreEqual(0f, iep.index.GetValue().GetValue());
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
             Assert.IsTrue(variableSelector.selector is InMemoryVariable);
