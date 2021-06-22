@@ -345,11 +345,11 @@ namespace IngameScript {
 
         String[] ParseSeparateTokens(String command) {
             var newCommand = command;
-            separateTokensFirstPass.ForEach(s => newCommand = newCommand.Replace(s, " " + s + " "));
+            foreach (var token in separateTokensFirstPass) newCommand = newCommand.Replace(token, " " + token + " ");
             newCommand = string.Join(" ", newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).SelectMany(token => {
                 var ignored = 0.0;
                 if (separateTokensFirstPass.Contains(token) || double.TryParse(token, out ignored)) return new[] { token };
-                separateTokensSecondPass.ForEach(s => token = token.Replace(s, " " + s + " "));
+                foreach (var s in separateTokensSecondPass) token = token.Replace(s, " " + s + " ");
                 return token.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }));
 
