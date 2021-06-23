@@ -73,7 +73,7 @@ namespace IngameScript {
 
             //Booleans
             AddUniOperation<bool>(UniOperand.NOT, a => !a);
-            AddBiOperation<bool, bool>(BiOperand.AND, (a,b) => a && b);
+            AddBiOperation<bool, bool>(BiOperand.AND, (a, b) => a && b);
             AddBiOperation<bool, bool>(BiOperand.OR, (a, b) => a || b);
             AddBiOperation<bool, bool>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<string, string>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
@@ -111,6 +111,7 @@ namespace IngameScript {
             AddBiOperation<string, string>(BiOperand.SUBTACT, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, string>(BiOperand.MOD, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, float>(BiOperand.SUBTACT, (a, b) => a.Substring(Convert.ToInt32(b)));
+            AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)).GetValue());
 
             //Vector
             //TODO add dot product, projection

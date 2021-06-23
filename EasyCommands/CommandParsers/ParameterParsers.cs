@@ -164,6 +164,7 @@ namespace IngameScript {
             AddWords(Words("divide", "/"), new BiOperandTier1Operand(BiOperand.DIVIDE));
             AddWords(Words("mod", "%"), new BiOperandTier1Operand(BiOperand.MOD));
             AddWords(Words("dot", "."), new BiOperandTier1Operand(BiOperand.DOT));
+            AddWords(Words("as", "cast"), new BiOperandTier1Operand(BiOperand.CAST));
             AddWords(Words("pow", "exp", "^"), new BiOperandTier1Operand(BiOperand.EXPONENT));
             AddWords(Words("plus", "+"), new BiOperandTier2Operand(BiOperand.ADD));
             AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));

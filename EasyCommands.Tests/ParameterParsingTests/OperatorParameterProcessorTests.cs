@@ -545,5 +545,27 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(4f, listValues[4].GetValue().GetValue());
             Assert.AreEqual(5f, listValues[5].GetValue().GetValue());
         }
+
+        [TestMethod]
+        public void CastStringAsVector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to (\"1\" + \":2:\" + \"3\") as \"vector\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.VECTOR, value.GetPrimitiveType());
+            Assert.AreEqual("1:2:3", CastString(value).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void CastStringAsBoolean() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"true\" as \"bool\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.BOOLEAN, value.GetPrimitiveType());
+            Assert.AreEqual(true, value.GetValue());
+        }
     }
 }

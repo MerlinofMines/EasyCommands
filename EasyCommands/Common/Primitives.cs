@@ -74,6 +74,15 @@ namespace IngameScript {
             { typeof(KeyedList), Return.LIST }
         };
 
+        static Dictionary<string, Func<Primitive, Primitive>> castMap = new Dictionary<string, Func<Primitive, Primitive>>() {
+            { "bool", CastBoolean },
+            { "string", CastString },
+            { "number", CastNumber },
+            { "vector", CastVector },
+            { "color", CastColor },
+            { "list", CastList }
+        };
+
         static Dictionary<String, Color> colors = new Dictionary<String, Color>{
             { "red", Color.Red },
             { "blue", Color.Blue },
