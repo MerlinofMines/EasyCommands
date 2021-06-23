@@ -56,6 +56,19 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignListIndexSelectorValuePlusList() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set my display[0] to \"Offset: \" + [offset]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
+        }
+
+        [TestMethod]
         public void InLineIndexSelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on \"batteries\" @0");

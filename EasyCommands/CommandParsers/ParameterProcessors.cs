@@ -262,6 +262,9 @@ namespace IngameScript {
                 requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (t,s1,s2,v1,v2) => new CommandReferenceParameter(new TransferItemCommand(s1.GetValue().value, s2.GetValue().value, v1.GetValue().value, v2.HasValue() ? v2.GetValue().value : null))),
 
+            //ListIndexAsVariableProcessor
+            NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
+
             //ActionProcessor
             BlockCommandProcessor(),
 
@@ -282,9 +285,6 @@ namespace IngameScript {
                             else b.SetPropertyValue(e, supplier, new BooleanPrimitive(true));
                         }));
                     })),
-
-            //ListIndexAsVariableProcessor
-            NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
             //PrintCommandProcessor
             OneValueRule<PrintCommandParameter,VariableCommandParameter>(
