@@ -354,7 +354,7 @@ namespace IngameScript {
             }
 
             public bool ShouldIgnore() {
-                return String.IsNullOrWhiteSpace(CommandString) || CommandString.StartsWith("#");
+                return String.IsNullOrWhiteSpace(CommandString) || CommandString.Trim().StartsWith("#");
             }
         }
 

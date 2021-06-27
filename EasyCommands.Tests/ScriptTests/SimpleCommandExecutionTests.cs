@@ -45,6 +45,24 @@ print 'Hello World'
             }
         }
 
+
+        [TestMethod]
+        public void indentedCommentsAreIgnored() {
+            String script = @"
+:main
+if true
+  #This is a nested comment
+  print 'Hello World'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+            }
+        }
+
         [TestMethod]
         public void emptyScriptPrintsWelcomeMessage() {
             String script = "";
