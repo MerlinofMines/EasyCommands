@@ -75,9 +75,6 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
             List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
-            Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(Return.LIST, listIndexes[0].GetValue().GetPrimitiveType());
-            listIndexes = CastList(listIndexes[0].GetValue()).GetTypedValue().GetValues();
             Assert.AreEqual(4, listIndexes.Count);
             Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
             Assert.AreEqual(1, CastNumber(listIndexes[1].GetValue()).GetTypedValue());
@@ -100,7 +97,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignVariableToListSubRange() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign myValue to [3..10][2..4]");
+            var command = program.ParseCommand("assign myValue to (3..10)[2..4]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myValue", assignmentCommand.variableName);

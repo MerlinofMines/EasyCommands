@@ -76,9 +76,12 @@ namespace IngameScript {
                 OneValueRule<ListCommandParameter, StringCommandParameter>(
                     requiredLeft<StringCommandParameter>(),
                     (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), list.value))),
+                OneValueRule<ListCommandParameter, VariableCommandParameter>(
+                    requiredLeft<VariableCommandParameter>(),
+                    (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
                 OneValueRule<ListCommandParameter, SelectorCommandParameter>(
                     requiredLeft<SelectorCommandParameter>(),
-                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new ListIndexVariable(list.value, EmptyList())))),
+                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value)))),
                 OneValueRule<ListCommandParameter, ListIndexCommandParameter>(
                     requiredLeft<ListIndexCommandParameter>(),
                     (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),

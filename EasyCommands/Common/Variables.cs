@@ -136,10 +136,8 @@ namespace IngameScript {
         }
 
         public static bool Evaluate(int count, int matches, AggregationMode aggregation) {
-            if (count == 0) return false; //If there are none, consider this not matching
-
             switch (aggregation) {
-                case AggregationMode.ALL: return matches == count;
+                case AggregationMode.ALL: return count > 0 && matches == count;
                 case AggregationMode.ANY: return matches > 0;
                 case AggregationMode.NONE: return matches == 0;
                 default: throw new Exception("Unsupported Aggregation Mode");
@@ -216,17 +214,34 @@ namespace IngameScript {
             public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetTypedValue().GetValues().Select(v => v.GetValue()).ToList(), aggregation);
         }
 
+        public class IndexVariable : Variable {
+            public Variable expectedIndex;
+
+            public IndexVariable(Variable index) {
+                expectedIndex = index;
+            }
+
+            public Primitive GetValue() {
+                ListPrimitive list = CastList(expectedIndex.GetValue());
+                if (list.GetTypedValue().GetValues().Count == 1) {
+                    Primitive onlyValue = list.GetTypedValue().GetValue(ResolvePrimitive(0)).GetValue();
+                    if (onlyValue.GetPrimitiveType() == Return.LIST) list = CastList(onlyValue);
+                }
+                return list;
+            }
+        }
+
         public class ListIndexVariable : Variable {
             public Variable expectedList;
             public Variable index;
 
             public ListIndexVariable(Variable list, Variable i) {
                 expectedList = list;
-                index = i;
+                index = new IndexVariable(i);
             }
 
             public Primitive GetValue() {
-                var list = GetList(expectedList);
+                var list = CastList(expectedList.GetValue()).GetTypedValue();
                 var values = GetIndexValues()
                     .Select(p => list.GetValue(p))
                     .ToList();
@@ -241,17 +256,8 @@ namespace IngameScript {
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 
-            KeyedList GetList(Variable expectedList) {
-                KeyedList list = CastList(expectedList.GetValue()).GetTypedValue();
-                if (list.GetValues().Count == 1) {
-                    Primitive onlyValue = list.GetValue(ResolvePrimitive(0)).GetValue();
-                    if (onlyValue.GetPrimitiveType() == Return.LIST) list = CastList(onlyValue).GetTypedValue();
-                }
-                return list;
-            }
-
             List<Primitive> GetIndexValues() {
-                return GetList(index).GetValues().Select(i => i.GetValue()).ToList();
+                return CastList(index.GetValue()).GetTypedValue().GetValues().Select(i => i.GetValue()).ToList();
             }
         }
 
