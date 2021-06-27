@@ -183,6 +183,11 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
 
+            //ListPropertyAggregationProcessor
+            OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
+                requiredLeft<PropertyAggregationCommandParameter>(),
+                (list,aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
+
             //VariableComparisonProcessor
             TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -221,11 +226,6 @@ namespace IngameScript {
                     if(dir.HasValue()) direction = dir.GetValue().value;
                     return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
                 }),
-
-            //ListPropertyAggregationProcessor
-            OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
-                requiredLeft<PropertyAggregationCommandParameter>(),
-                (list,aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
 
             //AggregateConditionProcessors
             TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(

@@ -171,5 +171,26 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(4f, listValues[1].GetValue().GetValue());
             Assert.AreEqual(5f, listValues[2].GetValue().GetValue());
         }
+
+        [TestMethod]
+        public void CountOfListAsCondition() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("if count of shipRoute[] > 0 wait");
+            Assert.IsTrue(command is ConditionalCommand);
+            ConditionalCommand conditionalCommand = (ConditionalCommand)command;
+            Assert.IsTrue(conditionalCommand.Condition is ComparisonVariable);
+            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.Condition;
+            Assert.IsTrue(comparison.a is ListAggregateVariable);
+            ListAggregateVariable listAggregate = (ListAggregateVariable)comparison.a;
+            Assert.AreEqual(PropertyAggregate.COUNT, listAggregate.aggregation);
+            Assert.IsTrue(listAggregate.expectedList is ListIndexVariable);
+            ListIndexVariable listIndex = (ListIndexVariable)listAggregate.expectedList;
+            Assert.IsTrue(listIndex.expectedList is InMemoryVariable);
+            InMemoryVariable listVariable = (InMemoryVariable)listIndex.expectedList;
+            Assert.AreEqual("shipRoute", listVariable.variableName);
+            Assert.IsTrue(comparison.b is StaticVariable);
+            StaticVariable comparisonVariable = (StaticVariable)comparison.b;
+            Assert.AreEqual(0f, comparisonVariable.GetValue().GetValue());
+        }
     }
 }
