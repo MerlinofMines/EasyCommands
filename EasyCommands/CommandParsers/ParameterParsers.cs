@@ -191,7 +191,7 @@ namespace IngameScript {
 
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);
-            AddBlockWords(Words("light"), Block.LIGHT);
+            AddBlockWords(Words("light", "spotlight"), Block.LIGHT);
             AddBlockWords(Words("rotor"), Block.ROTOR);
             AddBlockWords(Words("hinge"), Block.HINGE);
             AddBlockWords(Words("program"), Block.PROGRAM);
