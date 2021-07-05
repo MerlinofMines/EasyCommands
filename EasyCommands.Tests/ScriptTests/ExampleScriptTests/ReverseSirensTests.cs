@@ -11,7 +11,7 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests
 {
     [TestClass]
-    public class ConditionalBlockExecutionTests
+    public class ReverseSirensTests
     {
         [TestMethod]
         public void conditionalVelocityAndSoundBlockTest()
