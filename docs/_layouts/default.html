@@ -28,8 +28,11 @@
       </div>
     </header>
 
-    <div class="container">
-      <section id="main_content">
+    <div class="container float-container">
+      <div id="nav_bar" class="float-child">
+        {% include nav.html %}
+      </div>
+      <div id="main_content" class="float-child">
         {{ content }}
       </section>
     </div>
@@ -44,6 +47,5 @@
         ga('send', 'pageview');
       </script>
     {% endif %}
-    {% include nav.html %}
   </body>
 </html>
