@@ -4,6 +4,8 @@
 @import 'jekyll-theme-hacker';
 
 .nav-bar {
+    position: fixed;
+    top: 20px;
     width: 20%;
     float: left;
     padding: 20px;
