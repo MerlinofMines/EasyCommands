@@ -27,9 +27,11 @@
         </section>
       </div>
     </header>
-
+    
     <div id="nav_bar" class="nav-bar float-child">
+      {% if page.url contains 'EasyCommands' %}
       {% include nav.html %}
+      {% endif %}
     </div>
     <div class="container">
       <div id="main_content">
