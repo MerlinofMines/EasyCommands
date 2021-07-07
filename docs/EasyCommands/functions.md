@@ -24,7 +24,7 @@ Functions can also take in a list of parameters.  Simply add the names of the pa
 
 ```
 :sendMessage message channel 
-Print 'Sending Message: "' + message + '" to channel: " + channel
+Print 'Sending Message: "' + message + '" to channel: ' + channel
 send message to channel
 Print "Message Sent"
 ```
