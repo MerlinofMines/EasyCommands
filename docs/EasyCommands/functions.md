@@ -20,6 +20,26 @@ until the "pistons" height > 9.9
   wait 1 second
 ```
 
+Functions can also take in a list of parameters.  Simply add the names of the parameters (with or without quotes) after the function like below.  Just be sure to watch out for reserved keywords, as these will need to be wrapped in quotes.
+
+```
+:sendMessage message channel 
+Print 'Sending Message: "' + message + '" to channel: " + channel
+send message to channel
+Print "Message Sent"
+```
+
+Function parameters are always passed by value, not reference.  So the following script would print "myValue = 0".
+
+```
+set myValue to 0
+call updateValue myValue
+print "myValue = " + myValue
+
+:updateValue valueInput
+assign valueInput to valueInput + 1
+```
+
 ## Calling a Function
 
 ### "call"
