@@ -69,5 +69,35 @@ Print ""b is: "" + b
                 Assert.IsTrue(test.Logger.Contains("b is: a1"));
             }
         }
+
+        [TestMethod]
+        public void piIsAvailable() {
+            var script = @"
+Print ""Pi is: "" + pi
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Pi is: 3.141593"));
+            }
+        }
+
+        [TestMethod]
+        public void eIsAvailable() {
+            var script = @"
+Print ""e is: "" + e
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("e is: 2.718282"));
+            }
+        }
     }
 }

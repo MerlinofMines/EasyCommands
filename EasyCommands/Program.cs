@@ -42,7 +42,11 @@ namespace IngameScript {
         bool inAsyncThreadQueue = false;
         List<Thread> threadQueue = new List<Thread>();
         List<Thread> asyncThreadQueue = new List<Thread>();
-        Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable>();
+        Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable> {
+            { "pi", GetStaticVariable(Math.PI) },
+            { "e", GetStaticVariable(Math.E) },
+        };
+
         String defaultFunction;
         String customData = null;
         List<String> commandStrings = new List<String>();
