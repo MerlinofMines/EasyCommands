@@ -84,7 +84,12 @@ namespace EasyCommands.Tests.ScriptTests
         /// </summary>
         public void RunUntilDone()
         {
-            RunUntil(t => Program.ProgramState.COMPLETE == program.state || t.RunCounter >= 100);
+            RunUntilState(ProgramState.COMPLETE);
+        }
+
+        public void RunUntilState(ProgramState state) {
+            RunUntil(t => state == program.state || t.RunCounter >= 100);
+
         }
 
         /// <summary>

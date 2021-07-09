@@ -18,8 +18,7 @@ namespace EasyCommands.Tests.ScriptTests {
 :main
 print 'Hello World'
 ";
-            using (var test = new ScriptTest(script))
-            {
+            using (var test = new ScriptTest(script)) {
                 test.RunUntilDone();
 
                 Assert.AreEqual(1, test.Logger.Count);
@@ -36,8 +35,7 @@ print 'Hello World'
 print 'Hello World'
 ";
 
-            using (var test = new ScriptTest(script))
-            {
+            using (var test = new ScriptTest(script)) {
                 test.RunUntilDone();
 
                 Assert.AreEqual(1, test.Logger.Count);
@@ -103,5 +101,25 @@ print 'Hello New World'
             }
         }
 
+        [TestMethod]
+        public void pauseContinuesExecutionAfterResuming() {
+            String script = @"
+:main
+#This is a comment
+print 'Hello World'
+pause
+print 'Hello Again'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilState(Program.ProgramState.PAUSED);
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+                test.Logger.Clear();
+                test.RunUntilDone();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello Again", test.Logger[0]);
+            }
+        }
     }
 }

@@ -155,14 +155,10 @@ namespace IngameScript {
 
         public class ControlCommand : Command {
             public Control controlType;
-            public ControlCommand(List<CommandParameter> parameters) {
-                int controlIndex = parameters.FindIndex(p => p is ControlCommandParameter);
-                if (controlIndex < 0) throw new Exception("Control Command must have ControlType");
-                controlType = ((ControlCommandParameter)parameters[controlIndex]).value;
-            }
+            bool executed = false;
 
-            public ControlCommand(Control controlType) {
-                this.controlType = controlType;
+            public ControlCommand(Control type) {
+                controlType = type;
             }
 
             public override bool Execute() {
@@ -174,7 +170,9 @@ namespace IngameScript {
                         PROGRAM.ClearAllThreads();
                         throw new InterruptException(ProgramState.RUNNING);
                     case Control.PAUSE:
-                        throw new InterruptException(ProgramState.PAUSED);
+                        executed = !executed;
+                        if (executed) throw new InterruptException(ProgramState.PAUSED);
+                        else return true;
                     case Control.REPEAT:
                         Thread currentThread = PROGRAM.GetCurrentThread();
                         currentThread.Command = currentThread.Command.Clone();
@@ -182,7 +180,8 @@ namespace IngameScript {
                     default: throw new Exception("Unsupported Control Type: " + controlType);
                 }
             }
-            public override Command Clone() { return new ControlCommand(controlType); }
+
+            public override Command Clone() => new ControlCommand(controlType);
         }
 
         public class WaitCommand : Command {
