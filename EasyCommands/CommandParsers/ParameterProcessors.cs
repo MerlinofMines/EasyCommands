@@ -162,6 +162,16 @@ namespace IngameScript {
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
+            //VariableComparisonProcessor
+            TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
+
+            //NotProcessor
+            OneValueRule<NotCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
+
             //AndProcessor
             TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -178,20 +188,10 @@ namespace IngameScript {
                 requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p,left,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
 
-            //NotProcessor
-            OneValueRule<NotCommandParameter,VariableCommandParameter>(
-                requiredRight<VariableCommandParameter>(),
-                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
-
             //ListPropertyAggregationProcessor
             OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
                 requiredLeft<PropertyAggregationCommandParameter>(),
                 (list,aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
-
-            //VariableComparisonProcessor
-            TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
 
             //ListComparisonProcessor
             ThreeValueRule<ListIndexCommandParameter, ComparisonCommandParameter, VariableCommandParameter, AggregationModeCommandParameter>(

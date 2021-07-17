@@ -395,6 +395,25 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ComparisonBeforeBooleanLogic() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign c to a > 0 and b < 1");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.AND, variable.operand);
+            Assert.IsTrue(variable.a is ComparisonVariable);
+            Assert.IsTrue(variable.b is ComparisonVariable);
+            ComparisonVariable a = (ComparisonVariable)variable.a;
+            Assert.IsTrue(a.a is AmbiguousStringVariable);
+            Assert.IsTrue(a.b is StaticVariable);
+            ComparisonVariable b = (ComparisonVariable)variable.b;
+            Assert.IsTrue(b.a is AmbiguousStringVariable);
+            Assert.IsTrue(b.b is StaticVariable);
+        }
+
+        [TestMethod]
         public void AdditionUsedAsBlockConditionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("if the \"rotor\" angle > {a} + 30 set the \"rotor\" angle to {a}");
