@@ -91,13 +91,10 @@ namespace IngameScript {
             new IgnoreProcessor(),
 
             //FunctionProcessor
-            OneValueRule<FunctionCommandParameter,StringCommandParameter>(
-                requiredRight<StringCommandParameter>(),
-                (p,name) => {
-                    FunctionDefinition definition;
-                    if(!PROGRAM.functions.TryGetValue(name.GetValue().value, out definition)) throw new Exception("Unknown function: " + name.GetValue().value);
-                    return new FunctionDefinitionCommandParameter(p.value, definition);
-                }),
+            OneValueRule<StringCommandParameter, FunctionCommandParameter>(
+                optionalLeft<FunctionCommandParameter>(),
+                (name, function) => PROGRAM.functions.ContainsKey(name.value),
+                (name, function) => new FunctionDefinitionCommandParameter(function.HasValue() ? function.GetValue().value : Function.GOSUB, PROGRAM.functions[name.value])),
 
             //AssignmentProcessor
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(

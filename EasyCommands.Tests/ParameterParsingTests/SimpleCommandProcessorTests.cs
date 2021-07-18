@@ -61,6 +61,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ImpliciitFunctionCommand() {
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
+            var command = program.ParseCommand("\"listen\"");
+            Assert.IsTrue(command is FunctionCommand);
+            FunctionCommand functionCommand = (FunctionCommand)command;
+            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual(Function.GOSUB, functionCommand.type);
+        }
+
+        [TestMethod]
         public void FunctionCommandFromExplicitString() {
             var program = MDKFactory.CreateProgram<Program>();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
@@ -72,6 +83,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ImplicitFunctionCommandFromExplicitString() {
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
+            var command = program.ParseCommand("'listen'");
+            Assert.IsTrue(command is FunctionCommand);
+            FunctionCommand functionCommand = (FunctionCommand)command;
+            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual(Function.GOSUB, functionCommand.type);
+        }
+
+        [TestMethod]
         public void FunctionCommandWithParameters() {
             var program = MDKFactory.CreateProgram<Program>();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
@@ -80,6 +102,19 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
             Assert.AreEqual(Function.GOTO, functionCommand.type);
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetTypedValue());
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
+        public void ImplicitFunctionCommandWithParameters() {
+            var program = MDKFactory.CreateProgram<Program>();
+            program.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
+            var command = program.ParseCommand("\"listen\" 2 3");
+            Assert.IsTrue(command is FunctionCommand);
+            FunctionCommand functionCommand = (FunctionCommand)command;
+            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual(Function.GOSUB, functionCommand.type);
             Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetTypedValue());
             Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetTypedValue());
         }
