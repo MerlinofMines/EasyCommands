@@ -102,5 +102,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             command = program.ParseCommand("set the \"rotors\" angle to 30 clockwise");
             Assert.IsTrue(command is BlockCommand);
         }
+
+        [TestMethod]
+        public void SimpleBlockCommandUsingImplicitBlockPropertyValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("rotate the \"rotors\" to the \"rotors\" upper limit");
+            Assert.IsTrue(command is BlockCommand);
+        }
     }
 }

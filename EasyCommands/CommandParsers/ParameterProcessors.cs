@@ -71,6 +71,10 @@ namespace IngameScript {
                 requiredLeft<SelectorCommandParameter>(),
                 (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
 
+            OneValueRule<ListIndexCommandParameter, ListCommandParameter>(
+                requiredRight<ListCommandParameter>(),
+                (index, list) => new ListIndexCommandParameter(new ListIndexVariable(index.value, list.GetValue().value))),
+
             //ListProcessors
             new BranchingProcessor<ListCommandParameter> (
                 OneValueRule<ListCommandParameter, StringCommandParameter>(
@@ -81,12 +85,9 @@ namespace IngameScript {
                     (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
                 OneValueRule<ListCommandParameter, SelectorCommandParameter>(
                     requiredLeft<SelectorCommandParameter>(),
-                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value)))),
-                OneValueRule<ListCommandParameter, ListIndexCommandParameter>(
-                    requiredLeft<ListIndexCommandParameter>(),
-                    (list, index) => new ListIndexCommandParameter(new ListIndexVariable(index.GetValue().value, list.value))),
-                NoValueRule<ListCommandParameter>(
-                    (list) => new ListIndexCommandParameter(new ListIndexVariable(list.value, GetVariables(new KeyedList())[0])))),
+                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value))))),
+
+            new MultiListProcessor(),
 
             new IgnoreProcessor(),
 
@@ -108,11 +109,6 @@ namespace IngameScript {
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,g,name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
                 (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
-
-            //ListAssignmentProcessor
-            TwoValueRule<AssignmentCommandParameter,ListIndexCommandParameter,VariableCommandParameter>(
-                requiredRight<ListIndexCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,list,variable) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.GetValue().value, variable.GetValue().value, p.useReference))),
 
             //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
@@ -265,11 +261,9 @@ namespace IngameScript {
             //ListIndexAsVariableProcessor
             NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
-            //ActionProcessor
-            BlockCommandProcessor(),
-
-            //AmgiguousSelectorPropertyProcessor
+            //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(
+                BlockCommandProcessor(),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (Direction?)null))),
@@ -280,8 +274,8 @@ namespace IngameScript {
                         PropertyCommandParameter property = p.GetValue();
                         DirectionCommandParameter direction = d.GetValue();
                         return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) => {
-                            PropertySupplier supplier = property != null ? p.GetValue().value : b.GetDefaultProperty(d.GetValue().value);
-                            if (d.HasValue()) b.MoveNumericPropertyValue(e, supplier, d.GetValue().value);
+                            PropertySupplier supplier = property != null ? property.value : b.GetDefaultProperty(direction.value);
+                            if (direction != null) b.MoveNumericPropertyValue(e, supplier, direction.value);
                             else b.SetPropertyValue(e, supplier, new BooleanPrimitive(true));
                         }));
                     })),
@@ -405,13 +399,13 @@ namespace IngameScript {
                 bool revisit = false;
                 bool processed = false;
                 ParameterProcessor current = sortedParameterProcessors[processorIndex];
-                for (int i = 0; i < commandParameters.Count; i++) {
+                for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
                         List<CommandParameter> finalParameters;
                         if (current.Process(commandParameters, i, out finalParameters, branches)) {
                             AddProcessors(finalParameters, sortedParameterProcessors);
                             processed = true;
-                            //break; TODO: -Not sure if this may be needed! But much faster processing w/o this.
+                            break;
                         } else revisit = true;
                     }
                 }
@@ -557,6 +551,10 @@ namespace IngameScript {
             return new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => false, df => p => df.SetValue(p));
         }
 
+        static DataProcessor<T> leftList<T>(bool required) where T : class, CommandParameter {
+            return new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
+        }
+
         //ParameterProcessors
         public interface ParameterProcessor : IComparable<ParameterProcessor> {
             int Rank { get; set; }
@@ -637,6 +635,15 @@ namespace IngameScript {
                 if (variable == null) throw new Exception("List Index Values Must Resolve To a Variable");
 
                 return variable;
+            }
+        }
+
+        public class MultiListProcessor : ParameterProcessor<ListCommandParameter> {
+            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
+                while (i > 1 && p[i-1] is ListCommandParameter) i--;
+                finalParameters = new List<CommandParameter>() { new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, GetVariables(new KeyedList())[0])) };
+                p[i] = finalParameters[0];
+                return true;
             }
         }
 
