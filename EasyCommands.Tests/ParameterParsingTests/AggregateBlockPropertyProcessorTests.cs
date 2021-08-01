@@ -19,6 +19,21 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AggregatePropertyUsedInComparison() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("wait if count of the \"forward guns\" is 0");
+            Assert.IsTrue(command is ConditionalCommand);
+            ConditionalCommand conditionalCommand = (ConditionalCommand)command;
+            Assert.IsTrue(conditionalCommand.Condition is ComparisonVariable);
+            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.Condition;
+            Assert.IsTrue(comparison.a is AggregatePropertyVariable);
+            AggregatePropertyVariable aggregate = (AggregatePropertyVariable)comparison.a;
+            Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);
+            Assert.IsTrue(comparison.b is StaticVariable);
+            Assert.AreEqual(0f, comparison.b.GetValue().GetValue());
+        }
+
+        [TestMethod]
         public void AssignSumOfBlocks() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to sum of the \"forward guns\"");

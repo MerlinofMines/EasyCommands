@@ -195,6 +195,18 @@ namespace IngameScript {
                     return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
                 }),
 
+            //PropertyAggregationProcessor
+            ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
+                requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
+                (p,selector,property,direction) => selector.HasValue(),
+                (p,selector,prop,dir) => {
+                    PropertySupplier property = null;
+                    if(prop.HasValue()) property = prop.GetValue().value;
+                    Direction? direction = null;
+                    if(dir.HasValue()) direction = dir.GetValue().value;
+                    return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
+                }),
+
             //BlockComparisonProcessor
             ThreeValueRule<ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
                 optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),optionalRight<VariableCommandParameter>(),
@@ -206,18 +218,6 @@ namespace IngameScript {
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
                     return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
-                }),
-
-            //PropertyAggregationProcessor
-            ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
-                requiredEither<SelectorCommandParameter>(),optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),
-                (p,selector,property,direction) => selector.HasValue(),
-                (p,selector,prop,dir) => {
-                    PropertySupplier property = null;
-                    if(prop.HasValue()) property = prop.GetValue().value;
-                    Direction? direction = null;
-                    if(dir.HasValue()) direction = dir.GetValue().value;
-                    return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
                 }),
 
             //AggregateConditionProcessors
