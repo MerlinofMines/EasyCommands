@@ -37,9 +37,8 @@ namespace IngameScript {
         public BroadcastMessageProvider broadcastMessageProvider;
         public ProgramState state = ProgramState.STOPPED;
         public Dictionary<String, FunctionDefinition> functions = new Dictionary<string, FunctionDefinition>();
+        public Thread currentThread;
 
-        int asyncThreadQueueIndex = 0;
-        bool inAsyncThreadQueue = false;
         List<Thread> threadQueue = new List<Thread>();
         List<Thread> asyncThreadQueue = new List<Thread>();
         Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable> {
@@ -56,13 +55,7 @@ namespace IngameScript {
             threadQueue.Clear();
         }
 
-        public Thread GetCurrentThread() {
-            if (inAsyncThreadQueue) {
-                return asyncThreadQueue[asyncThreadQueueIndex];
-            } else {
-                return threadQueue[0];
-            }
-        }
+        public Thread GetCurrentThread() => currentThread;
 
         public void QueueThread(Thread thread) {
             threadQueue.Add(thread);
@@ -147,7 +140,6 @@ namespace IngameScript {
         }
 
         void RunThreads() {
-            inAsyncThreadQueue = false;
             try {
                 //If no current commands, we've been asked to restart.  start at the top.
                 if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
@@ -159,7 +151,7 @@ namespace IngameScript {
                 Info("Async Threads: " + asyncThreadQueue.Count());
                 //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
                 if (threadQueue.Count > 0 ) {
-                    Thread currentThread = threadQueue[0];
+                    currentThread = threadQueue[0];
                     Info(currentThread.GetName());
                     if(currentThread.Command.Execute()) {
                         threadQueue.RemoveAt(0);
@@ -167,11 +159,10 @@ namespace IngameScript {
                 }
 
                 //Process 1 iteration of all async commands, removing from queue if processed.
-                inAsyncThreadQueue = true;
-                asyncThreadQueueIndex = 0;
+                int asyncThreadQueueIndex = 0;
 
                 while (asyncThreadQueueIndex < asyncThreadQueue.Count) {
-                    Thread currentThread = asyncThreadQueue[asyncThreadQueueIndex];
+                    currentThread = asyncThreadQueue[asyncThreadQueueIndex];
                     Info(currentThread.GetName());
                     if (currentThread.Command.Execute()) {
                         asyncThreadQueue.RemoveAt(asyncThreadQueueIndex);
@@ -179,6 +170,7 @@ namespace IngameScript {
                         asyncThreadQueueIndex++;
                     }
                 }
+
                 if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
                     state = ProgramState.COMPLETE;
                 } else {

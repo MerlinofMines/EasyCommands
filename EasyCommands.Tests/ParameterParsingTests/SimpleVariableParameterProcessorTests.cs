@@ -91,7 +91,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignVariableToImplicitVariableReference() {
             var program = MDKFactory.CreateProgram<Program>();
-            program.QueueThread(new Thread(new NullCommand(), "test", "test"));
+            var thread = new Thread(new NullCommand(), "test", "test");
+            program.currentThread = thread;
             program.SetGlobalVariable("b", new StaticVariable(new NumberPrimitive(4)));
             var command = program.ParseCommand("assign a to b");
             Assert.IsTrue(command is VariableAssignmentCommand);
