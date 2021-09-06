@@ -39,6 +39,9 @@ namespace IngameScript {
                         return blockType.HasValue();
                         },
                         (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), new StaticVariable(new StringPrimitive(p.value))))),
+                NoValueRule<AmbiguiousStringCommandParameter>(
+                    name => PROGRAM.functions.ContainsKey(name.value),
+                    name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
                 NoValueRule<AmbiguiousStringCommandParameter>(b => new StringCommandParameter(b.value, false))),
 
             //SelfSelectorProcessor
@@ -93,9 +96,8 @@ namespace IngameScript {
 
             //FunctionProcessor
             OneValueRule<StringCommandParameter, FunctionCommandParameter>(
-                optionalLeft<FunctionCommandParameter>(),
-                (name, function) => PROGRAM.functions.ContainsKey(name.value),
-                (name, function) => new FunctionDefinitionCommandParameter(function.HasValue() ? function.GetValue().value : Function.GOSUB, PROGRAM.functions[name.value])),
+                requiredLeft<FunctionCommandParameter>(),
+                (name, function) => new FunctionDefinitionCommandParameter(function.GetValue().value, PROGRAM.functions[name.value])),
 
             //AssignmentProcessor
             TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(
@@ -744,8 +746,10 @@ namespace IngameScript {
         }
 
         //Utility methods efficiently create Rule Processors
-        static RuleProcessor<T> NoValueRule<T>(Convert<T> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(new List<DataProcessor>() { }, (p) => true, convert);
+        static RuleProcessor<T> NoValueRule<T>(Convert<T> convert) where T : class, CommandParameter => NoValueRule((p) => true, convert);
+
+        static RuleProcessor<T> NoValueRule<T>(CanConvert<T> canConvert, Convert<T> convert) where T : class, CommandParameter {
+            return new RuleProcessor<T>(new List<DataProcessor>() { }, canConvert, convert);
         }
 
         static RuleProcessor<T> OneValueRule<T, U>(DataProcessor<U> u, OneValueConvert<T, U> convert) where T : class, CommandParameter {
