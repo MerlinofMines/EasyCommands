@@ -73,6 +73,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetAssemblerSteelPlateAmountWithEmptyQueue() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steel Plate Remaining: "" + ""test assembler"" ""steel plate"" amount")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Steel Plate Remaining: 0"));
+            }
+        }
+
+        [TestMethod]
         public void GetAssemblerSteelPlateAmount() {
             using (ScriptTest test = new ScriptTest(@"Print ""Steel Plate Remaining: "" + ""test assembler"" ""steel plate"" amount")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();

@@ -44,7 +44,11 @@ namespace IngameScript {
                 var definitions = PROGRAM.GetItemBluePrints(CastString(p.valueAttribute.GetValue()).GetTypedValue());
                 var currentItems = new List<MyProductionItem>();
                 b.GetQueue(currentItems);
-                MyFixedPoint value = currentItems.Where(item => definitions.Contains(item.BlueprintId)).Select(item => item.Amount).Aggregate((sum, val) => sum + val);
+                MyFixedPoint value = currentItems
+                    .Where(item => definitions.Contains(item.BlueprintId))
+                    .Select(item => item.Amount)
+                    .DefaultIfEmpty(MyFixedPoint.Zero)
+                    .Aggregate((sum, val) => sum + val);
                 return (float)value;
             }
 
