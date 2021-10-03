@@ -123,6 +123,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+         public void AmbiguousVariableSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the a sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(sep.selector is AmbiguousStringVariable);
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+        }
+
+        [TestMethod]
         public void VariableSelectorWithIndex() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $mySirens[0]");

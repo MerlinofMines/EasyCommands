@@ -187,7 +187,7 @@ namespace IngameScript {
                 try {
                     return PROGRAM.GetVariable(value).GetValue();
                 } catch(Exception) {
-                    return new StringPrimitive(value);
+                    return ResolvePrimitive(value);
                 }
             }
         }

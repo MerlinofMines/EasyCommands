@@ -175,12 +175,30 @@ namespace EasyCommands.Tests.ScriptTests {
             }
         }
 
-
         [TestMethod]
         public void VariableSelector() {
             String script = @"
 assign myPistons to ""test pistons""
 turn on $myPistons
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockPiston1 = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test pistons", mockPiston1, mockPiston2);
+
+                test.RunOnce();
+
+                mockPiston1.VerifySet(p => p.Enabled = true);
+                mockPiston2.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void AmbiguousVariableSelector() {
+            String script = @"
+assign myPistons to ""test pistons""
+turn on myPistons pistons
 ";
 
             using (var test = new ScriptTest(script)) {

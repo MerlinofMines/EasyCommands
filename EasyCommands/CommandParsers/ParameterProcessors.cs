@@ -38,7 +38,7 @@ namespace IngameScript {
                         }
                         return blockType.HasValue();
                         },
-                        (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), new StaticVariable(new StringPrimitive(p.value))))),
+                        (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule<AmbiguiousStringCommandParameter>(
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
