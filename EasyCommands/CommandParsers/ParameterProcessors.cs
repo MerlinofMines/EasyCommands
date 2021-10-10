@@ -378,6 +378,22 @@ namespace IngameScript {
             }
         }
 
+        public T ParseParameters<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
+            var branches = new List<List<CommandParameter>>();
+            branches.Add(parameters);
+
+            //Branches
+            while (branches.Count > 0) {
+                branches.AddRange(ProcessParameters(branches[0]));
+                if (branches[0].Count == 1 && branches[0][0] is T) {
+                    return (T)branches[0][0];
+                } else {
+                    branches.RemoveAt(0);
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// This method inline processes the given list of command parameters.
         /// Any ambiguous parsing branches which were found during processing are also returned as additional entries.
@@ -629,14 +645,9 @@ namespace IngameScript {
 
             Variable ParseVariable(List<CommandParameter> p, int startIndex, int endIndex) {
                 var range = p.GetRange(startIndex + 1, endIndex - (startIndex + 1));
-                var listIndex = PROGRAM.ProcessParameters(range);
-                listIndex.Insert(0, range);
-                Variable variable = listIndex.Where(l => l.Count == 1 && l[0] is ValueCommandParameter<Variable>)
-                    .Select(l => ((ValueCommandParameter<Variable>)l[0]).value)
-                    .First();
+                ValueCommandParameter<Variable> variable = PROGRAM.ParseParameters<ValueCommandParameter<Variable>>(range);
                 if (variable == null) throw new Exception("List Index Values Must Resolve To a Variable");
-
-                return variable;
+                return variable.value;
             }
         }
 

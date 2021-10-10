@@ -322,22 +322,11 @@ namespace IngameScript {
             Trace("Pre Processed Parameters:");
             parameters.ForEach(param => Trace("Type: " + param.GetType()));
 
-            var branches = new List<List<CommandParameter>>();
-            branches.Add(parameters);
+            CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
 
-            //Branches
-            while (branches.Count > 0) {
-                branches.AddRange(ProcessParameters(branches[0]));
-                if (branches[0].Count == 1 && branches[0][0] is CommandReferenceParameter) {
-                    return ((CommandReferenceParameter)branches[0][0]).value;
-                } else {
-                    branches.RemoveAt(0);
-                }
-            }
-
-            throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);
+            if (command == null) throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);
+            return command.value;
         }
-
         class CommandLine {
             public int Depth;
             public List<CommandParameter> CommandParameters;

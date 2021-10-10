@@ -29,6 +29,22 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVariableToBasicStaticListWithBlockType() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign myList to [\"reactor component\"]");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
+            Assert.AreEqual("myList", assignmentCommand.variableName);
+            Assert.IsTrue(assignmentCommand.variable is ListIndexVariable);
+            ListIndexVariable listIndex = (ListIndexVariable)assignmentCommand.variable;
+            Primitive list = listIndex.expectedList.GetValue();
+            Assert.AreEqual(Return.LIST, list.GetPrimitiveType());
+            List<Variable> listItems = CastList(list).GetTypedValue().GetValues();
+            Assert.AreEqual(1, listItems.Count);
+            Assert.AreEqual("reactor component", CastString(listItems[0].GetValue()).GetTypedValue());
+        }
+
+        [TestMethod]
         public void AssignVariableIndexToVariable() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign myList[0] to \"value\"");
