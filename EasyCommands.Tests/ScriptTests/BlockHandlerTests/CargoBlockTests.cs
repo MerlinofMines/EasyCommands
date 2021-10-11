@@ -94,5 +94,28 @@ print ""Ore Amount: "" + {a}
                 Assert.AreEqual("Ore Amount: 300", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void getCargoAmountInProductionBlock() {
+            String script = @"
+assign ""a"" to ""mock assembler"" inventory ""ore"" amount
+print ""Ore Amount: "" + {a}
+";
+            using (var test = new ScriptTest(script)) {
+                var mockAssembler = new Mock<IMyAssembler>();
+                var mockInventory = new Mock<IMyInventory>();
+                var mockInputInventory = new Mock<IMyInventory>();
+                MockInventories(mockAssembler);
+                mockAssembler.Setup(b => b.InputInventory).Returns(mockInputInventory.Object);
+
+                MockInventoryItems(mockInputInventory, MockOre("Iron", 200), MockOre("Stone", 100));
+
+                test.MockBlocksOfType("mock assembler", mockAssembler);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Ore Amount: 300", test.Logger[0]);
+            }
+        }
     }
 }

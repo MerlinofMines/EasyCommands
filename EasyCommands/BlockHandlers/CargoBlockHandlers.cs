@@ -31,6 +31,7 @@ namespace IngameScript {
                 for (int i = 0; i < block.InventoryCount; i++) {
                     instances.Add(block.GetInventory(i));
                 }
+                if (block is IMyProductionBlock) instances.Add(((IMyProductionBlock)block).InputInventory);
             }
 
             public override string Name(IMyInventory block) => block.Owner.DisplayName;

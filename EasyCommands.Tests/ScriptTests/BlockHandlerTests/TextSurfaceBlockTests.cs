@@ -42,6 +42,32 @@ set the ""text panel"" display text to ""Hello World\nThis is my life""
             }
         }
 
+        [TestMethod]
+        public void IncrementTextPanelTextMultiLine() {
+            String script = @"
+set the ""text panel"" display text to ""Hello World""
+wait
+increase the ""text panel"" display text by ""\nThis is my life""
+";
+
+            var expectedText = "Hello World\nThis is my life";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTextPanel = new Mock<IMyTextPanel>();
+
+                test.MockBlocksOfType("text panel", mockTextPanel);
+
+                test.RunOnce();
+
+                mockTextPanel.Verify(b => b.WriteText("Hello World", false));
+
+                mockTextPanel.Setup(b => b.GetText()).Returns("Hello World");
+
+                test.RunOnce();
+
+                mockTextPanel.Verify(b => b.WriteText(expectedText, false));
+            }
+        }
 
         [TestMethod]
         public void SetProgrammableBlockDisplayText() {
