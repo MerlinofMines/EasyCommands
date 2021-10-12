@@ -100,6 +100,8 @@ namespace IngameScript {
             AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
             AddWords(Words("strength", "force", "gravity", "torque"), new PropertyCommandParameter(Property.STRENGTH));
             AddWords(Words("countdown"), new PropertyCommandParameter(Property.COUNTDOWN));
+            AddWords(Words("show", "showing"), new PropertyCommandParameter(Property.SHOW));
+            AddWords(Words("hide", "hiding"), new PropertyCommandParameter(Property.SHOW), new BooleanCommandParameter(false));
 
             //ValueProperty Words
             AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
@@ -236,6 +238,7 @@ namespace IngameScript {
             AddBlockWords(Words("decoy"), Block.DECOY);
             AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
             AddBlockWords(Words("laser", "laserAntenna"), Block.LASER_ANTENNA);
+            AddBlockWords(Words("terminal"), Block.TERMINAL);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");

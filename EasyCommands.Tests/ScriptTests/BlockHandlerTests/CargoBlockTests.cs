@@ -96,25 +96,53 @@ print ""Ore Amount: "" + {a}
         }
 
         [TestMethod]
-        public void getCargoAmountInProductionBlock() {
+        public void HideCargoInventory() {
             String script = @"
-assign ""a"" to ""mock assembler"" inventory ""ore"" amount
-print ""Ore Amount: "" + {a}
+hide the ""mock cargo"" inventory
 ";
             using (var test = new ScriptTest(script)) {
-                var mockAssembler = new Mock<IMyAssembler>();
+                var mockContainer = new Mock<IMyCargoContainer>();
                 var mockInventory = new Mock<IMyInventory>();
-                var mockInputInventory = new Mock<IMyInventory>();
-                MockInventories(mockAssembler);
-                mockAssembler.Setup(b => b.InputInventory).Returns(mockInputInventory.Object);
+                MockInventories(mockContainer, mockInventory);
+                test.MockBlocksOfType("mock cargo", mockContainer);
 
-                MockInventoryItems(mockInputInventory, MockOre("Iron", 200), MockOre("Stone", 100));
-
-                test.MockBlocksOfType("mock assembler", mockAssembler);
                 test.RunUntilDone();
 
-                Assert.AreEqual(1, test.Logger.Count);
-                Assert.AreEqual("Ore Amount: 300", test.Logger[0]);
+                mockContainer.VerifySet(b => b.ShowInInventory = false);
+            }
+        }
+
+        [TestMethod]
+        public void ShowCargoInventory() {
+            String script = @"
+show the ""mock cargo"" inventory
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+                test.MockBlocksOfType("mock cargo", mockContainer);
+
+                test.RunUntilDone();
+
+                mockContainer.VerifySet(b => b.ShowInInventory = true);
+            }
+        }
+
+        [TestMethod]
+        public void SetCargoBlockName() {
+            String script = @"
+set the ""mock cargo"" name to 'cargo block 1'
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+                test.MockBlocksOfType("mock cargo", mockContainer);
+
+                test.RunUntilDone();
+
+                mockContainer.VerifySet(b => b.CustomName = "cargo block 1");
             }
         }
     }

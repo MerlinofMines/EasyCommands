@@ -52,6 +52,7 @@ namespace IngameScript {
                 { Block.SENSOR, new SensorBlockHandler() },
                 { Block.SUSPENSION, new WheelSuspensionBlockHandler() },
                 { Block.TANK, new GasTankBlockHandler() },
+                { Block.TERMINAL, new TerminalBlockHandler<IMyTerminalBlock>() },
                 { Block.TIMER, new TimerBlockHandler() },
                 { Block.THRUSTER, new ThrusterBlockHandler()},
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
@@ -285,11 +286,12 @@ namespace IngameScript {
             }
         }
 
-        public abstract class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
-
+        public class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockHandler() {
                 AddPropertyHandler(Property.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
                 AddPropertyHandler(Property.DIRECTION, new DirectionVectorPropertyHandler<T>());
+                AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
+                AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
             }
 
