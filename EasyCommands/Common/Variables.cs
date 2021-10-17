@@ -281,8 +281,6 @@ namespace IngameScript {
             switch (aggregationType) {
                 case PropertyAggregate.COUNT:
                     return ResolvePrimitive(propertyValues.Count);
-                case PropertyAggregate.VALUE:
-                    return ValueAggregator(propertyValues);
                 case PropertyAggregate.SUM:
                     return SumAggregator(propertyValues);
                 case PropertyAggregate.AVG:

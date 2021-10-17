@@ -268,7 +268,7 @@ namespace IngameScript {
                 BlockCommandProcessor(),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.VALUE, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (Direction?)null))),
+                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.SUM, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (Direction?)null))),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!

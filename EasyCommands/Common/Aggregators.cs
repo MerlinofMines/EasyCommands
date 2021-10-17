@@ -19,57 +19,12 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public static Primitive ValueAggregator(List<Primitive> primitives) {
-            if (primitives.Count != 1) {
-                throw new Exception("Exact Value Aggregate must reference a selector with exactly one value");
-            }
-            return primitives[0];
-        }
+        public static Primitive SumAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => a.Plus(b));
 
-        public static Primitive SumAggregator(List<Primitive> primitives) {
-            if (primitives.Count==0) {
-                throw new Exception("Cannot sum an empty list");
-            }
+        public static Primitive AverageAggregator(List<Primitive> primitives) => SumAggregator(primitives).Divide(ResolvePrimitive(Math.Max(1, primitives.Count)));
 
-            Primitive result = primitives[0];
+        public static Primitive MinAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b));
 
-            for (int i = 1; i <primitives.Count;i++) {
-                result = result.Plus(primitives[i]);
-            }
-
-            return result;
-        }
-
-        public static Primitive AverageAggregator(List<Primitive> primitives) {
-            return SumAggregator(primitives).Divide(new NumberPrimitive(primitives.Count));
-        }
-
-        public static Primitive MinAggregator(List<Primitive> primitives) {
-            if (primitives.Count == 0) {
-                throw new Exception("Cannot sum an empty list");
-            }
-
-            Primitive result = primitives[0];
-
-            for (int i = 1; i < primitives.Count; i++) {
-                if (primitives[i].Compare(result) < 0) result = primitives[i];
-            }
-
-            return result;
-        }
-
-        public static Primitive MaxAggregator(List<Primitive> primitives) {
-            if (primitives.Count == 0) {
-                throw new Exception("Cannot sum an empty list");
-            }
-
-            Primitive result = primitives[0];
-
-            for (int i = 1; i < primitives.Count; i++) {
-                if (primitives[i].Compare(result) > 0) result = primitives[i];
-            }
-
-            return result;
-        }
+        public static Primitive MaxAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b));
     }
 }
