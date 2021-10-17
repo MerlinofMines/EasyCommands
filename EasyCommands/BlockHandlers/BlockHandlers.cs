@@ -58,6 +58,7 @@ namespace IngameScript {
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
                 { Block.WARHEAD, new WarheadBlockHandler() },
                 { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
+                { Block.REFINERY, new FunctionalBlockHandler<IMyRefinery>() }
             };
 
             public static BlockHandler GetBlockHandler(Block blockType) {

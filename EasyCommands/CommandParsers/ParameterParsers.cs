@@ -240,6 +240,7 @@ namespace IngameScript {
             AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
             AddBlockWords(Words("laser", "laserAntenna"), Block.LASER_ANTENNA);
             AddBlockWords(Words("terminal"), Block.TERMINAL);
+            AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
