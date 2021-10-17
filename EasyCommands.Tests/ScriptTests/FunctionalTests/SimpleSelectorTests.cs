@@ -47,6 +47,16 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void MissingGroupDoesIsOk() {
+            using (var test = new ScriptTest(@"Print ""Piston Count: "" + the count of ""mockPistons"" pistons")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("Piston Count: 0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void BasicImpliedGroupSelector() {
             using (var test = new ScriptTest(@"turn on the ""test pistons""")) {
                 var mockPiston1 = new Mock<IMyPistonBase>();

@@ -268,10 +268,10 @@ namespace IngameScript {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name == groupName);
-                if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
+                List<T> instances = new List<T>();
+                if (group == null) return instances;
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                 group.GetBlocksOfType<IMyTerminalBlock>(blocks);
-                List<T> instances = new List<T>();
                 blocks.ForEach((b) => GetInstances(b, instances));
                 return instances;
             }
@@ -305,8 +305,8 @@ namespace IngameScript {
                 List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name.Equals(groupName));
-                if (group == null) { throw new Exception("Unable to find requested block group: " + groupName); }
                 List<T> blocks = new List<T>();
+                if (group == null) return blocks;
                 group.GetBlocksOfType<T>(blocks);
                 return blocks;
             }
