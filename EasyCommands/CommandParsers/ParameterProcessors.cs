@@ -214,7 +214,7 @@ namespace IngameScript {
                 optionalEither<PropertyCommandParameter>(),optionalEither<DirectionCommandParameter>(),optionalRight<VariableCommandParameter>(),
                 (p,prop,dir,var) => var.HasValue() || prop.HasValue(),
                 (p,prop,dir,var) => {
-                    Variable variable = var.HasValue() ? var.GetValue().value : new StaticVariable(new BooleanPrimitive(true));
+                    Variable variable = var.HasValue() ? var.GetValue().value : GetStaticVariable(true);
                     PropertySupplier property = null;
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
@@ -228,12 +228,6 @@ namespace IngameScript {
                 (p,aggregation,selector) => {
                     AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
                     return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, selector.GetValue().value));
-                }),
-            TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,BlockTypeCommandParameter>(
-                optionalLeft<AggregationModeCommandParameter>(),requiredLeft<BlockTypeCommandParameter>(),
-                (p,aggregation,blockType) => {
-                    AggregationMode mode = aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL;
-                    return new VariableCommandParameter(new AggregateConditionVariable(mode, p.value, new AllEntityProvider(blockType.GetValue().value)));
                 }),
 
             //AggregateSelectorProcessor
