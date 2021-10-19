@@ -198,5 +198,65 @@ namespace EasyCommands.Tests.ScriptTests {
                 Assert.AreEqual("My Value: 5", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void SumOfConditionalSelector() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + the total height of ""test pistons"" that are on")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                var mockPiston3 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test pistons", mockPiston, mockPiston2, mockPiston3);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(3f);
+                mockPiston.Setup(b => b.Enabled).Returns(false);
+                mockPiston2.Setup(b => b.CurrentPosition).Returns(4f);
+                mockPiston2.Setup(b => b.Enabled).Returns(true);
+                mockPiston3.Setup(b => b.CurrentPosition).Returns(5f);
+                mockPiston3.Setup(b => b.Enabled).Returns(true);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: 9", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SumOfAndConditionalSelector() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + the total height of ""test pistons"" that are on and whose height > 4")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                var mockPiston3 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test pistons", mockPiston, mockPiston2, mockPiston3);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(3f);
+                mockPiston.Setup(b => b.Enabled).Returns(false);
+                mockPiston2.Setup(b => b.CurrentPosition).Returns(4f);
+                mockPiston2.Setup(b => b.Enabled).Returns(true);
+                mockPiston3.Setup(b => b.CurrentPosition).Returns(5f);
+                mockPiston3.Setup(b => b.Enabled).Returns(true);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: 5", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SumOfOrConditionalSelector() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + the total height of ""test pistons"" that are on or whose height > 3")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                var mockPiston3 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test pistons", mockPiston, mockPiston2, mockPiston3);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(3f);
+                mockPiston.Setup(b => b.Enabled).Returns(false);
+                mockPiston2.Setup(b => b.CurrentPosition).Returns(4f);
+                mockPiston2.Setup(b => b.Enabled).Returns(true);
+                mockPiston3.Setup(b => b.CurrentPosition).Returns(5f);
+                mockPiston3.Setup(b => b.Enabled).Returns(true);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: 9", test.Logger[0]);
+            }
+        }
     }
 }

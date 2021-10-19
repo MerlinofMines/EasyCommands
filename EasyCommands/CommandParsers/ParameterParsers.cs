@@ -126,8 +126,7 @@ namespace IngameScript {
             AddWords(Words("until"), new IfCommandParameter(true, true, false));
             AddWords(Words("when"), new IfCommandParameter(true, true, true));
             AddWords(Words("else", "otherwise"), new ElseCommandParameter());
-            AddWords(Words("that", "with", "which", "whose"), new WithCommandParameter(false));
-            AddWords(Words("without"), new WithCommandParameter(true));
+            AddWords(Words("that", "which", "whose"), new ThatCommandParameter());
 
             //Comparison Words
             AddWords(Words("less", "<", "below"), new ComparisonCommandParameter(Comparison.LESS));
@@ -256,6 +255,7 @@ namespace IngameScript {
             RegisterToString<CommandReferenceParameter>(p => "[Command]");
             RegisterToString<IterationCommandParameter>(p => "[Iteration]");
             RegisterToString<SelectorCommandParameter>(p => "[Selector]");
+            RegisterToString<ThatCommandParameter>(p => "That");
         }
 
         Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = new Dictionary<Type, Func<CommandParameter, object>>();

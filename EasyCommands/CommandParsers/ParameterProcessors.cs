@@ -64,10 +64,17 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p,var) => new IndexSelectorCommandParameter(var.GetValue().value)),
 
-            //ConditionalSelectorProcessor
-            TwoValueRule<WithCommandParameter,SelectorCommandParameter, BlockConditionCommandParameter>(
-                requiredLeft<SelectorCommandParameter>(),requiredRight<BlockConditionCommandParameter>(),
-                (p,selector,condition) => new SelectorCommandParameter(new ConditionalEntityProvider(selector.GetValue().value, condition.GetValue().value))),
+            //RedundantComparisonProcessor
+            //"is not <" => "!<"
+            //"is <" => "<"
+            //"is not" => !=
+            // "not greater than" => <
+            OneValueRule<ComparisonCommandParameter,NotCommandParameter>(
+                requiredEither<NotCommandParameter>(),
+                (p,left) => new ComparisonCommandParameter(Inverse(p.value))),
+            OneValueRule<ComparisonCommandParameter,ComparisonCommandParameter>(
+                requiredRight<ComparisonCommandParameter>(),
+                (p,right) => new ComparisonCommandParameter(right.GetValue().value)),
 
             //IndexSelectorProcessor
             OneValueRule<IndexSelectorCommandParameter,SelectorCommandParameter>(
@@ -120,18 +127,6 @@ namespace IngameScript {
                 requiredEither<VariableCommandParameter>(),
                 (p,v) => new PropertyCommandParameter(new PropertySupplier(() => p.value + "", v.GetValue().value))),
 
-            //RedundantComparisonProcessor
-            //"is not <" => "!<"
-            //"is <" => "<"
-            //"is not" => !=
-            // "not greater than" => <
-            OneValueRule<ComparisonCommandParameter,NotCommandParameter>(
-                requiredEither<NotCommandParameter>(),
-                (p,left) => new ComparisonCommandParameter(Inverse(p.value))),
-            OneValueRule<ComparisonCommandParameter,ComparisonCommandParameter>(
-                requiredRight<ComparisonCommandParameter>(),
-                (p,right) => new ComparisonCommandParameter(right.GetValue().value)),
-
             //UniOperationProcessor
             OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
@@ -171,17 +166,11 @@ namespace IngameScript {
             TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.AND, left.GetValue().value, right.GetValue().value))),
-            TwoValueRule<AndCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
-                requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p,left,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
 
             //OrProcessor
             TwoValueRule<OrCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.GetValue().value, right.GetValue().value))),
-            TwoValueRule<OrCommandParameter,BlockConditionCommandParameter,BlockConditionCommandParameter>(
-                requiredLeft<BlockConditionCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p,left,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
@@ -196,6 +185,32 @@ namespace IngameScript {
                     if(aggregation.HasValue()) mode = aggregation.GetValue().value;
                     return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
                 }),
+
+            //BlockConditionProcessors
+            ThreeValueRule<AndCommandParameter,BlockConditionCommandParameter,ThatCommandParameter,BlockConditionCommandParameter>(
+                requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
+                (p,left,with,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
+            ThreeValueRule<OrCommandParameter,BlockConditionCommandParameter,ThatCommandParameter,BlockConditionCommandParameter>(
+                requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
+                (p,left,with,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
+
+            //ThatBlockConditionProcessor
+            FourValueRule<ThatCommandParameter, ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
+                requiredRight<ComparisonCommandParameter>(), optionalRight<PropertyCommandParameter>(),optionalRight<DirectionCommandParameter>(),optionalRight<VariableCommandParameter>(),
+                (with,p,prop,dir,var) => p.HasValue() && (var.HasValue() || prop.HasValue()),
+                (with,p,prop,dir,var) => {
+                    Variable variable = var.HasValue() ? var.GetValue().value : GetStaticVariable(true);
+                    PropertySupplier property = null;
+                    if(prop.HasValue()) property = prop.GetValue().value;
+                    Direction? direction = null;
+                    if(dir.HasValue()) direction = dir.GetValue().value;
+                    return new List<CommandParameter>() {new ThatCommandParameter(), new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.GetValue().value), variable)) };
+                }),
+
+            //ConditionalSelectorProcessor
+            TwoValueRule<ThatCommandParameter,SelectorCommandParameter, BlockConditionCommandParameter>(
+                requiredLeft<SelectorCommandParameter>(),requiredRight<BlockConditionCommandParameter>(),
+                (p,selector,condition) => new SelectorCommandParameter(new ConditionalEntityProvider(selector.GetValue().value, condition.GetValue().value))),
 
             //PropertyAggregationProcessor
             ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
@@ -222,7 +237,7 @@ namespace IngameScript {
                     return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
                 }),
 
-            //AggregateConditionProcessors
+            //AggregateConditionProcessor
             TwoValueRule<BlockConditionCommandParameter,AggregationModeCommandParameter,SelectorCommandParameter>(
                 optionalLeft<AggregationModeCommandParameter>(),requiredLeft<SelectorCommandParameter>(),
                 (p,aggregation,selector) => {
@@ -444,11 +459,11 @@ namespace IngameScript {
         delegate bool ThreeValueCanConvert<T, U, V, W>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c);
         delegate bool FourValueCanConvert<T, U, V, W, X>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c, DataFetcher<X> d);
 
-        delegate CommandParameter Convert<T>(T t);
-        delegate CommandParameter OneValueConvert<T, U>(T t, DataFetcher<U> a) where T : CommandParameter;
-        delegate CommandParameter TwoValueConvert<T, U, V>(T t, DataFetcher<U> a, DataFetcher<V> b) where T : CommandParameter;
-        delegate CommandParameter ThreeValueConvert<T, U, V, W>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c);
-        delegate CommandParameter FourValueConvert<T, U, V, W, X>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c, DataFetcher<X> d);
+        delegate object Convert<T>(T t);
+        delegate object OneValueConvert<T, U>(T t, DataFetcher<U> a) where T : CommandParameter;
+        delegate object TwoValueConvert<T, U, V>(T t, DataFetcher<U> a, DataFetcher<V> b) where T : CommandParameter;
+        delegate object ThreeValueConvert<T, U, V, W>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c);
+        delegate object FourValueConvert<T, U, V, W, X>(T t, DataFetcher<U> a, DataFetcher<V> b, DataFetcher<W> c, DataFetcher<X> d);
 
         delegate bool Process(CommandParameter p);
         delegate Process ProcessCommandParameter(DataFetcher dataFetcher);
@@ -742,10 +757,15 @@ namespace IngameScript {
 
                 T hook = (T)p[i];
                 if (!canConvert(hook)) return false;
-                CommandParameter param = convert(hook);
+                var converted = convert(hook);
+
                 p.RemoveRange(k, j - k);
-                p.Insert(k, param);
-                finalParameters = new List<CommandParameter>() { p[k] };
+                if (converted is CommandParameter) {
+                    finalParameters = new List<CommandParameter>() { (CommandParameter)converted };
+                } else if (converted is List<CommandParameter>) {
+                    finalParameters = (List<CommandParameter>)converted;
+                } else throw new Exception("Final parameters must be CommandParameter");
+                p.InsertRange(k, finalParameters);
                 return true;
             }
         }
@@ -774,7 +794,7 @@ namespace IngameScript {
         }
 
         static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w }, (p) => u.f.Satisfied() && v.f.Satisfied() && v.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f));
+            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w }, (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f));
         }
 
         static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueCanConvert<T, U, V, W> canConvert, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter {
@@ -782,7 +802,7 @@ namespace IngameScript {
         }
 
         static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w, x }, (p) => u.f.Satisfied() && v.f.Satisfied() && v.f.Satisfied() && x.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f, x.f));
+            return new RuleProcessor<T>(new List<DataProcessor>() { u, v, w, x }, (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied() && x.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f, x.f));
         }
 
         static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {

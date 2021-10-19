@@ -47,6 +47,7 @@ namespace IngameScript {
         public class SelfCommandParameter : SimpleCommandParameter { }
         public class GlobalCommandParameter : SimpleCommandParameter { }
         public class IgnoreCommandParameter : SimpleCommandParameter { }
+        public class ThatCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T value;
@@ -184,13 +185,6 @@ namespace IngameScript {
             public FunctionDefinitionCommandParameter(Function functionType, FunctionDefinition functionDefinition) {
                 this.functionType = functionType;
                 this.functionDefinition = functionDefinition;
-            }
-        }
-
-        public class WithCommandParameter : SimpleCommandParameter {
-            public bool inverseCondition;
-            public WithCommandParameter(bool inverseCondition) {
-                this.inverseCondition = inverseCondition;
             }
         }
 
