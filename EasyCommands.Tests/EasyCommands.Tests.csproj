@@ -127,6 +127,7 @@
     <Compile Include="ParameterParsingTests\SimpleVariableParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\TransferCommandProcessorTests.cs" />
+    <Compile Include="ScriptTests\BlockHandlerTests\BatteryBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\TerminalBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\RefineryBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockCommandTests.cs" />
