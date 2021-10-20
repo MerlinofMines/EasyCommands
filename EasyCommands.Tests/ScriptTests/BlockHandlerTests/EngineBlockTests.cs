@@ -2,7 +2,6 @@
 using System;
 using Moq;
 using Sandbox.ModAPI.Ingame;
-using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
