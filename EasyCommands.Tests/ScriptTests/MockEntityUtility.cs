@@ -17,6 +17,22 @@ using VRage.Utils;
 namespace EasyCommands.Tests.ScriptTests {
     class MockEntityUtility {
 
+        public static void MockGetProperty<T, U>(Mock<T> mockBlock, String propertyId, U value) where T : class, IMyTerminalBlock {
+            var mockProperty = MockProperty<T,U>(mockBlock, propertyId);
+            MockPropertyValue(mockProperty, value);
+        }
+
+        public static void MockPropertyValue<U>(Mock<ITerminalProperty<U>> property, U value) {
+            if (!(value is float || value is bool || value is string || value is Color)) throw new Exception("Unsupported Property Value Type: " + typeof(U));
+            property.Setup(b => b.GetValue(It.IsAny<IMyCubeBlock>())).Returns(value);
+        }
+
+        public static Mock<ITerminalProperty<U>> MockProperty<T,U>(Mock<T> mockBlock, String propertyId) where T : class, IMyTerminalBlock {
+            var mockProperty = new Mock<ITerminalProperty<U>>();
+            mockBlock.Setup(b => b.GetProperty(propertyId)).Returns(mockProperty.Object);
+            return mockProperty;
+        }
+
         public static Mock<ITerminalAction> MockCalledAction<T>(Mock<T> mockBlock, String actionName) where T : class, IMyTerminalBlock {
             Mock<ITerminalAction> terminalAction = new Mock<ITerminalAction>();
 

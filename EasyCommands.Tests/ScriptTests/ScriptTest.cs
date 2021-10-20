@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VRage.Game.ModAPI.Ingame;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ScriptTests
@@ -243,6 +244,9 @@ namespace EasyCommands.Tests.ScriptTests
                 mockGroups.Add(blockGroup);
                 mockBlocks.UnionWith(blockGroup.GetBlocks());
             }
+
+            public bool CanAccess(IMyTerminalBlock block, MyTerminalAccessScope scope = MyTerminalAccessScope.All) => true;
+            public bool CanAccess(IMyCubeGrid grid, MyTerminalAccessScope scope = MyTerminalAccessScope.All) => true;
 
             public void GetBlockGroups(List<IMyBlockGroup> blockGroups, Func<IMyBlockGroup, bool> collect = null) {
                 blockGroups.AddRange(mockGroups
