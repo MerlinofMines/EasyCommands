@@ -39,7 +39,7 @@ namespace IngameScript {
             public ShipControllerHandler() {
                 AddBooleanHandler(Property.LOCKED, (b) => b.HandBrake, (b, v) => b.HandBrake = v);
                 AddPropertyHandler(Property.VELOCITY, new ShipVelocityHandler<T>());
-                AddPropertyHandler(Property.MOVE_INPUT, new ShipMoveInputHandler<T>());
+                AddPropertyHandler(Property.INPUT, new ShipMoveInputHandler<T>());
                 AddPropertyHandler(Property.ROLL_INPUT, new ShipRollInputHandler<T>());
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
 //                defaultPropertiesByPrimitive[PrimitiveType.BOOLEAN] = PropertyType.LOCKED;

@@ -23,7 +23,7 @@ namespace IngameScript {
             public JumpDriveBlockHandler() {
                 AddNumericHandler(Property.RATIO, b => b.CurrentStoredPower / b.MaxStoredPower);
                 AddNumericHandler(Property.RANGE, b => b.MaxStoredPower);
-                AddNumericHandler(Property.VOLUME, b => b.CurrentStoredPower);
+                AddNumericHandler(Property.LEVEL, b => b.CurrentStoredPower);
                 AddBooleanHandler(Property.COMPLETE, b => b.Status == MyJumpDriveStatus.Ready);
             }
         }

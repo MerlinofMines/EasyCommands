@@ -59,7 +59,7 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddWords(Words("height", "length"), new PropertyCommandParameter(Property.HEIGHT));
+            AddWords(Words("height", "length", "level"), new PropertyCommandParameter(Property.LEVEL));
             AddWords(Words("angle"), new PropertyCommandParameter(Property.ANGLE));
             AddWords(Words("speed", "velocity", "rate", "pace"), new PropertyCommandParameter(Property.VELOCITY));
             AddWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), new PropertyCommandParameter(Property.CONNECTED));
@@ -77,7 +77,7 @@ namespace IngameScript {
             AddWords(Words("power", "powered", "arm", "armed"), new PropertyCommandParameter(Property.POWER));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SONG));
             AddWords(Words("silent", "silence"), new PropertyCommandParameter(Property.SILENCE));
-            AddWords(Words("volume", "level", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));
+            AddWords(Words("volume", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));
             AddWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), new PropertyCommandParameter(Property.RANGE));
             AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
             AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
@@ -90,7 +90,7 @@ namespace IngameScript {
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
             AddWords(Words("ratio", "percentage", "percent"), new PropertyCommandParameter(Property.RATIO));
-            AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(Property.MOVE_INPUT));
+            AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(Property.INPUT));
             AddWords(Words("roll", "rollInput"), new PropertyCommandParameter(Property.ROLL_INPUT));
             AddWords(Words("auto", "refill", "drain", "draining"), new PropertyCommandParameter(Property.AUTO));
             AddWords(Words("override", "overrides", "overridden"), new PropertyCommandParameter(Property.OVERRIDE));

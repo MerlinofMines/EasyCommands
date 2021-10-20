@@ -22,11 +22,11 @@ namespace IngameScript {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
                 AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyPistonBase>(GetLimit, SetLimit, Direction.UP));
-                AddPropertyHandler(Property.HEIGHT, new PistonHeightHandler());
+                AddPropertyHandler(Property.LEVEL, new PistonHeightHandler());
                 AddNumericHandler(Property.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.HEIGHT;
-                defaultPropertiesByDirection[Direction.UP] = Property.HEIGHT;
-                defaultPropertiesByDirection[Direction.DOWN] = Property.HEIGHT;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
                 defaultDirection = Direction.UP;
             }
         }

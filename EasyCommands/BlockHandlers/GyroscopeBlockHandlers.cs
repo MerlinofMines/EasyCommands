@@ -26,7 +26,7 @@ namespace IngameScript {
                 AddNumericHandler(Property.RANGE, b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
                 var rollHandler = new SimpleNumericDirectionPropertyHandler<IMyGyro>(GetOverrideInput, SetOverrideInput, Direction.UP);
                 AddPropertyHandler(Property.ROLL_INPUT, rollHandler);
-                AddPropertyHandler(Property.MOVE_INPUT, rollHandler);
+                AddPropertyHandler(Property.INPUT, rollHandler);
             }
 
             float GetOverrideInput(IMyGyro gyro, Direction direction) {

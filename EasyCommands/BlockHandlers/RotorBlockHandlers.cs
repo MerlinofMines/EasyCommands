@@ -27,13 +27,13 @@ namespace IngameScript {
                 AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
                 AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyMotorStator>(GetLimit, SetLimit, Direction.UP));
                 AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
-                AddNumericHandler(Property.HEIGHT, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
+                AddNumericHandler(Property.LEVEL, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
                 AddBooleanHandler(Property.LOCKED, b => b.RotorLock, (b, v) => b.RotorLock = v);
                 AddNumericHandler(Property.STRENGTH, b => b.Torque, (b,v) => b.Torque = v, 1000);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.ANGLE;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.HEIGHT);
-                defaultPropertiesByDirection.Add(Direction.DOWN, Property.HEIGHT);
+                defaultPropertiesByDirection.Add(Direction.UP, Property.LEVEL);
+                defaultPropertiesByDirection.Add(Direction.DOWN, Property.LEVEL);
                 defaultPropertiesByDirection.Add(Direction.CLOCKWISE, Property.ANGLE);
                 defaultPropertiesByDirection.Add(Direction.COUNTERCLOCKWISE, Property.ANGLE);
                 defaultDirection = Direction.CLOCKWISE;
