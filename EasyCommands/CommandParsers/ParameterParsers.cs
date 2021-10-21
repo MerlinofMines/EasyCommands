@@ -216,7 +216,6 @@ namespace IngameScript {
             AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);
             AddBlockWords(Words("gun", "rocket", "missile", "launcher"), Block.GUN);
             AddBlockWords(Words("turret"), Block.TURRET);
-            AddBlockWords(Words("reactor"), Block.REACTOR);
             AddBlockWords(Words("generator"), Block.GENERATOR);
             AddBlockWords(Words("tank"), Block.TANK);
             AddBlockWords(Words("gear"), Block.GEAR);
@@ -225,7 +224,7 @@ namespace IngameScript {
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
-            AddBlockWords(Words("engine", "turbine", "solar"), Block.ENGINE);
+            AddBlockWords(Words("engine", "turbine", "solar", "reactor"), Block.ENGINE);
             AddBlockWords(Words("sorter"), Block.SORTER);
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);

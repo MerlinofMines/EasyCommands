@@ -44,7 +44,6 @@ namespace IngameScript {
                 { Block.PROGRAM, new ProgramBlockHandler() },
                 { Block.PISTON, new PistonBlockHandler() },
                 { Block.PROJECTOR, new ProjectorBlockHandler() },
-                { Block.REACTOR, new FunctionalBlockHandler<IMyReactor>()},
                 { Block.REMOTE, new RemoteControlBlockHandler()},
                 { Block.ROTOR, new RotorBlockHandler(b => !IsHinge(b)) },
                 { Block.SORTER, new SorterBlockerHandler() },
