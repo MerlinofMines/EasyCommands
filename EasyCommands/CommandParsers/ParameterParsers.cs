@@ -27,10 +27,10 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "to", "from", "then", "of", "either", "for", "in"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in"), new IgnoreCommandParameter());
 
             //Selector Related Words
-            AddWords(Words("blocks", "group"), new GroupCommandParameter());
+            AddWords(Words("blocks", "group", "panels"), new GroupCommandParameter());
             AddWords(Words("my", "self", "this"), new SelfCommandParameter());
 
             //Direction Words
@@ -225,7 +225,7 @@ namespace IngameScript {
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
-            AddBlockWords(Words("engine", "turbine"), Block.ENGINE);
+            AddBlockWords(Words("engine", "turbine", "solar"), Block.ENGINE);
             AddBlockWords(Words("sorter"), Block.SORTER);
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
