@@ -98,6 +98,25 @@ if the ""warhead"" is armed
         }
 
         [TestMethod]
+        public void isBombDisarmed() {
+            String script = @"
+if the ""warhead"" is disarmed
+  Print ""Bomb is safe""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockWarhead = new Mock<IMyWarhead>();
+                test.MockBlocksOfType("warhead", mockWarhead);
+
+                mockWarhead.Setup(b => b.IsArmed).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Bomb is safe"));
+            }
+        }
+
+        [TestMethod]
         public void armTheBomb() {
             String script = @"
 arm the ""warhead""
@@ -110,6 +129,22 @@ arm the ""warhead""
                 test.RunUntilDone();
 
                 mockWarhead.VerifySet(b => b.IsArmed = true);
+            }
+        }
+
+        [TestMethod]
+        public void disarmTheBomb() {
+            String script = @"
+disarm the ""warhead""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockWarhead = new Mock<IMyWarhead>();
+                test.MockBlocksOfType("warhead", mockWarhead);
+
+                test.RunUntilDone();
+
+                mockWarhead.VerifySet(b => b.IsArmed = false);
             }
         }
 

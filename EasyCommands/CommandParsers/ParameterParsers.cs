@@ -74,7 +74,9 @@ namespace IngameScript {
             AddWords(Words("fontsize", "size"), new PropertyCommandParameter(Property.FONT_SIZE));
             AddWords(Words("text", "message"), new PropertyCommandParameter(Property.TEXT));
             AddWords(Words("color"), new PropertyCommandParameter(Property.COLOR));
-            AddWords(Words("power", "powered", "arm", "armed"), new PropertyCommandParameter(Property.POWER));
+            AddWords(Words("power", "powered"), new PropertyCommandParameter(Property.POWER));
+            AddWords(Words("enable", "enabled", "arm", "armed"), new PropertyCommandParameter(Property.ENABLE));
+            AddWords(Words("disable", "disabled", "disarm", "disarmed"), new PropertyCommandParameter(Property.ENABLE), new BooleanCommandParameter(false));
             AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SONG));
             AddWords(Words("silent", "silence"), new PropertyCommandParameter(Property.SILENCE));
             AddWords(Words("volume", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));

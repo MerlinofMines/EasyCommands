@@ -22,7 +22,7 @@ namespace IngameScript {
         public class WarheadBlockHandler : TerminalBlockHandler<IMyWarhead> {
             public WarheadBlockHandler() {
                 AddBooleanHandler(Property.TRIGGER, b => b.IsCountingDown, (b,v) => b.Detonate());
-                AddBooleanHandler(Property.POWER, b => b.IsArmed, (b, v) => b.IsArmed = v);
+                AddBooleanHandler(Property.ENABLE, b => b.IsArmed, (b, v) => b.IsArmed = v);
                 AddNumericHandler(Property.RANGE, b => b.DetonationTime, (b, v) => b.DetonationTime = v, 1);
                 AddBooleanHandler(Property.COUNTDOWN, b => b.IsCountingDown, (b, v) => { if (v) b.StartCountdown(); else b.StopCountdown(); });
             }

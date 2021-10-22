@@ -281,7 +281,8 @@ namespace IngameScript {
 
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() : base() {
-                AddPropertyHandler(Property.POWER, new SimpleBooleanPropertyHandler<T>((block) => block.Enabled, (block, enabled) => block.Enabled = enabled));
+                AddBooleanHandler(Property.ENABLE, b => b.Enabled, (b, v) => b.Enabled = v);
+                AddBooleanHandler(Property.POWER, b => b.Enabled, (b, v) => b.Enabled = v);
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.POWER;
             }
         }
