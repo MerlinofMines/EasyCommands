@@ -9,7 +9,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetReactorOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Reactor Output: "" + ""test reactor"" output")) {
-                Mock<IMyPowerProducer> mockReactor = new Mock<IMyPowerProducer>();
+                Mock<IMyReactor> mockReactor = new Mock<IMyReactor>();
                 test.MockBlocksOfType("test reactor", mockReactor);
                 mockReactor.Setup(b => b.CurrentOutput).Returns(20f);
 
@@ -22,7 +22,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetReactorLimit() {
             using (ScriptTest test = new ScriptTest(@"Print ""Reactor Max Output: "" + ""test reactor"" limit")) {
-                Mock<IMyPowerProducer> mockReactor = new Mock<IMyPowerProducer>();
+                Mock<IMyReactor> mockReactor = new Mock<IMyReactor>();
                 test.MockBlocksOfType("test reactor", mockReactor);
                 mockReactor.Setup(b => b.MaxOutput).Returns(100f);
 
@@ -35,7 +35,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetReactorRatio() {
             using (ScriptTest test = new ScriptTest(@"Print ""Reactor Output: "" + ( 100 * ""test reactor"" ratio ) + ""%""")) {
-                Mock<IMyPowerProducer> mockReactor = new Mock<IMyPowerProducer>();
+                Mock<IMyReactor> mockReactor = new Mock<IMyReactor>();
                 test.MockBlocksOfType("test reactor", mockReactor);
                 mockReactor.Setup(b => b.CurrentOutput).Returns(20f);
                 mockReactor.Setup(b => b.MaxOutput).Returns(100f);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Moq;
-using Sandbox.ModAPI.Ingame;
+using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -9,7 +9,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetSolarPanelOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Solar Panel Output: "" + ""test solar panel"" output")) {
-                Mock<IMyPowerProducer> mockSolarPanel = new Mock<IMyPowerProducer>();
+                Mock<IMySolarPanel> mockSolarPanel = new Mock<IMySolarPanel>();
                 test.MockBlocksOfType("test solar panel", mockSolarPanel);
                 mockSolarPanel.Setup(b => b.CurrentOutput).Returns(20f);
 
@@ -22,7 +22,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetSolarPanelLimit() {
             using (ScriptTest test = new ScriptTest(@"Print ""Solar Panel Max Output: "" + ""test solar panel"" limit")) {
-                Mock<IMyPowerProducer> mockSolarPanel = new Mock<IMyPowerProducer>();
+                Mock<IMySolarPanel> mockSolarPanel = new Mock<IMySolarPanel>();
                 test.MockBlocksOfType("test solar panel", mockSolarPanel);
                 mockSolarPanel.Setup(b => b.MaxOutput).Returns(100f);
 
@@ -35,7 +35,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void GetSolarPanelRatio() {
             using (ScriptTest test = new ScriptTest(@"Print ""Solar Panel Output: "" + ( 100 * ""test solar panel"" ratio ) + ""%""")) {
-                Mock<IMyPowerProducer> mockSolarPanel = new Mock<IMyPowerProducer>();
+                Mock<IMySolarPanel> mockSolarPanel = new Mock<IMySolarPanel>();
                 test.MockBlocksOfType("test solar panel", mockSolarPanel);
                 mockSolarPanel.Setup(b => b.CurrentOutput).Returns(20f);
                 mockSolarPanel.Setup(b => b.MaxOutput).Returns(100f);

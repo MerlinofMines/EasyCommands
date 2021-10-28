@@ -19,11 +19,21 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class EngineBlockHandler : FunctionalBlockHandler<IMyPowerProducer> {
-            public EngineBlockHandler() {
+        public class EngineBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyPowerProducer {
+            Func<T, bool> blockFilter;
+            public EngineBlockHandler(String subType = "") {
+                blockFilter = b => subType.Length == 0 || b.BlockDefinition.SubtypeId.Contains(subType);
                 AddNumericHandler(Property.RATIO, b => b.CurrentOutput / b.MaxOutput);
                 AddNumericHandler(Property.RANGE, b => b.MaxOutput);
                 AddNumericHandler(Property.VOLUME, b => b.CurrentOutput);
+            }
+
+            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
+                return base.GetBlocksOfType(selector).Where(blockFilter).ToList();
+            }
+
+            public override List<T> GetBlocksOfTypeInGroup(string groupName) {
+                return base.GetBlocksOfTypeInGroup(groupName).Where(blockFilter).ToList();
             }
         }
     }

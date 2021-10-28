@@ -2,6 +2,7 @@
 using System;
 using Moq;
 using Sandbox.ModAPI.Ingame;
+using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -11,6 +12,7 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Engine Output: "" + ""test engine"" output")) {
                 Mock<IMyPowerProducer> mockEngine = new Mock<IMyPowerProducer>();
                 test.MockBlocksOfType("test engine", mockEngine);
+                MockBlockDefinition(mockEngine, "HydrogenEngine");
                 mockEngine.Setup(b => b.CurrentOutput).Returns(20f);
 
                 test.RunUntilDone();
@@ -24,6 +26,7 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Engine Max Output: "" + ""test engine"" limit")) {
                 Mock<IMyPowerProducer> mockEngine = new Mock<IMyPowerProducer>();
                 test.MockBlocksOfType("test engine", mockEngine);
+                MockBlockDefinition(mockEngine, "HydrogenEngine");
                 mockEngine.Setup(b => b.MaxOutput).Returns(100f);
 
                 test.RunUntilDone();
@@ -37,6 +40,7 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Engine Output: "" + ( 100 * ""test engine"" ratio ) + ""%""")) {
                 Mock<IMyPowerProducer> mockEngine = new Mock<IMyPowerProducer>();
                 test.MockBlocksOfType("test engine", mockEngine);
+                MockBlockDefinition(mockEngine, "HydrogenEngine");
                 mockEngine.Setup(b => b.CurrentOutput).Returns(20f);
                 mockEngine.Setup(b => b.MaxOutput).Returns(100f);
 
