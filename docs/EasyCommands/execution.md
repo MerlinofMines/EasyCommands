@@ -40,7 +40,7 @@ turn off the "Outside Lights"
 ```
 As you can imagine, the above script has the effect of making the "Outside Lights" blink on and off
 
-#Breaking Up Your Script Into Pieces
+# Breaking Up Your Script Into Pieces
 EasyCommands also supports the concept of functions, which allows you to break up your script into easy to understand and re-usable sections.  For example, We could improve the above script by doing the following:
 
 ```
