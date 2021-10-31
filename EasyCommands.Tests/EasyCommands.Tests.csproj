@@ -43,9 +43,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    <PackageReference Include="SpaceEngineers.ScriptingReferences">
-      <Version>1.1.0</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -135,7 +132,6 @@
     <Compile Include="ScriptTests\BlockHandlerTests\ReactorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\FunctionalBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\WindTurbineBlockTests.cs" />
-    <Compile Include="ScriptTests\BlockHandlerTests\WheelBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\TerminalBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\RefineryBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockCommandTests.cs" />
