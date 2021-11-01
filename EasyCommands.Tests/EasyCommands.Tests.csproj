@@ -40,40 +40,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="MDKUtilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Malware.MDK-SE.1.4.7\lib\net46\MDKUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="Moq, Version=4.16.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.16.1\lib\net45\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\Sandbox.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Sandbox.Game, Version=0.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\Sandbox.Game.dll</HintPath>
-    </Reference>
-    <Reference Include="Sandbox.Graphics, Version=0.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\Sandbox.Graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="SpaceEngineers.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\SpaceEngineers.Game.dll</HintPath>
-    </Reference>
-    <Reference Include="SpaceEngineers.ObjectBuilders, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\SpaceEngineers.ObjectBuilders.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -83,42 +54,6 @@
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Audio.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Game.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Input, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Input.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Library.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Math, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Math.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Render, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Render.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Render11, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Render11.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Scripting, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.Steam, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.Steam.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.UserInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.UserInterface.dll</HintPath>
-    </Reference>
-    <Reference Include="VRage.XmlSerializers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpaceEngineers.ScriptingReferences.1.1.0\lib\net46\VRage.XmlSerializers.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
