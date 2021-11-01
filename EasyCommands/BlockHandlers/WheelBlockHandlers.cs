@@ -21,15 +21,19 @@ namespace IngameScript {
     partial class Program {
         public class WheelSuspensionBlockHandler : FunctionalBlockHandler<IMyMotorSuspension> {
             public WheelSuspensionBlockHandler() {
-                AddNumericHandler(Property.LEVEL, b => b.Height, (b,v)=>b.Height=v,0.1f);
-                AddNumericHandler(Property.ANGLE, b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v, 5);
-                AddNumericHandler(Property.RATIO, b => b.Power, (b, v) => b.Power = v, 10);
-                AddPropertyHandler(Property.VELOCITY, new PropertyValueNumericPropertyHandler<IMyMotorSuspension>("Speed Limit", 5));
+                AddNumericHandler(Property.LEVEL, b => b.Height, (b, v) => b.Height = v, 0.1f);
+                AddNumericHandler(Property.ANGLE, b => (float)(-b.SteerAngle*180/Math.PI), (b, v) => { b.SteeringOverride = (float)(v * Math.PI / 144); b.MaxSteerAngle = 1; }, .1f);
+                AddBooleanHandler(Property.LOCKED, (b) => b.Brake, (b, v) => b.Brake = v);
+                //TODO: Add Max Steering Angle Support by upgrading this property handler to support directions
+                AddPropertyHandler(Property.RANGE, new PropertyValueNumericPropertyHandler<IMyMotorSuspension>("Speed Limit", 5));
+                AddNumericHandler(Property.VELOCITY, b => b.PropulsionOverride, (b,v) => b.PropulsionOverride = v, 0.1f);
+                AddNumericHandler(Property.STRENGTH, b => b.Strength, (b, v) => b.Strength = v, 10);
+                AddNumericHandler(Property.POWER, b => b.Power, (b, v) => b.Power = v, 10);
+                AddNumericHandler(Property.RATIO, b => b.Friction, (b, v) => b.Friction = v, 10);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
                 defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
                 defaultDirection = Direction.UP;
-                //TODO: Add Strength?
             }
         }
     }

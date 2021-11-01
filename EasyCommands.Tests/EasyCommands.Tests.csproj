@@ -132,6 +132,7 @@
     <Compile Include="ScriptTests\BlockHandlerTests\ReactorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\FunctionalBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\WindTurbineBlockTests.cs" />
+    <Compile Include="ScriptTests\BlockHandlerTests\WheelBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\TerminalBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\RefineryBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockCommandTests.cs" />

@@ -64,11 +64,10 @@ namespace IngameScript {
             AddWords(Words("speed", "velocity", "rate", "pace"), new PropertyCommandParameter(Property.VELOCITY));
             AddWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), new PropertyCommandParameter(Property.CONNECTED));
             AddWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), new PropertyCommandParameter(Property.CONNECTED), new BooleanCommandParameter(false));
-            AddWords(Words("lock", "locked", "freeze"), new PropertyCommandParameter(Property.LOCKED));
+            AddWords(Words("lock", "locked", "freeze", "brake"), new PropertyCommandParameter(Property.LOCKED));
             AddWords(Words("unlock", "unlocked", "unfreeze"), new PropertyCommandParameter(Property.LOCKED), new BooleanCommandParameter(false));
             AddWords(Words("run", "running", "execute", "executing"), new PropertyCommandParameter(Property.RUN));
             AddWords(Words("done", "ready", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
-            AddWords(Words("progress", "completion"), new PropertyCommandParameter(Property.RATIO));
             AddWords(Words("open", "opened"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(true));
             AddWords(Words("close", "closed", "shut"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(false));
             AddWords(Words("fontsize", "size"), new PropertyCommandParameter(Property.FONT_SIZE));
@@ -87,11 +86,11 @@ namespace IngameScript {
             AddWords(Words("falloff"), new PropertyCommandParameter(Property.FALLOFF));
             AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), new PropertyCommandParameter(Property.TRIGGER));
-            AddWords(Words("pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), new PropertyCommandParameter(Property.SUPPLY));
+            AddWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), new PropertyCommandParameter(Property.SUPPLY));
             AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
-            AddWords(Words("ratio", "percentage", "percent"), new PropertyCommandParameter(Property.RATIO));
+            AddWords(Words("ratio", "percentage", "percent", "progress", "completion"), new PropertyCommandParameter(Property.RATIO));
             AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(Property.INPUT));
             AddWords(Words("roll", "rollInput"), new PropertyCommandParameter(Property.ROLL_INPUT));
             AddWords(Words("auto", "refill", "drain", "draining"), new PropertyCommandParameter(Property.AUTO));
