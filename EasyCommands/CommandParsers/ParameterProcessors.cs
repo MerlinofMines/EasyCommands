@@ -125,7 +125,7 @@ namespace IngameScript {
             //ValuePropertyProcessor
             OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
                 requiredEither<VariableCommandParameter>(),
-                (p,v) => new PropertyCommandParameter(new PropertySupplier(() => p.value + "", v.GetValue().value))),
+                (p,v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
 
             //UniOperationProcessor
             OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
@@ -204,7 +204,7 @@ namespace IngameScript {
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
-                    return new List<CommandParameter>() {new ThatCommandParameter(), new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.GetValue().value), variable)) };
+                    return new List<CommandParameter>() {new ThatCommandParameter(), new BlockConditionCommandParameter(new BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.GetValue().value), variable)) };
                 }),
 
             //ConditionalSelectorProcessor
@@ -221,7 +221,7 @@ namespace IngameScript {
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
-                    return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, property, direction));
+                    return new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.GetValue().value, (property ?? new PropertySupplier()).WithDirection(direction)));
                 }),
 
             //BlockComparisonProcessor
@@ -234,7 +234,7 @@ namespace IngameScript {
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
-                    return new BlockConditionCommandParameter(new BlockPropertyCondition(property, direction, new PrimitiveComparator(p.value), variable));
+                    return new BlockConditionCommandParameter(new BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.value), variable));
                 }),
 
             //AggregateConditionProcessor
@@ -277,7 +277,7 @@ namespace IngameScript {
                 BlockCommandProcessor(),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.SUM, s.value, p.GetValue().value, d.HasValue() ? d.GetValue().value : (Direction?)null))),
+                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.SUM, s.value, p.GetValue().value.WithDirection(d.HasValue() ? d.GetValue().value : (Direction?)null)))),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!

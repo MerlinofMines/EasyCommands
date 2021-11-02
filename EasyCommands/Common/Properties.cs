@@ -19,23 +19,62 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public delegate String GetPropertyType();
-
         public class PropertySupplier {
-            public GetPropertyType propertyType;
-            public Variable valueAttribute;
+            public String propertyType;
+            public Variable attributeValue, propertyValue;
+            public Direction? direction;
 
-            public PropertySupplier(GetPropertyType property, Variable value = null) {
-                propertyType = property;
-                valueAttribute = value;
+            public PropertySupplier() { }
+
+            public PropertySupplier(Property property) {
+                propertyType = property + "";
             }
 
-            public PropertySupplier(Property property, Variable value = null) {
-                propertyType = () => property + "";
-                valueAttribute = value;
+            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) {
+                //TODO: Deal with PropertyType = "Property" and adjust values based on AttributeValue
+                return WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
             }
 
-            public override string ToString() => propertyType();
+            PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {
+                if (propertyType != null) return this;
+                if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
+                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().GetPrimitiveType());
+                if (defaultType.HasValue) return blockHandler.GetDefaultProperty(defaultType.Value);
+                return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
+            }
+
+            public PropertySupplier WithDirection(Direction? direction) {
+                var copy = Copy();
+                copy.direction = direction;
+                return copy;
+            }
+
+            public PropertySupplier WithPropertyType(String propertyType) {
+                var copy = Copy();
+                copy.propertyType = propertyType;
+                return copy;
+            }
+
+            public PropertySupplier WithPropertyValue(Variable propertyValue) {
+                var copy = Copy();
+                copy.propertyValue = propertyValue;
+                return copy;
+            }
+
+            public PropertySupplier WithAttributeValue(Variable attributeValue) {
+                var copy = Copy();
+                copy.attributeValue = attributeValue;
+                return copy;
+            }
+
+            PropertySupplier Copy() {
+                var newValue = new PropertySupplier();
+                newValue.propertyType = propertyType;
+                newValue.attributeValue = attributeValue;
+                newValue.propertyValue = propertyValue;
+                newValue.direction = direction;
+                return newValue;
+            }
         }
     }
 }

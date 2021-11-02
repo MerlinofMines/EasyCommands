@@ -97,8 +97,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
-            Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType());
-            Assert.AreEqual("gold ingot", aggregate.property.valueAttribute.GetValue().GetValue());
+            Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType);
+            Assert.AreEqual("gold ingot", aggregate.property.attributeValue.GetValue().GetValue());
         }
 
         [TestMethod]
@@ -195,7 +195,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
-            Assert.AreEqual(Property.POSITION + "", aggregate.property.propertyType());
+            Assert.AreEqual(Property.POSITION + "", aggregate.property.propertyType);
             Assert.IsTrue(aggregate.entityProvider is SelfEntityProvider);
             Assert.AreEqual(Block.PROGRAM, aggregate.entityProvider.GetBlockType());
         }
