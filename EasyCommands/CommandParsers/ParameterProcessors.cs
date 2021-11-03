@@ -282,13 +282,11 @@ namespace IngameScript {
                     optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!
                     (s,p,d) => {
-                        PropertyCommandParameter property = p.GetValue();
-                        DirectionCommandParameter direction = d.GetValue();
-                        return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) => {
-                            PropertySupplier supplier = property != null ? property.value : b.GetDefaultProperty(direction.value);
-                            if (direction != null) b.MoveNumericPropertyValue(e, supplier, direction.value);
-                            else b.SetPropertyValue(e, supplier, new BooleanPrimitive(true));
-                        }));
+                        PropertySupplier property = p.HasValue() ? p.GetValue().value : new PropertySupplier();
+                        Direction? direction = d.HasValue() ? d.GetValue().value : (Direction?)null;
+                        if (direction == null) property = property.WithPropertyValue(GetStaticVariable(true));
+                        return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) => 
+                            b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
                     })),
 
             //PrintCommandProcessor
@@ -835,26 +833,24 @@ namespace IngameScript {
                 VariableCommandParameter variable = variableProcessor.f.GetValue();
                 bool notValue = notProcessor.f.HasValue();
 
-                Func<BlockHandler, PropertySupplier> propertySupplier = (blockHandler) => {
-                    if (property != null) return property.value;
-                    if (direction != null) return blockHandler.GetDefaultProperty(direction.value);
-                    if (variable != null) return blockHandler.GetDefaultProperty(variable.value.GetValue().GetPrimitiveType());
-                    if (notValue) return blockHandler.GetDefaultProperty(Return.BOOLEAN);
-                    return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
-                };
-                Func<Variable> variableSupplier = () => {
-                    Variable v = new StaticVariable(new BooleanPrimitive(true));
-                    if (variable != null) v = variable.value;
-                    if (notValue) v = new UniOperandVariable(UniOperand.NOT, v);
-                    return v;
-                };
+                PropertySupplier propertySupplier = propertyProcessor.f.HasValue() ? property.value : new PropertySupplier();
+                if (directionProcessor.f.HasValue()) propertySupplier = propertySupplier.WithDirection(directionProcessor.f.GetValue().value);
 
-                if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier(b));
-                else if (AllSatisfied(relativeProcessor, directionProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier(b), direction.value, variableSupplier().GetValue());
-                else if (AllSatisfied(relativeProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier(b), variableSupplier().GetValue());
-                else if (AllSatisfied(variableProcessor, directionProcessor)) blockAction = (b, e) => b.SetPropertyValue(e, propertySupplier(b), direction.value, variableSupplier().GetValue());
-                else if (AllSatisfied(assignmentProcessor, directionProcessor)) blockAction = (b, e) => b.MoveNumericPropertyValue(e, propertySupplier(b), direction.value);
-                else blockAction = (b, e) => b.SetPropertyValue(e, propertySupplier(b), variableSupplier().GetValue());
+                Variable variableValue = GetStaticVariable(true);
+                if (variableProcessor.f.HasValue()) {
+                    variableValue = variable.value;
+                    propertySupplier = propertySupplier.WithPropertyValue(variableValue);
+                }
+
+                if (notValue) {
+                    variableValue = new UniOperandVariable(UniOperand.NOT, variableValue);
+                    propertySupplier = propertySupplier.WithPropertyValue(variableValue);
+                }
+
+                if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
+                else if (AllSatisfied(relativeProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
+                else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
+                else blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
 
                 BlockCommand command = new BlockCommand(p.value, blockAction);
                 return new CommandReferenceParameter(command);

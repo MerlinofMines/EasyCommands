@@ -247,12 +247,8 @@ namespace IngameScript {
             String GetName(Object block);
 
             Primitive GetPropertyValue(Object block, PropertySupplier property);
-
-            void SetPropertyValue(Object block, PropertySupplier property, Primitive value);
-            void SetPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value);
-            void IncrementPropertyValue(Object block, PropertySupplier property, Primitive value);
-            void IncrementPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value);
-            void MoveNumericPropertyValue(Object block, PropertySupplier property, Direction direction);
+            void UpdatePropertyValue(Object block, PropertySupplier property);
+            void IncrementPropertyValue(Object block, PropertySupplier property);
             void ReverseNumericPropertyValue(Object block, PropertySupplier property);
         }
 
@@ -365,28 +361,36 @@ namespace IngameScript {
                 if (property.direction.HasValue) return propertyHandlers[property.propertyType].GetDirection((T)block, property, property.direction.Value);
                 return propertyHandlers[property.propertyType].Get((T)block, property);
             }
-            public void SetPropertyValue(Object block, PropertySupplier property, Primitive value) {
-                Debug("Setting " + GetName(block) + " " + property + " to " + value.GetValue());
-                propertyHandlers[property.propertyType].Set((T)block, property, value);
+
+            public void UpdatePropertyValue(Object block, PropertySupplier property) {
+                if(property.propertyValue != null) {
+                    Primitive value = property.propertyValue.GetValue();
+                    if(property.direction != null) {
+                        Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value + " in " + property.direction + " direction");
+                        propertyHandlers[property.propertyType].SetDirection((T)block, property, property.direction.Value, value);
+                    } else {
+                        Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value);
+                        propertyHandlers[property.propertyType].Set((T)block, property, value);
+                    }
+                } else {
+                    Debug("Moving " + GetName(block) + " " + property.propertyType + " in " + property.direction + " direction");
+                    propertyHandlers[property.propertyType].Move((T)block, property, property.direction.Value);
+                }
             }
-            public void SetPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value) {
-                Debug("Setting " + GetName(block) + " " + property + " to " + value.GetValue() + " in " + direction + " direction");
-                propertyHandlers[property.propertyType].SetDirection((T)block, property, direction, value);
+
+            public void IncrementPropertyValue(Object block, PropertySupplier property) {
+                Primitive value = property.propertyValue.GetValue();
+                if(property.direction != null) {
+                    Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value + " in " + property.direction + " direction");
+                    propertyHandlers[property.propertyType].IncrementDirection((T)block, property, property.direction.Value, value);
+                } else {
+                    Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value);
+                    propertyHandlers[property.propertyType].Increment((T)block, property, value);
+                }
             }
-            public void IncrementPropertyValue(Object block, PropertySupplier property, Primitive value) {
-                Debug("Incrementing " + GetName(block) + " " + property + " by " + value.GetValue());
-                propertyHandlers[property.propertyType].Increment((T)block, property, value);
-            }
-            public void IncrementPropertyValue(Object block, PropertySupplier property, Direction direction, Primitive value) {
-                Debug("Incrementing " + GetName(block) + " " + property + " by " + value.GetValue() + " in " + direction + " direction");
-                propertyHandlers[property.propertyType].IncrementDirection((T)block, property, direction, value);
-            }
-            public void MoveNumericPropertyValue(Object block, PropertySupplier property, Direction direction) {
-                Debug("Moving " + GetName(block) + " " + property + " in " + direction + " direction");
-                propertyHandlers[property.propertyType].Move((T)block, property, direction);
-            }
+
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) {
-                Debug("Reversing " + GetName(block) + " " + property);
+                Debug("Reversing " + GetName(block) + " " + property.propertyType);
                 propertyHandlers[property.propertyType].Reverse((T)block, property);
             }
 

@@ -44,37 +44,35 @@ namespace IngameScript {
             }
 
             public PropertySupplier WithDirection(Direction? direction) {
-                var copy = Copy();
+                PropertySupplier copy = Copy();
                 copy.direction = direction;
                 return copy;
             }
 
             public PropertySupplier WithPropertyType(String propertyType) {
-                var copy = Copy();
+                PropertySupplier copy = Copy();
                 copy.propertyType = propertyType;
                 return copy;
             }
 
             public PropertySupplier WithPropertyValue(Variable propertyValue) {
-                var copy = Copy();
+                PropertySupplier copy = Copy();
                 copy.propertyValue = propertyValue;
                 return copy;
             }
 
             public PropertySupplier WithAttributeValue(Variable attributeValue) {
-                var copy = Copy();
+                PropertySupplier copy = Copy();
                 copy.attributeValue = attributeValue;
                 return copy;
             }
 
-            PropertySupplier Copy() {
-                var newValue = new PropertySupplier();
-                newValue.propertyType = propertyType;
-                newValue.attributeValue = attributeValue;
-                newValue.propertyValue = propertyValue;
-                newValue.direction = direction;
-                return newValue;
-            }
+            PropertySupplier Copy() => new PropertySupplier {
+                    propertyType = propertyType, 
+                    attributeValue = attributeValue,
+                    propertyValue = propertyValue,
+                    direction = direction
+                };
         }
     }
 }
