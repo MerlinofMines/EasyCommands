@@ -123,8 +123,12 @@ namespace IngameScript {
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
 
             //ValuePropertyProcessor
+            //Needs to check left, then right, which is opposite the typical checks.
             OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
-                requiredEither<VariableCommandParameter>(),
+                requiredLeft<VariableCommandParameter>(),
+                (p,v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
+            OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
                 (p,v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
 
             //UniOperationProcessor

@@ -333,5 +333,31 @@ namespace EasyCommands.Tests.ScriptTests {
                 mockBomb.Verify(b => b.Detonate());
             }
         }
+
+        [TestMethod]
+        public void SetDynamicProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" ""range"" property to 200")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 200);
+            }
+        }
+
+        //Under the hood, "stockpile" actually means to set supply to false.  This test confirms that we properly
+        //negate the value to set based on this fact.
+        [TestMethod]
+        public void SetDynamicPropertyWithImplicitNegation() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test tank"" ""stockpile"" property to true")) {
+                Mock<IMyGasTank> mockTank = new Mock<IMyGasTank>();
+                test.MockBlocksOfType("test tank", mockTank);
+
+                test.RunUntilDone();
+
+                mockTank.VerifySet(b => b.Stockpile = true);
+            }
+        }
     }
 }

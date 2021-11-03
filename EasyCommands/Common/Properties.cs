@@ -31,8 +31,25 @@ namespace IngameScript {
             }
 
             public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) {
-                //TODO: Deal with PropertyType = "Property" and adjust values based on AttributeValue
+                if (propertyType == ValueProperty.PROPERTY + "") return ResolveDynamicProperty();
                 return WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
+            }
+
+            public PropertySupplier ResolveDynamicProperty() {
+                PropertySupplier supplier = WithAttributeValue(null);
+                var propertyString = CastString(attributeValue.GetValue()).GetTypedValue();
+
+                if(PROGRAM.propertyWords.ContainsKey(propertyString)) {
+                    var commandParameters = PROGRAM.propertyWords[propertyString];
+                    PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
+                    BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
+                    if (property != null) supplier = WithPropertyType(property.value.propertyType);
+                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.WithPropertyValue(new UniOperandVariable(UniOperand.NOT, propertyValue ?? GetStaticVariable(true)));
+                } else {
+                    supplier = WithPropertyType(propertyString);
+                }
+
+                return supplier;
             }
 
             PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {

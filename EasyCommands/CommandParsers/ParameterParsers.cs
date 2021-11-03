@@ -90,6 +90,7 @@ namespace IngameScript {
             AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
+            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
             AddWords(Words("ratio", "percentage", "percent", "progress", "completion"), new PropertyCommandParameter(Property.RATIO));
             AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(Property.INPUT));
             AddWords(Words("roll", "rollInput"), new PropertyCommandParameter(Property.ROLL_INPUT));
