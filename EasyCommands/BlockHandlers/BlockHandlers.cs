@@ -179,9 +179,25 @@ namespace IngameScript {
             }
         }
 
-        public class PropertyValueNumericPropertyHandler<T> : SimpleNumericPropertyHandler<T> where T : class, IMyTerminalBlock {
-            public PropertyValueNumericPropertyHandler(String propertyName, float delta) : base((b) => b.GetValueFloat(propertyName), (b, v) => b.SetValueFloat(propertyName, v), delta) {
-            }
+        public class TerminalBlockPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
+            public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : base((b,p) => GetPrimitive(b, propertyId), (b,p,v) => SetPrimitiveValue(b,propertyId,v), delta) { }
+        }
+
+        public static Primitive GetPrimitive<T>(T block, String propertyId) where T : class, IMyTerminalBlock {
+            var property = block.GetProperty(propertyId);
+            if (property == null) throw new Exception(typeof(T) + block.BlockDefinition.SubtypeName + " does not have property: " + propertyId);
+            object value;
+            if (property.TypeName == "bool") value = block.GetValueBool(propertyId);
+            else if (property.TypeName == "color") value = block.GetValueColor(propertyId);
+            else value = block.GetValueFloat(propertyId);
+            return ResolvePrimitive(value);
+        }
+
+        public static void SetPrimitiveValue(IMyTerminalBlock block, String propertyId, Primitive value) {
+            Return type = value.GetPrimitiveType();
+            if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value).GetTypedValue());
+            else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value).GetTypedValue());
+            else block.SetValueFloat(propertyId, CastNumber(value).GetTypedValue());
         }
 
         public class DirectionVectorPropertyHandler<T> : PropertyHandler<T> where T : class, IMyTerminalBlock {
