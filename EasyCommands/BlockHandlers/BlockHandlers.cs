@@ -358,8 +358,10 @@ namespace IngameScript {
                 return new PropertySupplier(defaultPropertiesByPrimitive[type]);
             }
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
-                if (property.direction.HasValue) return propertyHandlers[property.propertyType].GetDirection((T)block, property, property.direction.Value);
-                return propertyHandlers[property.propertyType].Get((T)block, property);
+                Primitive value = (property.direction.HasValue ? propertyHandlers[property.propertyType].GetDirection((T)block, property, property.direction.Value) :
+                propertyHandlers[property.propertyType].Get((T)block, property));
+                if (property.propertyValue != null && !CastBoolean(property.propertyValue.GetValue()).GetTypedValue()) value = value.Not();
+                return value;
             }
 
             public void UpdatePropertyValue(Object block, PropertySupplier property) {
