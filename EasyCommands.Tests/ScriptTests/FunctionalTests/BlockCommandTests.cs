@@ -5,6 +5,7 @@ using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
 using VRage;
 using VRageMath;
+using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -356,6 +357,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockTank.VerifySet(b => b.Stockpile = true);
+            }
+        }
+
+        [TestMethod]
+        public void SetDynamicTerminalBlockProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" ""Speed Limit"" property to 50")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                var mockProperty = MockProperty<IMyMotorSuspension, float>(mockWheel, "Speed Limit");
+
+                test.RunUntilDone();
+
+                mockProperty.Verify(p => p.SetValue(mockWheel.Object, 50));
             }
         }
     }

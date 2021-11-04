@@ -326,6 +326,14 @@ namespace IngameScript {
                 return blocks;
             }
 
+            public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
+                try {
+                    return base.GetPropertyHandler(property);
+                } catch (Exception) {
+                    return new TerminalBlockPropertyHandler<T>(property.propertyType, ResolvePrimitive(1f));
+                }
+            }
+
             public override string Name(T block) { return block.CustomName; }
 
             protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
@@ -357,6 +365,11 @@ namespace IngameScript {
             public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
             public string GetName(object block) => Name((T)block);
 
+            public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
+                if(propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
+                throw new Exception("Unsupported Property: " + property.propertyType);
+            }
+
             public abstract List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector);
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
             public abstract string Name(T block);
@@ -374,8 +387,8 @@ namespace IngameScript {
                 return new PropertySupplier(defaultPropertiesByPrimitive[type]);
             }
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
-                Primitive value = (property.direction.HasValue ? propertyHandlers[property.propertyType].GetDirection((T)block, property, property.direction.Value) :
-                propertyHandlers[property.propertyType].Get((T)block, property));
+                Primitive value = (property.direction.HasValue ? GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :
+                GetPropertyHandler(property).Get((T)block, property));
                 if (property.propertyValue != null && !CastBoolean(property.propertyValue.GetValue()).GetTypedValue()) value = value.Not();
                 return value;
             }
@@ -385,14 +398,14 @@ namespace IngameScript {
                     Primitive value = property.propertyValue.GetValue();
                     if(property.direction != null) {
                         Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value + " in " + property.direction + " direction");
-                        propertyHandlers[property.propertyType].SetDirection((T)block, property, property.direction.Value, value);
+                        GetPropertyHandler(property).SetDirection((T)block, property, property.direction.Value, value);
                     } else {
                         Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value);
-                        propertyHandlers[property.propertyType].Set((T)block, property, value);
+                        GetPropertyHandler(property).Set((T)block, property, value);
                     }
                 } else {
                     Debug("Moving " + GetName(block) + " " + property.propertyType + " in " + property.direction + " direction");
-                    propertyHandlers[property.propertyType].Move((T)block, property, property.direction.Value);
+                    GetPropertyHandler(property).Move((T)block, property, property.direction.Value);
                 }
             }
 
@@ -400,16 +413,16 @@ namespace IngameScript {
                 Primitive value = property.propertyValue.GetValue();
                 if(property.direction != null) {
                     Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value + " in " + property.direction + " direction");
-                    propertyHandlers[property.propertyType].IncrementDirection((T)block, property, property.direction.Value, value);
+                    GetPropertyHandler(property).IncrementDirection((T)block, property, property.direction.Value, value);
                 } else {
                     Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value);
-                    propertyHandlers[property.propertyType].Increment((T)block, property, value);
+                    GetPropertyHandler(property).Increment((T)block, property, value);
                 }
             }
 
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) {
                 Debug("Reversing " + GetName(block) + " " + property.propertyType);
-                propertyHandlers[property.propertyType].Reverse((T)block, property);
+                GetPropertyHandler(property).Reverse((T)block, property);
             }
 
             protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get) {

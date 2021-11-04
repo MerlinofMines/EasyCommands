@@ -4,6 +4,7 @@ using IngameScript;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
+using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -55,6 +56,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("My Value: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetValueofDynamicTerminalBlockProperty() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + ""test wheel"" ""Speed Limit"" property")) {
+                var mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                MockGetProperty(mockWheel, "Speed Limit", 50f);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: 50", test.Logger[0]);
             }
         }
 
