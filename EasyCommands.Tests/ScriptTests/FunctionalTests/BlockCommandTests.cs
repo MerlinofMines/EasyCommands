@@ -5,11 +5,11 @@ using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
 using VRage;
 using VRageMath;
+using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class BlockCommandTests {
-
         [TestMethod]
         public void ReverseWithProperty() {
             using (ScriptTest test = new ScriptTest(@"reverse the ""test piston"" velocity")) {
@@ -331,6 +331,45 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockBomb.Verify(b => b.Detonate());
+            }
+        }
+
+        [TestMethod]
+        public void SetDynamicProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" ""range"" property to 200")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 200);
+            }
+        }
+
+        //Under the hood, "stockpile" actually means to set supply to false.  This test confirms that we properly
+        //negate the value to set based on this fact.
+        [TestMethod]
+        public void SetDynamicPropertyWithImplicitNegation() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test tank"" ""stockpile"" property to true")) {
+                Mock<IMyGasTank> mockTank = new Mock<IMyGasTank>();
+                test.MockBlocksOfType("test tank", mockTank);
+
+                test.RunUntilDone();
+
+                mockTank.VerifySet(b => b.Stockpile = true);
+            }
+        }
+
+        [TestMethod]
+        public void SetDynamicTerminalBlockProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" ""Speed Limit"" property to 50")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                var mockProperty = MockProperty<IMyMotorSuspension, float>(mockWheel, "Speed Limit");
+
+                test.RunUntilDone();
+
+                mockProperty.Verify(p => p.SetValue(mockWheel.Object, 50));
             }
         }
     }

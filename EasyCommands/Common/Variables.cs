@@ -148,13 +148,11 @@ namespace IngameScript {
             public PropertyAggregate aggregationType;
             public EntityProvider entityProvider;
             public PropertySupplier property;
-            public Direction? direction;
 
-            public AggregatePropertyVariable(PropertyAggregate aggregationType, EntityProvider entityProvider, PropertySupplier property, Direction? direction) {
+            public AggregatePropertyVariable(PropertyAggregate aggregationType, EntityProvider entityProvider, PropertySupplier property) {
                 this.aggregationType = aggregationType;
                 this.entityProvider = entityProvider;
                 this.property = property;
-                this.direction = direction;
             }
 
             public Primitive GetValue() {
@@ -166,11 +164,11 @@ namespace IngameScript {
 
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
 
-                PropertySupplier p = property ?? handler.GetDefaultProperty(Return.NUMERIC);
+                PropertySupplier p = property.Resolve(handler, Return.NUMERIC);
 
-                List<Primitive> propertyValues = blocks.Select(b => {
-                    return direction.HasValue ? handler.GetPropertyValue(b, p, direction.Value) : handler.GetPropertyValue(b, p);
-                }).ToList();
+                List<Primitive> propertyValues = blocks
+                    .Select(b => handler.GetPropertyValue(b, p))
+                    .ToList();
 
                 return Aggregate(propertyValues, aggregationType);
             }

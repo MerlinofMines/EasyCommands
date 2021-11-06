@@ -84,27 +84,24 @@ namespace IngameScript {
 
         public class BlockPropertyCondition : BlockCondition {
             public PropertySupplier property;
-            public Direction? direction;
             public PrimitiveComparator comparator;
             public Variable comparisonValue;
 
-            public BlockPropertyCondition(PropertySupplier property, Direction? direction, PrimitiveComparator comparator, Variable comparisonValue) {
+            public BlockPropertyCondition(PropertySupplier property, PrimitiveComparator comparator, Variable comparisonValue) {
                 this.property = property;
                 this.comparator = comparator;
                 this.comparisonValue = comparisonValue;
-                this.direction = direction;
             }
 
             public bool evaluate(Object block, Block blockType) {
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
                 Primitive value = comparisonValue.GetValue();
-                PropertySupplier prop = property ?? handler.GetDefaultProperty(value.GetPrimitiveType());
-                if (direction.HasValue) return comparator.compare(handler.GetPropertyValue(block, prop, direction.Value), value);
-                else return comparator.compare(handler.GetPropertyValue(block, prop), value);
+                PropertySupplier prop = property.Resolve(handler, value.GetPrimitiveType());
+                return comparator.compare(handler.GetPropertyValue(block, prop), value);
             }
 
             public override String ToString() {
-                return property + " " + comparator + " " + (direction.HasValue ? direction + " " : "") + comparisonValue.GetValue();
+                return property + " " + comparator + " " + comparisonValue.GetValue();
             }
         }
 

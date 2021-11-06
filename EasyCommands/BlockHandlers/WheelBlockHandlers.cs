@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddNumericHandler(Property.ANGLE, b => (float)(-b.SteerAngle*180/Math.PI), (b, v) => { b.SteeringOverride = (float)(v * Math.PI / 144); b.MaxSteerAngle = 1; }, .1f);
                 AddBooleanHandler(Property.LOCKED, (b) => b.Brake, (b, v) => b.Brake = v);
                 //TODO: Add Max Steering Angle Support by upgrading this property handler to support directions
-                AddPropertyHandler(Property.RANGE, new PropertyValueNumericPropertyHandler<IMyMotorSuspension>("Speed Limit", 5));
+                AddPropertyHandler(Property.RANGE, new TerminalBlockPropertyHandler<IMyMotorSuspension>("Speed Limit", ResolvePrimitive(5)));
                 AddNumericHandler(Property.VELOCITY, b => b.PropulsionOverride, (b,v) => b.PropulsionOverride = v, 0.1f);
                 AddNumericHandler(Property.STRENGTH, b => b.Strength, (b, v) => b.Strength = v, 10);
                 AddNumericHandler(Property.POWER, b => b.Power, (b, v) => b.Power = v, 10);

@@ -26,22 +26,22 @@ namespace IngameScript {
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
                 AddPropertyHandler(ValueProperty.CREATE, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => new BooleanPrimitive(GetProducingAmount(b, p) > 0),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p.valueAttribute.GetValue(), v); }
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
                 }) ;
                 AddPropertyHandler(ValueProperty.DESTROY, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => new BooleanPrimitive(GetProducingAmount(b, p) > 0),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p.valueAttribute.GetValue(), v); }
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
                 });
 
                 AddPropertyHandler(ValueProperty.AMOUNT, new PropertyHandler<IMyAssembler>() {
                     Get = (b, v) => new NumberPrimitive(GetProducingAmount(b, v)),
-                    Set = (b, p, v) => AddQueueItem(b, p.valueAttribute.GetValue(), v)
+                    Set = (b, p, v) => AddQueueItem(b, p.attributeValue.GetValue(), v)
                 });
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
 
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
-                var definitions = PROGRAM.GetItemBluePrints(CastString(p.valueAttribute.GetValue()).GetTypedValue());
+                var definitions = PROGRAM.GetItemBluePrints(CastString(p.attributeValue.GetValue()).GetTypedValue());
                 var currentItems = new List<MyProductionItem>();
                 b.GetQueue(currentItems);
                 MyFixedPoint value = currentItems

@@ -19,23 +19,77 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public delegate String GetPropertyType();
-
         public class PropertySupplier {
-            public GetPropertyType propertyType;
-            public Variable valueAttribute;
+            public String propertyType;
+            public Variable attributeValue, propertyValue;
+            public Direction? direction;
 
-            public PropertySupplier(GetPropertyType property, Variable value = null) {
-                propertyType = property;
-                valueAttribute = value;
+            public PropertySupplier() { }
+
+            public PropertySupplier(Property property) {
+                propertyType = property + "";
             }
 
-            public PropertySupplier(Property property, Variable value = null) {
-                propertyType = () => property + "";
-                valueAttribute = value;
+            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) {
+                if (propertyType == ValueProperty.PROPERTY + "") return ResolveDynamicProperty();
+                return WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
             }
 
-            public override string ToString() => propertyType();
+            public PropertySupplier ResolveDynamicProperty() {
+                PropertySupplier supplier = WithAttributeValue(null);
+                var propertyString = CastString(attributeValue.GetValue()).GetTypedValue();
+
+                if(PROGRAM.propertyWords.ContainsKey(propertyString)) {
+                    var commandParameters = PROGRAM.propertyWords[propertyString];
+                    PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
+                    BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
+                    if (property != null) supplier = WithPropertyType(property.value.propertyType);
+                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.WithPropertyValue(new UniOperandVariable(UniOperand.NOT, propertyValue ?? GetStaticVariable(true)));
+                } else {
+                    supplier = WithPropertyType(propertyString);
+                }
+
+                return supplier;
+            }
+
+            PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {
+                if (propertyType != null) return this;
+                if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
+                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().GetPrimitiveType());
+                if (defaultType.HasValue) return blockHandler.GetDefaultProperty(defaultType.Value);
+                return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
+            }
+
+            public PropertySupplier WithDirection(Direction? direction) {
+                PropertySupplier copy = Copy();
+                copy.direction = direction;
+                return copy;
+            }
+
+            public PropertySupplier WithPropertyType(String propertyType) {
+                PropertySupplier copy = Copy();
+                copy.propertyType = propertyType;
+                return copy;
+            }
+
+            public PropertySupplier WithPropertyValue(Variable propertyValue) {
+                PropertySupplier copy = Copy();
+                copy.propertyValue = propertyValue;
+                return copy;
+            }
+
+            public PropertySupplier WithAttributeValue(Variable attributeValue) {
+                PropertySupplier copy = Copy();
+                copy.attributeValue = attributeValue;
+                return copy;
+            }
+
+            PropertySupplier Copy() => new PropertySupplier {
+                    propertyType = propertyType, 
+                    attributeValue = attributeValue,
+                    propertyValue = propertyValue,
+                    direction = direction
+                };
         }
     }
 }

@@ -23,7 +23,13 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         public static void MockPropertyValue<U>(Mock<ITerminalProperty<U>> property, U value) {
-            if (!(value is float || value is bool || value is string || value is Color)) throw new Exception("Unsupported Property Value Type: " + typeof(U));
+            if (value is float) {
+                property.Setup(b => b.TypeName).Returns("float");
+            } else if (value is bool) {
+                property.Setup(b => b.TypeName).Returns("bool");
+            } else if (value is Color) {
+                property.Setup(b => b.TypeName).Returns("color");
+            } else throw new Exception("Unsupported Property Value Type: " + typeof(U));
             property.Setup(b => b.GetValue(It.IsAny<IMyCubeBlock>())).Returns(value);
         }
 

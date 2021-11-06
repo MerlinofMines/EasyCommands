@@ -83,7 +83,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
             Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
             BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType());
+            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
@@ -107,7 +107,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(AggregationMode.ALL, condition.aggregationMode);
             Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
             BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType());
+            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
