@@ -21,8 +21,8 @@ namespace IngameScript {
     partial class Program {
         public class ThrusterBlockHandler : FunctionalBlockHandler<IMyThrust> {
             public ThrusterBlockHandler() {
-                AddPropertyHandler(Property.RANGE, new SimpleNumericPropertyHandler<IMyThrust>((b) => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000));
-                AddPropertyHandler(Property.RATIO, new SimpleNumericPropertyHandler<IMyThrust>((b) => b.ThrustOverride/b.MaxThrust, (b, v) => b.ThrustOverride = v*b.MaxThrust, 0.1f));
+                AddNumericHandler(Property.RANGE, b => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000);
+                AddNumericHandler(Property.RATIO, b => b.ThrustOverride/b.MaxThrust, (b, v) => b.ThrustOverride = v*b.MaxThrust, 0.1f);
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
                 defaultDirection = Direction.UP;
                 //TODO: Better Properties

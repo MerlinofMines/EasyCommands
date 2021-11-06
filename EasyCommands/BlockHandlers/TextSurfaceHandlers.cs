@@ -23,7 +23,7 @@ namespace IngameScript {
             public TextSurfaceHandler() {
                 AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
                 AddColorHandler(Property.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
-                AddPropertyHandler(Property.FONT_SIZE, new SimpleNumericPropertyHandler<IMyTextSurface>((b) => b.FontSize, (b, v) => b.FontSize = v, 1));
+                AddNumericHandler(Property.FONT_SIZE, b => b.FontSize, (b, v) => b.FontSize = v, 1);
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByDirection[Direction.UP] = Property.FONT_SIZE;

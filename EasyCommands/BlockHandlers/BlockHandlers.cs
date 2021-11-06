@@ -88,20 +88,12 @@ namespace IngameScript {
         public delegate void ReversePropertyValue<T>(T block, PropertySupplier property);
 
         //Getters
-        public delegate bool GetBooleanProperty<T>(T block);
-        public delegate string GetStringProperty<T>(T block);
-        public delegate float GetNumericProperty<T>(T block);
+        public delegate U GetTypedProperty<T,U>(T block);
         public delegate float GetNumericPropertyDirection<T>(T block, Direction direction);
-        public delegate Vector3D GetVectorProperty<T>(T block);
-        public delegate Color GetColorProperty<T>(T block);
 
         //Setters
-        public delegate void SetBooleanProperty<T>(T block, bool value);
-        public delegate void SetStringProperty<T>(T block, String value);
-        public delegate void SetNumericProperty<T>(T block, float value);
+        public delegate void SetTypedProperty<T,U>(T block, U value);
         public delegate void SetNumericPropertyDirection<T>(T block, Direction direction, float value);
-        public delegate void SetVectorProperty<T>(T block, Vector3D value);
-        public delegate void SetColorProperty<T>(T block, Color value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
@@ -127,11 +119,9 @@ namespace IngameScript {
             private Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
         }
 
-        public class SimpleNumericPropertyHandler<T> : SimplePropertyHandler<T> {
-            public SimpleNumericPropertyHandler(GetNumericProperty<T> GetValue, SetNumericProperty<T> SetValue, float delta)
-                : base((b, p) => new NumberPrimitive(GetValue(b)), (b, p, v)=> {
-                    SetValue(b, CastNumber(v).GetTypedValue());
-                }, new NumberPrimitive(delta)) {
+        public class SimpleTypedHandler<T, U> : SimplePropertyHandler<T> {
+            public SimpleTypedHandler(GetTypedProperty<T, U> GetValue, SetTypedProperty<T, U> SetValue, Func<Primitive, SimplePrimitive<U>> Cast, U incrementValue)
+                : base((b, p) => ResolvePrimitive(GetValue(b)), (b, p, v) => SetValue(b, Cast(v).GetTypedValue()), ResolvePrimitive(incrementValue)) {
             }
         }
 
@@ -143,39 +133,6 @@ namespace IngameScript {
                 SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v).GetTypedValue());
                 IncrementDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(v));
                 Increment = (b, p, v) => IncrementDirection(b, p, defaultDirection, v);
-            }
-        }
-
-
-        public class SimpleStringPropertyHandler<T> : SimplePropertyHandler<T> {
-            public SimpleStringPropertyHandler(GetStringProperty<T> GetValue, SetStringProperty<T> SetValue)
-                : base((b, p) => new StringPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b,CastString(v).GetTypedValue());
-                }, new StringPrimitive("")) {
-            }
-        }
-
-        public class SimpleBooleanPropertyHandler<T> : SimplePropertyHandler<T> {
-            public SimpleBooleanPropertyHandler(GetBooleanProperty<T> GetValue, SetBooleanProperty<T> SetValue)
-                : base((b, p) => new BooleanPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastBoolean(v).GetTypedValue());
-                }, new BooleanPrimitive(true)) {
-            }
-        }
-
-        public class SimpleVectorPropertyHandler<T> : SimplePropertyHandler<T> {
-            public SimpleVectorPropertyHandler(GetVectorProperty<T> GetValue, SetVectorProperty<T> SetValue)
-                : base((b, p) => new VectorPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastVector(v).GetTypedValue());
-                }, new VectorPrimitive(Vector3D.Zero)) {
-            }
-        }
-
-        public class SimpleColorPropertyHandler<T> : SimplePropertyHandler<T> {
-            public SimpleColorPropertyHandler(GetColorProperty<T> GetValue, SetColorProperty<T> SetValue)
-                : base((b, p) => new ColorPrimitive(GetValue(b)), (b, p, v) => {
-                    SetValue(b, CastColor(v).GetTypedValue());
-                }, new ColorPrimitive(new Color(10,10,10))) {
             }
         }
 
@@ -303,7 +260,7 @@ namespace IngameScript {
 
         public class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockHandler() {
-                AddPropertyHandler(Property.POSITION, new SimpleVectorPropertyHandler<T>((block) => block.GetPosition(), (block, position) => { }));
+                AddVectorHandler(Property.POSITION, block => block.GetPosition());
                 AddPropertyHandler(Property.DIRECTION, new DirectionVectorPropertyHandler<T>());
                 AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
@@ -425,44 +382,48 @@ namespace IngameScript {
                 GetPropertyHandler(property).Reverse((T)block, property);
             }
 
-            protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get) {
+            public void AddPropertyHandler(Property property, PropertyHandler<T> handler) {
+                propertyHandlers[property + ""] = handler;
+            }
+
+            public void AddPropertyHandler(ValueProperty property, PropertyHandler<T> handler) {
+                propertyHandlers[property + ""] = handler;
+            }
+
+            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get) {
                 AddBooleanHandler(property, Get, (b, v) => { });
             }
 
-            protected void AddBooleanHandler(Property property, GetBooleanProperty<T> Get, SetBooleanProperty<T> Set) {
-                propertyHandlers[property + ""] = new SimpleBooleanPropertyHandler<T>(Get, Set);
+            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set) {
+                AddTypedPropertyHandler(property, Get, Set, CastBoolean, true);
             }
 
-            protected void AddPropertyHandler(Property property, PropertyHandler<T> handler) {
-                propertyHandlers[property + ""] = handler;
+            public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set) {
+                AddTypedPropertyHandler(property, Get, Set, CastString, "");
             }
 
-            protected void AddPropertyHandler(ValueProperty property, PropertyHandler<T> handler) {
-                propertyHandlers[property + ""] = handler;
+            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get) {
+                AddNumericHandler(property, Get, (b, v) => { }, 0);
             }
 
-            protected void AddStringHandler(Property property, GetStringProperty<T> Get, SetStringProperty<T> Set) {
-                propertyHandlers[property + ""] = new SimpleStringPropertyHandler<T>(Get, Set);
+            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set, float delta) {
+                AddTypedPropertyHandler(property, Get, Set, CastNumber, delta);
             }
 
-            protected void AddNumericHandler(Property property, GetNumericProperty<T> Get) {
-                propertyHandlers[property + ""] = new SimpleNumericPropertyHandler<T>(Get, (b, v) => { }, 0);
+            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get) {
+                AddVectorHandler(property, Get, (b, v) => { });
             }
 
-            protected void AddNumericHandler(Property property, GetNumericProperty<T> Get, SetNumericProperty<T> Set, float delta) {
-                propertyHandlers[property + ""] = new SimpleNumericPropertyHandler<T>(Get, Set, delta);
+            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set) {
+                AddTypedPropertyHandler(property, Get, Set, CastVector, Vector3D.Zero);
             }
 
-            protected void AddVectorHandler(Property property, GetVectorProperty<T> Get) {
-                propertyHandlers[property + ""] = new SimpleVectorPropertyHandler<T>(Get, (b,v) => { });
+            public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) {
+                AddTypedPropertyHandler(property, Get, Set, CastColor, new Color(10, 10, 10));
             }
 
-            protected void AddVectorHandler(Property property, GetVectorProperty<T> Get, SetVectorProperty<T> Set) {
-                propertyHandlers[property + ""] = new SimpleVectorPropertyHandler<T>(Get, Set);
-            }
-
-            protected void AddColorHandler(Property property, GetColorProperty<T> Get, SetColorProperty<T> Set) {
-                propertyHandlers[property + ""] = new SimpleColorPropertyHandler<T>(Get, Set);
+            void AddTypedPropertyHandler<U>(Property property, GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, SimplePrimitive<U>> Cast, U delta) {
+                AddPropertyHandler(property, new SimpleTypedHandler<T, U>(Get, Set, Cast, delta));
             }
         }
 

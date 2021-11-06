@@ -21,9 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class SoundBlockHandler : FunctionalBlockHandler<IMySoundBlock> {
             public SoundBlockHandler() {
-                AddPropertyHandler(Property.VOLUME, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.Volume, (b, v) => b.Volume = v,1));
-                AddPropertyHandler(Property.RANGE, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.Range, (b, v) => b.Range = v,50));
-                AddPropertyHandler(Property.LEVEL, new SimpleNumericPropertyHandler<IMySoundBlock>((b) => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60));
+                AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v,1);
+                AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v,50);
+                AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60);
                 AddStringHandler(Property.SONG, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
                 AddBooleanHandler(Property.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); Debug("P is: " + p); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
                 defaultPropertiesByPrimitive[Return.STRING] = Property.SONG;

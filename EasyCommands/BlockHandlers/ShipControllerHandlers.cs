@@ -22,7 +22,7 @@ namespace IngameScript {
         public class RemoteControlBlockHandler : ShipControllerHandler<IMyRemoteControl> {
             public RemoteControlBlockHandler() : base() {
                 AddPropertyHandler(Property.VELOCITY, new RemoteControlVelocityHandler());
-                AddPropertyHandler(Property.RANGE, new SimpleNumericPropertyHandler<IMyRemoteControl>((b) => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10));
+                AddNumericHandler(Property.RANGE, b => (float)b.GetShipSpeed(), (b, v) => b.SpeedLimit = v, 10);
                 AddBooleanHandler(Property.CONNECTED, b => false, (b,v) => b.SetDockingMode(v)); //TODO: Get Docking Mode?
                 AddBooleanHandler(Property.TRIGGER, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
                 AddBooleanHandler(Property.AUTO, (b) => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));

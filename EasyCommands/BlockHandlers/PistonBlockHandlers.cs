@@ -31,8 +31,8 @@ namespace IngameScript {
             }
         }
 
-        public class PistonHeightHandler : SimpleNumericPropertyHandler<IMyPistonBase> {
-            public PistonHeightHandler() : base((b)=>b.CurrentPosition, ExtendPistonToValue, 1) {
+        public class PistonHeightHandler : SimpleTypedHandler<IMyPistonBase, float> {
+            public PistonHeightHandler() : base(b=>b.CurrentPosition, ExtendPistonToValue, CastNumber, 1) {
                 Move = (b, p, d) => {
                     if (d == Direction.UP) b.Extend();
                     if (d == Direction.DOWN) b.Retract();
