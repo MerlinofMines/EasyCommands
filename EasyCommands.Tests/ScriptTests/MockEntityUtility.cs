@@ -60,6 +60,19 @@ namespace EasyCommands.Tests.ScriptTests {
             return new MyDetectedEntityInfo();
         }
 
+        public static void MockOrientation<T>(Mock<T> mockBlock, Vector3 forward, Vector3 up) where T : class, IMyTerminalBlock {
+            Mock<IMyCubeGrid> mockGrid = new Mock<IMyCubeGrid>();
+            mockGrid.Setup(g => g.GridIntegerToWorld(new Vector3I(0, 0, 0))).Returns(new Vector3D(0, 0, 0));
+            mockGrid.Setup(g => g.GridIntegerToWorld(new Vector3I(0, 1, 0))).Returns(new Vector3D(0, 1, 0));
+            mockGrid.Setup(g => g.GridIntegerToWorld(new Vector3I(0, 0, 1))).Returns(new Vector3D(0, 0, 1));
+            mockGrid.Setup(g => g.GridSize).Returns(1f);
+            mockBlock.Setup(g => g.CubeGrid).Returns(mockGrid.Object);
+            mockBlock.Setup(g => g.Min).Returns(Vector3I.Zero);
+            mockBlock.Setup(g => g.Max).Returns(Vector3I.Zero);
+            var matrix = Matrix.CreateFromDir(forward, up);
+            mockBlock.Setup(g => g.Orientation).Returns(new MyBlockOrientation(ref matrix));
+        }
+
         public static void MockTextSurfaces<T>(Mock<T> surfaceProvider, params Mock<IMyTextSurface>[] mockSurfaces) where T : class, IMyTextSurfaceProvider {
             surfaceProvider.Setup(x => x.SurfaceCount).Returns(mockSurfaces.Length);
             for(int i = 0; i < mockSurfaces.Length; i++) {

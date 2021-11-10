@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddBooleanHandler(Property.AUTO, (b) => b.GetValueBool("AutoDeploy"), (b, v) => b.SetValueBool("AutoDeploy", v));
                 AddBooleanHandler(Property.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
                 AddNumericHandler(Property.RATIO, (b) => 1 - b.OpenRatio);
-                AddPropertyHandler(Property.LEVEL, new TerminalBlockPropertyHandler<IMyParachute>("AutoDeployHeight", ResolvePrimitive(500)));
+                AddPropertyHandler(Property.LEVEL, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.OPEN;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);

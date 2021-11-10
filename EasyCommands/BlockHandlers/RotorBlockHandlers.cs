@@ -25,7 +25,9 @@ namespace IngameScript {
             Func<IMyMotorStator, bool> blockFilter;
             public RotorBlockHandler(Func<IMyMotorStator, bool> filter) {
                 AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
-                AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyMotorStator>(GetLimit, SetLimit, Direction.UP));
+                AddDirectionHandlers(Property.RANGE, Direction.UP,
+                    DirectionalHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
+                    DirectionalHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg= v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
                 AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
                 AddNumericHandler(Property.LEVEL, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
@@ -65,38 +67,6 @@ namespace IngameScript {
                     if (d == Direction.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
                 };
                 Reverse = (b, p) => b.TargetVelocityRPM *= -1;
-            }
-        }
-
-        static float GetLimit(IMyMotorStator rotor, Direction direction) {
-            switch (direction) {
-                case Direction.UP:
-                case Direction.CLOCKWISE:
-                case Direction.FORWARD:
-                    return rotor.UpperLimitDeg;
-                case Direction.DOWN:
-                case Direction.COUNTERCLOCKWISE:
-                case Direction.BACKWARD:
-                    return rotor.LowerLimitDeg;
-                default:
-                    throw new Exception("Unsupported direction: " + direction);
-            }
-        }
-
-        static void SetLimit(IMyMotorStator rotor, Direction direction, float value) {
-            switch (direction) {
-                case Direction.UP:
-                case Direction.CLOCKWISE:
-                case Direction.FORWARD:
-                    rotor.UpperLimitDeg = value;
-                    break;
-                case Direction.DOWN:
-                case Direction.COUNTERCLOCKWISE:
-                case Direction.BACKWARD:
-                    rotor.LowerLimitDeg = value;
-                    break;
-                default:
-                    throw new Exception("Unsupported direction: " + direction);
             }
         }
 

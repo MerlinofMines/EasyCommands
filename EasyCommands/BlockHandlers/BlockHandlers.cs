@@ -89,11 +89,11 @@ namespace IngameScript {
 
         //Getters
         public delegate U GetTypedProperty<T,U>(T block);
-        public delegate float GetNumericPropertyDirection<T>(T block, Direction direction);
+        public delegate U GetTypedPropertyDirection<T,U>(T block, Direction direction);
 
         //Setters
         public delegate void SetTypedProperty<T,U>(T block, U value);
-        public delegate void SetNumericPropertyDirection<T>(T block, Direction direction, float value);
+        public delegate void SetTypedPropertyDirection<T,U>(T block, Direction direction, U value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
@@ -107,16 +107,18 @@ namespace IngameScript {
         }
 
         public class SimplePropertyHandler<T> : PropertyHandler<T> {
-            public SimplePropertyHandler(GetProperty<T> Get, SetProperty<T> Set, Primitive delta) {
-                this.Get = Get;
-                this.Set = Set;
+            public SimplePropertyHandler(GetProperty<T> Getter, SetProperty<T> Setter, Primitive delta) {
+                Get = Getter;
+                Set = Setter;
+                GetDirection = (b, p, d) => Get(b, p);
                 SetDirection = (b, p, d, v) => Set(b, p, v);
                 Increment = (b, p, v) => Set(b, p, Get(b, p).Plus(v));
                 IncrementDirection = (b, p, d, v) => Increment(b, p, Multiply(v, d));
-                Move = (b, p, d) => Set(b, p, Get(b, p).Plus(Multiply(delta,d)));
+                Move = (b, p, d) => Set(b, p, Get(b, p).Plus(Multiply(delta, d)));
                 Reverse = (b, p) => Set(b, p, Get(b, p).Not());
             }
-            private Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
+
+            Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
         }
 
         public class SimpleTypedHandler<T, U> : SimplePropertyHandler<T> {
@@ -125,89 +127,40 @@ namespace IngameScript {
             }
         }
 
-        public class SimpleNumericDirectionPropertyHandler<T> : PropertyHandler<T> {
-            public SimpleNumericDirectionPropertyHandler(GetNumericPropertyDirection<T> GetValue, SetNumericPropertyDirection<T> SetValue, Direction defaultDirection) {
+        public class SimpleDirectionalTypedHandler<T> : PropertyHandler<T> {
+            Dictionary<Direction, PropertyHandler<T>> directionalHandlers;
+
+            public SimpleDirectionalTypedHandler(Dictionary<Direction, PropertyHandler<T>> handlers, Direction defaultDirection) {
+                directionalHandlers = handlers;
+                GetDirection = (b, p, d) => GetHandler(d, defaultDirection).GetDirection(b, p, d);
+                SetDirection = (b, p, d, v) => GetHandler(d, defaultDirection).SetDirection(b, p, d, v);
                 Get = (b, p) => GetDirection(b, p, defaultDirection);
-                GetDirection = (b, p, d) => ResolvePrimitive(GetValue(b,d));
                 Set = (b, p, v) => SetDirection(b, p, defaultDirection, v);
-                SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v));
-                IncrementDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(v));
+                IncrementDirection = (b, p, d, v) => GetHandler(d, defaultDirection).IncrementDirection(b, p, d, v);
                 Increment = (b, p, v) => IncrementDirection(b, p, defaultDirection, v);
             }
+
+            PropertyHandler<T> GetHandler(Direction d, Direction defaultDirection) => directionalHandlers.ContainsKey(d) ? directionalHandlers[d] : directionalHandlers[defaultDirection];
         }
 
         public class TerminalBlockPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : base((b,p) => GetPrimitive(b, propertyId), (b,p,v) => SetPrimitiveValue(b,propertyId,v), delta) { }
-        }
 
-        public static Primitive GetPrimitive<T>(T block, String propertyId) where T : class, IMyTerminalBlock {
-            var property = block.GetProperty(propertyId);
-            if (property == null) throw new Exception(typeof(T) + block.BlockDefinition.SubtypeName + " does not have property: " + propertyId);
-            object value;
-            if (property.TypeName == "bool") value = block.GetValueBool(propertyId);
-            else if (property.TypeName == "color") value = block.GetValueColor(propertyId);
-            else value = block.GetValueFloat(propertyId);
-            return ResolvePrimitive(value);
-        }
-
-        public static void SetPrimitiveValue(IMyTerminalBlock block, String propertyId, Primitive value) {
-            Return type = value.returnType;
-            if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value));
-            else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value));
-            else block.SetValueFloat(propertyId, CastNumber(value));
-        }
-
-        public class DirectionVectorPropertyHandler<T> : PropertyHandler<T> where T : class, IMyTerminalBlock {
-            public DirectionVectorPropertyHandler() {
-                Get = (b, p) => GetDirection(b, p, Direction.FORWARD);
-                GetDirection = (b, p, d) => {
-                    Vector3D vector;
-                    MatrixD b2w = GetBlock2WorldTransform(b);
-                    switch (d) {
-                        case Direction.FORWARD:
-                            vector = b2w.Forward;
-                            break;
-                        case Direction.BACKWARD:
-                            vector = b2w.Backward;
-                            break;
-                        case Direction.UP:
-                            vector = b2w.Up;
-                            break;
-                        case Direction.DOWN:
-                            vector = b2w.Down;
-                            break;
-                        case Direction.LEFT:
-                            vector = b2w.Left;
-                            break;
-                        case Direction.RIGHT:
-                            vector = b2w.Right;
-                            break;
-                        default: throw new Exception("Cannot get direction value for direction: " + d);
-                    }
-                    return ResolvePrimitive(vector/vector.Length());//Return normalized vector
-                };
-                Set = (b, p, v) => { };
-                SetDirection = (b, p, d, v) => { };
-                Increment = (b, p, v) => { };
-                IncrementDirection = (b, p, d, v) => { };
-                Move = (b, p, d) => { };
-                Reverse = (b, p) => { };
+            static Primitive GetPrimitive(T block, String propertyId) {
+                var property = block.GetProperty(propertyId);
+                if (property == null) throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + propertyId);
+                object value;
+                if (property.TypeName == "bool") value = block.GetValueBool(propertyId);
+                else if (property.TypeName == "color") value = block.GetValueColor(propertyId);
+                else value = block.GetValueFloat(propertyId);
+                return ResolvePrimitive(value);
             }
 
-             //Taken from https://forum.keenswh.com/threads/how-do-i-get-the-world-position-and-rotation-of-a-ship.7363867/
-            MatrixD GetGrid2WorldTransform(IMyCubeGrid grid) {
-                Vector3D origin = grid.GridIntegerToWorld(new Vector3I(0, 0, 0));
-                Vector3D plusY = grid.GridIntegerToWorld(new Vector3I(0, 1, 0)) - origin;
-                Vector3D plusZ = grid.GridIntegerToWorld(new Vector3I(0, 0, 1)) - origin;
-                return MatrixD.CreateScale(grid.GridSize) * MatrixD.CreateWorld(origin, -plusZ, plusY);
-            }
-
-            MatrixD GetBlock2WorldTransform(IMyCubeBlock blk) {
-                Matrix blk2grid;
-                blk.Orientation.GetMatrix(out blk2grid);
-                return blk2grid *
-                       MatrixD.CreateTranslation(new Vector3D(blk.Min + blk.Max) / 2.0) *
-                       GetGrid2WorldTransform(blk.CubeGrid);
+            static void SetPrimitiveValue(T block, String propertyId, Primitive value) {
+                Return type = value.returnType;
+                if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value));
+                else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value));
+                else block.SetValueFloat(propertyId, CastNumber(value));
             }
         }
 
@@ -261,9 +214,16 @@ namespace IngameScript {
         public class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockHandler() {
                 AddVectorHandler(Property.POSITION, block => block.GetPosition());
-                AddPropertyHandler(Property.DIRECTION, new DirectionVectorPropertyHandler<T>());
                 AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
+                AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Up)), Direction.UP),
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Down)), Direction.DOWN),
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Left)), Direction.LEFT),
+                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Right)), Direction.RIGHT));
+
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
             }
 
@@ -287,29 +247,53 @@ namespace IngameScript {
                 try {
                     return base.GetPropertyHandler(property);
                 } catch (Exception) {
-                    return new TerminalBlockPropertyHandler<T>(property.propertyType, ResolvePrimitive(1f));
+                    return TerminalBlockPropertyHandler(property.propertyType, 1);
                 }
             }
 
             public override string Name(T block) { return block.CustomName; }
 
-            protected String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
-            protected void SetCustomProperty(T block, String key, String value) {
+            public String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
+
+            public void SetCustomProperty(T block, String key, String value) {
                 Dictionary<String, String> d = GetCustomData(block);
                 d[key] = value;SaveCustomData(block, d);
             }
-            protected void DeleteCustomProperty(T block, String key) {
+
+            public void DeleteCustomProperty(T block, String key) {
                 Dictionary<String, String> d = GetCustomData(block);
                 if(d.ContainsKey(key)) d.Remove(key);
                 SaveCustomData(block, d);
             }
-            protected void SaveCustomData(T block, Dictionary<String, String> data) {
+
+            public void SaveCustomData(T block, Dictionary<String, String> data) {
                 block.CustomData = String.Join("\n",data.Keys.Select(k => k + "=" + data[k]).ToList());
             }
-            protected Dictionary<String, String> GetCustomData(T block) {
+
+            public Dictionary<String, String> GetCustomData(T block) {
                 List<String> keys = block.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 return keys.ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
             }
+
+            public PropertyHandler<T> TerminalBlockPropertyHandler(String propertyId, object delta) => new TerminalBlockPropertyHandler<T>(propertyId, ResolvePrimitive(delta));
+
+            //Taken from https://forum.keenswh.com/threads/how-do-i-get-the-world-position-and-rotation-of-a-ship.7363867/
+            MatrixD GetBlock2WorldTransform(IMyCubeBlock blk) {
+                Matrix blk2grid;
+                blk.Orientation.GetMatrix(out blk2grid);
+                return blk2grid *
+                       MatrixD.CreateTranslation(new Vector3D(blk.Min + blk.Max) / 2.0) *
+                       GetGrid2WorldTransform(blk.CubeGrid);
+            }
+
+            MatrixD GetGrid2WorldTransform(IMyCubeGrid grid) {
+                Vector3D origin = grid.GridIntegerToWorld(new Vector3I(0, 0, 0));
+                Vector3D plusY = grid.GridIntegerToWorld(new Vector3I(0, 1, 0)) - origin;
+                Vector3D plusZ = grid.GridIntegerToWorld(new Vector3I(0, 0, 1)) - origin;
+                return MatrixD.CreateScale(grid.GridSize) * MatrixD.CreateWorld(origin, -plusZ, plusY);
+            }
+
+            Vector3D Normalize(Vector3D vector) => vector / vector.Length();
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
@@ -390,44 +374,52 @@ namespace IngameScript {
                 propertyHandlers[property + ""] = handler;
             }
 
-            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get) {
-                AddBooleanHandler(property, Get, (b, v) => { });
-            }
-
-            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set) {
+            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) {
                 AddPropertyHandler(property, BooleanHandler(Get, Set));
             }
 
-            public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set) {
+            public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) {
                 AddPropertyHandler(property, StringHandler(Get, Set));
             }
 
-            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get) {
-                AddNumericHandler(property, Get, (b, v) => { }, 0);
-            }
-
-            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set, float delta) {
+            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) {
                 AddPropertyHandler(property, NumericHandler(Get, Set, delta));
             }
 
-            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get) {
-                AddVectorHandler(property, Get, (b, v) => { });
-            }
-
-            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set) {
+            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set = null) {
                 AddPropertyHandler(property, VectorHandler(Get, Set));
             }
 
-            public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) {
+            public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) {
                 AddPropertyHandler(property, ColorHandler(Get, Set));
             }
 
-            public PropertyHandler<T> BooleanHandler(GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set) => TypedPropertyHandler(Get, Set, CastBoolean, true);
-            public PropertyHandler<T> StringHandler(GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set) => TypedPropertyHandler(Get, Set, CastString, "");
-            public PropertyHandler<T> NumericHandler(GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set, float delta) => TypedPropertyHandler(Get, Set, CastNumber, delta);
-            public PropertyHandler<T> VectorHandler(GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set) => TypedPropertyHandler(Get, Set, CastVector, Vector3D.Zero);
-            public PropertyHandler<T> ColorHandler(GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) => TypedPropertyHandler(Get, Set, CastColor, new Color(10, 10, 10));
-            PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set, Cast, delta);
+            public void AddDirectionHandlers(Property property, Direction defaultDirection, params DirectionHandler<T>[] handlers) {
+                AddPropertyHandler(property, DirectionalTypedHandler(defaultDirection, handlers));
+            }
+
+            public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params DirectionHandler<T>[] handlers) {
+                Dictionary<Direction, PropertyHandler<T>> directionHandlers = new Dictionary<Direction, PropertyHandler<T>>();
+                foreach (DirectionHandler<T> handler in handlers) foreach (Direction direction in handler.supportedDirections) directionHandlers.Add(direction, handler.handler);
+                return new SimpleDirectionalTypedHandler<T>(directionHandlers, defaultDirection);
+            }
+
+            public DirectionHandler<T> DirectionalHandler(PropertyHandler<T> h, params Direction[] directions) => new DirectionHandler<T> {
+                handler = h,
+                supportedDirections = directions
+            };
+
+            public PropertyHandler<T> BooleanHandler(GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) => TypedPropertyHandler(Get, Set, CastBoolean, true);
+            public PropertyHandler<T> StringHandler(GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) => TypedPropertyHandler(Get, Set, CastString, "");
+            public PropertyHandler<T> NumericHandler(GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) => TypedPropertyHandler(Get, Set, CastNumber, delta);
+            public PropertyHandler<T> VectorHandler(GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set = null) => TypedPropertyHandler(Get, Set, CastVector, Vector3D.Zero);
+            public PropertyHandler<T> ColorHandler(GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) => TypedPropertyHandler(Get, Set, CastColor, new Color(10, 10, 10));
+            PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set ?? ((b, v) => { }), Cast, delta);
+        }
+
+        public class DirectionHandler<T> {
+            public PropertyHandler<T> handler;
+            public Direction[] supportedDirections;
         }
 
         /// <summary>

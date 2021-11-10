@@ -24,47 +24,17 @@ namespace IngameScript {
                 AddBooleanHandler(Property.AUTO, b => !b.GyroOverride, (b, v) => b.GyroOverride = !v);
                 AddBooleanHandler(Property.OVERRIDE, b => b.GyroOverride, (b, v) => b.GyroOverride = v);
                 AddNumericHandler(Property.RANGE, b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
-                var rollHandler = new SimpleNumericDirectionPropertyHandler<IMyGyro>(GetOverrideInput, SetOverrideInput, Direction.UP);
+
+                var rollHandler = DirectionalTypedHandler(Direction.UP,
+                    DirectionalHandler(NumericHandler(b => b.Pitch, (b,v) => b.Pitch = v), Direction.UP),
+                    DirectionalHandler(NumericHandler(b => -b.Pitch, (b, v) => b.Pitch = -v), Direction.DOWN),
+                    DirectionalHandler(NumericHandler(b => -b.Yaw, (b, v) => b.Yaw = -v), Direction.LEFT),
+                    DirectionalHandler(NumericHandler(b => b.Yaw, (b, v) => b.Yaw = v), Direction.RIGHT),
+                    DirectionalHandler(NumericHandler(b => b.Roll, (b, v) => b.Roll = v), Direction.CLOCKWISE),
+                    DirectionalHandler(NumericHandler(b => -b.Roll, (b, v) => b.Roll = -v), Direction.COUNTERCLOCKWISE));
+
                 AddPropertyHandler(Property.ROLL_INPUT, rollHandler);
                 AddPropertyHandler(Property.INPUT, rollHandler);
-            }
-
-            float GetOverrideInput(IMyGyro gyro, Direction direction) {
-                switch(direction) {
-                    case Direction.UP:
-                        return gyro.Pitch;
-                    case Direction.DOWN:
-                        return -gyro.Pitch;
-                    case Direction.LEFT:
-                        return -gyro.Yaw;
-                    case Direction.RIGHT:
-                        return gyro.Yaw;
-                    case Direction.CLOCKWISE:
-                        return gyro.Roll;
-                    case Direction.COUNTERCLOCKWISE:
-                        return -gyro.Roll;
-                    default:
-                        throw new Exception("Unknown direction: " + direction);
-                }
-            }
-
-            void SetOverrideInput(IMyGyro gyro, Direction direction, float value) {
-                switch (direction) {
-                    case Direction.UP:
-                        gyro.Pitch = value; break;
-                    case Direction.DOWN:
-                        gyro.Pitch = -value; break;
-                    case Direction.LEFT:
-                        gyro.Yaw = -value; break;
-                    case Direction.RIGHT:
-                        gyro.Yaw = value; break;
-                    case Direction.CLOCKWISE:
-                        gyro.Roll = value; break;
-                    case Direction.COUNTERCLOCKWISE:
-                        gyro.Roll = -value; break;
-                    default:
-                        throw new Exception("Unknown direction: " + direction);
-                }
             }
         }
     }

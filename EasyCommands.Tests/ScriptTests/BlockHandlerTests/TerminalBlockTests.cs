@@ -78,5 +78,125 @@ show the ""test terminal""
                 mockBlock.VerifySet(b => b.ShowInTerminal = true);
             }
         }
+
+        [TestMethod]
+        public void GetBlockPosition() {
+            String script = @"print ""Position: "" + the ""test terminal"" position";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                mockBlock.Setup(b => b.GetPosition()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Position: 1:2:3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockDirectionDefaultsToForward() {
+            String script = @"print ""Direction: "" + the ""test terminal"" direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Direction: 1:0:0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockForwardsDirection() {
+            String script = @"print ""Forward Direction: "" + the ""test terminal"" forwards direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Forward Direction: 1:0:0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockBackwardsDirection() {
+            String script = @"print ""Backwards Direction: "" + the ""test terminal"" backwards direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Backwards Direction: -1:0:0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockUpwardsDirection() {
+            String script = @"print ""Upwards Direction: "" + the ""test terminal"" upwards direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Upwards Direction: 0:1:0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockDownwardsDirection() {
+            String script = @"print ""Downwards Direction: "" + the ""test terminal"" downwards direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Downwards Direction: 0:-1:0", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockLeftDirection() {
+            String script = @"print ""Left Direction: "" + the ""test terminal"" left direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Left Direction: 0:0:-1", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockRightDirection() {
+            String script = @"print ""Right Direction: "" + the ""test terminal"" right direction";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Right Direction: 0:0:1", test.Logger[0]);
+            }
+        }
     }
 }

@@ -120,6 +120,45 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheWheelUpperLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" upper limit")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                MockGetProperty(mockWheel, "Speed Limit", 50f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Speed Limit: 50", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheWheelLeftLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Limit: "" + the ""test wheel"" left limit")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                mockWheel.Setup(b => b.MaxSteerAngle).Returns(20);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Limit: 20", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheWheelRightLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Limit: "" + the ""test wheel"" right limit")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                mockWheel.Setup(b => b.MaxSteerAngle).Returns(20);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Limit: 20", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void SetTheWheelLimit() {
             using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" limit to 50")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();

@@ -21,7 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
-                AddPropertyHandler(Property.RANGE, new SimpleNumericDirectionPropertyHandler<IMyPistonBase>(GetLimit, SetLimit, Direction.UP));
+                AddDirectionHandlers(Property.RANGE, Direction.UP,
+                    DirectionalHandler(NumericHandler(b => b.MaxLimit, (b, v) => b.MaxLimit = v, 1), Direction.UP, Direction.FORWARD),
+                    DirectionalHandler(NumericHandler(b => b.MinLimit, (b, v) => b.MinLimit = v, 1), Direction.DOWN, Direction.BACKWARD));
                 AddPropertyHandler(Property.LEVEL, new PistonHeightHandler());
                 AddNumericHandler(Property.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
@@ -38,34 +40,6 @@ namespace IngameScript {
                     if (d == Direction.DOWN) b.Retract();
                 };
                 Reverse = (b, p) => b.Reverse();
-            }
-        }
-
-        static float GetLimit(IMyPistonBase piston, Direction direction) {
-            switch (direction) {
-                case Direction.UP:
-                case Direction.FORWARD:
-                    return piston.MaxLimit;
-                case Direction.DOWN:
-                case Direction.BACKWARD:
-                    return piston.MinLimit;
-                default:
-                    throw new Exception("Unknown direction: " + direction);
-            }
-        }
-
-        static void SetLimit(IMyPistonBase piston, Direction direction, float value) {
-            switch (direction) {
-                case Direction.UP:
-                case Direction.FORWARD:
-                    piston.MaxLimit = value;
-                    break;
-                case Direction.DOWN:
-                case Direction.BACKWARD:
-                    piston.MinLimit = value;
-                    break;
-                default:
-                    throw new Exception("Unsupported direction: " + direction);
             }
         }
 
