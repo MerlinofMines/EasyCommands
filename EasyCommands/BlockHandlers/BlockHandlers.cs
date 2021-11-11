@@ -395,11 +395,11 @@ namespace IngameScript {
             }
 
             public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set) {
-                AddTypedPropertyHandler(property, Get, Set, CastBoolean, true);
+                AddPropertyHandler(property, BooleanHandler(Get, Set));
             }
 
             public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set) {
-                AddTypedPropertyHandler(property, Get, Set, CastString, "");
+                AddPropertyHandler(property, StringHandler(Get, Set));
             }
 
             public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get) {
@@ -407,7 +407,7 @@ namespace IngameScript {
             }
 
             public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set, float delta) {
-                AddTypedPropertyHandler(property, Get, Set, CastNumber, delta);
+                AddPropertyHandler(property, NumericHandler(Get, Set, delta));
             }
 
             public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get) {
@@ -415,16 +415,19 @@ namespace IngameScript {
             }
 
             public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set) {
-                AddTypedPropertyHandler(property, Get, Set, CastVector, Vector3D.Zero);
+                AddPropertyHandler(property, VectorHandler(Get, Set));
             }
 
             public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) {
-                AddTypedPropertyHandler(property, Get, Set, p => CastColor(p), new Color(10, 10, 10));
+                AddPropertyHandler(property, ColorHandler(Get, Set));
             }
 
-            void AddTypedPropertyHandler<U>(Property property, GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) {
-                AddPropertyHandler(property, new SimpleTypedHandler<T, U>(Get, Set, Cast, delta));
-            }
+            public PropertyHandler<T> BooleanHandler(GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set) => TypedPropertyHandler(Get, Set, CastBoolean, true);
+            public PropertyHandler<T> StringHandler(GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set) => TypedPropertyHandler(Get, Set, CastString, "");
+            public PropertyHandler<T> NumericHandler(GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set, float delta) => TypedPropertyHandler(Get, Set, CastNumber, delta);
+            public PropertyHandler<T> VectorHandler(GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set) => TypedPropertyHandler(Get, Set, CastVector, Vector3D.Zero);
+            public PropertyHandler<T> ColorHandler(GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) => TypedPropertyHandler(Get, Set, CastColor, new Color(10, 10, 10));
+            PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set, Cast, delta);
         }
 
         /// <summary>

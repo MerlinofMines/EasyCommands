@@ -29,30 +29,12 @@ namespace IngameScript {
                 value = v;
             }
 
-            public Primitive Plus(Primitive p) {
-                return PROGRAM.PerformOperation(BiOperand.ADD, this, p);
-            }
-
-            public Primitive Minus(Primitive p) {
-                return PROGRAM.PerformOperation(BiOperand.SUBTACT, this, p);
-            }
-
-            public Primitive Multiply(Primitive p) {
-                return PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
-            }
-
-            public Primitive Divide(Primitive p) {
-                return PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
-            }
-
-            public int Compare(Primitive p) {
-                return Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
-            }
-
-            public Primitive Not() {
-                return PROGRAM.PerformOperation(UniOperand.NOT, this);
-            }
-
+            public Primitive Plus(Primitive p) => PROGRAM.PerformOperation(BiOperand.ADD, this, p);
+            public Primitive Minus(Primitive p) => PROGRAM.PerformOperation(BiOperand.SUBTACT, this, p);
+            public Primitive Multiply(Primitive p) => PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
+            public Primitive Divide(Primitive p) => PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
+            public int Compare(Primitive p) => Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
+            public Primitive Not() => PROGRAM.PerformOperation(UniOperand.NOT, this);
             public Primitive DeepCopy() => ResolvePrimitive((value is KeyedList) ? ((KeyedList)value).DeepCopy() : value);
         }
 
