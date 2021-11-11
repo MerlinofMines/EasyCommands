@@ -50,9 +50,9 @@ namespace IngameScript {
 
         public class RemoteControlVelocityHandler : ShipVelocityHandler<IMyRemoteControl> {
             public RemoteControlVelocityHandler() : base() {
-                Set = (b, p, v) => b.SpeedLimit = (float)v.GetValue();
+                Set = (b, p, v) => b.SpeedLimit = CastNumber(v);
                 SetDirection = (b, p, d, v) => Set(b, p, v);
-                Increment = (b, p, v) => Set(b, p, v.Plus(new NumberPrimitive(b.SpeedLimit)));
+                Increment = (b, p, v) => Set(b, p, v.Plus(ResolvePrimitive(b.SpeedLimit)));
                 IncrementDirection = (b, p, d, v) => Set(b, p, Get(b, p).Plus(Multiply(v,d)));
             }
             private Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
@@ -60,8 +60,8 @@ namespace IngameScript {
 
         public class ShipVelocityHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
             public ShipVelocityHandler() {
-                Get = (b, p) => new NumberPrimitive((float)b.GetShipSpeed());
-                GetDirection = (b, p, d) => new NumberPrimitive(GetLinearVelocity(b, d));
+                Get = (b, p) => ResolvePrimitive((float)b.GetShipSpeed());
+                GetDirection = (b, p, d) => ResolvePrimitive(GetLinearVelocity(b, d));
             }
 
             float GetLinearVelocity(T block, Direction direction) {
@@ -81,8 +81,8 @@ namespace IngameScript {
 
         public class ShipMoveInputHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
             public ShipMoveInputHandler() {
-                Get = (b, p) => new NumberPrimitive(b.MoveIndicator.Length());
-                GetDirection = (b, p, d) => new NumberPrimitive(GetPilotMovementInput(b,d));
+                Get = (b, p) => ResolvePrimitive(b.MoveIndicator.Length());
+                GetDirection = (b, p, d) => ResolvePrimitive(GetPilotMovementInput(b,d));
             }
 
             float GetPilotMovementInput(T block, Direction direction) {
@@ -101,8 +101,8 @@ namespace IngameScript {
 
         public class ShipRollInputHandler<T> : PropertyHandler<T> where T : class, IMyShipController {
             public ShipRollInputHandler() {
-                Get = (b, p) => new NumberPrimitive(b.RotationIndicator.Length());
-                GetDirection = (b, p, d) => new NumberPrimitive(GetPilotRollInput(b, d));
+                Get = (b, p) => ResolvePrimitive(b.RotationIndicator.Length());
+                GetDirection = (b, p, d) => ResolvePrimitive(GetPilotRollInput(b, d));
             }
 
             float GetPilotRollInput(T block, Direction direction) {

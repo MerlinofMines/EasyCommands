@@ -37,7 +37,7 @@ namespace IngameScript {
 
             public PropertySupplier ResolveDynamicProperty() {
                 PropertySupplier supplier = WithAttributeValue(null);
-                var propertyString = CastString(attributeValue.GetValue()).GetTypedValue();
+                var propertyString = CastString(attributeValue.GetValue());
 
                 if(PROGRAM.propertyWords.ContainsKey(propertyString)) {
                     var commandParameters = PROGRAM.propertyWords[propertyString];
@@ -55,7 +55,7 @@ namespace IngameScript {
             PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {
                 if (propertyType != null) return this;
                 if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
-                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().GetPrimitiveType());
+                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().returnType);
                 if (defaultType.HasValue) return blockHandler.GetDefaultProperty(defaultType.Value);
                 return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
             }

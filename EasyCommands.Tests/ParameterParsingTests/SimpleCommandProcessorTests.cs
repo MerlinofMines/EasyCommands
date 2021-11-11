@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("print 'Hello World'");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
-            Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()).GetTypedValue());
+            Assert.AreEqual("Hello World", CastString(printCommand.variable.GetValue()));
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("listen \"garageDoors\"");
             Assert.IsTrue(command is ListenCommand);
             ListenCommand listenCommand = (ListenCommand)command;
-            Assert.AreEqual("garageDoors", CastString(listenCommand.tag.GetValue()).GetTypedValue());
+            Assert.AreEqual("garageDoors", CastString(listenCommand.tag.GetValue()));
         }
 
         [TestMethod]
@@ -45,8 +45,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("send \"goto openDoors\" to \"garageDoors\"");
             Assert.IsTrue(command is SendCommand);
             SendCommand sendCommand = (SendCommand)command;
-            Assert.AreEqual("garageDoors", CastString(sendCommand.tag.GetValue()).GetTypedValue());
-            Assert.AreEqual("goto openDoors", CastString(sendCommand.message.GetValue()).GetTypedValue());
+            Assert.AreEqual("garageDoors", CastString(sendCommand.tag.GetValue()));
+            Assert.AreEqual("goto openDoors", CastString(sendCommand.message.GetValue()));
         }
 
         [TestMethod]
@@ -91,8 +91,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
             Assert.AreEqual(Function.GOTO, functionCommand.type);
-            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetTypedValue());
-            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetTypedValue());
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()));
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()));
         }
 
         [TestMethod]
@@ -104,8 +104,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             FunctionCommand functionCommand = (FunctionCommand)command;
             Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
             Assert.AreEqual(Function.GOSUB, functionCommand.type);
-            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()).GetTypedValue());
-            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()).GetTypedValue());
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()));
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()));
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("function", assignCommand.variableName);
-            Assert.AreEqual("myFunction", assignCommand.variable.GetValue().GetValue());
+            Assert.AreEqual("myFunction", assignCommand.variable.GetValue().value);
         }
 
         [TestMethod]
@@ -125,7 +125,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
+            Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()));
             Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 
@@ -135,7 +135,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait 3");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
+            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()));
             Assert.AreEqual(Unit.SECONDS, waitCommand.units);
         }
 
@@ -145,7 +145,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait 3 ticks");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()).GetTypedValue());
+            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()));
             Assert.AreEqual(Unit.TICKS, waitCommand.units);
         }
 
@@ -155,12 +155,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("print \"hello world\" 3 times");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
-            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
+            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().value);
             List<Command> commands = iterateCommand.commandsToExecute;
             Assert.AreEqual(1, commands.Count);
             Assert.IsTrue(commands[0] is PrintCommand);
             PrintCommand printCommand = (PrintCommand)commands[0];
-            Assert.AreEqual("hello world", printCommand.variable.GetValue().GetValue());
+            Assert.AreEqual("hello world", printCommand.variable.GetValue().value);
         }
 
         [TestMethod]
@@ -169,12 +169,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("for 3 times print \"hello world\"");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
-            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().GetValue());
+            Assert.AreEqual(3f, iterateCommand.loopCount.GetValue().value);
             List<Command> commands = iterateCommand.commandsToExecute;
             Assert.AreEqual(1, commands.Count);
             Assert.IsTrue(commands[0] is PrintCommand);
             PrintCommand printCommand = (PrintCommand)commands[0];
-            Assert.AreEqual("hello world", printCommand.variable.GetValue().GetValue());
+            Assert.AreEqual("hello world", printCommand.variable.GetValue().value);
         }
 
         [TestMethod]

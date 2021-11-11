@@ -17,9 +17,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().value);
             Assert.IsNull(transferCommand.second);
         }
 
@@ -33,10 +33,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual(50f, transferCommand.first.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual(50f, transferCommand.first.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().value);
         }
 
         [TestMethod]
@@ -49,9 +49,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().value);
             Assert.IsNull(transferCommand.second);
         }
 
@@ -65,10 +65,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual(50f, transferCommand.first.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual(50f, transferCommand.first.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().value);
         }
 
         [TestMethod]
@@ -81,9 +81,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().value);
             Assert.IsNull(transferCommand.second);
         }
 
@@ -97,10 +97,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual(50f, transferCommand.first.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual(50f, transferCommand.first.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().value);
         }
 
         [TestMethod]
@@ -113,9 +113,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.first.GetValue().value);
             Assert.IsNull(transferCommand.second);
         }
 
@@ -129,10 +129,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(transferCommand.to is SelectorEntityProvider);
             SelectorEntityProvider from = (SelectorEntityProvider)transferCommand.from;
             SelectorEntityProvider to = (SelectorEntityProvider)transferCommand.to;
-            Assert.AreEqual("source cargo", from.selector.GetValue().GetValue());
-            Assert.AreEqual("destination cargo", to.selector.GetValue().GetValue());
-            Assert.AreEqual(50f, transferCommand.first.GetValue().GetValue());
-            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().GetValue());
+            Assert.AreEqual("source cargo", from.selector.GetValue().value);
+            Assert.AreEqual("destination cargo", to.selector.GetValue().value);
+            Assert.AreEqual(50f, transferCommand.first.GetValue().value);
+            Assert.AreEqual("gold ingot", transferCommand.second.GetValue().value);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                return new BooleanPrimitive(comparator.compare(a.GetValue(), b.GetValue()));
+                return ResolvePrimitive(comparator.compare(a.GetValue(), b.GetValue()));
             }
         }
 
@@ -109,8 +109,8 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 Primitive comparison = comparisonValue.GetValue();
-                List<Variable> list = CastList(expectedList.GetValue()).GetTypedValue().GetValues();
-                return new BooleanPrimitive(Evaluate(list.Count, list.Where(v => comparator.compare(v.GetValue(), comparison)).Count(), aggregationMode));
+                List<Variable> list = CastList(expectedList.GetValue()).GetValues();
+                return ResolvePrimitive(Evaluate(list.Count, list.Where(v => comparator.compare(v.GetValue(), comparison)).Count(), aggregationMode));
             }
         }
 
@@ -127,7 +127,7 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 var blocks = entityProvider.GetEntities();
-                return new BooleanPrimitive(Evaluate(blocks.Count, blocks.Count(block => blockCondition.evaluate(block, entityProvider.GetBlockType())), aggregationMode));
+                return ResolvePrimitive(Evaluate(blocks.Count, blocks.Count(block => blockCondition.evaluate(block, entityProvider.GetBlockType())), aggregationMode));
             }
 
             public override String ToString() {
@@ -159,7 +159,7 @@ namespace IngameScript {
                 List<Object> blocks = entityProvider.GetEntities();
 
                 if(aggregationType == PropertyAggregate.COUNT) {
-                    return new NumberPrimitive(blocks.Count);
+                    return ResolvePrimitive(blocks.Count);
                 }
 
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
@@ -209,7 +209,7 @@ namespace IngameScript {
                 aggregation = agg;
             }
 
-            public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetTypedValue().GetValues().Select(v => v.GetValue()).ToList(), aggregation);
+            public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetValues().Select(v => v.GetValue()).ToList(), aggregation);
         }
 
         public class IndexVariable : Variable {
@@ -220,12 +220,12 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                ListPrimitive list = CastList(expectedIndex.GetValue());
-                if (list.GetTypedValue().GetValues().Count == 1) {
-                    Primitive onlyValue = list.GetTypedValue().GetValue(ResolvePrimitive(0)).GetValue();
-                    if (onlyValue.GetPrimitiveType() == Return.LIST) list = CastList(onlyValue);
+                KeyedList list = CastList(expectedIndex.GetValue());
+                if (list.GetValues().Count == 1) {
+                    Primitive onlyValue = list.GetValue(ResolvePrimitive(0)).GetValue();
+                    if (onlyValue.returnType == Return.LIST) list = CastList(onlyValue);
                 }
-                return list;
+                return ResolvePrimitive(list);
             }
         }
 
@@ -239,23 +239,23 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                var list = CastList(expectedList.GetValue()).GetTypedValue();
+                var list = CastList(expectedList.GetValue());
                 var values = GetIndexValues()
                     .Select(p => list.GetValue(p))
                     .ToList();
-                if (values.Count == 0) return new ListPrimitive(list);
-                return values.Count == 1 ? values[0].GetValue() : new ListPrimitive(new KeyedList(values.ToArray()));
+                if (values.Count == 0) return ResolvePrimitive(list);
+                return values.Count == 1 ? values[0].GetValue() : ResolvePrimitive(new KeyedList(values.ToArray()));
             }
 
             public void SetValue(Variable value) {
-                var list = CastList(expectedList.GetValue()).GetTypedValue();
+                var list = CastList(expectedList.GetValue());
                 var indexes = GetIndexValues();
                 if (indexes.Count == 0) indexes.AddRange(Enumerable.Range(0, list.GetValues().Count).Select(i => ResolvePrimitive(i)));
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 
             List<Primitive> GetIndexValues() {
-                return CastList(index.GetValue()).GetTypedValue().GetValues().Select(i => i.GetValue()).ToList();
+                return CastList(index.GetValue()).GetValues().Select(i => i.GetValue()).ToList();
             }
         }
 
