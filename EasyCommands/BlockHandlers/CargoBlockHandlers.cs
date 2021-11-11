@@ -39,7 +39,7 @@ namespace IngameScript {
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {
-                    var itemString = CastString(p.attributeValue.GetValue()).GetTypedValue();
+                    var itemString = CastString(p.attributeValue.GetValue());
                     var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(itemString));
                     double totalAmount = 0;
                     var items = new List<MyInventoryItem>();
@@ -49,7 +49,7 @@ namespace IngameScript {
                     items.ForEach(item => totalAmount += item.Amount.RawValue);
 
                     //RawValues are returned in the microUnits, convert to units.
-                    return new NumberPrimitive((float)(totalAmount / 1000000));
+                    return ResolvePrimitive((float)(totalAmount / 1000000));
                 }
             };
 

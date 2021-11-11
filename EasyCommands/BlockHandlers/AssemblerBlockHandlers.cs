@@ -25,23 +25,23 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b,v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
                 AddPropertyHandler(ValueProperty.CREATE, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => new BooleanPrimitive(GetProducingAmount(b, p) > 0),
+                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) > 0),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
                 }) ;
                 AddPropertyHandler(ValueProperty.DESTROY, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => new BooleanPrimitive(GetProducingAmount(b, p) > 0),
+                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) > 0),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
                 });
 
                 AddPropertyHandler(ValueProperty.AMOUNT, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, v) => new NumberPrimitive(GetProducingAmount(b, v)),
+                    Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p.attributeValue.GetValue(), v)
                 });
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
 
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
-                var definitions = PROGRAM.GetItemBluePrints(CastString(p.attributeValue.GetValue()).GetTypedValue());
+                var definitions = PROGRAM.GetItemBluePrints(CastString(p.attributeValue.GetValue()));
                 var currentItems = new List<MyProductionItem>();
                 b.GetQueue(currentItems);
                 MyFixedPoint value = currentItems
@@ -53,15 +53,13 @@ namespace IngameScript {
             }
 
             void AddQueueItem(IMyAssembler b, Primitive v1, Primitive v2) {
-                string itemString;
-                if (v1.GetPrimitiveType() == Return.STRING) itemString = CastString(v1).GetTypedValue();
-                else itemString = CastString(v2).GetTypedValue();
+                string itemString = CastString(v1.returnType == Return.STRING ? v1 : v2);
 
                 float amount = 1f;
-                if (v1.GetPrimitiveType() == Return.NUMERIC) {
-                    amount = CastNumber(v1).GetTypedValue();
-                } else if (v2.GetPrimitiveType() == Return.NUMERIC) {
-                    amount = CastNumber(v2).GetTypedValue();
+                if (v1.returnType == Return.NUMERIC) {
+                    amount = CastNumber(v1);
+                } else if (v2.returnType == Return.NUMERIC) {
+                    amount = CastNumber(v2);
                 }
 
                 List<MyDefinitionId> blueprints = PROGRAM.GetItemBluePrints(itemString);

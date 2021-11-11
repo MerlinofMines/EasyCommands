@@ -303,7 +303,7 @@ namespace IngameScript {
                 optionalRight<VariableCommandParameter>(),optionalRight<UnitCommandParameter>(),
                 (p,time,unit) => {
                     Unit units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? Unit.SECONDS : Unit.TICKS;
-                    Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(new NumberPrimitive(1));
+                    Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(ResolvePrimitive(1));
                     return new CommandReferenceParameter(new WaitCommand(var, units));
                 }),
 
@@ -680,7 +680,7 @@ namespace IngameScript {
                 if (p[i] is StringCommandParameter) {
                     p[i] = GetParameter((StringCommandParameter)p[i]);
                 } else if (p[i] is BooleanCommandParameter) {
-                    p[i] = new VariableCommandParameter(new StaticVariable(new BooleanPrimitive(((BooleanCommandParameter)p[i]).value)));
+                    p[i] = new VariableCommandParameter(GetStaticVariable(((BooleanCommandParameter)p[i]).value));
                 } else {
                     finalParameters = null;
                     return false;
@@ -695,7 +695,7 @@ namespace IngameScript {
 
                 Variable variable = new AmbiguousStringVariable(value.value);
 
-                if (primitive != null || value.isExplicit) variable = new StaticVariable(primitive ?? new StringPrimitive(value.value));
+                if (primitive != null || value.isExplicit) variable = new StaticVariable(primitive ?? ResolvePrimitive(value.value));
                 return new VariableCommandParameter(variable);
             }
         }

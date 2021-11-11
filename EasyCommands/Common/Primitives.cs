@@ -20,18 +20,13 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        public abstract class Primitive {
-            Return type;
+        public class Primitive {
+            public Return returnType;
+            public object value;
 
-            protected Primitive(Return type) {
-                this.type = type;
-            }
-
-            public abstract object GetValue();
-            public virtual object GetDeepCopyValue() => GetValue();
-
-            public Return GetPrimitiveType() {
-                return type;
+            public Primitive(Return t, object v) {
+                returnType = t;
+                value = v;
             }
 
             public Primitive Plus(Primitive p) {
@@ -51,16 +46,14 @@ namespace IngameScript {
             }
 
             public int Compare(Primitive p) {
-                return Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)).GetTypedValue());
+                return Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
             }
 
             public Primitive Not() {
                 return PROGRAM.PerformOperation(UniOperand.NOT, this);
             }
 
-            public Primitive DeepCopy() {
-                return ResolvePrimitive(GetDeepCopyValue());
-            }
+            public Primitive DeepCopy() => ResolvePrimitive((value is KeyedList) ? ((KeyedList)value).DeepCopy() : value);
         }
 
         static Dictionary<Type, Return> PrimitiveTypeMap = new Dictionary<Type, Return>() {
@@ -74,12 +67,12 @@ namespace IngameScript {
             { typeof(KeyedList), Return.LIST }
         };
 
-        static Dictionary<string, Func<Primitive, Primitive>> castMap = new Dictionary<string, Func<Primitive, Primitive>>() {
-            { "bool", CastBoolean },
+        static Dictionary<string, Func<Primitive, object>> castMap = new Dictionary<string, Func<Primitive, object>>() {
+            { "bool", p => CastBoolean(p) },
             { "string", CastString },
-            { "number", CastNumber },
-            { "vector", CastVector },
-            { "color", CastColor },
+            { "number", p => CastNumber(p) },
+            { "vector", p => CastVector(p) },
+            { "color", p => CastColor(p) },
             { "list", CastList }
         };
 
@@ -101,86 +94,70 @@ namespace IngameScript {
         }
 
         static Primitive ResolvePrimitive(object o) {
-            if (o is bool) {
-                return new BooleanPrimitive((bool)o);
-            } else if (o is float) {
-                return new NumberPrimitive((float)o);
-            } else if (o is double) {
-                return new NumberPrimitive(Convert.ToSingle((double)o));
+            var type = PrimitiveTypeMap[o.GetType()];
+            if (o is double) {
+                return new Primitive(type, Convert.ToSingle((double)o));
             } else if (o is int) {
-                return new NumberPrimitive(Convert.ToSingle((int)o));
-            } else if (o is string) {
-                return new StringPrimitive((string)o);
-            } else if (o is Vector3D) {
-                return new VectorPrimitive((Vector3D)o);
-            } else if (o is Color) {
-                return new ColorPrimitive((Color)o);
-            } else if (o is KeyedList) {
-                return new ListPrimitive((KeyedList)o);
-            }
-            else throw new Exception("Cannot convert type: " + o.GetType() + " to primitive");
+                return new Primitive(type, Convert.ToSingle((int)o));
+            } else return new Primitive(type, o);
         }
 
-        public static BooleanPrimitive CastBoolean(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.BOOLEAN: return (BooleanPrimitive)p;
-                case Return.NUMERIC: return new BooleanPrimitive((float)p.GetValue() > 0);
-                case Return.STRING: return new BooleanPrimitive(bool.Parse((string)p.GetValue()));
-                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Boolean");
+        public static bool CastBoolean(Primitive p) {
+            switch (p.returnType) {
+                case Return.BOOLEAN: return (bool)p.value;
+                case Return.NUMERIC: return CastNumber(p) > 0;
+                case Return.STRING: return bool.Parse(CastString(p));
+                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " To Boolean");
             }
         }
 
-        public static NumberPrimitive CastNumber(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.BOOLEAN: return new NumberPrimitive((bool)p.GetValue() ? 1 : 0);
-                case Return.NUMERIC: return (NumberPrimitive)p;
-                case Return.STRING: return new NumberPrimitive(float.Parse((string)p.GetValue()));
-                case Return.VECTOR: return new NumberPrimitive((float)((Vector3D)p.GetValue()).Length());
-                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " To Number");
+        public static float CastNumber(Primitive p) {
+            switch (p.returnType) {
+                case Return.BOOLEAN: return CastBoolean(p) ? 1 : 0;
+                case Return.NUMERIC: return (float)p.value;
+                case Return.STRING: return float.Parse(CastString(p));
+                case Return.VECTOR: return (float)(CastVector(p)).Length();
+                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " To Number");
             }
         }
 
-        public static StringPrimitive CastString(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.VECTOR:
-                    return new StringPrimitive(VectorToString(CastVector(p).GetTypedValue()));
-                case Return.COLOR:
-                    return new StringPrimitive(ColorToString(CastColor(p).GetTypedValue()));
-                case Return.LIST:
-                    return new StringPrimitive(CastList(p).GetTypedValue().Print());
-                default: return new StringPrimitive(p.GetValue().ToString());
-            }
+        public static string CastString(Primitive p) {
+            var value = p.value.ToString();
+            if (p.returnType == Return.VECTOR) value = VectorToString(CastVector(p));
+            if (p.returnType == Return.COLOR) value = ColorToString(CastColor(p));
+            if (p.returnType == Return.LIST) value = CastList(p).Print();
+            return value.Replace("\\n", "\n");
         }
 
-        public static VectorPrimitive CastVector(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.VECTOR: return (VectorPrimitive)p;
+        public static Vector3D CastVector(Primitive p) {
+            switch (p.returnType) {
+                case Return.VECTOR: 
+                    return (Vector3D)p.value;
                 case Return.STRING:
                     Vector3D vector;
-                    if (GetVector((String)p.GetValue(), out vector)) return new VectorPrimitive(vector);
+                    if (GetVector(CastString(p), out vector)) return vector;
                     goto default;
-                default: throw new Exception("Cannot convert Primitive Type: " + p.GetPrimitiveType() + " to Vector");
+                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " to Vector");
             }
         }
 
-        public static ColorPrimitive CastColor(Primitive p) {
-            switch (p.GetPrimitiveType()) {
-                case Return.COLOR: return (ColorPrimitive)p;
+        public static Color CastColor(Primitive p) {
+            switch (p.returnType) {
+                case Return.COLOR: return (Color)p.value;
                 case Return.STRING:
                     Color color;
-                    if (GetColor((String)p.GetValue(), out color)) return new ColorPrimitive(color);
+                    if (GetColor(CastString(p), out color)) return color;
                     goto default;
                 case Return.NUMERIC:
-                    return new ColorPrimitive(new Color((float)p.GetValue()));
+                    return new Color(CastNumber(p));
                 case Return.VECTOR:
-                    var vector = CastVector(p).GetTypedValue();
-                    return new ColorPrimitive(new Color((int)vector.X, (int)vector.Y, (int)vector.Z));
-                default: throw new Exception("Cannot convert Primitive type: " + p.GetPrimitiveType() + " to Color");
+                    var vector = CastVector(p);
+                    return new Color((int)vector.X, (int)vector.Y, (int)vector.Z);
+                default: throw new Exception("Cannot convert Primitive type: " + p.returnType + " to Color");
             }
         }
 
-        public static ListPrimitive CastList(Primitive p) => new ListPrimitive(AsList(p));
-        public static KeyedList AsList(Primitive p) => p.GetPrimitiveType() == Return.LIST ? (KeyedList)p.GetValue() : new KeyedList(GetStaticVariable(p.GetValue()));
+        public static KeyedList CastList(Primitive p) => p.returnType == Return.LIST ? (KeyedList)p.value : new KeyedList(GetStaticVariable(p.value));
 
         public static bool GetColor(String s, out Color color) {
             Color? possibleColor = null;
@@ -221,43 +198,6 @@ namespace IngameScript {
 
         static string IntToHex(int hex) {
             return hex.ToString("X");
-        }
-
-        public class SimplePrimitive<T> : Primitive {
-            public T value;
-
-            public SimplePrimitive(Return type, T v) : base(type) {
-                value = v;
-            }
-
-            public override object GetValue() => value;
-            public T GetTypedValue() => (T) GetValue();
-        }
-
-        public class BooleanPrimitive : SimplePrimitive<bool> {
-            public BooleanPrimitive(bool value) : base(Return.BOOLEAN, value) {}
-        }
-
-        public class NumberPrimitive : SimplePrimitive<float> {
-            public NumberPrimitive(float number) : base(Return.NUMERIC, number) {}
-        }
-
-        public class StringPrimitive : SimplePrimitive<string> {
-            public StringPrimitive(String value) : base(Return.STRING, value) {}
-            public override object GetValue() => value.Replace("\\n", "\n");
-        }
-
-        public class VectorPrimitive : SimplePrimitive<Vector3D> {
-            public VectorPrimitive(Vector3D vector) : base(Return.VECTOR, vector) {}
-        }
-
-        public class ColorPrimitive : SimplePrimitive<Color> {
-            public ColorPrimitive(Color color) : base(Return.COLOR, color) {}
-        }
-
-        public class ListPrimitive : SimplePrimitive<KeyedList> {
-            public ListPrimitive(KeyedList list) : base(Return.LIST, list) { }
-            public override object GetDeepCopyValue() => GetTypedValue().DeepCopy();
         }
     }
 }

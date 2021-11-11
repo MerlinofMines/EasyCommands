@@ -20,12 +20,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.variable is ListIndexVariable);
             ListIndexVariable listIndex = (ListIndexVariable)assignmentCommand.variable;
             Primitive list = listIndex.expectedList.GetValue();
-            Assert.AreEqual(Return.LIST, list.GetPrimitiveType());
-            List<Variable> listItems = CastList(list).GetTypedValue().GetValues();
+            Assert.AreEqual(Return.LIST, list.returnType);
+            List<Variable> listItems = CastList(list).GetValues();
             Assert.AreEqual(3, listItems.Count);
-            Assert.AreEqual("one", CastString(listItems[0].GetValue()).GetTypedValue());
-            Assert.AreEqual("two", CastString(listItems[1].GetValue()).GetTypedValue());
-            Assert.AreEqual("three", CastString(listItems[2].GetValue()).GetTypedValue());
+            Assert.AreEqual("one", CastString(listItems[0].GetValue()));
+            Assert.AreEqual("two", CastString(listItems[1].GetValue()));
+            Assert.AreEqual("three", CastString(listItems[2].GetValue()));
         }
 
         [TestMethod]
@@ -38,10 +38,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.variable is ListIndexVariable);
             ListIndexVariable listIndex = (ListIndexVariable)assignmentCommand.variable;
             Primitive list = listIndex.expectedList.GetValue();
-            Assert.AreEqual(Return.LIST, list.GetPrimitiveType());
-            List<Variable> listItems = CastList(list).GetTypedValue().GetValues();
+            Assert.AreEqual(Return.LIST, list.returnType);
+            List<Variable> listItems = CastList(list).GetValues();
             Assert.AreEqual(1, listItems.Count);
-            Assert.AreEqual("reactor component", CastString(listItems[0].GetValue()).GetTypedValue());
+            Assert.AreEqual("reactor component", CastString(listItems[0].GetValue()));
         }
 
         [TestMethod]
@@ -53,11 +53,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()));
             Primitive value = assignmentCommand.value.GetValue();
-            Assert.AreEqual("value", CastString(value).GetTypedValue());
+            Assert.AreEqual("value", CastString(value));
         }
 
         [TestMethod]
@@ -69,16 +69,16 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
+            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()));
             Primitive list = assignmentCommand.value.GetValue();
-            Assert.AreEqual(Return.LIST, list.GetPrimitiveType());
-            List<Variable> listItems = CastList(list).GetTypedValue().GetValues();
+            Assert.AreEqual(Return.LIST, list.returnType);
+            List<Variable> listItems = CastList(list).GetValues();
             Assert.AreEqual(3, listItems.Count);
-            Assert.AreEqual("one", CastString(listItems[0].GetValue()).GetTypedValue());
-            Assert.AreEqual("two", CastString(listItems[1].GetValue()).GetTypedValue());
-            Assert.AreEqual("three", CastString(listItems[2].GetValue()).GetTypedValue());
+            Assert.AreEqual("one", CastString(listItems[0].GetValue()));
+            Assert.AreEqual("two", CastString(listItems[1].GetValue()));
+            Assert.AreEqual("three", CastString(listItems[2].GetValue()));
         }
 
         [TestMethod]
@@ -90,13 +90,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetValues();
             Assert.AreEqual(4, listIndexes.Count);
-            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
-            Assert.AreEqual(1, CastNumber(listIndexes[1].GetValue()).GetTypedValue());
-            Assert.AreEqual(2, CastNumber(listIndexes[2].GetValue()).GetTypedValue());
-            Assert.AreEqual(4, CastNumber(listIndexes[3].GetValue()).GetTypedValue());
-            Assert.AreEqual("value", CastString(assignmentCommand.value.GetValue()).GetValue());
+            Assert.AreEqual(0, CastNumber(listIndexes[0].GetValue()));
+            Assert.AreEqual(1, CastNumber(listIndexes[1].GetValue()));
+            Assert.AreEqual(2, CastNumber(listIndexes[2].GetValue()));
+            Assert.AreEqual(4, CastNumber(listIndexes[3].GetValue()));
+            Assert.AreEqual("value", CastString(assignmentCommand.value.GetValue()));
         }
 
         [TestMethod]
@@ -107,7 +107,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myValue", assignmentCommand.variableName);
             Primitive value = assignmentCommand.variable.GetValue();
-            Assert.AreEqual(1f, CastNumber(value).GetTypedValue());
+            Assert.AreEqual(1f, CastNumber(value));
         }
 
         [TestMethod]
@@ -117,11 +117,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myValue", assignmentCommand.variableName);
-            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetValues();
             Assert.AreEqual(3, values.Count);
-            Assert.AreEqual(5f, CastNumber(values[0].GetValue()).GetTypedValue());
-            Assert.AreEqual(6f, CastNumber(values[1].GetValue()).GetTypedValue());
-            Assert.AreEqual(7f, CastNumber(values[2].GetValue()).GetTypedValue());
+            Assert.AreEqual(5f, CastNumber(values[0].GetValue()));
+            Assert.AreEqual(6f, CastNumber(values[1].GetValue()));
+            Assert.AreEqual(7f, CastNumber(values[2].GetValue()));
         }
 
         [TestMethod]
@@ -133,14 +133,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);
             InMemoryVariable listName = (InMemoryVariable)assignmentCommand.list.expectedList;
             Assert.AreEqual("myList", listName.variableName);
-            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(assignmentCommand.list.index.GetValue()).GetValues();
             Assert.AreEqual(3, listIndexes.Count);
-            Assert.AreEqual(1, CastNumber(listIndexes[0].GetValue()).GetTypedValue());
-            Assert.AreEqual(2, CastNumber(listIndexes[1].GetValue()).GetTypedValue());
-            Assert.AreEqual(3, CastNumber(listIndexes[2].GetValue()).GetTypedValue());
-            List<Variable> assignedValue = CastList(assignmentCommand.value.GetValue()).GetTypedValue().GetValues();
+            Assert.AreEqual(1, CastNumber(listIndexes[0].GetValue()));
+            Assert.AreEqual(2, CastNumber(listIndexes[1].GetValue()));
+            Assert.AreEqual(3, CastNumber(listIndexes[2].GetValue()));
+            List<Variable> assignedValue = CastList(assignmentCommand.value.GetValue()).GetValues();
             Assert.AreEqual(1, assignedValue.Count);
-            Assert.AreEqual(0f, assignedValue[0].GetValue().GetValue());
+            Assert.AreEqual(0f, assignedValue[0].GetValue().value);
         }
 
         [TestMethod]
@@ -150,18 +150,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myList", assignmentCommand.variableName);
-            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> values = CastList(assignmentCommand.variable.GetValue()).GetValues();
             Assert.AreEqual(2, values.Count);
 
-            List<Variable> myList0 = CastList(values[0].GetValue()).GetTypedValue().GetValues();
-            Assert.AreEqual(0f, CastNumber(myList0[0].GetValue()).GetTypedValue());
-            Assert.AreEqual(1f, CastNumber(myList0[1].GetValue()).GetTypedValue());
-            Assert.AreEqual(2f, CastNumber(myList0[2].GetValue()).GetTypedValue());
+            List<Variable> myList0 = CastList(values[0].GetValue()).GetValues();
+            Assert.AreEqual(0f, CastNumber(myList0[0].GetValue()));
+            Assert.AreEqual(1f, CastNumber(myList0[1].GetValue()));
+            Assert.AreEqual(2f, CastNumber(myList0[2].GetValue()));
 
-            List<Variable> myList1 = CastList(values[1].GetValue()).GetTypedValue().GetValues();
-            Assert.AreEqual(3f, CastNumber(myList1[0].GetValue()).GetTypedValue());
-            Assert.AreEqual(4f, CastNumber(myList1[1].GetValue()).GetTypedValue());
-            Assert.AreEqual(5f, CastNumber(myList1[2].GetValue()).GetTypedValue());
+            List<Variable> myList1 = CastList(values[1].GetValue()).GetValues();
+            Assert.AreEqual(3f, CastNumber(myList1[0].GetValue()));
+            Assert.AreEqual(4f, CastNumber(myList1[1].GetValue()));
+            Assert.AreEqual(5f, CastNumber(myList1[2].GetValue()));
         }
 
         [TestMethod]
@@ -171,7 +171,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myValue", assignmentCommand.variableName);
-            Assert.AreEqual(5f, CastNumber(assignmentCommand.variable.GetValue()).GetTypedValue());
+            Assert.AreEqual(5f, CastNumber(assignmentCommand.variable.GetValue()));
         }
 
         [TestMethod]
@@ -181,11 +181,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("myValue", assignmentCommand.variableName);
-            List<Variable> listValues = CastList(assignmentCommand.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listValues = CastList(assignmentCommand.variable.GetValue()).GetValues();
             Assert.AreEqual(3, listValues.Count);
-            Assert.AreEqual(3f, listValues[0].GetValue().GetValue());
-            Assert.AreEqual(4f, listValues[1].GetValue().GetValue());
-            Assert.AreEqual(5f, listValues[2].GetValue().GetValue());
+            Assert.AreEqual(3f, listValues[0].GetValue().value);
+            Assert.AreEqual(4f, listValues[1].GetValue().value);
+            Assert.AreEqual(5f, listValues[2].GetValue().value);
         }
 
         [TestMethod]
@@ -206,7 +206,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual("shipRoute", listVariable.variableName);
             Assert.IsTrue(comparison.b is StaticVariable);
             StaticVariable comparisonVariable = (StaticVariable)comparison.b;
-            Assert.AreEqual(0f, comparisonVariable.GetValue().GetValue());
+            Assert.AreEqual(0f, comparisonVariable.GetValue().value);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(Block.BATTERY, sep.GetBlockType());
             Assert.IsTrue(sep.isGroup);
             Assert.IsTrue(sep.selector is StaticVariable);
-            Assert.AreEqual("batteries", CastString(sep.selector.GetValue()).GetTypedValue());
+            Assert.AreEqual("batteries", CastString(sep.selector.GetValue()));
         }
 
         [TestMethod]
@@ -50,9 +50,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
         }
 
         [TestMethod]
@@ -63,9 +63,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
         }
 
         [TestMethod]
@@ -142,9 +142,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
             Assert.IsTrue(variableSelector.selector is InMemoryVariable);
@@ -159,9 +159,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
             IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
-            Assert.AreEqual(0f, listIndexes[0].GetValue().GetValue());
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
             Assert.IsTrue(variableSelector.selector is InMemoryVariable);

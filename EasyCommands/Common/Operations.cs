@@ -30,19 +30,19 @@ namespace IngameScript {
 
         public Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) {
             if (!BiOperations.ContainsKey(type)
-                || !BiOperations[type].ContainsKey(a.GetPrimitiveType())
-                || !BiOperations[type][a.GetPrimitiveType()].ContainsKey(b.GetPrimitiveType())) {
-                throw new Exception("Cannot perform operation: " + type + " on types: " + a.GetPrimitiveType() + ", " + b.GetPrimitiveType());
+                || !BiOperations[type].ContainsKey(a.returnType)
+                || !BiOperations[type][a.returnType].ContainsKey(b.returnType)) {
+                throw new Exception("Cannot perform operation: " + type + " on types: " + a.returnType + ", " + b.returnType);
             }
-            return BiOperations[type][a.GetPrimitiveType()][b.GetPrimitiveType()](a, b);
+            return BiOperations[type][a.returnType][b.returnType](a, b);
         }
 
         public Primitive PerformOperation(UniOperand type, Primitive a) {
             if (!UniOperations.ContainsKey(type)
-                || !UniOperations[type].ContainsKey(a.GetPrimitiveType())) { 
-                throw new Exception("Cannot perform operation: " + type + " on type: " + a.GetPrimitiveType());
+                || !UniOperations[type].ContainsKey(a.returnType)) { 
+                throw new Exception("Cannot perform operation: " + type + " on type: " + a.returnType);
             }
-            return UniOperations[type][a.GetPrimitiveType()](a);
+            return UniOperations[type][a.returnType](a);
         }
 
         void AddBiOperation<T, U>(BiOperand type, Func<T, U, object> resolver) {
@@ -66,7 +66,7 @@ namespace IngameScript {
             //List
             AddBiOperation<KeyedList, object>(BiOperand.ADD, (a, b) => Combine(a, b));
             AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
-            AddBiOperation<KeyedList, object>(BiOperand.SUBTACT, (a, b) => a.Remove(AsList(ResolvePrimitive(b))));
+            AddBiOperation<KeyedList, object>(BiOperand.SUBTACT, (a, b) => a.Remove(CastList(ResolvePrimitive(b))));
             AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => new KeyedList(Enumerable.Range((int)a, (int)(b + 1 - a)).Select(i => GetStaticVariable(i)).ToArray()));
             AddUniOperation<KeyedList>(UniOperand.KEYS, a => a.Keys());
             AddUniOperation<KeyedList>(UniOperand.VALUES, a => a.Values());
@@ -106,12 +106,12 @@ namespace IngameScript {
             AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
 
             //String
-            AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)).GetTypedValue());
-            AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)).GetTypedValue() + b);
+            AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)));
+            AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)) + b);
             AddBiOperation<string, string>(BiOperand.SUBTACT, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, string>(BiOperand.MOD, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, float>(BiOperand.SUBTACT, (a, b) => a.Substring(Convert.ToInt32(b)));
-            AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)).GetValue());
+            AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
 
             //Vector
             //TODO add dot product, projection
@@ -139,18 +139,18 @@ namespace IngameScript {
         }
 
         static List<Variable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
-        static KeyedList Combine(object a, object b) => AsList(ResolvePrimitive(a)).Combine(AsList(ResolvePrimitive(b)));
+        static KeyedList Combine(object a, object b) => CastList(ResolvePrimitive(a)).Combine(CastList(ResolvePrimitive(b)));
 
         static UniOperation SimpleUniOperand<T>(Func<T,object> resolver) {
             return (a) => {
-                object result = resolver((T)a.GetValue());
+                object result = resolver((T)a.value);
                 return ResolvePrimitive(result);
             };
         }
 
         static BiOperation SimpleBiOperand<T,U>(Func<T,U,object> resolver) {
             return (a, b) => {
-                object result = resolver((T)a.GetValue(), (U)b.GetValue());
+                object result = resolver((T)a.value, (U)b.value);
                 return ResolvePrimitive(result);
             };
         }

@@ -37,40 +37,40 @@ namespace IngameScript {
 
         class GravityFieldHandler : SimplePropertyHandler<IMyGravityGenerator> {
             public GravityFieldHandler() : base(
-                (b, p) => new VectorPrimitive(new Vector3D(b.FieldSize)),
+                (b, p) => ResolvePrimitive(new Vector3D(b.FieldSize)),
                 (b, p, v) => {
-                    switch (v.GetPrimitiveType()) {
+                    switch (v.returnType) {
                         case Return.NUMERIC:
-                            float value = CastNumber(v).GetTypedValue();
+                            float value = CastNumber(v);
                             b.FieldSize = new Vector3(value, value, value);
                             break;
                         case Return.VECTOR:
-                            b.FieldSize = CastVector(v).GetTypedValue();
+                            b.FieldSize = CastVector(v);
                             break;
                         default:
-                            throw new Exception("Cannot set gravity field to type: " + v.GetPrimitiveType());
+                            throw new Exception("Cannot set gravity field to type: " + v.returnType);
                     }
                 },
-                new NumberPrimitive(25)) {
+                ResolvePrimitive(25)) {
 
                 GetDirection = (b, p, d) => {
                     switch(d) {
                         case Direction.UP:
                         case Direction.DOWN:
-                            return new NumberPrimitive(b.FieldSize.Y);
+                            return ResolvePrimitive(b.FieldSize.Y);
                         case Direction.LEFT:
                         case Direction.RIGHT:
-                            return new NumberPrimitive(b.FieldSize.X);
+                            return ResolvePrimitive(b.FieldSize.X);
                         case Direction.FORWARD:
                         case Direction.BACKWARD:
-                            return new NumberPrimitive(b.FieldSize.Z);
+                            return ResolvePrimitive(b.FieldSize.Z);
                         default:
                             throw new Exception("Bad");
                     }
                 };
 
                 SetDirection = (b, p, d, v) => {
-                    float value = CastNumber(v).GetTypedValue();
+                    float value = CastNumber(v);
                     float x = b.FieldSize.X;
                     float y = b.FieldSize.Y;
                     float z = b.FieldSize.Z;

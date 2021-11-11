@@ -20,7 +20,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.SIN, variable.operand);
-            Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.COS, variable.operand);
-            Assert.AreEqual((float)Math.Cos(1.5708f), CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual((float)Math.Cos(1.5708f), CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.TAN, variable.operand);
-            Assert.AreEqual((float)Math.Tan(1.5708f), CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual((float)Math.Tan(1.5708f), CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.ASIN, variable.operand);
-            Assert.AreEqual((float)Math.Asin(1.5708f), CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual((float)Math.Asin(1.5708f), CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.ACOS, variable.operand);
-            Assert.AreEqual((float)Math.Acos(1.5708f), CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual((float)Math.Acos(1.5708f), CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.ATAN, variable.operand);
-            Assert.AreEqual((float)Math.Atan(1.5708f), CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual((float)Math.Atan(1.5708f), CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.ROUND, variable.operand);
-            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)assignment.variable;
             Assert.AreEqual(UniOperand.ROUND, variable.operand);
-            Assert.AreEqual(6f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(6f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -131,9 +131,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(variable.a is UniOperandVariable);
             UniOperandVariable operation = (UniOperandVariable)variable.a;
             Assert.AreEqual(UniOperand.ABS, operation.operand);
-            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().GetPrimitiveType());
-            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().GetPrimitiveType());
-            Assert.AreEqual(3f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().returnType);
+            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().returnType);
+            Assert.AreEqual(3f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -160,9 +160,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(variable.a is UniOperandVariable);
             UniOperandVariable operation = (UniOperandVariable)variable.a;
             Assert.AreEqual(UniOperand.SQRT, operation.operand);
-            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().GetPrimitiveType());
-            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().GetPrimitiveType());
-            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().returnType);
+            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().returnType);
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.AreEqual(5f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -186,7 +186,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
-            Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
-            Assert.AreEqual(6f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(6f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -210,7 +210,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
-            Assert.AreEqual(new Vector3D(0,0,-1), CastVector(variable.GetValue()).GetValue());
+            Assert.AreEqual(new Vector3D(0,0,-1), CastVector(variable.GetValue()));
         }
 
         [TestMethod]
@@ -222,7 +222,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.DOT, variable.operand);
-            Assert.AreEqual(0f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(0f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -234,7 +234,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
-            Assert.AreEqual(3f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(3f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -246,7 +246,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.MOD, variable.operand);
-            Assert.AreEqual(1f, CastNumber(variable.GetValue()).GetValue());
+            Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -258,7 +258,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.MOD, variable.operand);
-            Assert.AreEqual(new Vector3D(1,0,0), CastVector(variable.GetValue()).GetValue());
+            Assert.AreEqual(new Vector3D(1,0,0), CastVector(variable.GetValue()));
         }
 
         [TestMethod]
@@ -270,7 +270,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
-            Assert.AreEqual(16, CastNumber(variable.GetValue()).GetTypedValue());
+            Assert.AreEqual(16, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -282,7 +282,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
-            Assert.AreEqual(90, CastNumber(variable.GetValue()).GetTypedValue());
+            Assert.AreEqual(90, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
@@ -345,7 +345,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(11f, CastNumber(addVariable.GetValue()).GetTypedValue());
+            Assert.AreEqual(11f, CastNumber(addVariable.GetValue()));
             Assert.AreEqual(BiOperand.ADD, addVariable.operand);
             Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
@@ -361,7 +361,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(5f, CastNumber(addVariable.GetValue()).GetTypedValue());
+            Assert.AreEqual(5f, CastNumber(addVariable.GetValue()));
             Assert.AreEqual(BiOperand.ADD, addVariable.operand);
             Assert.IsTrue(addVariable.a is BiOperandVariable);
             Assert.IsTrue(addVariable.b is StaticVariable);
@@ -433,8 +433,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual(Color.Red, primitive.GetValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual(Color.Red, primitive.value);
         }
 
         [TestMethod]
@@ -444,8 +444,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual(Color.Red, primitive.GetValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual(Color.Red, primitive.value);
         }
 
         [TestMethod]
@@ -455,8 +455,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual(Color.Yellow, primitive.GetValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual(Color.Yellow, primitive.value);
         }
 
         [TestMethod]
@@ -466,8 +466,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual(Color.Red, primitive.GetValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual(Color.Red, primitive.value);
         }
 
         [TestMethod]
@@ -477,8 +477,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual("#224466", CastString(primitive).GetTypedValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual("#224466", CastString(primitive));
         }
 
         [TestMethod]
@@ -488,8 +488,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual("#112233", CastString(primitive).GetTypedValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual("#112233", CastString(primitive));
         }
 
         [TestMethod]
@@ -499,8 +499,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive primitive = assignment.variable.GetValue();
-            Assert.AreEqual(Return.COLOR, primitive.GetPrimitiveType());
-            Assert.AreEqual(Color.Cyan, primitive.GetValue());
+            Assert.AreEqual(Return.COLOR, primitive.returnType);
+            Assert.AreEqual(Color.Cyan, primitive.value);
         }
 
         [TestMethod]
@@ -509,12 +509,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(4, listValues.Count);
-            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
-            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
-            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
-            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
+            Assert.AreEqual(0f, listValues[0].GetValue().value);
+            Assert.AreEqual(1f, listValues[1].GetValue().value);
+            Assert.AreEqual(2f, listValues[2].GetValue().value);
+            Assert.AreEqual(3f, listValues[3].GetValue().value);
         }
 
         [TestMethod]
@@ -523,12 +523,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0 + [1, 2, 3]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(4, listValues.Count);
-            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
-            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
-            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
-            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
+            Assert.AreEqual(0f, listValues[0].GetValue().value);
+            Assert.AreEqual(1f, listValues[1].GetValue().value);
+            Assert.AreEqual(2f, listValues[2].GetValue().value);
+            Assert.AreEqual(3f, listValues[3].GetValue().value);
         }
 
         [TestMethod]
@@ -537,7 +537,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + \" three\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.AreEqual("[0,1,2] three", CastString(assignment.variable.GetValue()).GetTypedValue());
+            Assert.AreEqual("[0,1,2] three", CastString(assignment.variable.GetValue()));
         }
 
         [TestMethod]
@@ -546,7 +546,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"zero \" + [0, 1, 2]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.AreEqual("zero [0,1,2]", CastString(assignment.variable.GetValue()).GetTypedValue());
+            Assert.AreEqual("zero [0,1,2]", CastString(assignment.variable.GetValue()));
         }
 
         [TestMethod]
@@ -555,14 +555,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + [3, 4, 5]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetTypedValue().GetValues();
+            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(6, listValues.Count);
-            Assert.AreEqual(0f, listValues[0].GetValue().GetValue());
-            Assert.AreEqual(1f, listValues[1].GetValue().GetValue());
-            Assert.AreEqual(2f, listValues[2].GetValue().GetValue());
-            Assert.AreEqual(3f, listValues[3].GetValue().GetValue());
-            Assert.AreEqual(4f, listValues[4].GetValue().GetValue());
-            Assert.AreEqual(5f, listValues[5].GetValue().GetValue());
+            Assert.AreEqual(0f, listValues[0].GetValue().value);
+            Assert.AreEqual(1f, listValues[1].GetValue().value);
+            Assert.AreEqual(2f, listValues[2].GetValue().value);
+            Assert.AreEqual(3f, listValues[3].GetValue().value);
+            Assert.AreEqual(4f, listValues[4].GetValue().value);
+            Assert.AreEqual(5f, listValues[5].GetValue().value);
         }
 
         [TestMethod]
@@ -572,8 +572,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive value = assignment.variable.GetValue();
-            Assert.AreEqual(Return.VECTOR, value.GetPrimitiveType());
-            Assert.AreEqual("1:2:3", CastString(value).GetTypedValue());
+            Assert.AreEqual(Return.VECTOR, value.returnType);
+            Assert.AreEqual("1:2:3", CastString(value));
         }
 
         [TestMethod]
@@ -583,8 +583,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Primitive value = assignment.variable.GetValue();
-            Assert.AreEqual(Return.BOOLEAN, value.GetPrimitiveType());
-            Assert.AreEqual(true, value.GetValue());
+            Assert.AreEqual(Return.BOOLEAN, value.returnType);
+            Assert.AreEqual(true, value.value);
         }
     }
 }

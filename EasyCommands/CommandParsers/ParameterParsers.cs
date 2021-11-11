@@ -369,9 +369,9 @@ namespace IngameScript {
             Vector3D vector;
             Double numeric;
             Color color;
-            if (Double.TryParse(token, out numeric)) primitive = new NumberPrimitive((float)numeric);
-            if (GetVector(token, out vector)) primitive = new VectorPrimitive(vector);
-            if (GetColor(token, out color)) primitive = new ColorPrimitive(color);
+            if (Double.TryParse(token, out numeric)) primitive = ResolvePrimitive((float)numeric);
+            if (GetVector(token, out vector)) primitive = ResolvePrimitive(vector);
+            if (GetColor(token, out color)) primitive = ResolvePrimitive(color);
             return primitive != null;
         }
 

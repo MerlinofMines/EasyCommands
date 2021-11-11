@@ -120,17 +120,17 @@ namespace IngameScript {
         }
 
         public class SimpleTypedHandler<T, U> : SimplePropertyHandler<T> {
-            public SimpleTypedHandler(GetTypedProperty<T, U> GetValue, SetTypedProperty<T, U> SetValue, Func<Primitive, SimplePrimitive<U>> Cast, U incrementValue)
-                : base((b, p) => ResolvePrimitive(GetValue(b)), (b, p, v) => SetValue(b, Cast(v).GetTypedValue()), ResolvePrimitive(incrementValue)) {
+            public SimpleTypedHandler(GetTypedProperty<T, U> GetValue, SetTypedProperty<T, U> SetValue, Func<Primitive, U> Cast, U incrementValue)
+                : base((b, p) => ResolvePrimitive(GetValue(b)), (b, p, v) => SetValue(b, Cast(v)), ResolvePrimitive(incrementValue)) {
             }
         }
 
         public class SimpleNumericDirectionPropertyHandler<T> : PropertyHandler<T> {
             public SimpleNumericDirectionPropertyHandler(GetNumericPropertyDirection<T> GetValue, SetNumericPropertyDirection<T> SetValue, Direction defaultDirection) {
                 Get = (b, p) => GetDirection(b, p, defaultDirection);
-                GetDirection = (b, p, d) => new NumberPrimitive(GetValue(b,d));
+                GetDirection = (b, p, d) => ResolvePrimitive(GetValue(b,d));
                 Set = (b, p, v) => SetDirection(b, p, defaultDirection, v);
-                SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v).GetTypedValue());
+                SetDirection = (b, p, d, v) => SetValue(b, d, CastNumber(v));
                 IncrementDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(v));
                 Increment = (b, p, v) => IncrementDirection(b, p, defaultDirection, v);
             }
@@ -151,10 +151,10 @@ namespace IngameScript {
         }
 
         public static void SetPrimitiveValue(IMyTerminalBlock block, String propertyId, Primitive value) {
-            Return type = value.GetPrimitiveType();
-            if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value).GetTypedValue());
-            else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value).GetTypedValue());
-            else block.SetValueFloat(propertyId, CastNumber(value).GetTypedValue());
+            Return type = value.returnType;
+            if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value));
+            else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value));
+            else block.SetValueFloat(propertyId, CastNumber(value));
         }
 
         public class DirectionVectorPropertyHandler<T> : PropertyHandler<T> where T : class, IMyTerminalBlock {
@@ -184,7 +184,7 @@ namespace IngameScript {
                             break;
                         default: throw new Exception("Cannot get direction value for direction: " + d);
                     }
-                    return new VectorPrimitive(vector/vector.Length());//Return normalized vector
+                    return ResolvePrimitive(vector/vector.Length());//Return normalized vector
                 };
                 Set = (b, p, v) => { };
                 SetDirection = (b, p, d, v) => { };
@@ -346,7 +346,7 @@ namespace IngameScript {
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
                 Primitive value = (property.direction.HasValue ? GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :
                 GetPropertyHandler(property).Get((T)block, property));
-                if (property.propertyValue != null && !CastBoolean(property.propertyValue.GetValue()).GetTypedValue()) value = value.Not();
+                if (property.propertyValue != null && !CastBoolean(property.propertyValue.GetValue())) value = value.Not();
                 return value;
             }
 
@@ -419,10 +419,10 @@ namespace IngameScript {
             }
 
             public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set) {
-                AddTypedPropertyHandler(property, Get, Set, CastColor, new Color(10, 10, 10));
+                AddTypedPropertyHandler(property, Get, Set, p => CastColor(p), new Color(10, 10, 10));
             }
 
-            void AddTypedPropertyHandler<U>(Property property, GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, SimplePrimitive<U>> Cast, U delta) {
+            void AddTypedPropertyHandler<U>(Property property, GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) {
                 AddPropertyHandler(property, new SimpleTypedHandler<T, U>(Get, Set, Cast, delta));
             }
         }

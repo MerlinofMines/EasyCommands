@@ -30,7 +30,7 @@ namespace IngameScript {
 
             public class DoorRatioHandler : PropertyHandler<IMyDoor> {
                 public DoorRatioHandler() {
-                    Get = (b, p) => new NumberPrimitive(1 - b.OpenRatio);
+                    Get = (b, p) => ResolvePrimitive(1 - b.OpenRatio);
                     Set = (b, p, v) => Exception();
                     SetDirection = (b, p, d, v) => Exception();
                     Increment = (b, p, v) => Exception();

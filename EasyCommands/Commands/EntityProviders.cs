@@ -60,17 +60,17 @@ namespace IngameScript {
                 List<object> selectedEntities = new List<Object>();
                 BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
-                var indexes = CastList(index.GetValue()).GetTypedValue().GetValues()
+                var indexes = CastList(index.GetValue()).GetValues()
                     .Select(v => v.GetValue()).ToList();
 
                 foreach (Primitive p in indexes) {
                     //Return empty list if index > Count
-                    if (p.GetPrimitiveType() == Return.NUMERIC) {
-                        int i = (int)CastNumber(p).GetTypedValue();
+                    if (p.returnType == Return.NUMERIC) {
+                        int i = (int)CastNumber(p);
                         if (i < entities.Count) selectedEntities.Add(entities[i]);
                     }
-                    if (p.GetPrimitiveType() == Return.STRING) {
-                        var entityName = CastString(p).GetTypedValue();
+                    if (p.returnType == Return.STRING) {
+                        var entityName = CastString(p);
                         selectedEntities.AddRange(entities.Where(o => entityName == b.GetName(o)));
                     }
                     //Other Index types not supported
@@ -91,7 +91,7 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                String selectorString = CastString(selector.GetValue()).GetTypedValue();
+                String selectorString = CastString(selector.GetValue());
                 bool resolvedIsGroup = false;
                 Block bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
                 bool useGroup = isGroup || resolvedIsGroup;
@@ -102,7 +102,7 @@ namespace IngameScript {
             public Block GetBlockType() {
                 if (blockType.HasValue) return blockType.Value;
                 bool ignored;
-                return ResolveType(CastString(selector.GetValue()).GetTypedValue(), out ignored);
+                return ResolveType(CastString(selector.GetValue()), out ignored);
             }
 
             Block ResolveType(String selector, out bool isGroup) {

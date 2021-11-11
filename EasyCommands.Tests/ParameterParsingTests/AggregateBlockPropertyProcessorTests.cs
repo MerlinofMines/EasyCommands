@@ -30,7 +30,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)comparison.a;
             Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);
             Assert.IsTrue(comparison.b is StaticVariable);
-            Assert.AreEqual(0f, comparison.b.GetValue().GetValue());
+            Assert.AreEqual(0f, comparison.b.GetValue().value);
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
             Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType);
-            Assert.AreEqual("gold ingot", aggregate.property.attributeValue.GetValue().GetValue());
+            Assert.AreEqual("gold ingot", aggregate.property.attributeValue.GetValue().value);
         }
 
         [TestMethod]

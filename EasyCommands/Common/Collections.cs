@@ -30,31 +30,31 @@ namespace IngameScript {
 
             //If numeric, get by index.  If string, get by key value
             public Variable GetValue(Primitive key) {
-                switch(key.GetPrimitiveType()) {
+                switch(key.returnType) {
                     case Return.NUMERIC:
-                        return keyedValues[(int)CastNumber(key).GetTypedValue()];
+                        return keyedValues[(int)CastNumber(key)];
                     case Return.STRING:
-                        var keyString = CastString(key).GetTypedValue();
-                        return keyedValues.Where(v => v.Key == CastString(key).GetTypedValue())
+                        var keyString = CastString(key);
+                        return keyedValues.Where(v => v.Key == CastString(key))
                             .Cast<Variable>()
                             .DefaultIfEmpty(EmptyList())
                             .First();
                     default:
-                        throw new Exception("Cannot lookup collection value by Primitive Type: " + key.GetPrimitiveType());
+                        throw new Exception("Cannot lookup collection value by Primitive Type: " + key.returnType);
                 }
             }
 
             //If numeric, set by Index.  If string, put (or append) keyed value
             public void SetValue(Primitive key, Variable value) {
-                if (key.GetPrimitiveType() == Return.NUMERIC) {
-                    keyedValues[(int)CastNumber(key).GetTypedValue()] = AsKeyedVariable(value);
-                } else if (key.GetPrimitiveType() == Return.STRING) {
-                    var keyString = CastString(key).GetTypedValue();
+                if (key.returnType == Return.NUMERIC) {
+                    keyedValues[(int)CastNumber(key)] = AsKeyedVariable(value);
+                } else if (key.returnType == Return.STRING) {
+                    var keyString = CastString(key);
                     KeyedVariable existing = keyedValues.Where(v => v.Key == keyString).FirstOrDefault();
                     if (existing == null) {
                         keyedValues.Add(new KeyedVariable(keyString, value));
                     } else existing.Value = value;
-                } else throw new Exception("Cannot set collection value by Primitive Type: " + key.GetPrimitiveType());
+                } else throw new Exception("Cannot set collection value by Primitive Type: " + key.returnType);
             }
 
             public KeyedList Combine(KeyedList other) {
@@ -74,7 +74,7 @@ namespace IngameScript {
 
             public KeyedList DeepCopy() => new KeyedList(keyedValues.Select(k => new KeyedVariable(k.Key, new StaticVariable(k.Value.GetValue().DeepCopy()))).ToArray());
 
-            public String Print() => "[" + string.Join(",", keyedValues.Select(k => (k.HasKey() ? k.Key + "=" : "") + CastString(k.Value.GetValue()).GetTypedValue())) + "]";
+            public String Print() => "[" + string.Join(",", keyedValues.Select(k => (k.HasKey() ? k.Key + "=" : "") + CastString(k.Value.GetValue()))) + "]";
         }
     }
 }
