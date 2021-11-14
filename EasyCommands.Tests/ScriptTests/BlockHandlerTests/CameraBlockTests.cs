@@ -12,7 +12,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void getCameraRange() {
             String script = @"
 assign ""a"" to ""mock camera"" range
-print ""Range: "" + {a}
+print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockCamera = new Mock<IMyCameraBlock>();

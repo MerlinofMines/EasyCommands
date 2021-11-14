@@ -22,12 +22,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void SimpleVariableCondition() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("if {a} set the \"rotors\" height to 5");
+            var command = program.ParseCommand("if a set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.Condition is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)conditionalCommand.Condition;
-            Assert.AreEqual("a", variable.variableName);
+            Assert.IsTrue(conditionalCommand.Condition is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)conditionalCommand.Condition;
+            Assert.AreEqual("a", variable.value);
         }
 
         [TestMethod]

@@ -187,9 +187,9 @@ async call printLocalVariable 1
 async call printLocalVariable 2
 
 :printLocalVariable ""a""
-print 'Variable is: ' + {a}
-assign ""a"" to {a} + 2
-goto printLocalVariable {a}
+print 'Variable is: ' + a
+assign ""a"" to a + 2
+goto printLocalVariable a
 ";
 
             using (var test = new ScriptTest(script)) {
@@ -215,8 +215,8 @@ async call printGlobalVariable
 async call printGlobalVariable
 
 :printGlobalVariable
-print 'Variable is: ' + {a}
-assign global ""a"" to {a} + 2
+print 'Variable is: ' + a
+assign global ""a"" to a + 2
 goto printGlobalVariable
 ";
 
@@ -244,12 +244,12 @@ async call printVariable
 call ""printGlobalVariable""
 
 :printGlobalVariable
-Print ""Global Variable is: "" + {a}
+Print ""Global Variable is: "" + a
 goto ""printGlobalVariable""
 
 :printVariable
-print 'Variable is: ' + {a}
-assign ""a"" to {a} + 2
+print 'Variable is: ' + a
+assign ""a"" to a + 2
 goto printVariable
 ";
 
@@ -274,13 +274,13 @@ goto printVariable
             String script = @"
 :main
 assign ""i"" to 0
-async call printLocalVariable {i}
-assign ""i"" to {i} + 1
-async call printLocalVariable {i}
-assign ""i"" to {i} + 1
+async call printLocalVariable i
+assign ""i"" to i + 1
+async call printLocalVariable i
+assign ""i"" to i + 1
 
 :printLocalVariable ""a""
-print 'Variable is: ' + {a}
+print 'Variable is: ' + a
 ";
 
             using (var test = new ScriptTest(script)) {
@@ -296,12 +296,12 @@ print 'Variable is: ' + {a}
             String script = @"
 :main
 assign ""i"" to 0
-while {i} < 2
-  async call printLocalVariable {i}
-  assign ""i"" to {i} + 1
+while i < 2
+  async call printLocalVariable i
+  assign ""i"" to i + 1
 
 :printLocalVariable ""a""
-print 'Variable is: ' + {a}
+print 'Variable is: ' + a
 ";
 
             using (var test = new ScriptTest(script)) {

@@ -14,7 +14,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void getCargoCapacity() {
             String script = @"
 assign ""a"" to ""mock cargo"" capacity
-print ""Cargo Capacity: "" + {a}
+print ""Cargo Capacity: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockContainer = new Mock<IMyCargoContainer>();
@@ -35,7 +35,7 @@ print ""Cargo Capacity: "" + {a}
         public void getCargoVolume() {
             String script = @"
 assign ""a"" to ""mock cargo"" volume
-print ""Cargo Volume: "" + {a}
+print ""Cargo Volume: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockContainer = new Mock<IMyCargoContainer>();
@@ -56,7 +56,7 @@ print ""Cargo Volume: "" + {a}
         public void getCargoRatio() {
             String script = @"
 assign ""a"" to ""mock cargo"" ratio
-print ""Cargo Ratio: "" + {a}
+print ""Cargo Ratio: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockContainer = new Mock<IMyCargoContainer>();
@@ -78,7 +78,7 @@ print ""Cargo Ratio: "" + {a}
         public void getCargoAmount() {
              String script = @"
 assign ""a"" to ""mock cargo"" ""ore"" amount
-print ""Ore Amount: "" + {a}
+print ""Ore Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockContainer = new Mock<IMyCargoContainer>();

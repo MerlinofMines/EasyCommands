@@ -69,7 +69,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignVariableFromInMemoryVariableName() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign {a} to 2");
+            var command = program.ParseCommand("assign a to 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -105,19 +105,19 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignVariableCaseIsPreserved() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign \"a\" to {variableName}");
+            var command = program.ParseCommand("assign \"a\" to variableName");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.IsTrue(assignCommand.variable is InMemoryVariable);
-            InMemoryVariable memoryVariable = (InMemoryVariable)assignCommand.variable;
-            Assert.AreEqual("variableName", memoryVariable.variableName);
+            Assert.IsTrue(assignCommand.variable is AmbiguousStringVariable);
+            AmbiguousStringVariable memoryVariable = (AmbiguousStringVariable)assignCommand.variable;
+            Assert.AreEqual("variableName", memoryVariable.value);
         }
 
         [TestMethod]
         public void LockVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("bind \"a\" to {b} is 2");
+            var command = program.ParseCommand("bind \"a\" to b is 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
@@ -125,7 +125,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.useReference);
 
             ComparisonVariable comparison = (ComparisonVariable)assignCommand.variable;
-            Assert.IsTrue(comparison.a is InMemoryVariable);
+            Assert.IsTrue(comparison.a is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)comparison.a;
+            Assert.AreEqual("b", variable.value);
         }
 
         [TestMethod]

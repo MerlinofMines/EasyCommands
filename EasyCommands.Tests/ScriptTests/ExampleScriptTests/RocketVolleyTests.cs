@@ -13,32 +13,32 @@ namespace EasyCommands.Tests.ScriptTests {
             String script = @"
 :setup
 assign global rocketGroup to 'Rockets'
-assign global ""fireTickInterval"" to 1
+assign global fireTickInterval to 1
 
 #Background Firing Loop
 async call ""fireLoop""
 call ""stopFiring""
 
 :toggle
-assign global ""firing"" to not {firing}
-assign global ""i"" to 0
+assign global isFiring to not isFiring
+assign global i to 0
 
 :startFiring
-assign global ""firing"" to true
+assign global isFiring to true
 assign global i to 0
 
 :stopFiring
 tell $rocketGroup rockets to not shoot
-assign global ""firing"" to false
+assign global isFiring to false
 
 :fireLoop
-if not {firing} replay
+if not isFiring replay
 print ""i = "" + i
-if {i} >= count of $rocketGroup rockets
+if i >= count of $rocketGroup rockets
   assign global i to 0
 tell $rocketGroup rockets @ i to shoot
 tell $rocketGroup rockets to not shoot
-wait {fireTickInterval} ticks
+wait fireTickInterval ticks
 assign global i to i + 1
 goto ""fireLoop""
 ";

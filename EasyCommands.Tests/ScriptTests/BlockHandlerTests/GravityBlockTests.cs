@@ -13,7 +13,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void getGravityGeneratorStrength() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" strength
-print ""Strength: "" + {a}
+print ""Strength: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGenerator>();
@@ -43,7 +43,7 @@ set ""test gravityGenerator"" strength to 0.2
         public void getGravityGeneratorRange() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" range
-print ""Range: "" + {a}
+print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGenerator>();
@@ -59,7 +59,7 @@ print ""Range: "" + {a}
         public void getGravityGeneratorHeight() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" upper range
-print ""Range: "" + {a}
+print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGenerator>();
@@ -75,7 +75,7 @@ print ""Range: "" + {a}
         public void getGravityGeneratorWidth() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" left range
-print ""Range: "" + {a}
+print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGenerator>();
@@ -91,7 +91,7 @@ print ""Range: "" + {a}
         public void getGravityGeneratorDepth() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" forward range
-print ""Range: "" + {a}
+print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGenerator>();
@@ -170,7 +170,7 @@ set ""test gravityGenerator"" forward range to 2
         public void getSphericalGravityGeneratorStrength() {
             String script = @"
 assign ""a"" to ""test gravitySphere"" strength
-print ""Strength: "" + {a}
+print ""Strength: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
@@ -200,7 +200,7 @@ set ""test gravitySphere"" strength to 0.2
         public void getSphericalGravityGeneratorRadius() {
             String script = @"
 assign ""a"" to ""test gravitySphere"" radius
-print ""Radius: "" + {a}
+print ""Radius: "" + a
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();

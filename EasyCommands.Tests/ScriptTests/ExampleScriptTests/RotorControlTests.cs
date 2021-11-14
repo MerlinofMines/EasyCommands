@@ -13,72 +13,72 @@ namespace EasyCommands.Tests.ScriptTests {
 assign desiredSecondsToLimit to 2.5
 assign minRotorRPM to 0.02
 assign maxRotorRPM to 3.5
-assign 'rotors' to 'test rotors'
+assign myRotors to 'test rotors'
 assign i to 0
-until {i} >= count of $rotors
-  async call setVelocity {i}
-  assign ""i"" to {i} + 1
+until i >= count of $myRotors
+  async call setVelocity i
+  assign i to i + 1
 
 :setVelocity ""index""
-assign ""velocity"" to $rotors @ {index} velocity
-Print {rotors} + "" "" + {index} + "": "" + {velocity}
+assign myVelocity to $myRotors @ index velocity
+Print myRotors + "" "" + index + "": "" + myVelocity
 
-if absolute {velocity} < 0.0001 goto setVelocity {index}
+if absolute myVelocity < 0.0001 goto setVelocity index
 
-assign isNegative to {velocity} < 0
-assign anglesPerSecond to 6 * {velocity}
-assign currentAngle to $rotors @ {index} angle
+assign isNegative to myVelocity < 0
+assign anglesPerSecond to 6 * myVelocity
+assign currentAngle to $myRotors @ index angle
 
-#Print ""IsNegative: "" + {isNegative}
-#Print ""anglePerSecond: "" + {anglesPerSecond}
-#Print ""currentAngle: "" + {currentAngle}
+#Print ""IsNegative: "" + isNegative
+#Print ""anglePerSecond: "" + anglesPerSecond
+#Print ""currentAngle: "" + currentAngle
 
-if {isNegative}
-  assign rotorLimit to $rotors @ {index} lower limit - {currentAngle}
+if isNegative
+  assign rotorLimit to $myRotors @ index lower limit - currentAngle
 else
-  assign rotorLimit to $rotors @ {index} upper limit - {currentAngle}
+  assign rotorLimit to $myRotors @ index upper limit - currentAngle
 
-#Print ""rotorLimit: "" + {rotorLimit}
+#Print ""rotorLimit: "" + rotorLimit
 
-assign timeToLimit to {rotorLimit} / {anglesPerSecond}
-assign newSpeed to ( {timeToLimit} * {velocity} ) / {desiredSecondsToLimit}
+assign timeToLimit to rotorLimit / anglesPerSecond
+assign newSpeed to ( timeToLimit * myVelocity ) / desiredSecondsToLimit
 
-#Print ""timeToLimit: "" + {timeToLimit}
-#Print ""desiredSecondsToLimit: "" + {desiredSecondsToLimit}
-#Print ""newSpeed: "" + {newSpeed}
+#Print ""timeToLimit: "" + timeToLimit
+#Print ""desiredSecondsToLimit: "" + desiredSecondsToLimit
+#Print ""newSpeed: "" + newSpeed
 
-if {isNegative}
-  if {timeToLimit} < {desiredSecondsToLimit}
-    call ""min"" -1 * {minRotorRPM} {newSpeed}
-    assign newSpeed to {output}
+if isNegative
+  if timeToLimit < desiredSecondsToLimit
+    call ""min"" -1 * minRotorRPM newSpeed
+    assign newSpeed to myOutput
   else
-    call ""max"" -1 * {maxRotorRPM} {newSpeed}
-    assign newSpeed to {output}
+    call ""max"" -1 * maxRotorRPM newSpeed
+    assign newSpeed to myOutput
 else
-  if {timeToLimit} < {desiredSecondsToLimit}
-    call ""max"" {minRotorRPM} {newSpeed}
-    assign newSpeed to {output}
+  if timeToLimit < desiredSecondsToLimit
+    call ""max"" minRotorRPM newSpeed
+    assign newSpeed to myOutput
   else
-    call ""min"" {maxRotorRPM} {newSpeed}
-    assign newSpeed to {output}
+    call ""min"" maxRotorRPM newSpeed
+    assign newSpeed to myOutput
 
-#Print ""Final New Speed: "" + {newSpeed}
+#Print ""Final New Speed: "" + newSpeed
 
-set $rotors @ {index} velocity to {newSpeed}
+set $myRotors @ index velocity to newSpeed
 
-goto setVelocity {index}
+goto setVelocity index
 
 :max a b
-if {a} > {b}
-  assign ""output"" to {a}
+if a > b
+  assign myOutput to a
 else
-  assign ""output"" to {b}
+  assign myOutput to b
 
 :min a b
-if {a} > {b}
-  assign ""output"" to {b}
+if a > b
+  assign myOutput to b
 else
-  assign ""output"" to {a}
+  assign myOutput to a
 ";
         [TestMethod]
         public void RotorControlTestNoMovement() {

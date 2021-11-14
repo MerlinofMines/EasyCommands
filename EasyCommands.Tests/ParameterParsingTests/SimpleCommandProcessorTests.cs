@@ -22,12 +22,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void PrintCommandVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("print {a}");
+            var command = program.ParseCommand("print a");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
-            Assert.IsTrue(printCommand.variable is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)printCommand.variable;
-            Assert.AreEqual("a", variable.variableName);
+            Assert.IsTrue(printCommand.variable is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)printCommand.variable;
+            Assert.AreEqual("a", variable.value);
         }
 
         [TestMethod]

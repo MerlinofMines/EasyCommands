@@ -324,8 +324,6 @@ namespace IngameScript {
                 commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
-            } else if (t.StartsWith("{") && t.EndsWith("}")) { //Variable References
-                commandParameters.Add(new VariableCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 2))));
             } else if (t.StartsWith("$")) { //Variable References used as Selectors
                 commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 1))));
             } else { //If nothing else matches, must be a string

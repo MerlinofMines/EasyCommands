@@ -288,52 +288,52 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignSimpleAdditionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} + 2");
+            var command = program.ParseCommand("assign a to b + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.IsTrue(variable.a is InMemoryVariable);
+            Assert.IsTrue(variable.a is AmbiguousStringVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
 
         [TestMethod]
         public void AssignSimpleSubtractionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} - 2");
+            var command = program.ParseCommand("assign a to b - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
-            Assert.IsTrue(variable.a is InMemoryVariable);
+            Assert.IsTrue(variable.a is AmbiguousStringVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
 
         [TestMethod]
         public void AssignSimpleMultiplicationVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} * 2");
+            var command = program.ParseCommand("assign a to b * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
-            Assert.IsTrue(variable.a is InMemoryVariable);
+            Assert.IsTrue(variable.a is AmbiguousStringVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
 
         [TestMethod]
         public void AssignSimpleDivisionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} / 2");
+            var command = program.ParseCommand("assign a to b / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
-            Assert.IsTrue(variable.a is InMemoryVariable);
+            Assert.IsTrue(variable.a is AmbiguousStringVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }
 
@@ -372,7 +372,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AdditionBeforeVariableComparison() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} + 1 > 2");
+            var command = program.ParseCommand("assign a to b + 1 > 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is ComparisonVariable);
@@ -384,14 +384,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AdditionBeforeBooleanLogic() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to {b} + 1 and {c}");
+            var command = program.ParseCommand("assign a to b + 1 and c");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.AND, variable.operand);
             Assert.IsTrue(variable.a is BiOperandVariable);
-            Assert.IsTrue(variable.b is InMemoryVariable);
+            Assert.IsTrue(variable.b is AmbiguousStringVariable);
         }
 
         [TestMethod]
@@ -416,7 +416,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AdditionUsedAsBlockConditionVariable() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("if the \"rotor\" angle > {a} + 30 set the \"rotor\" angle to {a}");
+            var command = program.ParseCommand("if the \"rotor\" angle > a + 30 set the \"rotor\" angle to a");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand assignment = (ConditionalCommand)command;
             Assert.IsTrue(assignment.Condition is AggregateConditionVariable);

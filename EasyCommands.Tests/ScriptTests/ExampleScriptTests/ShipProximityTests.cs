@@ -12,7 +12,7 @@ namespace EasyCommands.Tests.ScriptTests {
 :setup
 assign ""LASER_SCAN_DISTANCE"" to 10000
 assign ""LASER_CAMERA"" to 'My Camera'
-set $LASER_CAMERA camera range to {LASER_SCAN_DISTANCE}
+set $LASER_CAMERA camera range to LASER_SCAN_DISTANCE
 
 while true
   call ""detect""
@@ -20,17 +20,17 @@ while true
 :detect
 when $LASER_CAMERA camera is triggered
   call calculateClosestDistance
-  Print ""Distance To Target: "" + round ( abs {distanceVector} / 10 ) / 100 + ""km""
-  Print ""Closest Approach: "" + round ( {closestDistance} / 10 ) / 100 + ""km""
+  Print ""Distance To Target: "" + round ( abs distanceVector / 10 ) / 100 + ""km""
+  Print ""Closest Approach: "" + round ( closestDistance / 10 ) / 100 + ""km""
 
 :calculateClosestDistance
 assign ""distanceVector"" to avg $LASER_CAMERA camera position - avg $LASER_CAMERA camera target
 assign ""velocityVector"" to avg $LASER_CAMERA camera targetVelocity
-if abs {velocityVector} < 0.0001
-  assign ""closestDistance"" to abs {distanceVector}
+if abs velocityVector < 0.0001
+  assign ""closestDistance"" to abs distanceVector
 else
-  assign ""vang"" to acos ( ( {distanceVector} . {velocityVector} ) / ( abs {distanceVector} * abs {velocityVector} ) )
-  assign ""closestDistance"" to sin {vang} * abs {distanceVector}
+  assign ""vang"" to acos ( ( distanceVector . velocityVector ) / ( abs distanceVector * abs velocityVector ) )
+  assign ""closestDistance"" to sin vang * abs distanceVector
 ";
 
         [TestMethod]
