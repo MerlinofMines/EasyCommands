@@ -25,13 +25,14 @@ namespace IngameScript {
                 AddBooleanHandler(Property.RUN, (b) => InProgress(b));
                 AddBooleanHandler(Property.SUPPLY, (b) => !InProgress(b), (b, v) => b.Depressurize = !v);
                 AddNumericHandler(Property.RATIO, (b) => b.GetOxygenLevel());
+                AddNumericHandler(Property.LEVEL, (b) => b.GetOxygenLevel());
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SUPPLY;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
                 defaultDirection = Direction.UP;
             }
 
-            bool InProgress(IMyAirVent b) { return b.Status == VentStatus.Depressurizing || b.Status == VentStatus.Pressurizing; }
+            bool InProgress(IMyAirVent b) => b.Status == VentStatus.Depressurizing || b.Status == VentStatus.Pressurizing;
         }
     }
 }
