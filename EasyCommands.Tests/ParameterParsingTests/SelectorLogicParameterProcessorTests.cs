@@ -135,6 +135,50 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void ListVariableSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the a[0] sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+            Assert.IsTrue(sep.selector is ListIndexVariable);
+            ListIndexVariable variable = (ListIndexVariable)sep.selector;
+            Assert.IsTrue(variable.expectedList is InMemoryVariable);
+            InMemoryVariable list = (InMemoryVariable)variable.expectedList;
+            Assert.AreEqual("a", list.variableName);
+            Assert.IsTrue(variable.index is IndexVariable);
+            IndexVariable index = (IndexVariable)variable.index;
+            Assert.AreEqual(0, CastNumber(CastList(index.GetValue()).GetValues()[0].GetValue()));
+        }
+
+        [TestMethod]
+        public void MultiDimensionalListVariableSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the a[0][1] sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+            Assert.IsTrue(sep.selector is ListIndexVariable);
+            ListIndexVariable second = (ListIndexVariable)sep.selector;
+            Assert.IsTrue(second.index is IndexVariable);
+            IndexVariable secondIndex = (IndexVariable)second.index;
+            Assert.AreEqual(1, CastNumber(CastList(secondIndex.GetValue()).GetValues()[0].GetValue()));
+
+            Assert.IsTrue(second.expectedList is ListIndexVariable);
+            ListIndexVariable first = (ListIndexVariable)second.expectedList;
+            Assert.IsTrue(first.expectedList is InMemoryVariable);
+            InMemoryVariable firstList = (InMemoryVariable)first.expectedList;
+            Assert.AreEqual("a", firstList.variableName);
+            Assert.IsTrue(first.index is IndexVariable);
+            IndexVariable firstIndex = (IndexVariable)first.index;
+            Assert.AreEqual(0, CastNumber(CastList(firstIndex.GetValue()).GetValues()[0].GetValue()));
+        }
+
+        [TestMethod]
         public void VariableSelectorWithIndex() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $mySirens[0]");

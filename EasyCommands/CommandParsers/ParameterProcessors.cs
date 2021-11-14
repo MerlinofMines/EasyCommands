@@ -44,6 +44,18 @@ namespace IngameScript {
                     name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
                 NoValueRule<AmbiguiousStringCommandParameter>(b => new StringCommandParameter(b.value, false))),
 
+            OneValueRule<ListCommandParameter, StringCommandParameter>(
+                requiredLeft<StringCommandParameter>(),
+                (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), list.value))),
+
+            OneValueRule<ListIndexCommandParameter, ListCommandParameter>(
+                requiredRight<ListCommandParameter>(),
+                (index, list) => new ListIndexCommandParameter(new ListIndexVariable(index.value, list.GetValue().value))),
+
+            OneValueRule<ListCommandParameter, VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(),
+                (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
+
             //SelfSelectorProcessor
             OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
@@ -52,6 +64,11 @@ namespace IngameScript {
             //VariableSelectorProcessor
             TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+
+            //ListSelectorProcessor
+            TwoValueRule<ListIndexCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
+                requiredRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
                 (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ImplicitAllSelectorProcessor
@@ -81,21 +98,10 @@ namespace IngameScript {
                 requiredLeft<SelectorCommandParameter>(),
                 (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
 
-            OneValueRule<ListIndexCommandParameter, ListCommandParameter>(
-                requiredRight<ListCommandParameter>(),
-                (index, list) => new ListIndexCommandParameter(new ListIndexVariable(index.value, list.GetValue().value))),
-
             //ListProcessors
-            new BranchingProcessor<ListCommandParameter> (
-                OneValueRule<ListCommandParameter, StringCommandParameter>(
-                    requiredLeft<StringCommandParameter>(),
-                    (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.GetValue().value), list.value))),
-                OneValueRule<ListCommandParameter, VariableCommandParameter>(
-                    requiredLeft<VariableCommandParameter>(),
-                    (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
-                OneValueRule<ListCommandParameter, SelectorCommandParameter>(
-                    requiredLeft<SelectorCommandParameter>(),
-                    (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value))))),
+            OneValueRule<ListCommandParameter, SelectorCommandParameter>(
+                requiredLeft<SelectorCommandParameter>(),
+                (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value)))),
 
             new MultiListProcessor(),
 
