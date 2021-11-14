@@ -1,7 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Moq;
 using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI.Interfaces;
 using VRageMath;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
@@ -196,6 +199,24 @@ show the ""test terminal""
                 test.RunUntilDone();
 
                 Assert.AreEqual("Right Direction: 0:0:1", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockProperties() {
+            String script = @"print ""Properties: "" + the ""test terminal"" properties";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var property1 = MockProperty<IMyTerminalBlock, float>(mockBlock, "Property1");
+                var property2 = MockProperty<IMyTerminalBlock, StringBuilder>(mockBlock, "Property2");
+                List<ITerminalProperty> expectedProperties = new List<ITerminalProperty> { property1.Object, property2.Object };
+                mockBlock.Setup(b => b.GetProperties(It.IsAny<List<ITerminalProperty>>(), null))
+                    .Callback<List<ITerminalProperty>, Func<ITerminalProperty,bool>>((list,collect)=> list.AddRange(expectedProperties));
+                test.RunUntilDone();
+
+                Assert.AreEqual("Properties: [Property1,Property2]", test.Logger[0]);
             }
         }
     }

@@ -18,25 +18,30 @@ namespace EasyCommands.Tests.ScriptTests {
     class MockEntityUtility {
 
         public static void MockGetProperty<T, U>(Mock<T> mockBlock, String propertyId, U value) where T : class, IMyTerminalBlock {
-            var mockProperty = MockProperty<T,U>(mockBlock, propertyId);
-            MockPropertyValue(mockProperty, value);
-        }
-
-        public static void MockPropertyValue<U>(Mock<ITerminalProperty<U>> property, U value) {
-            if (value is float) {
-                property.Setup(b => b.TypeName).Returns("float");
-            } else if (value is bool) {
-                property.Setup(b => b.TypeName).Returns("bool");
-            } else if (value is Color) {
-                property.Setup(b => b.TypeName).Returns("color");
-            } else throw new Exception("Unsupported Property Value Type: " + typeof(U));
+            var property = MockProperty<T,U>(mockBlock, propertyId);
             property.Setup(b => b.GetValue(It.IsAny<IMyCubeBlock>())).Returns(value);
         }
 
         public static Mock<ITerminalProperty<U>> MockProperty<T,U>(Mock<T> mockBlock, String propertyId) where T : class, IMyTerminalBlock {
             var mockProperty = new Mock<ITerminalProperty<U>>();
+            mockProperty.Setup(p => p.Id).Returns(propertyId);
+            MockPropertyType(mockProperty);
             mockBlock.Setup(b => b.GetProperty(propertyId)).Returns(mockProperty.Object);
             return mockProperty;
+        }
+
+        public static void MockPropertyType<U>(Mock<ITerminalProperty<U>> property) {
+            if (typeof(U) == typeof(bool)) {
+                property.Setup(b => b.TypeName).Returns("Boolean");
+            } else if (typeof(U) == typeof(StringBuilder)) {
+                property.Setup(b => b.TypeName).Returns("StringBuilder");
+            } else if (typeof(U) == typeof(Color)) {
+                property.Setup(b => b.TypeName).Returns("Color");
+            } else if (typeof(U) == typeof(long)) {
+                property.Setup(b => b.TypeName).Returns("Int64");
+            } else if (typeof(U) == typeof(float)) {
+                property.Setup(b => b.TypeName).Returns("Single");
+            } else throw new Exception("Unsupported Property Value Type: " + typeof(U));
         }
 
         public static Mock<ITerminalAction> MockCalledAction<T>(Mock<T> mockBlock, String actionName) where T : class, IMyTerminalBlock {

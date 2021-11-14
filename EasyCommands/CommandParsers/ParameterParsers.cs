@@ -59,57 +59,58 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddWords(Words("height", "length", "level"), new PropertyCommandParameter(Property.LEVEL));
-            AddWords(Words("angle"), new PropertyCommandParameter(Property.ANGLE));
-            AddWords(Words("speed", "velocity", "rate", "pace"), new PropertyCommandParameter(Property.VELOCITY));
-            AddWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), new PropertyCommandParameter(Property.CONNECTED));
-            AddWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), new PropertyCommandParameter(Property.CONNECTED), new BooleanCommandParameter(false));
-            AddWords(Words("lock", "locked", "freeze", "brake"), new PropertyCommandParameter(Property.LOCKED));
-            AddWords(Words("unlock", "unlocked", "unfreeze"), new PropertyCommandParameter(Property.LOCKED), new BooleanCommandParameter(false));
-            AddWords(Words("run", "running", "execute", "executing"), new PropertyCommandParameter(Property.RUN));
-            AddWords(Words("done", "ready", "complete", "finished", "built", "finish"), new PropertyCommandParameter(Property.COMPLETE));
-            AddWords(Words("open", "opened"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(true));
-            AddWords(Words("close", "closed", "shut"), new PropertyCommandParameter(Property.OPEN), new BooleanCommandParameter(false));
-            AddWords(Words("fontsize", "size"), new PropertyCommandParameter(Property.FONT_SIZE));
-            AddWords(Words("text", "message"), new PropertyCommandParameter(Property.TEXT));
-            AddWords(Words("color"), new PropertyCommandParameter(Property.COLOR));
-            AddWords(Words("power", "powered"), new PropertyCommandParameter(Property.POWER));
-            AddWords(Words("enable", "enabled", "arm", "armed"), new PropertyCommandParameter(Property.ENABLE));
-            AddWords(Words("disable", "disabled", "disarm", "disarmed"), new PropertyCommandParameter(Property.ENABLE), new BooleanCommandParameter(false));
-            AddWords(Words("music", "song"), new PropertyCommandParameter(Property.SONG));
-            AddWords(Words("silent", "silence"), new PropertyCommandParameter(Property.SILENCE));
-            AddWords(Words("volume", "intensity", "output"), new PropertyCommandParameter(Property.VOLUME));
-            AddWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), new PropertyCommandParameter(Property.RANGE));
-            AddWords(Words("blinkinterval", "blinkInterval", "interval"), new PropertyCommandParameter(Property.BLINK_INTERVAL));
-            AddWords(Words("blinklength", "blinkLength"), new PropertyCommandParameter(Property.BLINK_LENGTH));
-            AddWords(Words("blinkoffset", "blinkOffset"), new PropertyCommandParameter(Property.BLINK_OFFSET));
-            AddWords(Words("falloff"), new PropertyCommandParameter(Property.FALLOFF));
-            AddWords(Words("times", "iterations"), new IteratorCommandParameter());
-            AddWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), new PropertyCommandParameter(Property.TRIGGER));
-            AddWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), new PropertyCommandParameter(Property.SUPPLY));
-            AddWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), new PropertyCommandParameter(Property.SUPPLY), new BooleanCommandParameter(false));
-            AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
-            AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
-            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
-            AddWords(Words("ratio", "percentage", "percent", "progress", "completion"), new PropertyCommandParameter(Property.RATIO));
-            AddWords(Words("input", "pilot", "user"), new PropertyCommandParameter(Property.INPUT));
-            AddWords(Words("roll", "rollInput"), new PropertyCommandParameter(Property.ROLL_INPUT));
-            AddWords(Words("auto", "refill", "drain", "draining"), new PropertyCommandParameter(Property.AUTO));
-            AddWords(Words("override", "overrides", "overridden"), new PropertyCommandParameter(Property.OVERRIDE));
-            AddWords(Words("direction"), new PropertyCommandParameter(Property.DIRECTION));
-            AddWords(Words("coordinates", "position", "location"), new PropertyCommandParameter(Property.POSITION));
-            AddWords(Words("target", "destination", "waypoint"), new PropertyCommandParameter(Property.TARGET));
-            AddWords(Words("targetvelocity"), new PropertyCommandParameter(Property.TARGET_VELOCITY));
-            AddWords(Words("strength", "force", "gravity", "torque"), new PropertyCommandParameter(Property.STRENGTH));
-            AddWords(Words("countdown"), new PropertyCommandParameter(Property.COUNTDOWN));
-            AddWords(Words("name", "label"), new PropertyCommandParameter(Property.NAME));
-            AddWords(Words("show", "showing"), new PropertyCommandParameter(Property.SHOW));
-            AddWords(Words("hide", "hiding"), new PropertyCommandParameter(Property.SHOW), new BooleanCommandParameter(false));
+            AddPropertyWords(Words("height", "length", "level"), Property.LEVEL);
+            AddPropertyWords(Words("angle"), Property.ANGLE);
+            AddPropertyWords(Words("speed", "velocity", "rate", "pace"), Property.VELOCITY);
+            AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), Property.CONNECTED);
+            AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
+            AddPropertyWords(Words("lock", "locked", "freeze", "brake"), Property.LOCKED);
+            AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
+            AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
+            AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish"), Property.COMPLETE);
+            AddPropertyWords(Words("open", "opened"), Property.OPEN);
+            AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
+            AddPropertyWords(Words("fontsize", "size"), Property.FONT_SIZE);
+            AddPropertyWords(Words("text", "message"), Property.TEXT);
+            AddPropertyWords(Words("color"), Property.COLOR);
+            AddPropertyWords(Words("power", "powered"), Property.POWER);
+            AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
+            AddPropertyWords(Words("disable", "disabled", "disarm", "disarmed"), Property.ENABLE, false);
+            AddPropertyWords(Words("music", "song"), Property.SONG);
+            AddPropertyWords(Words("silent", "silence"), Property.SILENCE);
+            AddPropertyWords(Words("volume", "intensity", "output"), Property.VOLUME);
+            AddPropertyWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), Property.RANGE);
+            AddPropertyWords(Words("blinkinterval", "blinkInterval", "interval"), Property.BLINK_INTERVAL);
+            AddPropertyWords(Words("blinklength", "blinkLength"), Property.BLINK_LENGTH);
+            AddPropertyWords(Words("blinkoffset", "blinkOffset"), Property.BLINK_OFFSET);
+            AddPropertyWords(Words("falloff"), Property.FALLOFF);
+            AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
+            AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), Property.SUPPLY);
+            AddPropertyWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), Property.SUPPLY, false);
+            AddPropertyWords(Words("ratio", "percentage", "percent", "progress", "completion"), Property.RATIO);
+            AddPropertyWords(Words("input", "pilot", "user"), Property.INPUT);
+            AddPropertyWords(Words("roll", "rollInput"), Property.ROLL_INPUT);
+            AddPropertyWords(Words("auto", "refill", "drain", "draining"), Property.AUTO);
+            AddPropertyWords(Words("override", "overrides", "overridden"), Property.OVERRIDE);
+            AddPropertyWords(Words("direction"), Property.DIRECTION);
+            AddPropertyWords(Words("coordinates", "position", "location"), Property.POSITION);
+            AddPropertyWords(Words("target", "destination", "waypoint"), Property.TARGET);
+            AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
+            AddPropertyWords(Words("strength", "force", "gravity", "torque"), Property.STRENGTH);
+            AddPropertyWords(Words("countdown"), Property.COUNTDOWN);
+            AddPropertyWords(Words("name", "label"), Property.NAME);
+            AddPropertyWords(Words("show", "showing"), Property.SHOW);
+            AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
+            AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
 
             //ValueProperty Words
             AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
+            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
+            AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
+            AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
 
             //Special Command Words
+            AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(Function.GOSUB));
             AddWords(Words("goto"), new FunctionCommandParameter(Function.GOTO));
@@ -278,6 +279,11 @@ namespace IngameScript {
 
         String[] Words(params String[] words) {
             return words;
+        }
+
+        void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
+            if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
+            else AddWords(words, new PropertyCommandParameter(property));
         }
 
         //Assume group words are just blockWords with "s" added to the end

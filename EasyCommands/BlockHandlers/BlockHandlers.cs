@@ -4,6 +4,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using VRage.Game.ModAPI.Ingame;
 using VRageMath;
 
@@ -88,12 +89,12 @@ namespace IngameScript {
         public delegate void ReversePropertyValue<T>(T block, PropertySupplier property);
 
         //Getters
-        public delegate U GetTypedProperty<T,U>(T block);
-        public delegate U GetTypedPropertyDirection<T,U>(T block, Direction direction);
+        public delegate U GetTypedProperty<T, U>(T block);
+        public delegate U GetTypedPropertyDirection<T, U>(T block, Direction direction);
 
         //Setters
-        public delegate void SetTypedProperty<T,U>(T block, U value);
-        public delegate void SetTypedPropertyDirection<T,U>(T block, Direction direction, U value);
+        public delegate void SetTypedProperty<T, U>(T block, U value);
+        public delegate void SetTypedPropertyDirection<T, U>(T block, Direction direction, U value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
@@ -143,24 +144,36 @@ namespace IngameScript {
             PropertyHandler<T> GetHandler(Direction d, Direction defaultDirection) => directionalHandlers.ContainsKey(d) ? directionalHandlers[d] : directionalHandlers[defaultDirection];
         }
 
-        public class TerminalBlockPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
-            public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : base((b,p) => GetPrimitive(b, propertyId), (b,p,v) => SetPrimitiveValue(b,propertyId,v), delta) { }
+        public delegate object GetValue(IMyTerminalBlock block, String propertyId);
+        public delegate void SetValue(IMyTerminalBlock block, String propertyId, Primitive value);
 
-            static Primitive GetPrimitive(T block, String propertyId) {
+        public class TerminalPropertyConverter {
+            public GetValue GetValue;
+            public SetValue SetValue;
+        }
+
+        public static TerminalPropertyConverter PropertyConverter(GetValue GetValue, SetValue SetValue) => new TerminalPropertyConverter {
+            GetValue = GetValue,
+            SetValue = SetValue
+        };
+
+        public class TerminalBlockPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
+            public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : base(
+                (b,p) => ResolvePrimitive(GetPropertyConverter(b, propertyId).GetValue(b,propertyId)),
+                (b, p, v) => GetPropertyConverter(b, propertyId).SetValue(b, propertyId, v), delta) { }
+
+            static Dictionary<String, TerminalPropertyConverter> TerminalPropertyValueConversion = new Dictionary<String, TerminalPropertyConverter> {
+                { "StringBuilder", PropertyConverter((b,p) => b.GetValue<StringBuilder>(p).ToString(), (b,p,v) => b.SetValue(p, new StringBuilder(CastString(v))))},
+                { "Boolean", PropertyConverter((b,p) => b.GetValueBool(p), (b,p,v) => b.SetValueBool(p, CastBoolean(v)))},
+                { "Single", PropertyConverter((b,p) => b.GetValueFloat(p), (b,p,v) => b.SetValueFloat(p, CastNumber(v)))},
+                { "Int64", PropertyConverter((b,p) => (float)b.GetValue<long>(p), (b,p,v) => b.SetValue(p, (long)CastNumber(v)))},
+                { "Color", PropertyConverter((b,p) => b.GetValueColor(p), (b,p,v) => b.SetValueColor(p, CastColor(v)))}
+            };
+
+            static TerminalPropertyConverter GetPropertyConverter(T block, String propertyId) {
                 var property = block.GetProperty(propertyId);
                 if (property == null) throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + propertyId);
-                object value;
-                if (property.TypeName == "bool") value = block.GetValueBool(propertyId);
-                else if (property.TypeName == "color") value = block.GetValueColor(propertyId);
-                else value = block.GetValueFloat(propertyId);
-                return ResolvePrimitive(value);
-            }
-
-            static void SetPrimitiveValue(T block, String propertyId, Primitive value) {
-                Return type = value.returnType;
-                if (type == Return.BOOLEAN) block.SetValueBool(propertyId, CastBoolean(value));
-                else if (type == Return.COLOR) block.SetValueColor(propertyId, CastColor(value));
-                else block.SetValueFloat(propertyId, CastNumber(value));
+                return TerminalPropertyValueConversion[property.TypeName];
             }
         }
 
@@ -216,6 +229,11 @@ namespace IngameScript {
                 AddVectorHandler(Property.POSITION, block => block.GetPosition());
                 AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
+                AddListHandler(Property.PROPERTIES, b => {
+                    var properties = new List<ITerminalProperty>();
+                    b.GetProperties(properties);
+                    return new KeyedList(properties.Select(p => GetStaticVariable(p.Id)).ToArray());
+                });
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
                     DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
                     DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),
@@ -394,6 +412,10 @@ namespace IngameScript {
                 AddPropertyHandler(property, ColorHandler(Get, Set));
             }
 
+            public void AddListHandler(Property property, GetTypedProperty<T, KeyedList> Get, SetTypedProperty<T, KeyedList> Set = null) {
+                AddPropertyHandler(property, ListHandler(Get, Set));
+            }
+
             public void AddDirectionHandlers(Property property, Direction defaultDirection, params DirectionHandler<T>[] handlers) {
                 AddPropertyHandler(property, DirectionalTypedHandler(defaultDirection, handlers));
             }
@@ -414,6 +436,7 @@ namespace IngameScript {
             public PropertyHandler<T> NumericHandler(GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) => TypedPropertyHandler(Get, Set, CastNumber, delta);
             public PropertyHandler<T> VectorHandler(GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set = null) => TypedPropertyHandler(Get, Set, CastVector, Vector3D.Zero);
             public PropertyHandler<T> ColorHandler(GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) => TypedPropertyHandler(Get, Set, CastColor, new Color(10, 10, 10));
+            public PropertyHandler<T> ListHandler(GetTypedProperty<T, KeyedList> Get, SetTypedProperty<T, KeyedList> Set = null) => TypedPropertyHandler(Get, Set, CastList, new KeyedList());
             PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set ?? ((b, v) => { }), Cast, delta);
         }
 
