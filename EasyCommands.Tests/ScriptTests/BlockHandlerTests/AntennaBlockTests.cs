@@ -33,6 +33,43 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void TellTheAntennaToBroadcast() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""test antenna"" to broadcast")) {
+                Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
+                test.MockBlocksOfType("test antenna", mockAntenna);
+
+                test.RunUntilDone();
+
+                mockAntenna.VerifySet(b => b.EnableBroadcasting = true);
+            }
+        }
+
+        [TestMethod]
+        public void IsTheAntennaBroadcasting() {
+            using (ScriptTest test = new ScriptTest(@"print ""Antenna Broadcasting: "" + ""test antenna"" is broadcasting")) {
+                Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
+                test.MockBlocksOfType("test antenna", mockAntenna);
+                mockAntenna.Setup(b => b.EnableBroadcasting).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Antenna Broadcasting: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void TellTheAntennaToShow() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""test antenna"" to show")) {
+                Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
+                test.MockBlocksOfType("test antenna", mockAntenna);
+
+                test.RunUntilDone();
+
+                mockAntenna.VerifySet(b => b.ShowShipName = true);
+            }
+        }
+
+        [TestMethod]
         public void GetTheAntennaRange() {
             using (ScriptTest test = new ScriptTest(@"Print ""Antenna Range: "" + the ""test antenna"" range")) {
                 Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
