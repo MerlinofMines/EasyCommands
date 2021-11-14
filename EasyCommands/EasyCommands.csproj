@@ -108,6 +108,7 @@
   <Import Project="MDK/MDK.options.props" Condition="exists('MDK/MDK.options.props')" />
   <Import Project="MDK/MDK.paths.props" Condition="exists('MDK/MDK.paths.props')" />
   <ItemGroup>
+    <Compile Include="BlockHandlers\TerminalBlockHandlers.cs" />
     <Compile Include="BlockHandlers\AirVentBlockHandlers.cs" />
     <Compile Include="BlockHandlers\AntennaBlockHandlers.cs" />
     <Compile Include="BlockHandlers\BatteryBlockHandlers.cs" />
