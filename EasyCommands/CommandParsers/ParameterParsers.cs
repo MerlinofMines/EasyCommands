@@ -86,7 +86,7 @@ namespace IngameScript {
             AddPropertyWords(Words("blinkoffset", "blinkOffset"), Property.BLINK_OFFSET);
             AddPropertyWords(Words("falloff"), Property.FALLOFF);
             AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
-            AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging"), Property.SUPPLY);
+            AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging", "broadcast", "broadcasting"), Property.SUPPLY);
             AddPropertyWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), Property.SUPPLY, false);
             AddPropertyWords(Words("ratio", "percentage", "percent", "progress", "completion"), Property.RATIO);
             AddPropertyWords(Words("input", "pilot", "user"), Property.INPUT);
@@ -118,7 +118,7 @@ namespace IngameScript {
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(Function.GOSUB));
             AddWords(Words("goto"), new FunctionCommandParameter(Function.GOTO));
             AddWords(Words("listen", "channel"), new ListenCommandParameter());
-            AddWords(Words("send", "broadcast"), new SendCommandParameter());
+            AddWords(Words("send"), new SendCommandParameter());
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
             AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
