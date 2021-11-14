@@ -28,6 +28,7 @@ namespace IngameScript {
         }
         public class IndexCommandParameter : SimpleCommandParameter { }
         public class GroupCommandParameter : SimpleCommandParameter { }
+        public class VariableSelectorCommandParameter : SimpleCommandParameter { }
         public class NotCommandParameter : SimpleCommandParameter { }
         public class AndCommandParameter : SimpleCommandParameter { }
         public class OrCommandParameter : SimpleCommandParameter { }
@@ -114,10 +115,6 @@ namespace IngameScript {
 
         public class VariableCommandParameter : ValueCommandParameter<Variable> {
             public VariableCommandParameter(Variable value) : base(value) {}
-        }
-
-        public class VariableSelectorCommandParameter : ValueCommandParameter<Variable> {
-            public VariableSelectorCommandParameter(Variable value) : base(value) { }
         }
 
         public class AmbiguiousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {

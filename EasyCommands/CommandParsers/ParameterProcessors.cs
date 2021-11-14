@@ -25,6 +25,14 @@ namespace IngameScript {
             new ParenthesisProcessor(),
             new ListProcessor(),
 
+            //SelectorVariableSelectorProcessor
+            ThreeValueRule<VariableSelectorCommandParameter, AmbiguiousStringCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
+                requiredRight<AmbiguiousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), new AmbiguousStringVariable(selector.GetValue().value)))),
+            ThreeValueRule<VariableSelectorCommandParameter, VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
+                requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), selector.GetValue().value))),
+
             //SelectorProcessor
             new BranchingProcessor<AmbiguiousStringCommandParameter>(
                 TwoValueRule<AmbiguiousStringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
@@ -60,11 +68,6 @@ namespace IngameScript {
             OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
                 (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
-
-            //SelectorVariableSelectorProcessor
-            TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //VariableSelectorProcessor
             TwoValueRule<VariableCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(

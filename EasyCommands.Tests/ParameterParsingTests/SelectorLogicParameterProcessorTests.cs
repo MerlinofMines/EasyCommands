@@ -116,9 +116,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
             SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
-            Assert.IsTrue(sep.selector is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)sep.selector;
-            Assert.AreEqual("a", variable.variableName);
+            Assert.IsTrue(sep.selector is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)sep.selector;
+            Assert.AreEqual("a", CastString(variable.GetValue()));
             Assert.AreEqual(Block.SOUND, sep.blockType);
         }
 
@@ -205,8 +205,70 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
-            Assert.IsTrue(variableSelector.selector is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)variableSelector.selector;
+            Assert.IsTrue(variableSelector.selector is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)variableSelector.selector;
+            Assert.AreEqual("mySirens", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void SelectorVariableInterpretListIndexAsSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on $(mySirens[0])");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(sep.selector is ListIndexVariable);
+            ListIndexVariable selector = (ListIndexVariable)sep.selector;
+            List<Variable> listIndexes = CastList(selector.index.GetValue()).GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
+            Assert.IsTrue(selector.expectedList is InMemoryVariable);
+            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.variableName);
+        }
+
+        [TestMethod]
+        public void SelectorVariableInterpretListIndexAsSelectorWithBlockType() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on $(mySirens[0]) sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+            Assert.IsTrue(sep.selector is ListIndexVariable);
+            ListIndexVariable selector = (ListIndexVariable)sep.selector;
+            List<Variable> listIndexes = CastList(selector.index.GetValue()).GetValues();
+            Assert.AreEqual(1, listIndexes.Count);
+            Assert.AreEqual(0f, listIndexes[0].GetValue().value);
+            Assert.IsTrue(selector.expectedList is InMemoryVariable);
+            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.variableName);
+        }
+
+        [TestMethod]
+        public void SelectorVariableInterpretListIndexAsSelectorWithIndex() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on $(mySirens[0])[1]");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            List<Variable> outerIndex = CastList(iep.index.GetValue()).GetValues();
+            Assert.AreEqual(1, outerIndex.Count);
+            Assert.AreEqual(1f, outerIndex[0].GetValue().value);
+
+            Assert.IsTrue(iep.provider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(sep.selector is ListIndexVariable);
+            ListIndexVariable selector = (ListIndexVariable)sep.selector;
+            List<Variable> innerIndex = CastList(selector.index.GetValue()).GetValues();
+            Assert.AreEqual(1, innerIndex.Count);
+            Assert.AreEqual(0f, innerIndex[0].GetValue().value);
+            Assert.IsTrue(selector.expectedList is InMemoryVariable);
+            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.variableName);
         }
 
         [TestMethod]
@@ -222,9 +284,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
             Assert.IsTrue(iep.provider is SelectorEntityProvider);
             SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
-            Assert.IsTrue(variableSelector.selector is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)variableSelector.selector;
-            Assert.AreEqual("mySirens", variable.variableName);
+            Assert.IsTrue(variableSelector.selector is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)variableSelector.selector;
+            Assert.AreEqual("mySirens", CastString(variable.GetValue()));
             Assert.IsTrue(variableSelector.isGroup);
             Assert.AreEqual(Block.SOUND, variableSelector.blockType);
         }
@@ -237,9 +299,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
             SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
-            Assert.IsTrue(sep.selector is InMemoryVariable);
-            InMemoryVariable variable = (InMemoryVariable)sep.selector;
-            Assert.AreEqual("a", variable.variableName);
+            Assert.IsTrue(sep.selector is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)sep.selector;
+            Assert.AreEqual("a", CastString(variable.GetValue()));
         }
 
         [TestMethod]

@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
 
-        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@"};
+        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$"};
         string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-" };
 
         public void InitializeParsers() {
@@ -32,6 +32,7 @@ namespace IngameScript {
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels"), new GroupCommandParameter());
             AddWords(Words("my", "self", "this"), new SelfCommandParameter());
+            AddWords(Words("$"), new VariableSelectorCommandParameter());
 
             //Direction Words
             AddWords(Words("up", "upward", "upwards", "upper"), new DirectionCommandParameter(Direction.UP));
@@ -324,9 +325,7 @@ namespace IngameScript {
                 commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
-            } else if (t.StartsWith("$")) { //Variable References used as Selectors
-                commandParameters.Add(new VariableSelectorCommandParameter(new InMemoryVariable(token.original.Substring(1, token.original.Length - 1))));
-            } else { //If nothing else matches, must be a string
+            } else { //If no property matches, must be a string
                 commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, true));
             }
 
