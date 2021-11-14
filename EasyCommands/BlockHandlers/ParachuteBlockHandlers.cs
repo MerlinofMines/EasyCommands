@@ -21,16 +21,22 @@ namespace IngameScript {
     partial class Program {
         public class ParachuteBlockHandler : FunctionalBlockHandler<IMyParachute> {
             public ParachuteBlockHandler() {
-                AddBooleanHandler(Property.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddBooleanHandler(Property.AUTO, (b) => b.GetValueBool("AutoDeploy"), (b, v) => b.SetValueBool("AutoDeploy", v));
-                AddBooleanHandler(Property.TRIGGER, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddNumericHandler(Property.RATIO, (b) => 1 - b.OpenRatio);
-                AddPropertyHandler(Property.LEVEL, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
+                var openHandler = BooleanHandler(b => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
+                AddPropertyHandler(Property.OPEN, openHandler);
+                AddPropertyHandler(Property.TRIGGER, openHandler);
+                AddPropertyHandler(Property.AUTO, TerminalBlockPropertyHandler("AutoDeploy", true));
+                AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
+                AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
+                AddNumericHandler(Property.VELOCITY, b => (float)b.GetVelocity().Length());
+                AddNumericHandler(Property.STRENGTH, b => (float)b.GetTotalGravity().Length());
+                AddNumericHandler(Property.LEVEL, b => {
+                    Vector3D? closestPoint;
+                    return (float)(b.TryGetClosestPoint(out closestPoint) ? closestPoint.Value.Length() : -1);
+                });
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.OPEN;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
                 defaultDirection = Direction.UP;
-
             }
         }
     }

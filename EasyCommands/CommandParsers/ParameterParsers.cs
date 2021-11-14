@@ -226,7 +226,7 @@ namespace IngameScript {
             AddBlockWords(Words("tank"), Block.TANK);
             AddBlockWords(Words("gear"), Block.GEAR);
             AddBlockWords(Words("battery"), Words("batteries"), Block.BATTERY);
-            AddBlockWords(Words("chute", "parachutes"), Block.PARACHUTE);
+            AddBlockWords(Words("chute", "parachute"), Block.PARACHUTE);
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
