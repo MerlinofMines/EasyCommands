@@ -61,9 +61,14 @@ namespace IngameScript {
                 optionalRight<BlockTypeCommandParameter>(),
                 (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
 
-            //VariableSelectorProcessor
+            //SelectorVariableSelectorProcessor
             TwoValueRule<VariableSelectorCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+
+            //VariableSelectorProcessor
+            TwoValueRule<VariableCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
+                requiredRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
                 (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ListSelectorProcessor

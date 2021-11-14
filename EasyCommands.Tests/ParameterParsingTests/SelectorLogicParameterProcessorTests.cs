@@ -109,7 +109,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void VariableSelector() {
+        public void SelectorVariableSelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $a sirens");
             Assert.IsTrue(command is BlockCommand);
@@ -119,6 +119,20 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(sep.selector is InMemoryVariable);
             InMemoryVariable variable = (InMemoryVariable)sep.selector;
             Assert.AreEqual("a", variable.variableName);
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+        }
+
+        [TestMethod]
+        public void VariableSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("turn on the (a + \" test\") sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
+            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(sep.selector is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)sep.selector;
+            Assert.AreEqual("a test", CastString(variable.GetValue()));
             Assert.AreEqual(Block.SOUND, sep.blockType);
         }
 
@@ -179,7 +193,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void VariableSelectorWithIndex() {
+        public void SelectorVariableSelectorWithIndex() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $mySirens[0]");
             Assert.IsTrue(command is BlockCommand);
@@ -196,7 +210,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void VariableSelectorWithBlockTypeAndIndex() {
+        public void SelectorVariableSelectorWithBlockTypeAndIndex() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $mySirens sirens [0]");
             Assert.IsTrue(command is BlockCommand);
@@ -216,7 +230,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void ImplicitVariableSelector() {
+        public void ImplicitSelectorVariableSelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("turn on the $a");
             Assert.IsTrue(command is BlockCommand);
