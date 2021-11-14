@@ -45,7 +45,7 @@ namespace IngameScript {
 
             //Action Words
             AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
-            AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate"), new AssignmentCommandParameter());
+            AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate", "apply"), new AssignmentCommandParameter());
             AddWords(Words("increase", "raise", "extend", "expand"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
             AddWords(Words("add"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.UP));
             AddWords(Words("subtact"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
@@ -102,10 +102,12 @@ namespace IngameScript {
             AddPropertyWords(Words("show", "showing"), Property.SHOW);
             AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
+            AddPropertyWords(Words("actions"), Property.ACTIONS);
 
             //ValueProperty Words
             AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
             AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
+            AddWords(Words("action"), new ValuePropertyCommandParameter(ValueProperty.ACTION));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
 

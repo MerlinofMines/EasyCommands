@@ -219,5 +219,67 @@ show the ""test terminal""
                 Assert.AreEqual("Properties: [Property1,Property2]", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void GetBlockProperty() {
+            String script = @"print ""Property1: "" + the ""test terminal"" ""Property1"" property";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockGetProperty(mockBlock, "Property1", new StringBuilder("Hello World!"));
+                test.RunUntilDone();
+
+                Assert.AreEqual("Property1: Hello World!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetBlockProperty() {
+            String script = @"set the ""test terminal"" ""Property1"" property to 4";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var property = MockProperty<IMyTerminalBlock, float>(mockBlock, "Property1");
+
+                test.RunUntilDone();
+
+                property.Verify(p => p.SetValue(mockBlock.Object, 4));
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockActions() {
+            String script = @"print ""Actions: "" + the ""test terminal"" actions";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action1 = MockAction(mockBlock, "Action1");
+                var action2 = MockAction(mockBlock, "Action2");
+                List<ITerminalAction> expectedActions = new List<ITerminalAction> { action1.Object, action2.Object };
+                mockBlock.Setup(b => b.GetActions(It.IsAny<List<ITerminalAction>>(), null))
+                    .Callback<List<ITerminalAction>, Func<ITerminalAction, bool>>((list, collect) => list.AddRange(expectedActions));
+                test.RunUntilDone();
+
+                Assert.AreEqual("Actions: [Action1,Action2]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ApplyBlockAction() {
+            String script = @"apply the ""test terminal"" ""Action1"" action";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
     }
 }

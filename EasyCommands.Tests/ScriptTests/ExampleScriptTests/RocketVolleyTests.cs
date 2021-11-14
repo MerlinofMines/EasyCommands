@@ -46,10 +46,10 @@ goto ""fireLoop""
                 var mockRocket1 = new Mock<IMyUserControllableGun>();
                 var mockRocket2 = new Mock<IMyUserControllableGun>();
 
-                var rocket1Off = MockCalledAction(mockRocket1, "Shoot_Off");
-                var rocket1On = MockCalledAction(mockRocket1, "Shoot_On");
-                var rocket2Off = MockCalledAction(mockRocket2, "Shoot_Off");
-                var rocket2On = MockCalledAction(mockRocket2, "Shoot_On");
+                var rocket1Off = MockAction(mockRocket1, "Shoot_Off");
+                var rocket1On = MockAction(mockRocket1, "Shoot_On");
+                var rocket2Off = MockAction(mockRocket2, "Shoot_Off");
+                var rocket2On = MockAction(mockRocket2, "Shoot_On");
 
                 test.MockBlocksInGroup("Rockets", mockRocket1, mockRocket2);
 

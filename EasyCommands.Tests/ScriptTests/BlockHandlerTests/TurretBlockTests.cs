@@ -18,7 +18,7 @@ tell the ""turrets"" to shoot
                 var mockTurret = new Mock<IMyLargeTurretBase>();
                 test.MockBlocksInGroup("turrets", mockTurret);
 
-                var turretFire = MockCalledAction(mockTurret, "Shoot_On");
+                var turretFire = MockAction(mockTurret, "Shoot_On");
 
                 test.RunUntilDone();
 

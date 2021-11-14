@@ -144,15 +144,15 @@ namespace IngameScript {
             PropertyHandler<T> GetHandler(Direction d, Direction defaultDirection) => directionalHandlers.ContainsKey(d) ? directionalHandlers[d] : directionalHandlers[defaultDirection];
         }
 
-        public delegate object GetValue(IMyTerminalBlock block, String propertyId);
-        public delegate void SetValue(IMyTerminalBlock block, String propertyId, Primitive value);
+        public delegate object GetBlockPropertyValue(IMyTerminalBlock block, String propertyId);
+        public delegate void SetBlockPropertyValue(IMyTerminalBlock block, String propertyId, Primitive value);
 
         public class TerminalPropertyConverter {
-            public GetValue GetValue;
-            public SetValue SetValue;
+            public GetBlockPropertyValue GetValue;
+            public SetBlockPropertyValue SetValue;
         }
 
-        public static TerminalPropertyConverter PropertyConverter(GetValue GetValue, SetValue SetValue) => new TerminalPropertyConverter {
+        public static TerminalPropertyConverter PropertyConverter(GetBlockPropertyValue GetValue, SetBlockPropertyValue SetValue) => new TerminalPropertyConverter {
             GetValue = GetValue,
             SetValue = SetValue
         };
@@ -234,6 +234,14 @@ namespace IngameScript {
                     b.GetProperties(properties);
                     return new KeyedList(properties.Select(p => GetStaticVariable(p.Id)).ToArray());
                 });
+                AddListHandler(Property.ACTIONS, b => {
+                    var actions = new List<ITerminalAction>();
+                    b.GetActions(actions);
+                    return new KeyedList(actions.Select(p => GetStaticVariable(p.Id)).ToArray());
+                });
+
+                AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>((b,p)=>p.attributeValue.GetValue(), (b,p,v) => b.ApplyAction(CastString(p.attributeValue.GetValue())), ResolvePrimitive(0)));
+
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
                     DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
                     DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),

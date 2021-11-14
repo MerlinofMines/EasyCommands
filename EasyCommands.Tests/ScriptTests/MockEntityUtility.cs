@@ -44,11 +44,10 @@ namespace EasyCommands.Tests.ScriptTests {
             } else throw new Exception("Unsupported Property Value Type: " + typeof(U));
         }
 
-        public static Mock<ITerminalAction> MockCalledAction<T>(Mock<T> mockBlock, String actionName) where T : class, IMyTerminalBlock {
+        public static Mock<ITerminalAction> MockAction<T>(Mock<T> mockBlock, String actionName) where T : class, IMyTerminalBlock {
             Mock<ITerminalAction> terminalAction = new Mock<ITerminalAction>();
-
+            terminalAction.Setup(action => action.Id).Returns(actionName);
             mockBlock.Setup(b => b.GetActionWithName(actionName)).Returns(terminalAction.Object);
-
             return terminalAction;
         }
 
