@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
                 AddNumericHandler(Property.BLINK_INTERVAL, (b) => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
                 AddNumericHandler(Property.BLINK_LENGTH, (b) => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
-                AddNumericHandler(Property.BLINK_OFFSET, (b) => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
+                AddNumericHandler(Property.OFFSET, (b) => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
                 AddNumericHandler(Property.VOLUME, (b) => b.Intensity, (b, v) => b.Intensity = v, 1f);
                 AddNumericHandler(Property.FALLOFF, (b) => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;

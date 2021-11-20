@@ -63,9 +63,9 @@ namespace IngameScript {
             AddPropertyWords(Words("height", "length", "level"), Property.LEVEL);
             AddPropertyWords(Words("angle"), Property.ANGLE);
             AddPropertyWords(Words("speed", "velocity", "rate", "pace"), Property.VELOCITY);
-            AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked"), Property.CONNECTED);
+            AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "freeze", "brake"), Property.LOCKED);
+            AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish"), Property.COMPLETE);
@@ -81,9 +81,9 @@ namespace IngameScript {
             AddPropertyWords(Words("silent", "silence"), Property.SILENCE);
             AddPropertyWords(Words("volume", "intensity", "output"), Property.VOLUME);
             AddPropertyWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), Property.RANGE);
-            AddPropertyWords(Words("blinkinterval", "blinkInterval", "interval"), Property.BLINK_INTERVAL);
-            AddPropertyWords(Words("blinklength", "blinkLength"), Property.BLINK_LENGTH);
-            AddPropertyWords(Words("blinkoffset", "blinkOffset"), Property.BLINK_OFFSET);
+            AddPropertyWords(Words("blinkinterval", "interval"), Property.BLINK_INTERVAL);
+            AddPropertyWords(Words("blinklength"), Property.BLINK_LENGTH);
+            AddPropertyWords(Words("blinkoffset", "offset"), Property.OFFSET);
             AddPropertyWords(Words("falloff"), Property.FALLOFF);
             AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
             AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging", "broadcast", "broadcasting"), Property.SUPPLY);
@@ -96,6 +96,7 @@ namespace IngameScript {
             AddPropertyWords(Words("direction"), Property.DIRECTION);
             AddPropertyWords(Words("coordinates", "position", "location"), Property.POSITION);
             AddPropertyWords(Words("target", "destination", "waypoint"), Property.TARGET);
+            AddPropertyWords(Words("waypoints"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(Words("strength", "force", "gravity", "torque"), Property.STRENGTH);
             AddPropertyWords(Words("countdown"), Property.COUNTDOWN);
@@ -264,6 +265,8 @@ namespace IngameScript {
             RegisterToString<IterationCommandParameter>(p => "[Iteration]");
             RegisterToString<SelectorCommandParameter>(p => "[Selector]");
             RegisterToString<ThatCommandParameter>(p => "That");
+            RegisterToString<AssignmentCommandParameter>(p => "[Action]");
+            RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType +"]");
         }
 
         Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = new Dictionary<Type, Func<CommandParameter, object>>();

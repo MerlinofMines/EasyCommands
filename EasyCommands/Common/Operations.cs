@@ -75,10 +75,12 @@ namespace IngameScript {
             AddUniOperation<bool>(UniOperand.NOT, a => !a);
             AddBiOperation<bool, bool>(BiOperand.AND, (a, b) => a && b);
             AddBiOperation<bool, bool>(BiOperand.OR, (a, b) => a || b);
+
+            //Comparisons
             AddBiOperation<bool, bool>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<string, string>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<float, float>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.COMPARE, (a, b) => a.Length().CompareTo(b.Length()));
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.COMPARE, (a, b) => a.Equals(b));
             AddBiOperation<Color, Color>(BiOperand.COMPARE, (a, b) => a.PackedValue.CompareTo(b.PackedValue));
             AddBiOperation<Vector3D, float>(BiOperand.COMPARE, (a, b) => a.Length().CompareTo(b));
             AddBiOperation<float, Vector3D>(BiOperand.COMPARE, (a, b) => a.CompareTo(b.Length()));
@@ -115,10 +117,9 @@ namespace IngameScript {
             AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
 
             //Vector
-            //TODO add dot product, projection
             AddUniOperation<Vector3D>(UniOperand.NOT, a => -a);
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => Vector3D.Add(a,b));
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTACT, (a, b) => Vector3D.Subtract(a, b));
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => a + b);
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTACT, (a, b) => a - b);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.MULTIPLY, (a, b) => Vector3D.Cross(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(a, b.Length()));
             AddBiOperation<Vector3D, float>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(a, b));

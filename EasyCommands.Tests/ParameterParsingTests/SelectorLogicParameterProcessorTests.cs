@@ -58,7 +58,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignListIndexSelectorValuePlusList() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("set my display[0] to \"Offset: \" + [offset]");
+            var command = program.ParseCommand("set my display[0] to \"Offset: \" + [myOffset]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is IndexEntityProvider);

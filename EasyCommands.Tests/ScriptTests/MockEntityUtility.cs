@@ -64,6 +64,11 @@ namespace EasyCommands.Tests.ScriptTests {
             return new MyDetectedEntityInfo();
         }
 
+        public static void MockShipVelocities<T>(Mock<T> mockShip, Vector3D linearVelocity, Vector3D angularVelocity) where T : class, IMyShipController {
+            mockShip.Setup(b => b.GetShipVelocities()).Returns(new MyShipVelocities(linearVelocity, angularVelocity));
+            mockShip.Setup(b => b.WorldMatrix).Returns(MatrixD.Identity);
+        }
+
         public static void MockOrientation<T>(Mock<T> mockBlock, Vector3 forward, Vector3 up) where T : class, IMyTerminalBlock {
             Mock<IMyCubeGrid> mockGrid = new Mock<IMyCubeGrid>();
             mockGrid.Setup(g => g.GridIntegerToWorld(new Vector3I(0, 0, 0))).Returns(new Vector3D(0, 0, 0));
