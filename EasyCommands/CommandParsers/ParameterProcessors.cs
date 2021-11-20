@@ -274,11 +274,6 @@ namespace IngameScript {
                 requiredLeft<VariableCommandParameter>(),
                 (p,var) => new IterationCommandParameter(var.GetValue().value)),
 
-            //IfProcessor
-            OneValueRule<IfCommandParameter,VariableCommandParameter>(
-                requiredRight<VariableCommandParameter>(),
-                (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
-
             //TransferCommandProcessor
             FourValueRule<TransferCommandParameter,SelectorCommandParameter,SelectorCommandParameter,VariableCommandParameter,VariableCommandParameter>(
                 requiredLeft<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
@@ -289,6 +284,11 @@ namespace IngameScript {
 
             //ListIndexAsVariableProcessor
             NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
+
+            //IfProcessor
+            OneValueRule<IfCommandParameter,VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
+                (p,var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.NOT, var.GetValue().value) : var.GetValue().value, p.alwaysEvaluate, p.swapCommands)),
 
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(

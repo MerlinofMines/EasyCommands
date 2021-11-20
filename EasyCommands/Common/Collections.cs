@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class KeyedList {
-            List<KeyedVariable> keyedValues;
+            public List<KeyedVariable> keyedValues;
 
             public KeyedList(params Variable[] values) {
                 keyedValues = values.ToList().ConvertAll(AsKeyedVariable);

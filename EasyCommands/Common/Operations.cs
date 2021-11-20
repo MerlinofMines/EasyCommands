@@ -82,6 +82,7 @@ namespace IngameScript {
             AddBiOperation<Color, Color>(BiOperand.COMPARE, (a, b) => a.PackedValue.CompareTo(b.PackedValue));
             AddBiOperation<Vector3D, float>(BiOperand.COMPARE, (a, b) => a.Length().CompareTo(b));
             AddBiOperation<float, Vector3D>(BiOperand.COMPARE, (a, b) => a.CompareTo(b.Length()));
+            AddBiOperation<KeyedList, KeyedList>(BiOperand.COMPARE, (a, b) => Enumerable.SequenceEqual(a.keyedValues, b.keyedValues));
 
             //Numeric
             AddUniOperation<float>(UniOperand.NOT, a => -a);

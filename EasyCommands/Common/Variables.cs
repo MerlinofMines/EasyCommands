@@ -271,6 +271,8 @@ namespace IngameScript {
             public bool HasKey() => !string.IsNullOrEmpty(Key);
 
             public Primitive GetValue() => Value.GetValue();
+
+            public override bool Equals(Object variable) => Key == ((KeyedVariable)variable).Key && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
         }
 
         public static KeyedVariable AsKeyedVariable(Variable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);

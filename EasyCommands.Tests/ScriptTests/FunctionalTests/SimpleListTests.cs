@@ -6,6 +6,119 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SimpleListTests {
         [TestMethod]
+        public void CheckIfListIsEmpty() {
+            String script = @"
+:main
+assign myList to []
+if myList is empty
+  Print ""List is empty""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("List is empty"));
+            }
+        }
+
+        [TestMethod]
+        public void CheckIfListIsNotEmpty() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+if myList is not empty
+  Print ""List is not empty""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("List is not empty"));
+            }
+        }
+
+        [TestMethod]
+        public void CompareTwoEqualLists() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+if myList is [1,2,3]
+  Print ""Lists are equal""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Lists are equal"));
+            }
+        }
+
+        [TestMethod]
+        public void CompareTwoEqualKeyedLists() {
+            String script = @"
+:main
+assign myList to []
+assign myList2 to []
+assign myList[""one""] to 1
+assign myList2[""one""] to 1
+
+if myList is myList2
+  Print ""Lists are equal""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Lists are equal"));
+            }
+        }
+
+        [TestMethod]
+        public void CompareTwoDifferentLists() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+if myList is not [1,2,3,4]
+  Print ""Lists are not equal""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Lists are not equal"));
+            }
+        }
+
+        [TestMethod]
+        public void CompareTwoDifferentListsWithSameValues() {
+            String script = @"
+:main
+assign myList to [1,2,3]
+if myList is not [3,2,1]
+  Print ""Lists are not equal""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Lists are not equal"));
+            }
+        }
+
+        [TestMethod]
+        public void CompareTwoDifferentKeyedLists() {
+            String script = @"
+:main
+assign myList to []
+assign myList2 to []
+assign myList[""one""] to 1
+assign myList2[""two""] to 1
+
+if myList is not myList2
+  Print ""Lists are not equal""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Lists are not equal"));
+            }
+        }
+
+        [TestMethod]
         public void PrintSimpleListSize() {
             String script = @"
 :main

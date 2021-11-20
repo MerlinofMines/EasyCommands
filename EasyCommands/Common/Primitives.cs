@@ -95,7 +95,7 @@ namespace IngameScript {
 
         public static float CastNumber(Primitive p) {
             switch (p.returnType) {
-                case Return.BOOLEAN: return CastBoolean(p) ? 1 : 0;
+                case Return.BOOLEAN: return CastBoolean(p) ? 0 : -1;
                 case Return.NUMERIC: return (float)p.value;
                 case Return.STRING: return float.Parse(CastString(p));
                 case Return.VECTOR: return (float)(CastVector(p)).Length();

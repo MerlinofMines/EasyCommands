@@ -44,6 +44,7 @@ namespace IngameScript {
         Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable> {
             { "pi", GetStaticVariable(Math.PI) },
             { "e", GetStaticVariable(Math.E) },
+            { "empty", GetStaticVariable(new KeyedList()) }
         };
 
         String defaultFunction;
