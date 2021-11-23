@@ -62,6 +62,65 @@ if true
         }
 
         [TestMethod]
+        public void incorrectlyIndentedCommentsAreIgnored() {
+            String script = @"
+:main
+if true
+#This is a nested comment with incorrect indenting
+    #This is another nested comment with incorrect indenting
+  print 'Hello World'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void sectionCommentsAreIgnored() {
+            String script = @"
+:main
+#First Section
+Print ""First Section""
+
+#Second Section
+Print ""Second Section""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("First Section", test.Logger[0]);
+                Assert.AreEqual("Second Section", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void commentAtEndOfFunctionIsIgnored() {
+            String script = @"
+:main
+#First Section
+Print ""First Section""
+
+#Second Section
+Print ""Second Section""
+#Ignore Me
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("First Section", test.Logger[0]);
+                Assert.AreEqual("Second Section", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
         public void emptyScriptPrintsWelcomeMessage() {
             String script = "";
 
