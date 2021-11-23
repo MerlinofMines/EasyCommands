@@ -4,9 +4,9 @@ EasyCommands makes it easy to write scripts to control your creations without re
 
 ## How it works
 
-EasyCommands is not a script by itself.  Rather, EasyCommands is an interpreter, baked into a Programmable Block, which allows you to write human readable scripts in the CustomData.  The script interprets the Custom Data as the actual program to execute.
+EasyCommands is an interpreter, baked into a Programmable Block, which allows you to write human readable scripts in the CustomData.  The script interprets the Custom Data as the actual program to execute.
 
-Here's a simple example of an EasyCommands script to turn on the "Outside Lights", wait 10 seconds, and then turn off the "Outside Lights"
+Let's imagine you have a group of lights called "Outside Lights", and you want a to turn them on, wait 10 seconds, and turn them off. Here's how you would write that in EasyCommands:
 
 ```
 turn on the "Outside Lights"
@@ -14,7 +14,7 @@ wait 10 seconds
 turn off the "Outside Lights"
 ```
 
-It's that easy! And there is a lot more you can do with EasyCommands.  This website will attempt to describe all the pieces of functionality with the hope that you will start building your own really cool creations!
+It's that easy! Now, you can invoke this program however you like: a push-button to run the programmable block, for example, and you'll see the lights turn on and off. There is a LOT more you can do with EasyCommands. This website will attempt to describe all the pieces of functionality with the hope that you will start building your own really cool creations!
 
 Check out the list of [Examples](https://spaceengineers.merlinofmines.com/EasyCommands/examples "Examples") to jump start your scripting, or take a look through the various sections in this website to get an idea of all the cool things you can do with EasyCommands. 
 
