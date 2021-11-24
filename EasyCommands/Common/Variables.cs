@@ -273,6 +273,7 @@ namespace IngameScript {
             public Primitive GetValue() => Value.GetValue();
 
             public override bool Equals(Object variable) => Key == ((KeyedVariable)variable).Key && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
+            public override int GetHashCode() => base.GetHashCode();
         }
 
         public static KeyedVariable AsKeyedVariable(Variable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);
