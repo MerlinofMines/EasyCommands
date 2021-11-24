@@ -27,7 +27,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByDirection[Direction.UP] = Property.FONT_SIZE;
-                defaultDirection = Direction.UP;
             }
 
             public override string Name(IMyTextSurface block) {

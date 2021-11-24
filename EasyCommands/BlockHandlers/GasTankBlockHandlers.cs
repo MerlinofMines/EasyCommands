@@ -28,7 +28,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
-                defaultDirection = Direction.UP;
             }
         }
     }

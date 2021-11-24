@@ -187,7 +187,7 @@ namespace IngameScript {
             protected Dictionary<String, PropertyHandler<T>> propertyHandlers = new Dictionary<String, PropertyHandler<T>>();
             protected Dictionary<Return, Property> defaultPropertiesByPrimitive = new Dictionary<Return, Property>();
             protected Dictionary<Direction, Property> defaultPropertiesByDirection = new Dictionary<Direction, Property>();
-            protected Direction? defaultDirection = null;
+            protected Direction defaultDirection = Direction.UP;
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) { return GetBlocksOfType(selector).Select(t => t as object).ToList(); }
             public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
@@ -202,10 +202,8 @@ namespace IngameScript {
             public abstract List<T> GetBlocksOfTypeInGroup(String name);
             public abstract string Name(T block);
 
-            public Direction GetDefaultDirection() {
-                if (!defaultDirection.HasValue) throw new Exception(GetType() + " Does Not Have a Default Direction");
-                return defaultDirection.Value;
-            }
+            public Direction GetDefaultDirection() => defaultDirection;
+
             public PropertySupplier GetDefaultProperty(Direction direction) {
                 if (!defaultPropertiesByDirection.ContainsKey(direction)) throw new Exception(GetType() + " Does Not Have A Default Property for Direction: " + direction);
                 return new PropertySupplier(defaultPropertiesByDirection[direction]);

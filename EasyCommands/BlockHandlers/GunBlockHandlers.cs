@@ -62,7 +62,7 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
-                defaultDirection = Direction.UP;
+
             }
             void Shoot(IMyUserControllableGun gun, bool b) { if(b) gun.ApplyAction("Shoot_On"); else gun.ApplyAction("Shoot_Off"); }
             float GetRange(IMyUserControllableGun gun) { return gun.GetValueFloat("Range"); }

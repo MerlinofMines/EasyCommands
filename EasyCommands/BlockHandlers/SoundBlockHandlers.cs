@@ -29,7 +29,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.STRING] = Property.SONG;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;
                 defaultPropertiesByDirection[Direction.UP] = Property.VOLUME;
-                defaultDirection = Direction.UP;
             }
         }
     }

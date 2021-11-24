@@ -26,7 +26,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
-                defaultDirection = Direction.UP;
             }
         }
     }

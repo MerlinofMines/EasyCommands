@@ -29,7 +29,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
                 defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
-                defaultDirection = Direction.UP;
             }
         }
 

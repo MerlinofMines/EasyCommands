@@ -31,7 +31,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
-                defaultDirection = Direction.UP;
             }
         }
     }

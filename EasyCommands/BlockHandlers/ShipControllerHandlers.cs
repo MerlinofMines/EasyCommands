@@ -78,7 +78,6 @@ namespace IngameScript {
 
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
                 defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
-                defaultDirection = Direction.UP;
             }
 
             Vector3D VelocityVector(T block) => Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));

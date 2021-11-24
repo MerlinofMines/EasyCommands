@@ -24,7 +24,6 @@ namespace IngameScript {
                 AddNumericHandler(Property.RANGE, b => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000);
                 AddNumericHandler(Property.RATIO, b => b.ThrustOverride/b.MaxThrust, (b, v) => b.ThrustOverride = v*b.MaxThrust, 0.1f);
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
-                defaultDirection = Direction.UP;
                 //TODO: Better Properties
             }
         }

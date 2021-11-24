@@ -25,7 +25,6 @@ namespace IngameScript {
                 AddBooleanHandler(Property.SUPPLY, b => b.BroadcastUsingAntennas, (b, v) => b.BroadcastUsingAntennas = v);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
-                defaultDirection = Direction.UP;
             }
         }
     }
