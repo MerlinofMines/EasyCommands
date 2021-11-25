@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Internal (Don't touch!)
-        Dictionary<String, List<CommandParameter>> propertyWords = new Dictionary<string, List<CommandParameter>>();
+        Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
 
         string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$"};
         string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-" };
@@ -269,7 +269,7 @@ namespace IngameScript {
             RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType +"]");
         }
 
-        Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = new Dictionary<Type, Func<CommandParameter, object>>();
+        Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = NewDictionary<Type, Func<CommandParameter, object>>();
 
         void RegisterToString<T>(Func<T, object> toString) where T : CommandParameter {
             commandParameterStrings[typeof(T)] = (p) => toString((T)p);

@@ -118,12 +118,12 @@ namespace IngameScript {
             public String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
 
             public void SetCustomProperty(T block, String key, String value) {
-                Dictionary<String, String> d = GetCustomData(block);
+                var d = GetCustomData(block);
                 d[key] = value; SaveCustomData(block, d);
             }
 
             public void DeleteCustomProperty(T block, String key) {
-                Dictionary<String, String> d = GetCustomData(block);
+                var d = GetCustomData(block);
                 if (d.ContainsKey(key)) d.Remove(key);
                 SaveCustomData(block, d);
             }

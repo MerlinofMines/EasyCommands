@@ -23,10 +23,10 @@ namespace IngameScript {
         public delegate Primitive BiOperation(Primitive a, Primitive b);
 
         Dictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>> BiOperations 
-            = new Dictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>>();
+            = NewDictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>>();
 
         Dictionary<UniOperand, Dictionary<Return, UniOperation>> UniOperations
-            = new Dictionary<UniOperand, Dictionary<Return, UniOperation>>();
+            = NewDictionary<UniOperand, Dictionary<Return, UniOperation>>();
 
         public Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) {
             if (!BiOperations.ContainsKey(type)
@@ -46,17 +46,17 @@ namespace IngameScript {
         }
 
         void AddBiOperation<T, U>(BiOperand type, Func<T, U, object> resolver) {
-            if (!BiOperations.ContainsKey(type)) BiOperations[type] = new Dictionary<Return, Dictionary<Return, BiOperation>>();
+            if (!BiOperations.ContainsKey(type)) BiOperations[type] = NewDictionary<Return, Dictionary<Return, BiOperation>>();
             foreach (Return a in GetTypes(typeof(T))) {
                 foreach(Return b in GetTypes(typeof(U))) {
-                    if (!BiOperations[type].ContainsKey(a)) BiOperations[type][a] = new Dictionary<Return, BiOperation>();
+                    if (!BiOperations[type].ContainsKey(a)) BiOperations[type][a] = NewDictionary<Return, BiOperation>();
                     BiOperations[type][a][b] = SimpleBiOperand(resolver);
                 }
             }
         }
 
         void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {
-            if (!UniOperations.ContainsKey(type)) UniOperations[type] = new Dictionary<Return, UniOperation>();
+            if (!UniOperations.ContainsKey(type)) UniOperations[type] = NewDictionary<Return, UniOperation>();
             foreach (Return a in GetTypes(typeof(T))) {
                 UniOperations[type][a] = SimpleUniOperand(resolver);
             }

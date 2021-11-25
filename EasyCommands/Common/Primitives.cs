@@ -38,7 +38,7 @@ namespace IngameScript {
             public Primitive DeepCopy() => ResolvePrimitive((value is KeyedList) ? ((KeyedList)value).DeepCopy() : value);
         }
 
-        static Dictionary<Type, Return> PrimitiveTypeMap = new Dictionary<Type, Return>() {
+        static Dictionary<Type, Return> PrimitiveTypeMap = new Dictionary<Type, Return> {
             { typeof(bool), Return.BOOLEAN },
             { typeof(string), Return.STRING},
             { typeof(float), Return.NUMERIC },
@@ -49,7 +49,7 @@ namespace IngameScript {
             { typeof(KeyedList), Return.LIST }
         };
 
-        static Dictionary<string, Func<Primitive, object>> castMap = new Dictionary<string, Func<Primitive, object>>() {
+        static Dictionary<string, Func<Primitive, object>> castMap = new Dictionary<string, Func<Primitive, object>> {
             { "bool", p => CastBoolean(p) },
             { "string", CastString },
             { "number", p => CastNumber(p) },
@@ -58,7 +58,7 @@ namespace IngameScript {
             { "list", CastList }
         };
 
-        static Dictionary<String, Color> colors = new Dictionary<String, Color>{
+        static Dictionary<String, Color> colors = new Dictionary<String, Color> {
             { "red", Color.Red },
             { "blue", Color.Blue },
             { "green", Color.Green },

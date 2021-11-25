@@ -11,7 +11,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public static class BlockHandlerRegistry {
-            static readonly Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
+            static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
                 { Block.ASSEMBLER, new AssemblerBlockHandler()},
@@ -184,9 +184,9 @@ namespace IngameScript {
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
-            protected Dictionary<String, PropertyHandler<T>> propertyHandlers = new Dictionary<String, PropertyHandler<T>>();
-            protected Dictionary<Return, Property> defaultPropertiesByPrimitive = new Dictionary<Return, Property>();
-            protected Dictionary<Direction, Property> defaultPropertiesByDirection = new Dictionary<Direction, Property>();
+            protected Dictionary<String, PropertyHandler<T>> propertyHandlers = NewDictionary<String, PropertyHandler<T>>();
+            protected Dictionary<Return, Property> defaultPropertiesByPrimitive = NewDictionary<Return, Property>();
+            protected Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();
             protected Direction defaultDirection = Direction.UP;
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) { return GetBlocksOfType(selector).Select(t => t as object).ToList(); }
@@ -288,7 +288,7 @@ namespace IngameScript {
             }
 
             public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params DirectionHandler<T>[] handlers) {
-                Dictionary<Direction, PropertyHandler<T>> directionHandlers = new Dictionary<Direction, PropertyHandler<T>>();
+                var directionHandlers = NewDictionary<Direction, PropertyHandler<T>>();
                 foreach (DirectionHandler<T> handler in handlers) foreach (Direction direction in handler.supportedDirections) directionHandlers.Add(direction, handler.handler);
                 return new SimpleDirectionalTypedHandler<T>(directionHandlers, defaultDirection);
             }

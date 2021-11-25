@@ -19,7 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program : MyGridProgram {
-        Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = new Dictionary<Type, List<ParameterProcessor>>();
+        Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<ParameterProcessor>>();
         List<ParameterProcessor> parameterProcessors = NewList<ParameterProcessor>(
             new ParenthesisProcessor(),
             new ListProcessor(),
@@ -326,7 +326,7 @@ namespace IngameScript {
                 (p,variables) => ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues().Count == p.functionDefinition.parameterNames.Count,
                 (p,variables) => {
                     List<VariableCommandParameter> parameters = ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues();
-                    Dictionary<string, Variable> inputParameters = new Dictionary<string, Variable>();
+                    var inputParameters = NewDictionary<string, Variable>();
                     for (int i = 0; i < p.functionDefinition.parameterNames.Count; i++) {
                         inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
                     }

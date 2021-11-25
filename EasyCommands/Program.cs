@@ -36,7 +36,7 @@ namespace IngameScript {
         public static Program PROGRAM;
         public BroadcastMessageProvider broadcastMessageProvider;
         public ProgramState state = ProgramState.STOPPED;
-        public Dictionary<String, FunctionDefinition> functions = new Dictionary<string, FunctionDefinition>();
+        public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
         public Thread currentThread;
 
         List<Thread> threadQueue = NewList<Thread>();
@@ -338,7 +338,7 @@ namespace IngameScript {
 
         public class Thread {
             public Command Command { get; set; }
-            public Dictionary<String, Variable> threadVariables = new Dictionary<string, Variable>();
+            public Dictionary<String, Variable> threadVariables = NewDictionary<string, Variable>();
             String prefix;
             String name;
 

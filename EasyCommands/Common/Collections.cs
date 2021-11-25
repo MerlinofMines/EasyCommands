@@ -20,6 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
+        static Dictionary<T, U> NewDictionary<T, U>() => new Dictionary<T, U>();
 
         public class KeyedList {
             public List<KeyedVariable> keyedValues;

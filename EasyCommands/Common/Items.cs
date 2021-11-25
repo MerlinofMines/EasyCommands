@@ -20,8 +20,8 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<String, List<ItemFilter>> itemNamesToFilters = new Dictionary<string, List<ItemFilter>>();
-        Dictionary<String, MyDefinitionId> itemNamesToBlueprints = new Dictionary<string, MyDefinitionId>();
+        Dictionary<String, List<ItemFilter>> itemNamesToFilters = NewDictionary<string, List<ItemFilter>>();
+        Dictionary<String, MyDefinitionId> itemNamesToBlueprints = NewDictionary<string, MyDefinitionId>();
 
         public void InitializeItems() {
             //Ores
