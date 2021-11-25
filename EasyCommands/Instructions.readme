@@ -4,4 +4,4 @@ Having trouble?  You can change the updateFrequency below to slow down execution
 You can also enable (way) more verbose logging by setting logLevel to LogLevel.DEBUG.
 
 A full list of supported capabilities can be found at
-http://spaceengineers.merlinofmines.com/EasyCommands/
+https://spaceengineers.merlinofmines.com/EasyCommands/

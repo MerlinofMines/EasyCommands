@@ -194,7 +194,6 @@
     <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
     <Compile Include="TokenParsingTests\ItemParsingTests.cs" />
     <Compile Include="TokenParsingTests\BlueprintParsingTests.cs" />
-    <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Instructions.readme" />
