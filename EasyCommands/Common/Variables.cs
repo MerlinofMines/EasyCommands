@@ -36,16 +36,6 @@ namespace IngameScript {
             public Primitive GetValue() => primitive;
         }
 
-        public class LockedVariable : Variable {
-            public Variable locked;
-
-            public LockedVariable(Variable v) {
-                locked = v;
-            }
-
-            public Primitive GetValue() => locked.GetValue();
-        }
-
         public class ComparisonVariable : Variable {
             public Variable a, b;
             public PrimitiveComparator comparator;
@@ -245,19 +235,24 @@ namespace IngameScript {
         }
 
         public class KeyedVariable : Variable {
-            public String Key { get; set; }
-            public Variable Value { get; set; }
+            public Variable Key;
+            public Variable Value;
 
-            public KeyedVariable(String key, Variable value) {
+            public KeyedVariable(Variable key, Variable value) {
                 Key = key;
                 Value = value;
             }
 
-            public bool HasKey() => !string.IsNullOrEmpty(Key);
+            public bool HasKey() => Key != null;
 
+            public String GetKey() => Key != null ? CastString(Key.GetValue()) : null;
             public Primitive GetValue() => Value.GetValue();
 
-            public override bool Equals(Object variable) => Key == ((KeyedVariable)variable).Key && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
+            public String Print() => (HasKey() ? Wrap(GetKey()) + "->" : "") + Wrap(CastString(GetValue()));
+
+            String Wrap(String value) => value.Contains(" ") ? "\"" + value + "\"" : value;
+
+            public override bool Equals(Object variable) => GetKey() == ((KeyedVariable)variable).GetKey() && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
             public override int GetHashCode() => base.GetHashCode();
         }
 

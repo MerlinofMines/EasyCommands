@@ -177,7 +177,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Waypoints: [Waypoint 1=1:2:3,Waypoint 2=4:5:6,Waypoint 3=7:8:9]", test.Logger[0]);
+                Assert.AreEqual("Waypoints: [\"Waypoint 1\"->1:2:3,\"Waypoint 2\"->4:5:6,\"Waypoint 3\"->7:8:9]", test.Logger[0]);
             }
         }
 

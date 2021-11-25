@@ -49,6 +49,7 @@ namespace IngameScript {
         public class GlobalCommandParameter : SimpleCommandParameter { }
         public class IgnoreCommandParameter : SimpleCommandParameter { }
         public class ThatCommandParameter : SimpleCommandParameter { }
+        public class KeyedVariableCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
             public T value;

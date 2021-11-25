@@ -34,13 +34,13 @@ namespace IngameScript {
                     b => {
                         var waypoints = NewList<MyWaypointInfo>();
                         b.GetWaypointInfo(waypoints);
-                        return new KeyedList(waypoints.Select(w => new KeyedVariable(w.Name, GetStaticVariable(w.Coords))).ToArray());
+                        return new KeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))).ToArray());
                     },
                     (b, v) => {
                         b.ClearWaypoints();
                         for (int i = 0; i < v.keyedValues.Count; i++) {
                             KeyedVariable value = v.keyedValues[i];
-                            b.AddWaypoint(new MyWaypointInfo(value.HasKey() ? value.Key : "Waypoint " + i, CastVector(value.GetValue())));
+                            b.AddWaypoint(new MyWaypointInfo(value.HasKey() ? value.GetKey() : "Waypoint " + i, CastVector(value.GetValue())));
                     }
                 });
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;

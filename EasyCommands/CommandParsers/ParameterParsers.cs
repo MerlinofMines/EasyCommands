@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
 
-        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$"};
+        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->"};
         string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-" };
 
         public void InitializeParsers() {
@@ -125,6 +125,7 @@ namespace IngameScript {
             AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
             AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
             AddWords(Words("take"), new TransferCommandParameter(false));
+            AddWords(Words("->"), new KeyedVariableCommandParameter());
 
             //Conditional Words
             AddWords(Words("if"), new IfCommandParameter(false, false, false));

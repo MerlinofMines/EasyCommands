@@ -257,7 +257,38 @@ Print ""After: "" + myList
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Before: []"));
-                Assert.IsTrue(test.Logger.Contains("After: [key=value]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key->value]"));
+            }
+        }
+
+        [TestMethod]
+        public void CreateKeyedListWithPopulatedValues() {
+            String script = @"
+:main
+assign myList to [""key1"" -> ""value1"", ""key2"" -> ""value2""]
+Print ""Values: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Values: [key1->value1,key2->value2]"));
+            }
+        }
+
+        [TestMethod]
+        public void PrintKeyedListWithStringValuesIncludingSpacesAddsQuotes() {
+            String script = @"
+:main
+assign myList to []
+Print ""Before: "" + myList
+assign myList[""my key""] to ""my value""
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: []"));
+                Assert.IsTrue(test.Logger.Contains("After: [\"my key\"->\"my value\"]"));
             }
         }
 
@@ -274,8 +305,8 @@ Print ""After: "" + myList
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Before: [key=value]"));
-                Assert.IsTrue(test.Logger.Contains("After: [key=newValue]"));
+                Assert.IsTrue(test.Logger.Contains("Before: [key->value]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key->newValue]"));
             }
         }
 
@@ -292,7 +323,7 @@ Print ""After: "" + myList
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Before: [1,2,3]"));
-                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,key=value]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,key->value]"));
             }
         }
 
@@ -340,7 +371,7 @@ Print ""Values: "" + myList[""key1"",""key2""]
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Values: [key1=value1,key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("Values: [key1->value1,key2->value2]"));
             }
         }
 
@@ -522,8 +553,8 @@ Print ""After: "" + myList
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Before: [key1=value1,key2=value2]"));
-                Assert.IsTrue(test.Logger.Contains("After: [key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("Before: [key1->value1,key2->value2]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key2->value2]"));
             }
         }
 
@@ -543,8 +574,8 @@ Print ""After: "" + subList
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Before: [key1=value1,key2=oldValue]"));
-                Assert.IsTrue(test.Logger.Contains("After: [key2=newValue]"));
+                Assert.IsTrue(test.Logger.Contains("Before: [key1->value1,key2->oldValue]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key2->newValue]"));
             }
         }
 
@@ -562,8 +593,8 @@ Print ""After: "" + myList
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5,6,key1=value1,key2=value2]"));
-                Assert.IsTrue(test.Logger.Contains("After: [2,4,6,key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5,6,key1->value1,key2->value2]"));
+                Assert.IsTrue(test.Logger.Contains("After: [2,4,6,key2->value2]"));
             }
         }
 
@@ -585,8 +616,8 @@ Print ""After: "" + myList
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.IsTrue(test.Logger.Contains("Before: [key=oldValue,key1=value1]"));
-                Assert.IsTrue(test.Logger.Contains("After: [key1=value1,key=newValue,key2=value2]"));
+                Assert.IsTrue(test.Logger.Contains("Before: [key->oldValue,key1->value1]"));
+                Assert.IsTrue(test.Logger.Contains("After: [key1->value1,key->newValue,key2->value2]"));
             }
         }
 

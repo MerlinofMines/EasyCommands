@@ -26,26 +26,26 @@ namespace IngameScript {
 
             //SelectorVariableSelectorProcessor
             ThreeValueRule<VariableSelectorCommandParameter, AmbiguiousStringCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
-                requiredRight<AmbiguiousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                requiredRight<AmbiguiousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
                 (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), new AmbiguousStringVariable(selector.GetValue().value)))),
             ThreeValueRule<VariableSelectorCommandParameter, VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
-                requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
+                requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
                 (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), selector.GetValue().value))),
 
             //SelectorProcessor
             new BranchingProcessor<AmbiguiousStringCommandParameter>(
-                TwoValueRule<AmbiguiousStringCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                        optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                        (p,blockType,group) => {
-                        if (!blockType.HasValue()) {
-                            BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.subTokens);
-                            if (type != null) blockType.SetValue(type);
-                            GroupCommandParameter g = findLast<GroupCommandParameter>(p.subTokens);
-                            if (g != null) group.SetValue(g);
-                        }
-                        return blockType.HasValue();
+                TwoValueRule<AmbiguiousStringCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
+                        optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                        (p, blockType, group) => {
+                            if (!blockType.HasValue()) {
+                                BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.subTokens);
+                                if (type != null) blockType.SetValue(type);
+                                GroupCommandParameter g = findLast<GroupCommandParameter>(p.subTokens);
+                                if (g != null) group.SetValue(g);
+                            }
+                            return blockType.HasValue();
                         },
-                        (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                        (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule<AmbiguiousStringCommandParameter>(
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
@@ -64,46 +64,46 @@ namespace IngameScript {
                 (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
 
             //SelfSelectorProcessor
-            OneValueRule<SelfCommandParameter,BlockTypeCommandParameter>(
+            OneValueRule<SelfCommandParameter, BlockTypeCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
                 (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
 
             //VariableSelectorProcessor
-            TwoValueRule<VariableCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                requiredRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+            TwoValueRule<VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
+                requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ListSelectorProcessor
-            TwoValueRule<ListIndexCommandParameter,BlockTypeCommandParameter,GroupCommandParameter>(
-                requiredRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
-                (p,blockType,group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+            TwoValueRule<ListIndexCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
+                requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ImplicitAllSelectorProcessor
-            OneValueRule<BlockTypeCommandParameter,GroupCommandParameter>(
+            OneValueRule<BlockTypeCommandParameter, GroupCommandParameter>(
                 optionalRight<GroupCommandParameter>(),
                 (blockType, group) => new SelectorCommandParameter(new AllEntityProvider(blockType.value))),
-            
+
             //IndexProcessor
-            OneValueRule<IndexCommandParameter,VariableCommandParameter>(
+            OneValueRule<IndexCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,var) => new IndexSelectorCommandParameter(var.GetValue().value)),
+                (p, var) => new IndexSelectorCommandParameter(var.GetValue().value)),
 
             //RedundantComparisonProcessor
             //"is not <" => "!<"
             //"is <" => "<"
             //"is not" => !=
             // "not greater than" => <
-            OneValueRule<ComparisonCommandParameter,NotCommandParameter>(
+            OneValueRule<ComparisonCommandParameter, NotCommandParameter>(
                 requiredEither<NotCommandParameter>(),
-                (p,left) => new ComparisonCommandParameter(Inverse(p.value))),
-            OneValueRule<ComparisonCommandParameter,ComparisonCommandParameter>(
+                (p, left) => new ComparisonCommandParameter(Inverse(p.value))),
+            OneValueRule<ComparisonCommandParameter, ComparisonCommandParameter>(
                 requiredRight<ComparisonCommandParameter>(),
-                (p,right) => new ComparisonCommandParameter(right.GetValue().value)),
+                (p, right) => new ComparisonCommandParameter(right.GetValue().value)),
 
             //IndexSelectorProcessor
-            OneValueRule<IndexSelectorCommandParameter,SelectorCommandParameter>(
+            OneValueRule<IndexSelectorCommandParameter, SelectorCommandParameter>(
                 requiredLeft<SelectorCommandParameter>(),
-                (p,selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value,p.value))),
+                (p, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, p.value))),
 
             //ListProcessors
             OneValueRule<ListCommandParameter, SelectorCommandParameter>(
@@ -120,88 +120,93 @@ namespace IngameScript {
                 (name, function) => new FunctionDefinitionCommandParameter(function.GetValue().value, PROGRAM.functions[name.value])),
 
             //AssignmentProcessor
-            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,StringCommandParameter>(
+            TwoValueRule<AssignmentCommandParameter, GlobalCommandParameter, StringCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
-                (p,g,name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
+                (p, g, name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
             TwoValueRule<AssignmentCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, list, value) => list.HasValue() && list.GetValue().value is ListIndexVariable && value.HasValue(),
                 (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.GetValue().value, value.GetValue().value, p.useReference))),
-            TwoValueRule<AssignmentCommandParameter,GlobalCommandParameter,VariableCommandParameter>(
+            TwoValueRule<AssignmentCommandParameter, GlobalCommandParameter, VariableCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,g,name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
-                (p,g,name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
+                (p, g, name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
+                (p, g, name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
 
             //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
-            OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
+            OneValueRule<ValuePropertyCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(),
-                (p,v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
-            OneValueRule<ValuePropertyCommandParameter,VariableCommandParameter>(
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
+            OneValueRule<ValuePropertyCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
 
             //UniOperationProcessor
-            OneValueRule<UniOperationCommandParameter,VariableCommandParameter>(
+            OneValueRule<UniOperationCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
+                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
             //AfterUniOperationProcessor
-            OneValueRule<LeftUniOperationCommandParameter,VariableCommandParameter>(
+            OneValueRule<LeftUniOperationCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(),
-                (p,df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
+                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
             //Tier1OperationProcessor
-            TwoValueRule<BiOperandTier1Operand,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<BiOperandTier1Operand, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
+                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
             //Tier2OperationProcessor
-            TwoValueRule<BiOperandTier2Operand,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<BiOperandTier2Operand, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
+                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
             //Tier3OperationProcessor
-            TwoValueRule<BiOperandTier3Operand,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<BiOperandTier3Operand, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,a,b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
+                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
             //VariableComparisonProcessor
-            TwoValueRule<ComparisonCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<ComparisonCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
+                (p, left, right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
 
             //NotProcessor
-            OneValueRule<NotCommandParameter,VariableCommandParameter>(
+            OneValueRule<NotCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
+                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.GetValue().value))),
 
             //AndProcessor
-            TwoValueRule<AndCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<AndCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.AND, left.GetValue().value, right.GetValue().value))),
+                (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.AND, left.GetValue().value, right.GetValue().value))),
 
             //OrProcessor
-            TwoValueRule<OrCommandParameter,VariableCommandParameter,VariableCommandParameter>(
+            TwoValueRule<OrCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p,left,right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.GetValue().value, right.GetValue().value))),
+                (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.GetValue().value, right.GetValue().value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
                 requiredLeft<PropertyAggregationCommandParameter>(),
-                (list,aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
+                (list, aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
 
             //ListComparisonProcessor
             ThreeValueRule<ListIndexCommandParameter, ComparisonCommandParameter, VariableCommandParameter, AggregationModeCommandParameter>(
                 requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
                 (list, comparison, value, aggregation) => {
                     AggregationMode mode = AggregationMode.ALL;
-                    if(aggregation.HasValue()) mode = aggregation.GetValue().value;
+                    if (aggregation.HasValue()) mode = aggregation.GetValue().value;
                     return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
                 }),
+
+            //KeyedVariableProcessor
+            TwoValueRule<KeyedVariableCommandParameter, VariableCommandParameter, VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (keyed, left, right) => new VariableCommandParameter(new KeyedVariable(left.GetValue().value, right.GetValue().value))),
 
             //BlockConditionProcessors
             ThreeValueRule<AndCommandParameter,BlockConditionCommandParameter,ThatCommandParameter,BlockConditionCommandParameter>(
