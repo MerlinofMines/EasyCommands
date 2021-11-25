@@ -160,21 +160,21 @@ namespace IngameScript {
 
         public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {
             public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                var blocks = NewList<IMyTerminalBlock>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, selector);
 
-                List<T> instances = new List<T>();
+                var instances = NewList<T>();
                 blocks.ForEach((b) => GetInstances(b, instances));
                 return instances;
             }
 
             public override List<T> GetBlocksOfTypeInGroup(String groupName) {
-                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                var blockGroups = NewList<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name == groupName);
-                List<T> instances = new List<T>();
+                var instances = NewList<T>();
                 if (group == null) return instances;
-                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                var blocks = NewList<IMyTerminalBlock>();
                 group.GetBlocksOfType<IMyTerminalBlock>(blocks);
                 blocks.ForEach((b) => GetInstances(b, instances));
                 return instances;

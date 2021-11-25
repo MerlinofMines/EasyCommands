@@ -279,7 +279,7 @@ namespace IngameScript {
                 BlockHandler blockHandler = BlockHandlerRegistry.GetBlockHandler(Block.CARGO);
 
                 var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue())));
-                var items = new List<MyInventoryItem>();
+                var items = NewList<MyInventoryItem>();
 
                 var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
                 var fromInventories = from.GetEntities().Select(i => (IMyInventory)i)

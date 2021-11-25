@@ -32,7 +32,7 @@ namespace IngameScript {
                 });
                 AddListHandler(Property.WAYPOINTS,
                     b => {
-                        var waypoints = new List<MyWaypointInfo>();
+                        var waypoints = NewList<MyWaypointInfo>();
                         b.GetWaypointInfo(waypoints);
                         return new KeyedList(waypoints.Select(w => new KeyedVariable(w.Name, GetStaticVariable(w.Coords))).ToArray());
                     },

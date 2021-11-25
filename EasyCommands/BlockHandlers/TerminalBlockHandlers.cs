@@ -66,12 +66,12 @@ namespace IngameScript {
                 AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
                 AddListHandler(Property.PROPERTIES, b => {
-                    var properties = new List<ITerminalProperty>();
+                    var properties = NewList<ITerminalProperty>();
                     b.GetProperties(properties);
                     return new KeyedList(properties.Select(p => GetStaticVariable(p.Id)).ToArray());
                 });
                 AddListHandler(Property.ACTIONS, b => {
-                    var actions = new List<ITerminalAction>();
+                    var actions = NewList<ITerminalAction>();
                     b.GetActions(actions);
                     return new KeyedList(actions.Select(p => GetStaticVariable(p.Id)).ToArray());
                 });
@@ -90,16 +90,16 @@ namespace IngameScript {
             }
 
             public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                List<T> blocks = new List<T>();
+                var blocks = NewList<T>();
                 PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, selector);
                 return blocks;
             }
 
             public override List<T> GetBlocksOfTypeInGroup(String groupName) {
-                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                var blockGroups = NewList<IMyBlockGroup>();
                 PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
                 IMyBlockGroup group = blockGroups.Find(g => g.Name.Equals(groupName));
-                List<T> blocks = new List<T>();
+                var blocks = NewList<T>();
                 if (group == null) return blocks;
                 group.GetBlocksOfType<T>(blocks);
                 return blocks;

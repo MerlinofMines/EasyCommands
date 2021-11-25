@@ -72,7 +72,7 @@ namespace IngameScript {
             if (type == typeof(object)) return ((Return[])Enum.GetValues(typeof(Return))).ToList();
             Return primitiveType;
             if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
-            return new List<Return> { primitiveType };
+            return NewList<Return>(primitiveType);
         }
 
         static Primitive ResolvePrimitive(object o) {
@@ -153,7 +153,7 @@ namespace IngameScript {
 
         public static bool GetVector(String s, out Vector3D vector) {
             vector = Vector3D.Zero;
-            List<double> components = new List<double>();
+            var components = NewList<double>();
             string[] vectorStrings = s.Split(':');
 
             foreach (string component in vectorStrings) {

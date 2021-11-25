@@ -39,8 +39,8 @@ namespace IngameScript {
         public Dictionary<String, FunctionDefinition> functions = new Dictionary<string, FunctionDefinition>();
         public Thread currentThread;
 
-        List<Thread> threadQueue = new List<Thread>();
-        List<Thread> asyncThreadQueue = new List<Thread>();
+        List<Thread> threadQueue = NewList<Thread>();
+        List<Thread> asyncThreadQueue = NewList<Thread>();
         Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable> {
             { "pi", GetStaticVariable(Math.PI) },
             { "e", GetStaticVariable(Math.E) },
@@ -49,7 +49,7 @@ namespace IngameScript {
 
         String defaultFunction;
         String customData = null;
-        List<String> commandStrings = new List<String>();
+        List<String> commandStrings = NewList<String>();
 
         public void ClearAllThreads() {
             asyncThreadQueue.Clear();
@@ -85,7 +85,7 @@ namespace IngameScript {
 
         List<MyIGCMessage> provideMessages()
         {
-            List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+            var listeners = NewList<IMyBroadcastListener>();
             IGC.GetBroadcastListeners(listeners);
             return listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
         }
@@ -231,7 +231,7 @@ namespace IngameScript {
         }
 
         void ParseFunctions(List<String> commandStrings) {
-            List<int> functionIndices = new List<int>();
+            var functionIndices = NewList<int>();
             int implicitMainOffset = 1;
             if (!commandStrings[0].StartsWith(":")) {
                 commandStrings.Insert(0, ":main");
@@ -269,7 +269,7 @@ namespace IngameScript {
                     .Where(line => line.commandParameters.Count > 0)
                     .ToList(), 0, true);
                 commandStrings.RemoveRange(i, commandStrings.Count - i);
-                if (!(command is MultiActionCommand)) { command = new MultiActionCommand(new List<Command> { command }); }
+                if (!(command is MultiActionCommand)) command = new MultiActionCommand(NewList<Command>(command));
                 functions[functionName].function = (MultiActionCommand)command;
                 defaultFunction = functionName;
                 toParse--;
@@ -278,7 +278,7 @@ namespace IngameScript {
         }
 
         Command ParseCommand(List<CommandLine> commandStrings, int index, bool parseSiblings) {
-            List<Command> resolvedCommands = new List<Command>();
+            var resolvedCommands = NewList<Command>();
             while (index < commandStrings.Count - 1)//Parse Sibling & Child Commands, if any
             {
                 CommandLine current = commandStrings[index];

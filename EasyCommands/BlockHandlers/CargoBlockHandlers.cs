@@ -42,7 +42,7 @@ namespace IngameScript {
                     var itemString = CastString(p.attributeValue.GetValue());
                     var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(itemString));
                     double totalAmount = 0;
-                    var items = new List<MyInventoryItem>();
+                    var items = NewList<MyInventoryItem>();
 
                     b.GetItems(items, filter);
 

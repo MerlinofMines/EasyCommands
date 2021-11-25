@@ -19,6 +19,8 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
+
         public class KeyedList {
             public List<KeyedVariable> keyedValues;
 

@@ -42,7 +42,7 @@ namespace IngameScript {
 
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
                 var definitions = PROGRAM.GetItemBluePrints(CastString(p.attributeValue.GetValue()));
-                var currentItems = new List<MyProductionItem>();
+                var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
                 MyFixedPoint value = currentItems
                     .Where(item => definitions.Contains(item.BlueprintId))

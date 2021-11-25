@@ -306,7 +306,7 @@ namespace IngameScript {
 
         List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
             Trace("Command: " + String.Join(" | ", tokens));
-            var parameters = new List<CommandParameter>();
+            var parameters = NewList<CommandParameter>();
 
             foreach (var token in tokens) {
                 var newParameters = ParseCommandParameters(token);
@@ -318,7 +318,7 @@ namespace IngameScript {
         }
 
         List<CommandParameter> ParseCommandParameters(Token token) {
-            List<CommandParameter> commandParameters = new List<CommandParameter>();
+            var commandParameters = NewList<CommandParameter>();
             String t = token.token;
             if (token.isExplicitString) {
                 commandParameters.Add(new StringCommandParameter(token.original, true));
@@ -337,7 +337,7 @@ namespace IngameScript {
 
         //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
         public List<Token> ParseTokens(String commandString) {
-            if (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) return new List<Token>();
+            if (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) return NewList<Token>();
 
             List<Token> singleQuoteTokens = commandString.Trim().Split('\'')
             .SelectMany((element, index) => index % 2 == 0  // If even index

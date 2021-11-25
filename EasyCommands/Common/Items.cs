@@ -159,7 +159,7 @@ namespace IngameScript {
 
         public delegate bool ItemFilter(MyInventoryItem item);
 
-        public List<ItemFilter> GetItemFilters(String itemString) => itemString.Split(',').SelectMany(i => itemNamesToFilters.GetValueOrDefault(i.Trim().ToLower(), new List<ItemFilter>())).ToList();
+        public List<ItemFilter> GetItemFilters(String itemString) => itemString.Split(',').SelectMany(i => itemNamesToFilters.GetValueOrDefault(i.Trim().ToLower(), NewList<ItemFilter>())).ToList();
         public List<MyDefinitionId> GetItemBluePrints(String itemString) => itemString.Split(',').Where(i => itemNamesToBlueprints.ContainsKey(i)).Select(i => itemNamesToBlueprints[i]).ToList();
 
 

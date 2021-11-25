@@ -118,7 +118,7 @@ namespace IngameScript {
         }
 
         public class AmbiguiousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
-            public List<CommandParameter> SubTokens = new List<CommandParameter>();
+            public List<CommandParameter> SubTokens;
             public bool isImplicit;
             public AmbiguiousStringCommandParameter(String value, bool isImplicit, params CommandParameter[] SubTokens) : base(value) {
                 this.SubTokens = SubTokens.ToList();
