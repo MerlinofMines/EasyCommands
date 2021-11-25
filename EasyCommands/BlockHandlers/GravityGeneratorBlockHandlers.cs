@@ -29,69 +29,23 @@ namespace IngameScript {
         public class GravityGeneratorBlockHandler : FunctionalBlockHandler<IMyGravityGenerator> {
             public GravityGeneratorBlockHandler() {
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b, v) => b.GravityAcceleration = v, 0.25f);
-                AddPropertyHandler(Property.RANGE, new GravityFieldHandler());
+                AddDirectionHandlers(Property.RANGE, Direction.NONE,
+                    DirectionalHandler(new SimplePropertyHandler<IMyGravityGenerator>(
+                        (b, p) => ResolvePrimitive(new Vector3D(b.FieldSize)),
+                        (b, p, v) => {
+                            if (v.returnType == Return.VECTOR) b.FieldSize = CastVector(v);
+                            else {
+                                var size = CastNumber(v);
+                                b.FieldSize = new Vector3(size, size, size);
+                            }
+                        }, ResolvePrimitive(25)), Direction.NONE),
+                    DirectionalHandler(NumericHandler(b => b.FieldSize.Y, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, v, b.FieldSize.Z)), Direction.UP, Direction.DOWN),
+                    DirectionalHandler(NumericHandler(b => b.FieldSize.X, (b, v) => b.FieldSize = new Vector3(v, b.FieldSize.Y, b.FieldSize.Z)), Direction.LEFT, Direction.RIGHT),
+                    DirectionalHandler(NumericHandler(b => b.FieldSize.Z, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, b.FieldSize.Y, v)), Direction.FORWARD, Direction.BACKWARD)
+                    );
+
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.RANGE;
-            }
-        }
-
-        class GravityFieldHandler : SimplePropertyHandler<IMyGravityGenerator> {
-            public GravityFieldHandler() : base(
-                (b, p) => ResolvePrimitive(new Vector3D(b.FieldSize)),
-                (b, p, v) => {
-                    switch (v.returnType) {
-                        case Return.NUMERIC:
-                            float value = CastNumber(v);
-                            b.FieldSize = new Vector3(value, value, value);
-                            break;
-                        case Return.VECTOR:
-                            b.FieldSize = CastVector(v);
-                            break;
-                        default:
-                            throw new Exception("Cannot set gravity field to type: " + v.returnType);
-                    }
-                },
-                ResolvePrimitive(25)) {
-
-                GetDirection = (b, p, d) => {
-                    switch(d) {
-                        case Direction.UP:
-                        case Direction.DOWN:
-                            return ResolvePrimitive(b.FieldSize.Y);
-                        case Direction.LEFT:
-                        case Direction.RIGHT:
-                            return ResolvePrimitive(b.FieldSize.X);
-                        case Direction.FORWARD:
-                        case Direction.BACKWARD:
-                            return ResolvePrimitive(b.FieldSize.Z);
-                        default:
-                            throw new Exception("Bad");
-                    }
-                };
-
-                SetDirection = (b, p, d, v) => {
-                    float value = CastNumber(v);
-                    float x = b.FieldSize.X;
-                    float y = b.FieldSize.Y;
-                    float z = b.FieldSize.Z;
-                    switch (d) {
-                        case Direction.UP:
-                        case Direction.DOWN:
-                            y = value;
-                            break;
-                        case Direction.LEFT:
-                        case Direction.RIGHT:
-                            x = value;
-                            break;
-                        case Direction.FORWARD:
-                        case Direction.BACKWARD:
-                            z = value;
-                            break;
-                        default:
-                            throw new Exception("Bad");
-                    }
-                    b.FieldSize = new Vector3(x, y, z);
-                };
             }
         }
     }
