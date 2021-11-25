@@ -51,6 +51,22 @@ until i >= blockCount
         }
 
         [TestMethod]
+        public void GetBlockNames() {
+            String script = @"
+print ""Names: "" + terminal names
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Names: [\"Script Program\",\"test terminal\"]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void HideBlock() {
             String script = @"
 hide the ""test terminal""

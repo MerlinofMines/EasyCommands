@@ -105,6 +105,7 @@ namespace IngameScript {
             AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
             AddPropertyWords(Words("actions"), Property.ACTIONS);
+            AddPropertyWords(Words("names"), Property.NAMES);
 
             //ValueProperty Words
             AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));

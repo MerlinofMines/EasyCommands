@@ -180,10 +180,14 @@ namespace IngameScript {
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
-            protected Dictionary<String, PropertyHandler<T>> propertyHandlers = NewDictionary<String, PropertyHandler<T>>();
-            protected Dictionary<Return, Property> defaultPropertiesByPrimitive = NewDictionary<Return, Property>();
-            protected Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();
-            protected Direction defaultDirection = Direction.UP;
+            public Dictionary<String, PropertyHandler<T>> propertyHandlers = NewDictionary<String, PropertyHandler<T>>();
+            public Dictionary<Return, Property> defaultPropertiesByPrimitive = NewDictionary<Return, Property>();
+            public Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();
+            public Direction defaultDirection = Direction.UP;
+
+            public BlockHandler() {
+                AddListHandler(Property.NAMES, b => CastList(ResolvePrimitive(Name(b))));
+            }
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) => GetBlocksOfType(selector).Select(t => t as object).ToList();
             public List<Object> GetBlocksInGroup(String groupName) => GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList();
