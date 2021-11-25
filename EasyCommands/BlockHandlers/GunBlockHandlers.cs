@@ -57,7 +57,7 @@ namespace IngameScript {
 
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
-                AddNumericHandler(Property.RANGE, GetRange, SetRange, 100);
+                AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("Range", 100));
                 AddBooleanHandler(Property.TRIGGER, (b) => b.IsShooting, Shoot);
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
@@ -65,8 +65,6 @@ namespace IngameScript {
 
             }
             void Shoot(IMyUserControllableGun gun, bool b) { if(b) gun.ApplyAction("Shoot_On"); else gun.ApplyAction("Shoot_Off"); }
-            float GetRange(IMyUserControllableGun gun) { return gun.GetValueFloat("Range"); }
-            void SetRange(IMyUserControllableGun gun, float range) { gun.SetValueFloat("Range", range); }
         }
     }
 }

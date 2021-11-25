@@ -30,7 +30,7 @@ namespace IngameScript {
 
         public abstract class Command {
             public virtual void Reset() { }
-            public virtual Command Clone() { return this; }
+            public virtual Command Clone() => this;
 
             //Returns true if the program has finished execution.
             public abstract bool Execute();
@@ -40,9 +40,9 @@ namespace IngameScript {
             public Command command;
             bool async;
 
-            public QueueCommand(Command command, bool async) {
-                this.command = command;
-                this.async = async;
+            public QueueCommand(Command Command, bool Async) {
+                command = Command;
+                async = Async;
             }
 
             public override bool Execute() {
@@ -65,8 +65,8 @@ namespace IngameScript {
         public class PrintCommand : Command {
             public Variable variable;
 
-            public PrintCommand(Variable variable) {
-                this.variable = variable;
+            public PrintCommand(Variable v) {
+                variable = v;
             }
 
             public override bool Execute() {
@@ -82,10 +82,10 @@ namespace IngameScript {
 
             MultiActionCommand function;
 
-            public FunctionCommand(Function type, FunctionDefinition functionDefinition, Dictionary<string, Variable> inputParameters) {
-                this.type = type;
-                this.functionDefinition = functionDefinition;
-                this.inputParameters = inputParameters;
+            public FunctionCommand(Function functionType, FunctionDefinition definition, Dictionary<string, Variable> parameters) {
+                type = functionType;
+                functionDefinition = definition;
+                inputParameters = parameters;
                 function = null;
             }
 
@@ -108,7 +108,7 @@ namespace IngameScript {
                         throw new Exception("Unsupported Function Type: " + type);
                 }
             }
-            public override Command Clone() { return new FunctionCommand(type, functionDefinition, inputParameters); }
+            public override Command Clone() => new FunctionCommand(type, functionDefinition, inputParameters);
             public override void Reset() => function = null;
         }
 
@@ -118,11 +118,11 @@ namespace IngameScript {
             public bool isGlobal;
             public bool useReference;
 
-            public VariableAssignmentCommand(string variableName, Variable variable, bool useReference, bool isGlobal) {
-                this.variableName = variableName;
-                this.variable = variable;
-                this.useReference = useReference;
-                this.isGlobal = isGlobal;
+            public VariableAssignmentCommand(string name, Variable var, bool reference, bool global) {
+                variableName = name;
+                variable = var;
+                useReference = reference;
+                isGlobal = global;
             }
 
             public override bool Execute() {
@@ -141,10 +141,10 @@ namespace IngameScript {
             public Variable value;
             public bool useReference;
 
-            public ListVariableAssignmentCommand(ListIndexVariable list, Variable value, bool useReference) {
-                this.list = list;
-                this.value = value;
-                this.useReference = useReference;
+            public ListVariableAssignmentCommand(ListIndexVariable listVariable, Variable v, bool reference) {
+                list = listVariable;
+                value = v;
+                useReference = reference;
             }
 
             public override bool Execute() {
@@ -189,12 +189,12 @@ namespace IngameScript {
             public Unit units;
             int ticksLeft = -1;
 
-            public WaitCommand(Variable waitInterval, Unit units) {
-                this.waitInterval = waitInterval;
-                this.units = units;
+            public WaitCommand(Variable variable, Unit u) {
+                waitInterval = variable;
+                units = u;
             }
 
-            public override Command Clone() { return new WaitCommand(waitInterval,units); }
+            public override Command Clone() => new WaitCommand(waitInterval,units);
             public override void Reset() { ticksLeft = -1; }
             public override bool Execute() {
                 if (ticksLeft < 0) {
@@ -219,8 +219,8 @@ namespace IngameScript {
         public class ListenCommand : Command {
             public Variable tag;
 
-            public ListenCommand(Variable tag) {
-                this.tag = tag;
+            public ListenCommand(Variable v) {
+                tag = v;
             }
 
             public override bool Execute() {
@@ -232,9 +232,9 @@ namespace IngameScript {
         public class SendCommand : Command {
             public Variable message, tag;
 
-            public SendCommand(Variable message, Variable tag) {
-                this.message = message;
-                this.tag = tag;
+            public SendCommand(Variable messageVariable, Variable tagVariable) {
+                message = messageVariable;
+                tag = tagVariable;
             }
 
             public override bool Execute() {
@@ -243,7 +243,7 @@ namespace IngameScript {
             }
         }
 
-        public class NullCommand : Command { public override bool Execute() { return true; } }
+        public class NullCommand : Command { public override bool Execute() => true; }
 
         public class BlockCommand : Command {
             public EntityProvider entityProvider;
@@ -266,11 +266,11 @@ namespace IngameScript {
             public EntityProvider to;//Must be Inventory
             public Variable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
 
-            public TransferItemCommand(EntityProvider from, EntityProvider to, Variable first, Variable second) {
-                this.from = from;
-                this.to = to;
-                this.first = first;
-                this.second = second;
+            public TransferItemCommand(EntityProvider source, EntityProvider destination, Variable firstVariable, Variable secondVariable) {
+                from = source;
+                to = destination;
+                first = firstVariable;
+                second = secondVariable;
             }
 
             public override bool Execute() {
@@ -312,7 +312,7 @@ namespace IngameScript {
         }
 
         public class ConditionalCommand : Command {
-            public Variable Condition;
+            public Variable condition;
             public bool alwaysEvaluate = false;
             public bool evaluated = false;
             public bool evaluatedValue = false;
@@ -320,17 +320,17 @@ namespace IngameScript {
             public Command conditionMetCommand;
             public Command conditionNotMetCommand;
 
-            public ConditionalCommand(Variable condition, Command conditionMetCommand, Command conditionNotMetCommand, bool alwaysEvaluate) {
-                this.Condition = condition;
-                this.conditionMetCommand = conditionMetCommand;
-                this.conditionNotMetCommand = conditionNotMetCommand;
-                this.alwaysEvaluate = alwaysEvaluate;
-                if (alwaysEvaluate) UpdateAlwaysEvaluate();
+            public ConditionalCommand(Variable conditionVariable, Command metCommand, Command notMetCommand, bool alwaysEval) {
+                condition = conditionVariable;
+                conditionMetCommand = metCommand;
+                conditionNotMetCommand = notMetCommand;
+                alwaysEvaluate = alwaysEval;
+                if (alwaysEval) UpdateAlwaysEvaluate();
             }
 
             public override bool Execute() {
                 Debug("Executing Conditional Command");
-                Debug("Condition: " + Condition.ToString());
+                Debug("Condition: " + condition.ToString());
                 Trace("Action Command: " + conditionMetCommand.ToString());
                 Trace("Other Command: " + conditionNotMetCommand.ToString());
                 Trace("Always Evaluate: " + alwaysEvaluate);
@@ -352,7 +352,7 @@ namespace IngameScript {
                 conditionNotMetCommand.Reset();
 
                 //throw new Exception("Stop!");
-                if (alwaysEvaluate) { return !conditionMet; } else { return commandResult; }
+                return alwaysEvaluate ? !conditionMet : commandResult;
             }
 
             public override void Reset() {
@@ -361,7 +361,7 @@ namespace IngameScript {
                 evaluated = false;
                 isExecuting = false;
             }
-            public override Command Clone() { return new ConditionalCommand(Condition, conditionMetCommand.Clone(), conditionNotMetCommand.Clone(), alwaysEvaluate); ; }
+            public override Command Clone() => new ConditionalCommand(condition, conditionMetCommand.Clone(), conditionNotMetCommand.Clone(), alwaysEvaluate);
 
             private void UpdateAlwaysEvaluate() {
                 alwaysEvaluate = true;
@@ -372,7 +372,7 @@ namespace IngameScript {
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     Trace("Evaluating Value");
-                    evaluatedValue = CastBoolean(Condition.GetValue()); evaluated = true;
+                    evaluatedValue = CastBoolean(condition.GetValue()); evaluated = true;
                 }
                 Debug("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
@@ -389,8 +389,8 @@ namespace IngameScript {
 
             }
 
-            public MultiActionCommand(List<Command> commandsToExecute, Variable loops) {
-                this.commandsToExecute = commandsToExecute;
+            public MultiActionCommand(List<Command> commands, Variable loops) {
+                commandsToExecute = commands;
                 loopCount = loops;
             }
 
@@ -420,7 +420,7 @@ namespace IngameScript {
                 return false;
             }
             public override void Reset() { currentCommands = null; }
-            public override Command Clone() { return new MultiActionCommand(commandsToExecute, loopCount); }
+            public override Command Clone() => new MultiActionCommand(commandsToExecute, loopCount);
             public void Loop(int times) { loopsLeft += times; }
         }
     }

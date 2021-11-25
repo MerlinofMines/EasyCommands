@@ -38,9 +38,9 @@ namespace IngameScript {
                         optionalRight<BlockTypeCommandParameter>(),optionalRight<GroupCommandParameter>(),
                         (p,blockType,group) => {
                         if (!blockType.HasValue()) {
-                            BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.SubTokens);
+                            BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.subTokens);
                             if (type != null) blockType.SetValue(type);
-                            GroupCommandParameter g = findLast<GroupCommandParameter>(p.SubTokens);
+                            GroupCommandParameter g = findLast<GroupCommandParameter>(p.subTokens);
                             if (g != null) group.SetValue(g);
                         }
                         return blockType.HasValue();
@@ -499,8 +499,8 @@ namespace IngameScript {
             T value = null;
             bool required;
 
-            public ValueDataFetcher(bool required) {
-                this.required = required;
+            public ValueDataFetcher(bool req) {
+                required = req;
             }
 
             public void Clear() => value = null;
@@ -508,7 +508,9 @@ namespace IngameScript {
             public T GetValue() => value;
             public bool Satisfied() => !required || value != null;
             public bool SetValue(CommandParameter p) {
-                if(p is T && value == null) { value = (T)p; return true; } return false;
+                var setValue = p is T && value == null;
+                if (setValue) value = (T)p;
+                return setValue;
             }
         }
 
@@ -528,8 +530,8 @@ namespace IngameScript {
             public bool HasValue() => values.Count() > 0;
             public bool Satisfied() => !required || HasValue();
             public bool SetValue(CommandParameter p) {
-                if (p is T) { values.Add((T)p); return true; }
-                return false;
+                if (p is T) values.Add((T)p);
+                return p is T;
             }
         }
 
@@ -548,54 +550,34 @@ namespace IngameScript {
         class DataProcessor<U> : DataProcessor {
             public DataFetcher<U> f;
 
-            public DataProcessor(DataFetcher<U> f, ProcessCommandParameter l, ProcessCommandParameter r) : base(f,l,r) {
-                this.f = f;
+            public DataProcessor(DataFetcher<U> fetcher, ProcessCommandParameter l, ProcessCommandParameter r) : base(fetcher,l,r) {
+                f = fetcher;
             }
         }
 
-        static DataProcessor<T> requiredRight<T>() where T : class, CommandParameter {
-            return right<T>(true);
-        }
+        static DataProcessor<T> requiredRight<T>() where T : class, CommandParameter => right<T>(true);
+        static DataProcessor<T> optionalRight<T>() where T : class, CommandParameter => right<T>(false);
 
-        static DataProcessor<T> requiredLeft<T>() where T : class, CommandParameter {
-            return left<T>(true);
-        }
+        static DataProcessor<T> requiredLeft<T>() where T : class, CommandParameter => left<T>(true);
+        static DataProcessor<T> optionalLeft<T>() where T : class, CommandParameter => left<T>(false);
 
-        static DataProcessor<T> requiredEither<T>() where T : class, CommandParameter {
-            return either<T>(true);
-        }
+        static DataProcessor<T> requiredEither<T>() where T : class, CommandParameter => either<T>(true);
+        static DataProcessor<T> optionalEither<T>() where T : class, CommandParameter => either<T>(false);
 
-        static DataProcessor<T> optionalRight<T>() where T : class, CommandParameter {
-            return right<T>(false);
-        }
+        static DataProcessor<T> right<T>(bool required) where T : class, CommandParameter =>
+            new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => false ,df => p => df.SetValue(p));
 
-        static DataProcessor<T> optionalLeft<T>() where T : class, CommandParameter {
-            return left<T>(false);
-        }
+        static DataProcessor<T> left<T>(bool required) where T : class, CommandParameter =>
+            new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
 
-        static DataProcessor<T> optionalEither<T>() where T : class, CommandParameter {
-            return either<T>(false);
-        }
+        static DataProcessor<T> either<T>(bool required) where T : class, CommandParameter =>
+            new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => df.SetValue(p));
 
-        static DataProcessor<T> right<T>(bool required) where T : class, CommandParameter {
-            return new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => false ,df => p => df.SetValue(p));
-        }
+        static DataProcessor<T> rightList<T>(bool required) where T: class, CommandParameter =>
+            new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => false, df => p => df.SetValue(p));
 
-        static DataProcessor<T> left<T>(bool required) where T : class, CommandParameter {
-            return new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
-        }
-
-        static DataProcessor<T> either<T>(bool required) where T : class, CommandParameter {
-            return new DataProcessor<T>(new ValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => df.SetValue(p));
-        }
-
-        static DataProcessor<T> rightList<T>(bool required) where T: class, CommandParameter {
-            return new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => false, df => p => df.SetValue(p));
-        }
-
-        static DataProcessor<T> leftList<T>(bool required) where T : class, CommandParameter {
-            return new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
-        }
+        static DataProcessor<T> leftList<T>(bool required) where T : class, CommandParameter =>
+            new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
 
         //ParameterProcessors
         public interface ParameterProcessor : IComparable<ParameterProcessor> {
@@ -685,9 +667,7 @@ namespace IngameScript {
         }
 
         public class PrimitiveProcessor<T> : ParameterProcessor<T> where T : class, PrimitiveCommandParameter {
-            public override List<Type> GetProcessedTypes() {
-                return NewList<Type>(typeof(BooleanCommandParameter), typeof(StringCommandParameter));
-            }
+            public override List<Type> GetProcessedTypes() => NewList<Type>(typeof(BooleanCommandParameter), typeof(StringCommandParameter));
 
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 if (p[i] is StringCommandParameter) {
@@ -787,41 +767,32 @@ namespace IngameScript {
         //Utility methods efficiently create Rule Processors
         static RuleProcessor<T> NoValueRule<T>(Convert<T> convert) where T : class, CommandParameter => NoValueRule((p) => true, convert);
 
-        static RuleProcessor<T> NoValueRule<T>(CanConvert<T> canConvert, Convert<T> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(), canConvert, convert);
-        }
+        static RuleProcessor<T> NoValueRule<T>(CanConvert<T> canConvert, Convert<T> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(), canConvert, convert);
 
-        static RuleProcessor<T> OneValueRule<T, U>(DataProcessor<U> u, OneValueConvert<T, U> convert) where T : class, CommandParameter {
-            return OneValueRule(u, (p, a) => a.Satisfied(), convert);
-        }
+        static RuleProcessor<T> OneValueRule<T, U>(DataProcessor<U> u, OneValueConvert<T, U> convert) where T : class, CommandParameter =>
+            OneValueRule(u, (p, a) => a.Satisfied(), convert);
 
-        static RuleProcessor<T> OneValueRule<T, U>(DataProcessor<U> u, OneValueCanConvert<T, U> canConvert, OneValueConvert<T, U> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u), (p) => canConvert(p, u.f), (p) => convert(p, u.f));
-        }
+        static RuleProcessor<T> OneValueRule<T, U>(DataProcessor<U> u, OneValueCanConvert<T, U> canConvert, OneValueConvert<T, U> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u), (p) => canConvert(p, u.f), (p) => convert(p, u.f));
 
-        static RuleProcessor<T> TwoValueRule<T, U, V>(DataProcessor<U> u, DataProcessor<V> v, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter {
-            return TwoValueRule(u, v, (p, a, b) => a.Satisfied() && b.Satisfied(), convert);
-        }
+        static RuleProcessor<T> TwoValueRule<T, U, V>(DataProcessor<U> u, DataProcessor<V> v, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter =>
+            TwoValueRule(u, v, (p, a, b) => a.Satisfied() && b.Satisfied(), convert);
 
-        static RuleProcessor<T> TwoValueRule<T, U, V>(DataProcessor<U> u, DataProcessor<V> v, TwoValueCanConvert<T, U, V> canConvert, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u, v ), (p) => canConvert(p, u.f, v.f), (p) => convert(p, u.f, v.f));
-        }
+        static RuleProcessor<T> TwoValueRule<T, U, V>(DataProcessor<U> u, DataProcessor<V> v, TwoValueCanConvert<T, U, V> canConvert, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u, v ), (p) => canConvert(p, u.f, v.f), (p) => convert(p, u.f, v.f));
 
-        static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u, v, w ), (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f));
-        }
+        static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w ), (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f));
 
-        static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueCanConvert<T, U, V, W> canConvert, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u, v, w ), (p) => canConvert(p, u.f, v.f, w.f), (p) => convert(p, u.f, v.f, w.f));
-        }
+        static RuleProcessor<T> ThreeValueRule<T, U, V, W>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueCanConvert<T, U, V, W> canConvert, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w ), (p) => canConvert(p, u.f, v.f, w.f), (p) => convert(p, u.f, v.f, w.f));
 
-        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u, v, w, x ), (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied() && x.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f, x.f));
-        }
+        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w, x ), (p) => u.f.Satisfied() && v.f.Satisfied() && w.f.Satisfied() && x.f.Satisfied(), (p) => convert(p, u.f, v.f, w.f, x.f));
 
-        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter {
-            return new RuleProcessor<T>(NewList<DataProcessor>(u, v, w, x ), (p) => canConvert(p, u.f, v.f, w.f, x.f), (p) => convert(p, u.f, v.f, w.f, x.f));
-        }
+        static RuleProcessor<T> FourValueRule<T, U, V, W, X>(DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter =>
+            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w, x ), (p) => canConvert(p, u.f, v.f, w.f, x.f), (p) => convert(p, u.f, v.f, w.f, x.f));
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = requiredEither<AssignmentCommandParameter>();

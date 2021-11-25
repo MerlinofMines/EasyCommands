@@ -96,8 +96,8 @@ namespace IngameScript {
         public class AssignmentCommandParameter : SimpleCommandParameter {
             public bool useReference;
 
-            public AssignmentCommandParameter(bool useReference = false) {
-                this.useReference = useReference;
+            public AssignmentCommandParameter(bool reference = false) {
+                useReference = reference;
             }
         }
 
@@ -106,10 +106,10 @@ namespace IngameScript {
             public bool useReference;
             public bool isGlobal;
 
-            public VariableAssignmentCommandParameter(string variableName, bool useReference, bool isGlobal) {
-                this.variableName = variableName;
-                this.useReference = useReference;
-                this.isGlobal = isGlobal;
+            public VariableAssignmentCommandParameter(string variable, bool reference, bool global) {
+                variableName = variable;
+                useReference = reference;
+                isGlobal = global;
             }
         }
 
@@ -118,11 +118,11 @@ namespace IngameScript {
         }
 
         public class AmbiguiousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
-            public List<CommandParameter> SubTokens;
+            public List<CommandParameter> subTokens;
             public bool isImplicit;
-            public AmbiguiousStringCommandParameter(String value, bool isImplicit, params CommandParameter[] SubTokens) : base(value) {
-                this.SubTokens = SubTokens.ToList();
-                this.isImplicit = isImplicit;
+            public AmbiguiousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
+                subTokens = SubTokens.ToList();
+                isImplicit = impl;
             }
         }
 
@@ -179,9 +179,9 @@ namespace IngameScript {
             public Function functionType;
             public FunctionDefinition functionDefinition;
 
-            public FunctionDefinitionCommandParameter(Function functionType, FunctionDefinition functionDefinition) {
-                this.functionType = functionType;
-                this.functionDefinition = functionDefinition;
+            public FunctionDefinitionCommandParameter(Function type, FunctionDefinition definition) {
+                functionType = type;
+                functionDefinition = definition;
             }
         }
 
@@ -190,10 +190,10 @@ namespace IngameScript {
             public bool alwaysEvaluate;
             public bool swapCommands;
 
-            public IfCommandParameter(bool inverseCondition, bool alwaysEvaluate, bool swapCommands) {
-                this.inverseCondition = inverseCondition;
-                this.alwaysEvaluate = alwaysEvaluate;
-                this.swapCommands = swapCommands;
+            public IfCommandParameter(bool inverse, bool alwaysEval, bool swap) {
+                inverseCondition = inverse;
+                alwaysEvaluate = alwaysEval;
+                swapCommands = swap;
             }
         }
 
@@ -201,9 +201,9 @@ namespace IngameScript {
             public bool alwaysEvaluate;
             public bool swapCommands;
 
-            public ConditionCommandParameter(Variable value, bool alwaysEvaluate, bool swapCommands) : base(value) {
-                this.alwaysEvaluate = alwaysEvaluate;
-                this.swapCommands = swapCommands;
+            public ConditionCommandParameter(Variable value, bool alwaysEval, bool swap) : base(value) {
+                alwaysEvaluate = alwaysEval;
+                swapCommands = swap;
             }
         }
 

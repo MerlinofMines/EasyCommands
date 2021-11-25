@@ -45,7 +45,7 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
-            public float GetRange(IMyCameraBlock b) { return float.Parse(GetCustomProperty(b, "Range") ?? "1000"); }
+            public float GetRange(IMyCameraBlock b) => float.Parse(GetCustomProperty(b, "Range") ?? "1000");
         }
     }
 }

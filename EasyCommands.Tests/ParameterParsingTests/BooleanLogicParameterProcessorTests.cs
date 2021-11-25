@@ -76,8 +76,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if any battery ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.Condition is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.Condition;
+            Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
+            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
             Assert.IsTrue(condition.entityProvider is AllEntityProvider);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
             Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
@@ -97,8 +97,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if not all of the batteries ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.Condition is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)conditionalCommand.Condition;
+            Assert.IsTrue(conditionalCommand.condition is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)conditionalCommand.condition;
             Assert.AreEqual(UniOperand.NOT, variable.operand);
             Assert.IsTrue(variable.a is AggregateConditionVariable);
             AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;

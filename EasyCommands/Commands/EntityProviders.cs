@@ -28,32 +28,26 @@ namespace IngameScript {
             public EntityProvider provider;
             public BlockCondition condition;
 
-            public ConditionalEntityProvider(EntityProvider provider, BlockCondition condition) {
-                this.provider = provider;
-                this.condition = condition;
+            public ConditionalEntityProvider(EntityProvider prov, BlockCondition cond) {
+                provider = prov;
+                condition = cond;
             }
 
-            public Block GetBlockType() {
-                return provider.GetBlockType();
-            }
+            public Block GetBlockType() => provider.GetBlockType();
 
-            public List<object> GetEntities() {
-                return provider.GetEntities().Where(b => condition.evaluate(b, provider.GetBlockType())).ToList();
-            }
+            public List<object> GetEntities() => provider.GetEntities().Where(b => condition.evaluate(b, provider.GetBlockType())).ToList();
         }
 
         public class IndexEntityProvider : EntityProvider {
             public EntityProvider provider;
             public Variable index;
 
-            public IndexEntityProvider(EntityProvider provider, Variable index) {
-                this.provider = provider;
-                this.index = index;
+            public IndexEntityProvider(EntityProvider prov, Variable ind) {
+                provider = prov;
+                index = ind;
             }
 
-            public Block GetBlockType() {
-                return provider.GetBlockType();
-            }
+            public Block GetBlockType() => provider.GetBlockType();
 
             public List<object> GetEntities() {
                 var entities = provider.GetEntities();
@@ -84,10 +78,10 @@ namespace IngameScript {
             public bool isGroup;
             public Variable selector;
 
-            public SelectorEntityProvider(Block? blockType, bool isGroup, Variable selector) {
-                this.blockType = blockType;
-                this.isGroup = isGroup;
-                this.selector = selector;
+            public SelectorEntityProvider(Block? type, bool group, Variable sel) {
+                blockType = type;
+                isGroup = group;
+                selector = sel;
             }
 
             public List<Object> GetEntities() {
@@ -114,41 +108,31 @@ namespace IngameScript {
                 return blockType.value;
             }
 
-            public override String ToString() {
-                return blockType + (isGroup ? " in group named " : " named " + selector);
-            }
+            public override String ToString() => blockType + (isGroup ? " in group named " : " named " + selector);
         }
 
         public class SelfEntityProvider : EntityProvider {
             public Block blockType;
 
-            public SelfEntityProvider(Block blockType) {
-                this.blockType = blockType;
+            public SelfEntityProvider(Block type) {
+                blockType = type;
             }
 
-            public Block GetBlockType() {
-                return blockType;
-            }
+            public Block GetBlockType() => blockType;
 
-            public List<object> GetEntities() {
-                return BlockHandlerRegistry.GetBlocks(blockType, (b) => b.EntityId.Equals(PROGRAM.Me.EntityId));
-            }
+            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType, (b) => b.EntityId.Equals(PROGRAM.Me.EntityId));
         }
 
         public class AllEntityProvider : EntityProvider {
             public Block blockType;
 
-            public AllEntityProvider(Block blockType) {
-                this.blockType = blockType;
+            public AllEntityProvider(Block type) {
+                blockType = type;
             }
 
-            public Block GetBlockType() {
-                return blockType;
-            }
+            public Block GetBlockType() => blockType;
 
-            public List<object> GetEntities() {
-                return BlockHandlerRegistry.GetBlocks(blockType, block => true);
-            }
+            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType, block => true);
         }
     }
 }

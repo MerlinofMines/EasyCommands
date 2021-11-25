@@ -42,44 +42,37 @@ namespace IngameScript {
         public class NotBlockCondition : BlockCondition {
             public BlockCondition blockCondition;
 
-            public NotBlockCondition(BlockCondition blockCondition) {
-                this.blockCondition = blockCondition;
+            public NotBlockCondition(BlockCondition condition) {
+                blockCondition = condition;
             }
 
-            public bool evaluate(Object block, Block blockType) {
-                return !blockCondition.evaluate(block, blockType);
-            }
-            public override String ToString() {
-                return "not " + blockCondition;
-            }
+            public bool evaluate(Object block, Block blockType) => !blockCondition.evaluate(block, blockType);
+
+            public override String ToString() => "not " + blockCondition;
         }
 
         public class AndBlockCondition : BlockCondition {
             public BlockCondition conditionA;
             public BlockCondition conditionB;
 
-            public AndBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
-                this.conditionA = conditionA;
-                this.conditionB = conditionB;
+            public AndBlockCondition(BlockCondition condA, BlockCondition condB) {
+                conditionA = condA;
+                conditionB = condB;
             }
 
-            public bool evaluate(object block, Block blockType) {
-                return conditionA.evaluate(block, blockType) && conditionB.evaluate(block, blockType);
-            }
+            public bool evaluate(object block, Block blockType) => conditionA.evaluate(block, blockType) && conditionB.evaluate(block, blockType);
         }
 
         public class OrBlockCondition : BlockCondition {
             public BlockCondition conditionA;
             public BlockCondition conditionB;
 
-            public OrBlockCondition(BlockCondition conditionA, BlockCondition conditionB) {
-                this.conditionA = conditionA;
-                this.conditionB = conditionB;
+            public OrBlockCondition(BlockCondition condA, BlockCondition condB) {
+                conditionA = condA;
+                conditionB = condB;
             }
 
-            public bool evaluate(object block, Block blockType) {
-                return conditionA.evaluate(block, blockType) || conditionB.evaluate(block, blockType);
-            }
+            public bool evaluate(object block, Block blockType) => conditionA.evaluate(block, blockType) || conditionB.evaluate(block, blockType);
         }
 
         public class BlockPropertyCondition : BlockCondition {
@@ -87,10 +80,10 @@ namespace IngameScript {
             public PrimitiveComparator comparator;
             public Variable comparisonValue;
 
-            public BlockPropertyCondition(PropertySupplier property, PrimitiveComparator comparator, Variable comparisonValue) {
-                this.property = property;
-                this.comparator = comparator;
-                this.comparisonValue = comparisonValue;
+            public BlockPropertyCondition(PropertySupplier prop, PrimitiveComparator comp, Variable value) {
+                property = prop;
+                comparator = comp;
+                comparisonValue = value;
             }
 
             public bool evaluate(Object block, Block blockType) {
@@ -100,15 +93,13 @@ namespace IngameScript {
                 return comparator.compare(handler.GetPropertyValue(block, prop), value);
             }
 
-            public override String ToString() {
-                return property + " " + comparator + " " + comparisonValue.GetValue();
-            }
+            public override String ToString() => property + " " + comparator + " " + comparisonValue.GetValue();
         }
 
         public class PrimitiveComparator {
             public Comparison comparisonType;
-            public PrimitiveComparator(Comparison comparisonType) {
-                this.comparisonType = comparisonType;
+            public PrimitiveComparator(Comparison comparison) {
+                comparisonType = comparison;
             }
             public bool compare(Primitive a, Primitive b) {
                 switch (comparisonType) {

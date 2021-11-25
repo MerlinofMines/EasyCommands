@@ -26,7 +26,7 @@ namespace IngameScript {
             public List<KeyedVariable> keyedValues;
 
             public KeyedList(params Variable[] values) {
-                keyedValues = values.ToList().ConvertAll(AsKeyedVariable);
+                keyedValues = NewList(values).ConvertAll(AsKeyedVariable);
             }
 
             public List<Variable> GetValues() => keyedValues.ConvertAll(v => (Variable)v);

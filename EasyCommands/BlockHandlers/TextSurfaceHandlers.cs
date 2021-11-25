@@ -29,9 +29,7 @@ namespace IngameScript {
                 defaultPropertiesByDirection[Direction.UP] = Property.FONT_SIZE;
             }
 
-            public override string Name(IMyTextSurface block) {
-                return block.DisplayName;
-            }
+            public override string Name(IMyTextSurface block) => block.DisplayName;
 
             public override void GetInstances(IMyTerminalBlock b, List<IMyTextSurface> surfaces) {
                 if (b is IMyTextSurface) surfaces.Add((IMyTextSurface)b);

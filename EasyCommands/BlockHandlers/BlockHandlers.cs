@@ -69,13 +69,9 @@ namespace IngameScript {
                 return blockHandlers[blockType];
             }
 
-            public static List<Object> GetBlocks(Block blockType, Func<IMyTerminalBlock, bool> selector) {
-                return blockHandlers[blockType].GetBlocks(selector);
-            }
+            public static List<Object> GetBlocks(Block blockType, Func<IMyTerminalBlock, bool> selector) => blockHandlers[blockType].GetBlocks(selector);
 
-            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) {
-                return blockHandlers[blockType].GetBlocksInGroup(groupName);
-            }
+            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) => blockHandlers[blockType].GetBlocksInGroup(groupName);
         }
 
         //Property Getters
@@ -119,7 +115,7 @@ namespace IngameScript {
                 Reverse = (b, p) => Set(b, p, Get(b, p).Not());
             }
 
-            Primitive Multiply(Primitive p, Direction d) { return (d == Direction.DOWN) ? p.Not() : p; }
+            Primitive Multiply(Primitive p, Direction d) => (d == Direction.DOWN) ? p.Not() : p;
         }
 
         public class SimpleTypedHandler<T, U> : SimplePropertyHandler<T> {
@@ -189,8 +185,8 @@ namespace IngameScript {
             protected Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();
             protected Direction defaultDirection = Direction.UP;
 
-            public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) { return GetBlocksOfType(selector).Select(t => t as object).ToList(); }
-            public List<Object> GetBlocksInGroup(String groupName) { return GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList(); }
+            public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) => GetBlocksOfType(selector).Select(t => t as object).ToList();
+            public List<Object> GetBlocksInGroup(String groupName) => GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList();
             public string GetName(object block) => Name((T)block);
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {

@@ -24,8 +24,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait if count of the \"forward guns\" is 0");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.Condition is ComparisonVariable);
-            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.Condition;
+            Assert.IsTrue(conditionalCommand.condition is ComparisonVariable);
+            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.condition;
             Assert.IsTrue(comparison.a is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)comparison.a;
             Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);

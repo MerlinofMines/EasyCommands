@@ -283,9 +283,7 @@ namespace IngameScript {
             return func(parameter).ToString();
         }
 
-        String[] Words(params String[] words) {
-            return words;
-        }
+        String[] Words(params String[] words) => words;
 
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
             if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
@@ -348,8 +346,8 @@ namespace IngameScript {
             return singleQuoteTokens;
         }
 
-        Token[] ParseDoubleQuotes(String commandString) {
-            return commandString.Trim().Split('"')
+        Token[] ParseDoubleQuotes(String commandString) =>
+            commandString.Trim().Split('"')
                 .Select((element, index) => index % 2 == 0  // If even index
                     ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .SelectMany(ParseSeparateTokens)
@@ -357,7 +355,6 @@ namespace IngameScript {
                     : new Token[] { new Token(element, true, false) })  // Keep the entire item
                 .SelectMany(element => element)
                 .ToArray();
-        }
 
         String[] ParseSeparateTokens(String command) {
             var newCommand = command;
@@ -391,14 +388,14 @@ namespace IngameScript {
             public bool isString;
             public bool isExplicitString;
 
-            public Token(string token, bool isString, bool isExplicitString) {
-                this.isString = isString;
-                this.isExplicitString = isExplicitString;
-                this.token = token.ToLower();
-                this.original = token;
+            public Token(string tokenParameter, bool isStringParameter, bool isExplicit) {
+                isString = isStringParameter;
+                isExplicitString = isExplicit;
+                token = tokenParameter.ToLower();
+                original = tokenParameter;
             }
 
-            public override string ToString() { return token; }
+            public override string ToString() => token;
         }
     }
 }

@@ -308,12 +308,11 @@ namespace IngameScript {
             resolvedCommands.Add(ParseCommand(commandStrings[index].commandParameters, commandStrings[index].lineNumber));
             commandStrings.RemoveAt(index);
 
-            if (resolvedCommands.Count > 1) return new MultiActionCommand(resolvedCommands); else return resolvedCommands[0];
+            return resolvedCommands.Count > 1 ? new MultiActionCommand(resolvedCommands) : resolvedCommands[0];
         }
 
-        public Command ParseCommand(String commandLine, int lineNumber = 0) {
-            return ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
-        }
+        public Command ParseCommand(String commandLine, int lineNumber = 0) =>
+            ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
 
         Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
             Trace("Parsing Command at line: " + lineNumber);
@@ -342,10 +341,10 @@ namespace IngameScript {
             String prefix;
             String name;
 
-            public Thread(Command command, string prefix, string name) {
-                this.Command = command;
-                this.prefix = prefix;
-                this.name = name;
+            public Thread(Command command, string p, string n) {
+                Command = command;
+                prefix = p;
+                name = n;
             }
 
             public String GetName() => "[" + prefix + "] " + name;
@@ -354,19 +353,12 @@ namespace IngameScript {
 
         public class FunctionDefinition {
             public String functionName;
-            public MultiActionCommand function;
+            public MultiActionCommand function = null;
             public List<String> parameterNames;
 
-            public FunctionDefinition(string functionName, List<string> parameterNames) {
-                this.functionName = functionName;
-                this.parameterNames = parameterNames;
-                this.function = null;
-            }
-
-            public FunctionDefinition(string functionName, MultiActionCommand function, List<string> parameterNames) {
-                this.functionName = functionName;
-                this.function = function;
-                this.parameterNames = parameterNames;
+            public FunctionDefinition(string function, List<string> parameters) {
+                functionName = function;
+                parameterNames = parameters;
             }
         }
     }

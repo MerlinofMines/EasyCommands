@@ -28,13 +28,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, b => b.CurrentOutput);
             }
 
-            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                return base.GetBlocksOfType(selector).Where(blockFilter).ToList();
-            }
+            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) => base.GetBlocksOfType(selector).Where(blockFilter).ToList();
 
-            public override List<T> GetBlocksOfTypeInGroup(string groupName) {
-                return base.GetBlocksOfTypeInGroup(groupName).Where(blockFilter).ToList();
-            }
+            public override List<T> GetBlocksOfTypeInGroup(string groupName) => base.GetBlocksOfTypeInGroup(groupName).Where(blockFilter).ToList();
         }
     }
 }

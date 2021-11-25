@@ -113,9 +113,9 @@ namespace IngameScript {
                 }
             }
 
-            public override string Name(T block) { return block.CustomName; }
+            public override string Name(T block) => block.CustomName;
 
-            public String GetCustomProperty(T block, String key) { return GetCustomData(block).GetValueOrDefault(key, null); }
+            public String GetCustomProperty(T block, String key) => GetCustomData(block).GetValueOrDefault(key, null);
 
             public void SetCustomProperty(T block, String key, String value) {
                 var d = GetCustomData(block);
@@ -132,10 +132,10 @@ namespace IngameScript {
                 block.CustomData = String.Join("\n", data.Keys.Select(k => k + "=" + data[k]).ToList());
             }
 
-            public Dictionary<String, String> GetCustomData(T block) {
-                List<String> keys = block.CustomData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                return keys.ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
-            }
+            public Dictionary<String, String> GetCustomData(T block) =>
+                block.CustomData
+                    .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
 
             public PropertyHandler<T> TerminalBlockPropertyHandler(String propertyId, object delta) => new TerminalBlockPropertyHandler<T>(propertyId, ResolvePrimitive(delta));
 
@@ -156,6 +156,7 @@ namespace IngameScript {
             }
 
             Vector3D Normalize(Vector3D vector) => vector / vector.Length();
+
         }
 
         /// <summary>
@@ -164,8 +165,6 @@ namespace IngameScript {
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        static Vector3D GetPosition(MyDetectedEntityInfo entity) {
-            return entity.HitPosition.GetValueOrDefault(entity.Position);
-        }
+        static Vector3D GetPosition(MyDetectedEntityInfo entity) => entity.HitPosition.GetValueOrDefault(entity.Position);
     }
 }

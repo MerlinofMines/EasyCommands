@@ -166,20 +166,12 @@ namespace IngameScript {
             return true;
         }
 
-        static string VectorToString(Vector3D vector) {
-            return vector.X + ":" + vector.Y + ":" + vector.Z;
-        }
+        static string VectorToString(Vector3D vector) => vector.X + ":" + vector.Y + ":" + vector.Z;
 
-        static string ColorToString(Color color) {
-            return "#" + IntToHex(color.R) + IntToHex(color.G) + IntToHex(color.B);
-        }
+        static string ColorToString(Color color) => "#" + IntToHex(color.R) + IntToHex(color.G) + IntToHex(color.B);
 
-        static int HexToInt(string hex) {
-            return int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier);
-        }
+        static int HexToInt(string hex) => int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier);
 
-        static string IntToHex(int hex) {
-            return hex.ToString("X");
-        }
+        static string IntToHex(int hex) => hex.ToString("X");
     }
 }

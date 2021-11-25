@@ -27,9 +27,7 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
             }
 
-            static bool Connected(IMyShipConnector connector) {
-                return connector.Status == MyShipConnectorStatus.Connected;
-            }
+            static bool Connected(IMyShipConnector connector) => connector.Status == MyShipConnectorStatus.Connected;
 
             static void Connect(IMyShipConnector connector, bool value) {
                 if (value) { connector.Connect(); } else { connector.Disconnect(); }

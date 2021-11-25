@@ -50,7 +50,7 @@ namespace IngameScript {
             foreach (Return a in GetTypes(typeof(T))) {
                 foreach(Return b in GetTypes(typeof(U))) {
                     if (!BiOperations[type].ContainsKey(a)) BiOperations[type][a] = NewDictionary<Return, BiOperation>();
-                    BiOperations[type][a][b] = SimpleBiOperand(resolver);
+                    BiOperations[type][a][b] = (t, u) => ResolvePrimitive(resolver((T)t.value, (U)u.value));
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace IngameScript {
         void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {
             if (!UniOperations.ContainsKey(type)) UniOperations[type] = NewDictionary<Return, UniOperation>();
             foreach (Return a in GetTypes(typeof(T))) {
-                UniOperations[type][a] = SimpleUniOperand(resolver);
+                UniOperations[type][a] = t => ResolvePrimitive(resolver((T)t.value));
             }
         }
 
@@ -142,19 +142,5 @@ namespace IngameScript {
 
         static List<Variable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
         static KeyedList Combine(object a, object b) => CastList(ResolvePrimitive(a)).Combine(CastList(ResolvePrimitive(b)));
-
-        static UniOperation SimpleUniOperand<T>(Func<T,object> resolver) {
-            return (a) => {
-                object result = resolver((T)a.value);
-                return ResolvePrimitive(result);
-            };
-        }
-
-        static BiOperation SimpleBiOperand<T,U>(Func<T,U,object> resolver) {
-            return (a, b) => {
-                object result = resolver((T)a.value, (U)b.value);
-                return ResolvePrimitive(result);
-            };
-        }
     }
 }

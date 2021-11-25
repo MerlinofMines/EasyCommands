@@ -30,10 +30,8 @@ namespace IngameScript {
                 propertyType = property + "";
             }
 
-            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) {
-                if (propertyType == ValueProperty.PROPERTY + "") return ResolveDynamicProperty();
-                return WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
-            }
+            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) =>
+                (propertyType == ValueProperty.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
 
             public PropertySupplier ResolveDynamicProperty() {
                 PropertySupplier supplier = WithAttributeValue(null);

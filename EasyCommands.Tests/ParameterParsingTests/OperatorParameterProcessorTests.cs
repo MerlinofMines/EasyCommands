@@ -419,8 +419,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if the \"rotor\" angle > a + 30 set the \"rotor\" angle to a");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand assignment = (ConditionalCommand)command;
-            Assert.IsTrue(assignment.Condition is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)assignment.Condition;
+            Assert.IsTrue(assignment.condition is AggregateConditionVariable);
+            AggregateConditionVariable condition = (AggregateConditionVariable)assignment.condition;
             Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
             BlockPropertyCondition blockCondition = (BlockPropertyCondition)condition.blockCondition;
             Assert.IsTrue(blockCondition.comparisonValue is BiOperandVariable);

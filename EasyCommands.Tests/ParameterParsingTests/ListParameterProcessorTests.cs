@@ -194,8 +194,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if count of shipRoute[] > 0 wait");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.Condition is ComparisonVariable);
-            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.Condition;
+            Assert.IsTrue(conditionalCommand.condition is ComparisonVariable);
+            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.condition;
             Assert.IsTrue(comparison.a is ListAggregateVariable);
             ListAggregateVariable listAggregate = (ListAggregateVariable)comparison.a;
             Assert.AreEqual(PropertyAggregate.COUNT, listAggregate.aggregation);
