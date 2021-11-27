@@ -317,13 +317,9 @@ namespace IngameScript {
                 (p,var) => new CommandReferenceParameter(new PrintCommand(var.GetValue().value))),
 
             //WaitProcessor
-            TwoValueRule<WaitCommandParameter,VariableCommandParameter,UnitCommandParameter>(
-                optionalRight<VariableCommandParameter>(),optionalRight<UnitCommandParameter>(),
-                (p,time,unit) => {
-                    Unit units = unit.HasValue() ? unit.GetValue().value : time.HasValue() ? Unit.SECONDS : Unit.TICKS;
-                    Variable var = time.HasValue() ? time.GetValue().value : new StaticVariable(ResolvePrimitive(1));
-                    return new CommandReferenceParameter(new WaitCommand(var, units));
-                }),
+            OneValueRule<WaitCommandParameter,VariableCommandParameter>(
+                optionalRight<VariableCommandParameter>(),
+                (p,time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.0167f)))),
 
             //FunctionCallCommandProcessor
             OneValueRule<FunctionDefinitionCommandParameter,VariableCommandParameter>(

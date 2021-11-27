@@ -125,8 +125,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(1, CastNumber(waitCommand.waitInterval.GetValue()));
-            Assert.AreEqual(Unit.TICKS, waitCommand.units);
+            Assert.AreEqual(0.0167f, CastNumber(waitCommand.waitInterval.GetValue())); // 1/60 seconds or 1 tick
         }
 
         [TestMethod]
@@ -136,17 +135,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
             Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()));
-            Assert.AreEqual(Unit.SECONDS, waitCommand.units);
         }
 
         [TestMethod]
-        public void WaitCommandIntervalUnits() {
+        public void WaitCommandIntervalTicks() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("wait 3 ticks");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(3, CastNumber(waitCommand.waitInterval.GetValue()));
-            Assert.AreEqual(Unit.TICKS, waitCommand.units);
+            Assert.AreEqual(0.05f, CastNumber(waitCommand.waitInterval.GetValue()));
         }
 
         [TestMethod]

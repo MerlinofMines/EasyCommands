@@ -182,33 +182,20 @@ namespace IngameScript {
 
         public class WaitCommand : Command {
             public Variable waitInterval;
-            public Unit units;
             int ticksLeft = -1;
 
-            public WaitCommand(Variable variable, Unit u) {
+            public WaitCommand(Variable variable) {
                 waitInterval = variable;
-                units = u;
             }
 
-            public override Command Clone() => new WaitCommand(waitInterval,units);
+            public override Command Clone() => new WaitCommand(waitInterval);
             public override void Reset() { ticksLeft = -1; }
             public override bool Execute() {
                 if (ticksLeft < 0) {
-                    ticksLeft = getTicks(CastNumber(waitInterval.GetValue()), units);
+                    ticksLeft = (int)(CastNumber(waitInterval.GetValue()) * 60); //Assume 60 ticks / second
                 }
                 Debug("Waiting for " + ticksLeft + " ticks");
                 return ticksLeft-- <= 0;
-            }
-
-            int getTicks(float numeric, Unit unitType) {
-                switch (unitType) {
-                    case Unit.SECONDS:
-                        return (int)(numeric * 60);//Assume 60 ticks / second
-                    case Unit.TICKS:
-                        return (int)numeric;
-                    default:
-                        throw new Exception("Unsupported Unit Type: " + unitType);
-                }
             }
         }
 

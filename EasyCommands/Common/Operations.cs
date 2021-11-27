@@ -101,6 +101,7 @@ namespace IngameScript {
             AddUniOperation<float>(UniOperand.ROUND, a => Math.Round(a));
             AddUniOperation<Vector3D>(UniOperand.ABS, a => a.Length());
             AddUniOperation<Vector3D>(UniOperand.SQRT, a => Math.Sqrt(a.Length()));
+            AddUniOperation<float>(UniOperand.TICKS, a => a / 60);
             AddBiOperation<float, float>(BiOperand.ADD, (a, b) => a + b);
             AddBiOperation<float, float>(BiOperand.SUBTACT, (a, b) => a - b);
             AddBiOperation<float, float>(BiOperand.MULTIPLY, (a, b) => a * b);

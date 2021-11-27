@@ -152,10 +152,6 @@ namespace IngameScript {
             public PropertyCommandParameter(Property value) : base(new PropertySupplier(value)) { }
         }
 
-        public class UnitCommandParameter : ValueCommandParameter<Unit> {
-            public UnitCommandParameter(Unit value) : base(value) {}
-        }
-
         public class ListCommandParameter : ValueCommandParameter<Variable> {
             public ListCommandParameter(Variable v) : base(v) {}
         }

@@ -27,7 +27,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds"), new IgnoreCommandParameter());
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels"), new GroupCommandParameter());
@@ -182,18 +182,12 @@ namespace IngameScript {
             AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));
             AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
             AddWords(Words("@"), new IndexCommandParameter());
+            AddWords(Words("tick", "ticks"), new LeftUniOperationCommandParameter(UniOperand.TICKS));
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
             AddWords(Words("]"), new CloseBracketCommandParameter());
             AddWords(Words(","), new ListSeparatorCommandParameter());
-
-            //Unit Words
-            AddWords(Words("second", "seconds"), new UnitCommandParameter(Unit.SECONDS));
-            AddWords(Words("tick", "ticks"), new UnitCommandParameter(Unit.TICKS));
-            AddWords(Words("degree", "degrees"), new UnitCommandParameter(Unit.DEGREES));
-            AddWords(Words("meter", "meters"), new UnitCommandParameter(Unit.METERS));
-            AddWords(Words("rpm"), new UnitCommandParameter(Unit.RPM));
 
             //Control Types
             AddWords(Words("restart", "reset", "reboot"), new ControlCommandParameter(Control.RESTART));
