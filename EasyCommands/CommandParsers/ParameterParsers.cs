@@ -27,7 +27,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does"), new IgnoreCommandParameter());
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels"), new GroupCommandParameter());
@@ -138,11 +138,12 @@ namespace IngameScript {
             AddWords(Words("that", "which", "whose"), new ThatCommandParameter());
 
             //Comparison Words
-            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter(Comparison.LESS));
-            AddWords(Words("<="), new ComparisonCommandParameter(Comparison.LESS_OR_EQUAL));
-            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter(Comparison.EQUAL));
-            AddWords(Words(">="), new ComparisonCommandParameter(Comparison.GREATER_OR_EQUAL));
-            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter(Comparison.GREATER));
+            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.Compare(b) < 0));
+            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.Compare(b) <= 0));
+            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.Compare(b) == 0));
+            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.Compare(b) >= 0));
+            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.Compare(b) > 0));
+            AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PROGRAM.PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
             AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));

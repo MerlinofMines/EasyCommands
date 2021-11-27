@@ -46,7 +46,7 @@ namespace IngameScript {
                 comparator = comp;
             }
 
-            public Primitive GetValue() => ResolvePrimitive(comparator.compare(a.GetValue(), b.GetValue()));
+            public Primitive GetValue() => ResolvePrimitive(comparator(a.GetValue(), b.GetValue()));
         }
 
         public class UniOperandVariable : Variable {
@@ -80,16 +80,16 @@ namespace IngameScript {
             public PrimitiveComparator comparator;
             public Variable comparisonValue;
 
-            public ListAggregateConditionVariable(AggregationMode aggregation, Variable list, Comparison comparison, Variable value) {
+            public ListAggregateConditionVariable(AggregationMode aggregation, Variable list, PrimitiveComparator comp, Variable value) {
                 aggregationMode = aggregation;
                 expectedList = list;
-                comparator = new PrimitiveComparator(comparison);
+                comparator = comp;
                 comparisonValue = value;
             }
 
             public Primitive GetValue() {
                 var list = CastList(expectedList.GetValue()).GetValues();
-                return ResolvePrimitive(Evaluate(list.Count, list.Where(v => comparator.compare(v.GetValue(), comparisonValue.GetValue())).Count(), aggregationMode));
+                return ResolvePrimitive(Evaluate(list.Count, list.Where(v => comparator(v.GetValue(), comparisonValue.GetValue())).Count(), aggregationMode));
             }
         }
 

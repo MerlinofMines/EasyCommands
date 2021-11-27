@@ -230,8 +230,8 @@ namespace IngameScript {
             }
         }
 
-        public class ComparisonCommandParameter : ValueCommandParameter<Comparison> {
-            public ComparisonCommandParameter(Comparison value) : base(value) {
+        public class ComparisonCommandParameter : ValueCommandParameter<PrimitiveComparator> {
+            public ComparisonCommandParameter(PrimitiveComparator value) : base(value) {
             }
         }
 

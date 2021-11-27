@@ -25,12 +25,11 @@ namespace IngameScript {
         public enum ValueProperty { AMOUNT, CREATE, DESTROY, PROPERTY, ACTION };
         public enum Unit { SECONDS, TICKS, DEGREES, RADIANS, METERS, RPM }
         public enum Direction { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE, NONE }
-        public enum Comparison { GREATER, GREATER_OR_EQUAL, EQUAL, LESS_OR_EQUAL, LESS, NOT_EQUALS }
         public enum Control { RESTART, STOP, REPEAT, PAUSE }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum Function { GOTO, GOSUB, SWITCH }
         public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST }
-        public enum BiOperand { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE, CAST };
+        public enum BiOperand { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE, CAST, CONTAINS };
         public enum UniOperand { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS, VALUES };
         public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }
         public enum PropertyAggregate { SUM, COUNT, AVG, MIN, MAX };

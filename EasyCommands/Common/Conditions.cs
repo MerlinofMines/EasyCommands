@@ -90,40 +90,12 @@ namespace IngameScript {
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
                 Primitive value = comparisonValue.GetValue();
                 PropertySupplier prop = property.Resolve(handler, value.returnType);
-                return comparator.compare(handler.GetPropertyValue(block, prop), value);
+                return comparator(handler.GetPropertyValue(block, prop), value);
             }
 
             public override String ToString() => property + " " + comparator + " " + comparisonValue.GetValue();
         }
 
-        public class PrimitiveComparator {
-            public Comparison comparisonType;
-            public PrimitiveComparator(Comparison comparison) {
-                comparisonType = comparison;
-            }
-            public bool compare(Primitive a, Primitive b) {
-                switch (comparisonType) {
-                    case Comparison.GREATER: return a.Compare(b)>0;
-                    case Comparison.GREATER_OR_EQUAL: return a.Compare(b) >= 0;
-                    case Comparison.EQUAL: return a.Compare(b) == 0;
-                    case Comparison.LESS_OR_EQUAL: return a.Compare(b) <= 0;
-                    case Comparison.LESS: return a.Compare(b)<0;
-                    case Comparison.NOT_EQUALS: return a.Compare(b) != 0;
-                    default: throw new Exception("Unsupported Comparison Type");
-                }
-            }
-        }
-
-        public static Comparison Inverse(Comparison comparisonType) {
-            switch (comparisonType) {
-                case Comparison.GREATER: return Comparison.LESS_OR_EQUAL;
-                case Comparison.GREATER_OR_EQUAL: return Comparison.LESS;
-                case Comparison.EQUAL: return Comparison.NOT_EQUALS;
-                case Comparison.LESS_OR_EQUAL: return Comparison.GREATER;
-                case Comparison.LESS: return Comparison.GREATER_OR_EQUAL;
-                case Comparison.NOT_EQUALS: return Comparison.EQUAL;
-                default: throw new Exception("Unsupported Comparison Type");
-            }
-        }
+        public delegate bool PrimitiveComparator(Primitive a, Primitive b);
     }
 }

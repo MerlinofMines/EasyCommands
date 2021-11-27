@@ -147,6 +147,7 @@
     <Compile Include="ScriptTests\BlockHandlerTests\CargoBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\ConnectorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\JumpDriveBlockTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleAggregationTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ExampleScriptTests\ReverseSirensTests.cs" />

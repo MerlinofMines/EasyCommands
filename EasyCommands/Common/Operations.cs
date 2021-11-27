@@ -75,6 +75,8 @@ namespace IngameScript {
             AddUniOperation<bool>(UniOperand.NOT, a => !a);
             AddBiOperation<bool, bool>(BiOperand.AND, (a, b) => a && b);
             AddBiOperation<bool, bool>(BiOperand.OR, (a, b) => a || b);
+            AddBiOperation<String, object>(BiOperand.CONTAINS, (a, b) => a.Contains(CastString(ResolvePrimitive(b))));
+            AddBiOperation<KeyedList, object>(BiOperand.CONTAINS, (a, b) => CastList(ResolvePrimitive(b)).keyedValues.Select(v => v.GetValue().value).Except(a.keyedValues.Select(v => v.GetValue().value)).Count() == 0);
 
             //Comparisons
             AddBiOperation<bool, bool>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));

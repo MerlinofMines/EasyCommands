@@ -95,7 +95,7 @@ namespace IngameScript {
             // "not greater than" => <
             OneValueRule<ComparisonCommandParameter, NotCommandParameter>(
                 requiredEither<NotCommandParameter>(),
-                (p, left) => new ComparisonCommandParameter(Inverse(p.value))),
+                (p, left) => new ComparisonCommandParameter((a,b) => !p.value(a,b))),
             OneValueRule<ComparisonCommandParameter, ComparisonCommandParameter>(
                 requiredRight<ComparisonCommandParameter>(),
                 (p, right) => new ComparisonCommandParameter(right.GetValue().value)),
@@ -172,7 +172,7 @@ namespace IngameScript {
             //VariableComparisonProcessor
             TwoValueRule<ComparisonCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, left, right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, new PrimitiveComparator(p.value)))),
+                (p, left, right) => new VariableCommandParameter(new ComparisonVariable(left.GetValue().value, right.GetValue().value, p.value))),
 
             //NotProcessor
             OneValueRule<NotCommandParameter, VariableCommandParameter>(
