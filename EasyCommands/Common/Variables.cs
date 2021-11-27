@@ -106,10 +106,8 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 var blocks = entityProvider.GetEntities();
-                return ResolvePrimitive(Evaluate(blocks.Count, blocks.Count(block => blockCondition.evaluate(block, entityProvider.GetBlockType())), aggregationMode));
+                return ResolvePrimitive(Evaluate(blocks.Count, blocks.Count(block => blockCondition(block, entityProvider.GetBlockType())), aggregationMode));
             }
-
-            public override String ToString() => getAggregationModeName(aggregationMode) + " of " + entityProvider + " are " + blockCondition;
         }
 
         public static bool Evaluate(int count, int matches, AggregationMode aggregation) {

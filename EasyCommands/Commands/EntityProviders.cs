@@ -35,7 +35,7 @@ namespace IngameScript {
 
             public Block GetBlockType() => provider.GetBlockType();
 
-            public List<object> GetEntities() => provider.GetEntities().Where(b => condition.evaluate(b, provider.GetBlockType())).ToList();
+            public List<object> GetEntities() => provider.GetEntities().Where(b => condition(b, provider.GetBlockType())).ToList();
         }
 
         public class IndexEntityProvider : EntityProvider {

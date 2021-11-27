@@ -211,10 +211,10 @@ namespace IngameScript {
             //BlockConditionProcessors
             ThreeValueRule<AndCommandParameter,BlockConditionCommandParameter,ThatCommandParameter,BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p,left,with,right) => new BlockConditionCommandParameter(new AndBlockCondition(left.GetValue().value, right.GetValue().value))),
+                (p,left,with,right) => new BlockConditionCommandParameter((block, blockType) => left.GetValue().value(block, blockType) && right.GetValue().value(block, blockType))),
             ThreeValueRule<OrCommandParameter,BlockConditionCommandParameter,ThatCommandParameter,BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p,left,with,right) => new BlockConditionCommandParameter(new OrBlockCondition(left.GetValue().value, right.GetValue().value))),
+                (p, left, with, right) => new BlockConditionCommandParameter((block, blockType) => left.GetValue().value(block, blockType) || right.GetValue().value(block, blockType))),
 
             //ThatBlockConditionProcessor
             FourValueRule<ThatCommandParameter, ComparisonCommandParameter,PropertyCommandParameter,DirectionCommandParameter,VariableCommandParameter>(
@@ -226,7 +226,7 @@ namespace IngameScript {
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
-                    return NewList<CommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(new BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.GetValue().value), variable)));
+                    return NewList<CommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.GetValue().value), variable)));
                 }),
 
             //ConditionalSelectorProcessor
@@ -256,7 +256,7 @@ namespace IngameScript {
                     if(prop.HasValue()) property = prop.GetValue().value;
                     Direction? direction = null;
                     if(dir.HasValue()) direction = dir.GetValue().value;
-                    return new BlockConditionCommandParameter(new BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.value), variable));
+                    return new BlockConditionCommandParameter(BlockPropertyCondition((property ?? new PropertySupplier()).WithDirection(direction), new PrimitiveComparator(p.value), variable));
                 }),
 
             //AggregateConditionProcessor

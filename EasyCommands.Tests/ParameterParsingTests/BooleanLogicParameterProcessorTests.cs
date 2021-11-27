@@ -3,6 +3,7 @@ using System;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
@@ -81,9 +82,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(condition.entityProvider is AllEntityProvider);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
             Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
-            Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
-            BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType);
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.AreEqual(Property.RATIO + "", property.propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
@@ -105,9 +105,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(condition.entityProvider is AllEntityProvider);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
             Assert.AreEqual(AggregationMode.ALL, condition.aggregationMode);
-            Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
-            BlockPropertyCondition propertyCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.AreEqual(Property.RATIO + "", propertyCondition.property.propertyType);
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.AreEqual(Property.RATIO + "", property.propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;

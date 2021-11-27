@@ -6,6 +6,7 @@ using VRageMath;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
@@ -418,12 +419,16 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("if the \"rotor\" angle > a + 30 set the \"rotor\" angle to a");
             Assert.IsTrue(command is ConditionalCommand);
-            ConditionalCommand assignment = (ConditionalCommand)command;
-            Assert.IsTrue(assignment.condition is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)assignment.condition;
-            Assert.IsTrue(condition.blockCondition is BlockPropertyCondition);
-            BlockPropertyCondition blockCondition = (BlockPropertyCondition)condition.blockCondition;
-            Assert.IsTrue(blockCondition.comparisonValue is BiOperandVariable);
+            ConditionalCommand conditionalCommand = (ConditionalCommand)command;
+            Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
+            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.AreEqual(Property.ANGLE + "", property.propertyType);
+            BiOperandVariable comparisonValue = GetDelegateProperty<BiOperandVariable>("comparisonValue", condition.blockCondition);
+            Assert.IsTrue(comparisonValue.a is AmbiguousStringVariable);
+            Assert.IsTrue(comparisonValue.b is StaticVariable);
+            Assert.AreEqual("a", comparisonValue.a.GetValue().value);
+            Assert.AreEqual(30f, comparisonValue.b.GetValue().value);
         }
 
         [TestMethod]
