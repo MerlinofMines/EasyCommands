@@ -65,7 +65,6 @@ namespace IngameScript {
                 List<MyDefinitionId> blueprints = PROGRAM.GetItemBluePrints(itemString);
 
                 foreach(MyDefinitionId bp in blueprints) {
-                    Print("Found Blueprint: " + bp);
                     b.AddQueueItem(bp, (MyFixedPoint)amount);
                 }
             }

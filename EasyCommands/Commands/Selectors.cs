@@ -107,8 +107,6 @@ namespace IngameScript {
                 if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
                 return blockType.value;
             }
-
-            public override String ToString() => blockType + (isGroup ? " in group named " : " named " + selector);
         }
 
         public class SelfSelector : Selector {

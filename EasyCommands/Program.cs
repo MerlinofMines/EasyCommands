@@ -47,6 +47,13 @@ namespace IngameScript {
             { "empty", GetStaticVariable(new KeyedList()) }
         };
 
+        Dictionary<ProgramState, Tuple<String, bool>> programStateMap = new Dictionary<ProgramState, Tuple<string, bool>> {
+            { ProgramState.RUNNING, Tuple.Create("Running", true) },
+            { ProgramState.PAUSED, Tuple.Create("Paused", false) },
+            { ProgramState.STOPPED, Tuple.Create("Stopped", false) },
+            { ProgramState.COMPLETE, Tuple.Create("Complete", false) }
+        };
+
         String defaultFunction;
         String customData = null;
         List<String> commandStrings = NewList<String>();
@@ -101,9 +108,8 @@ namespace IngameScript {
         }
 
         static void Print(String str) { PROGRAM.Echo(str); }
-        static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) PROGRAM.Echo(str); }
-        static void Debug(String str) { if (PROGRAM.logLevel == LogLevel.DEBUG || PROGRAM.logLevel == LogLevel.TRACE) PROGRAM.Echo(str); }
-        static void Trace(String str) { if (PROGRAM.logLevel == LogLevel.TRACE) PROGRAM.Echo(str); }
+        static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
+        static void Debug(String str) { if (PROGRAM.logLevel == LogLevel.DEBUG) Print(str); }
 
         public void Main(string argument) {
             try {
@@ -131,7 +137,11 @@ namespace IngameScript {
                 if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument), "Request", argument)); }
 
                 RunThreads();
-                UpdateState();
+
+                //Update State
+                var stateTuple = programStateMap[state];
+                Info(stateTuple.Item1);
+                Runtime.UpdateFrequency = stateTuple.Item2 ? updateFrequency : UpdateFrequency.None;
             } catch(Exception e) {
                 Info("Exception Occurred: ");
                 Info(e.Message);
@@ -185,29 +195,6 @@ namespace IngameScript {
             }
         }
 
-        void UpdateState() {
-            switch (state) {
-                case ProgramState.RUNNING:
-                    Runtime.UpdateFrequency = updateFrequency;
-                    Info("Running");
-                    break;
-                case ProgramState.PAUSED:
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Info("Paused");
-                    break;
-                case ProgramState.STOPPED:
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Info("Stopped");
-                    break;
-                case ProgramState.COMPLETE:
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Info("Complete");
-                    break;
-                default:
-                    throw new Exception("Unknown Program State");
-            }
-        }
-
         bool ParseCommands() {
             if (String.IsNullOrWhiteSpace(PROGRAM.Me.CustomData)) {
                 Info("Welcome to EasyCommands!");
@@ -239,11 +226,8 @@ namespace IngameScript {
             }
 
             for (int i = commandStrings.Count - 1; i >= 0; i--) {
-                Trace("Command String: " + commandStrings[i]);
                 if (commandStrings[i].StartsWith(":")) { functionIndices.Add(i); }
             }
-            Trace("Function Indices: ");
-            Trace(String.Join(" | ", functionIndices));
 
             //Parse Function Definitions
             foreach (int i in functionIndices) {
@@ -283,28 +267,24 @@ namespace IngameScript {
             {
                 CommandLine current = commandStrings[index];
                 CommandLine next = commandStrings[index + 1];
-                if (current.depth > next.depth) break;//End, break
-                if (current.depth < next.depth) {//I'm a parent of next line
-                    Trace("Parsing Sub Command @ Index: " + (index + 1));
+                if (current.depth > next.depth) break; //End, break
+                if (current.depth < next.depth) { //I'm a parent of next line
                     current.commandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, true)));
                     continue;
                 }
                 if (next.commandParameters.Count > 0 && next.commandParameters[0] is ElseCommandParameter) {//Handle Otherwise
-                    Trace("Handling Otherwise @ index: " + index);
                     current.commandParameters.Add(next.commandParameters[0]);
                     next.commandParameters.RemoveAt(0);
                     current.commandParameters.Add(new CommandReferenceParameter(ParseCommand(commandStrings, index + 1, false)));
                     continue;
                 }
 
-                if (!parseSiblings) break;//Only parsing myself
-                Trace("Parsing Sibling Command @ Index: " + index);
+                if (!parseSiblings) break; //Only parsing myself
                 resolvedCommands.Add(ParseCommand(current.commandParameters, current.lineNumber));
                 commandStrings.RemoveAt(index);
             }
 
             //Parse Last one, which has become current
-            Trace("Parsing Final Command @ Index: " + index);
             resolvedCommands.Add(ParseCommand(commandStrings[index].commandParameters, commandStrings[index].lineNumber));
             commandStrings.RemoveAt(index);
 
@@ -315,10 +295,6 @@ namespace IngameScript {
             ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
 
         Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
-            Trace("Parsing Command at line: " + lineNumber);
-            Trace("Pre Processed Parameters:");
-            parameters.ForEach(param => Trace("Type: " + param.GetType()));
-
             CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
 
             if (command == null) throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);

@@ -300,7 +300,6 @@ namespace IngameScript {
         }
 
         List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
-            Trace("Command: " + String.Join(" | ", tokens));
             var parameters = NewList<CommandParameter>();
 
             foreach (var token in tokens) {

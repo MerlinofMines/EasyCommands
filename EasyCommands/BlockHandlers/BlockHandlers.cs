@@ -222,14 +222,11 @@ namespace IngameScript {
                 if(property.propertyValue != null) {
                     Primitive value = property.propertyValue.GetValue();
                     if(property.direction != null) {
-                        Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value + " in " + property.direction + " direction");
                         GetPropertyHandler(property).SetDirection((T)block, property, property.direction.Value, value);
                     } else {
-                        Debug("Setting " + GetName(block) + " " + property.propertyType + " to " + value);
                         GetPropertyHandler(property).Set((T)block, property, value);
                     }
                 } else {
-                    Debug("Moving " + GetName(block) + " " + property.propertyType + " in " + property.direction + " direction");
                     GetPropertyHandler(property).Move((T)block, property, property.direction.Value);
                 }
             }
@@ -237,16 +234,13 @@ namespace IngameScript {
             public void IncrementPropertyValue(Object block, PropertySupplier property) {
                 Primitive value = property.propertyValue.GetValue();
                 if(property.direction != null) {
-                    Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value + " in " + property.direction + " direction");
                     GetPropertyHandler(property).IncrementDirection((T)block, property, property.direction.Value, value);
                 } else {
-                    Debug("Incrementing " + GetName(block) + " " + property.propertyType + " by " + value);
                     GetPropertyHandler(property).Increment((T)block, property, value);
                 }
             }
 
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) {
-                Debug("Reversing " + GetName(block) + " " + property.propertyType);
                 GetPropertyHandler(property).Reverse((T)block, property);
             }
 

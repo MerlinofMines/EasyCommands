@@ -310,19 +310,10 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Debug("Executing Conditional Command");
-                Debug("Condition: " + condition.ToString());
-                Trace("Action Command: " + conditionMetCommand.ToString());
-                Trace("Other Command: " + conditionNotMetCommand.ToString());
-                Trace("Always Evaluate: " + alwaysEvaluate);
                 bool conditionMet = EvaluateCondition();
-                bool commandResult = false;
+                bool commandResult = conditionMet ? conditionMetCommand.Execute() : conditionNotMetCommand.Execute();
 
-                if (conditionMet) {
-                    commandResult = conditionMetCommand.Execute();
-                } else {
-                    commandResult = conditionNotMetCommand.Execute();
-                }
+                Debug("Condition Met: " + conditionMet);
 
                 isExecuting = !commandResult;
 
@@ -352,10 +343,9 @@ namespace IngameScript {
 
             private bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
-                    Trace("Evaluating Value");
-                    evaluatedValue = CastBoolean(condition.GetValue()); evaluated = true;
+                    evaluatedValue = CastBoolean(condition.GetValue());
+                    evaluated = true;
                 }
-                Debug("Evaluated Value: " + evaluatedValue);
                 return evaluatedValue;
             }
         }
