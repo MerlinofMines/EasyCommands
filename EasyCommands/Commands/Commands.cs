@@ -246,10 +246,10 @@ namespace IngameScript {
         public class NullCommand : Command { public override bool Execute() => true; }
 
         public class BlockCommand : Command {
-            public EntityProvider entityProvider;
+            public Selector entityProvider;
             public Action<BlockHandler, Object> blockAction;
 
-            public BlockCommand(EntityProvider provider, Action<BlockHandler, Object> action) {
+            public BlockCommand(Selector provider, Action<BlockHandler, Object> action) {
                 entityProvider = provider;
                 blockAction = action;
             }
@@ -262,11 +262,11 @@ namespace IngameScript {
         }
 
         public class TransferItemCommand : Command {
-            public EntityProvider from;//Must be Inventory
-            public EntityProvider to;//Must be Inventory
+            public Selector from;//Must be Inventory
+            public Selector to;//Must be Inventory
             public Variable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
 
-            public TransferItemCommand(EntityProvider source, EntityProvider destination, Variable firstVariable, Variable secondVariable) {
+            public TransferItemCommand(Selector source, Selector destination, Variable firstVariable, Variable secondVariable) {
                 from = source;
                 to = destination;
                 first = firstVariable;
@@ -275,8 +275,6 @@ namespace IngameScript {
 
             public override bool Execute() {
                 if (from.GetBlockType() != Block.CARGO || to.GetBlockType() != Block.CARGO) throw new Exception("Transfers can only be executed on cargo block types");
-
-                BlockHandler blockHandler = BlockHandlerRegistry.GetBlockHandler(Block.CARGO);
 
                 var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue())));
                 var items = NewList<MyInventoryItem>();

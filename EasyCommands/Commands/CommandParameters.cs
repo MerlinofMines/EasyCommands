@@ -225,8 +225,8 @@ namespace IngameScript {
             }
         }
 
-        public class PropertyAggregationCommandParameter : ValueCommandParameter<PropertyAggregate> {
-            public PropertyAggregationCommandParameter(PropertyAggregate value) : base(value) {
+        public class PropertyAggregationCommandParameter : ValueCommandParameter<Aggregator> {
+            public PropertyAggregationCommandParameter(Aggregator value) : base(value) {
             }
         }
 
@@ -235,8 +235,8 @@ namespace IngameScript {
             }
         }
 
-        public class SelectorCommandParameter : ValueCommandParameter<EntityProvider> {
-            public SelectorCommandParameter(EntityProvider value) : base(value) {
+        public class SelectorCommandParameter : ValueCommandParameter<Selector> {
+            public SelectorCommandParameter(Selector value) : base(value) {
             }
         }
 

@@ -149,11 +149,11 @@ namespace IngameScript {
             AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));
             AddWords(Words("all", "every", "each"), new AggregationModeCommandParameter(AggregationMode.ALL));
             AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
-            AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter(PropertyAggregate.AVG));
-            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter(PropertyAggregate.MIN));
-            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter(PropertyAggregate.MAX));
-            AddWords(Words("count", "number"), new PropertyAggregationCommandParameter(PropertyAggregate.COUNT));
-            AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(PropertyAggregate.SUM));
+            AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
+            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b))));
+            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b))));
+            AddWords(Words("count", "number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
+            AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
 
             //Operations Words
             AddWords(Words("("), new OpenParenthesisCommandParameter());

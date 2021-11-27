@@ -148,7 +148,7 @@
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\Commands.cs" />
-    <Compile Include="Commands\EntityProviders.cs" />
+    <Compile Include="Commands\Selectors.cs" />
     <Compile Include="Common\Aggregators.cs" />
     <Compile Include="Common\Collections.cs" />
     <Compile Include="Common\Items.cs" />

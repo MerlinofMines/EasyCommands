@@ -19,12 +19,7 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public static Primitive SumAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => a.Plus(b));
-
-        public static Primitive AverageAggregator(List<Primitive> primitives) => SumAggregator(primitives).Divide(ResolvePrimitive(Math.Max(1, primitives.Count)));
-
-        public static Primitive MinAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b));
-
-        public static Primitive MaxAggregator(List<Primitive> primitives) => primitives.DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b));
+        public delegate Primitive Aggregator(IEnumerable<object> blocks, Func<object,Primitive> primitiveSupplier);
+        public Aggregator SumAggregator = (blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => a.Plus(b));
     }
 }

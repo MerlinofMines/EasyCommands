@@ -27,10 +27,10 @@ namespace IngameScript {
             //SelectorVariableSelectorProcessor
             ThreeValueRule<VariableSelectorCommandParameter, AmbiguiousStringCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
                 requiredRight<AmbiguiousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), new AmbiguousStringVariable(selector.GetValue().value)))),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), new AmbiguousStringVariable(selector.GetValue().value)))),
             ThreeValueRule<VariableSelectorCommandParameter, VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
                 requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), selector.GetValue().value))),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), selector.GetValue().value))),
 
             //SelectorProcessor
             new BranchingProcessor<AmbiguiousStringCommandParameter>(
@@ -45,7 +45,7 @@ namespace IngameScript {
                             }
                             return blockType.HasValue();
                         },
-                        (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                        (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule<AmbiguiousStringCommandParameter>(
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
@@ -66,22 +66,22 @@ namespace IngameScript {
             //SelfSelectorProcessor
             OneValueRule<SelfCommandParameter, BlockTypeCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
-                (p, blockType) => new SelectorCommandParameter(new SelfEntityProvider(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
+                (p, blockType) => new SelectorCommandParameter(new SelfSelector(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
 
             //VariableSelectorProcessor
             TwoValueRule<VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
                 requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ListSelectorProcessor
             TwoValueRule<ListIndexCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
                 requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new SelectorEntityProvider(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), p.value))),
 
             //ImplicitAllSelectorProcessor
             OneValueRule<BlockTypeCommandParameter, GroupCommandParameter>(
                 optionalRight<GroupCommandParameter>(),
-                (blockType, group) => new SelectorCommandParameter(new AllEntityProvider(blockType.value))),
+                (blockType, group) => new SelectorCommandParameter(new BlockTypeSelector(blockType.value))),
 
             //IndexProcessor
             OneValueRule<IndexCommandParameter, VariableCommandParameter>(
@@ -103,12 +103,12 @@ namespace IngameScript {
             //IndexSelectorProcessor
             OneValueRule<IndexSelectorCommandParameter, SelectorCommandParameter>(
                 requiredLeft<SelectorCommandParameter>(),
-                (p, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, p.value))),
+                (p, selector) => new SelectorCommandParameter(new IndexSelector(selector.GetValue().value, p.value))),
 
             //ListProcessors
             OneValueRule<ListCommandParameter, SelectorCommandParameter>(
                 requiredLeft<SelectorCommandParameter>(),
-                (list, selector) => new SelectorCommandParameter(new IndexEntityProvider(selector.GetValue().value, new IndexVariable(list.value)))),
+                (list, selector) => new SelectorCommandParameter(new IndexSelector(selector.GetValue().value, new IndexVariable(list.value)))),
 
             new MultiListProcessor(),
 
@@ -232,7 +232,7 @@ namespace IngameScript {
             //ConditionalSelectorProcessor
             TwoValueRule<ThatCommandParameter,SelectorCommandParameter, BlockConditionCommandParameter>(
                 requiredLeft<SelectorCommandParameter>(),requiredRight<BlockConditionCommandParameter>(),
-                (p,selector,condition) => new SelectorCommandParameter(new ConditionalEntityProvider(selector.GetValue().value, condition.GetValue().value))),
+                (p,selector,condition) => new SelectorCommandParameter(new ConditionalSelector(selector.GetValue().value, condition.GetValue().value))),
 
             //PropertyAggregationProcessor
             ThreeValueRule<PropertyAggregationCommandParameter,SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
@@ -299,7 +299,7 @@ namespace IngameScript {
                 BlockCommandProcessor(),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PropertyAggregate.SUM, s.value, p.GetValue().value.WithDirection(d.HasValue() ? d.GetValue().value : (Direction?)null)))),
+                    (s,p,d) => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.value, p.GetValue().value.WithDirection(d.HasValue() ? d.GetValue().value : (Direction?)null)))),
                 TwoValueRule<SelectorCommandParameter,PropertyCommandParameter,DirectionCommandParameter>(
                     optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s,p,d) => p.HasValue() || d.HasValue(),//Must have at least one!

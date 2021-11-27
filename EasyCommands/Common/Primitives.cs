@@ -68,14 +68,14 @@ namespace IngameScript {
             { "black", Color.Black}
         };
 
-        static List<Return> GetTypes(Type type) {
+        public static List<Return> GetTypes(Type type) {
             if (type == typeof(object)) return ((Return[])Enum.GetValues(typeof(Return))).ToList();
             Return primitiveType;
             if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
             return NewList<Return>(primitiveType);
         }
 
-        static Primitive ResolvePrimitive(object o) {
+        public static Primitive ResolvePrimitive(object o) {
             var type = PrimitiveTypeMap[o.GetType()];
             if (o is double) {
                 return new Primitive(type, Convert.ToSingle((double)o));

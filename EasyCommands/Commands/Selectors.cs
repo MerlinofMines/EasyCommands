@@ -19,38 +19,38 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface EntityProvider {
+        public interface Selector {
             List<Object> GetEntities();
             Block GetBlockType();
         }
 
-        public class ConditionalEntityProvider : EntityProvider {
-            public EntityProvider provider;
+        public class ConditionalSelector : Selector {
+            public Selector selector;
             public BlockCondition condition;
 
-            public ConditionalEntityProvider(EntityProvider prov, BlockCondition cond) {
-                provider = prov;
+            public ConditionalSelector(Selector sel, BlockCondition cond) {
+                selector = sel;
                 condition = cond;
             }
 
-            public Block GetBlockType() => provider.GetBlockType();
+            public Block GetBlockType() => selector.GetBlockType();
 
-            public List<object> GetEntities() => provider.GetEntities().Where(b => condition(b, provider.GetBlockType())).ToList();
+            public List<object> GetEntities() => selector.GetEntities().Where(b => condition(b, selector.GetBlockType())).ToList();
         }
 
-        public class IndexEntityProvider : EntityProvider {
-            public EntityProvider provider;
+        public class IndexSelector : Selector {
+            public Selector selector;
             public Variable index;
 
-            public IndexEntityProvider(EntityProvider prov, Variable ind) {
-                provider = prov;
+            public IndexSelector(Selector sel, Variable ind) {
+                selector = sel;
                 index = ind;
             }
 
-            public Block GetBlockType() => provider.GetBlockType();
+            public Block GetBlockType() => selector.GetBlockType();
 
             public List<object> GetEntities() {
-                var entities = provider.GetEntities();
+                var entities = selector.GetEntities();
                 var selectedEntities = NewList<Object>();
                 BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
@@ -73,12 +73,12 @@ namespace IngameScript {
             }
         }
 
-        public class SelectorEntityProvider : EntityProvider {
+        public class BlockSelector : Selector {
             public Block? blockType;
             public bool isGroup;
             public Variable selector;
 
-            public SelectorEntityProvider(Block? type, bool group, Variable sel) {
+            public BlockSelector(Block? type, bool group, Variable sel) {
                 blockType = type;
                 isGroup = group;
                 selector = sel;
@@ -111,10 +111,10 @@ namespace IngameScript {
             public override String ToString() => blockType + (isGroup ? " in group named " : " named " + selector);
         }
 
-        public class SelfEntityProvider : EntityProvider {
+        public class SelfSelector : Selector {
             public Block blockType;
 
-            public SelfEntityProvider(Block type) {
+            public SelfSelector(Block type) {
                 blockType = type;
             }
 
@@ -123,10 +123,10 @@ namespace IngameScript {
             public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType, (b) => b.EntityId.Equals(PROGRAM.Me.EntityId));
         }
 
-        public class AllEntityProvider : EntityProvider {
+        public class BlockTypeSelector : Selector {
             public Block blockType;
 
-            public AllEntityProvider(Block type) {
+            public BlockTypeSelector(Block type) {
                 blockType = type;
             }
 

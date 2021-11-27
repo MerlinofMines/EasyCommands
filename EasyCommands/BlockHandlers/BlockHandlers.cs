@@ -187,6 +187,7 @@ namespace IngameScript {
 
             public BlockHandler() {
                 AddListHandler(Property.NAMES, b => CastList(ResolvePrimitive(Name(b))));
+                defaultPropertiesByPrimitive[Return.STRING] = Property.NAMES;
             }
 
             public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) => GetBlocksOfType(selector).Select(t => t as object).ToList();
@@ -204,14 +205,12 @@ namespace IngameScript {
 
             public Direction GetDefaultDirection() => defaultDirection;
 
-            public PropertySupplier GetDefaultProperty(Direction direction) {
-                if (!defaultPropertiesByDirection.ContainsKey(direction)) throw new Exception(GetType() + " Does Not Have A Default Property for Direction: " + direction);
-                return new PropertySupplier(defaultPropertiesByDirection[direction]);
-            }
-            public PropertySupplier GetDefaultProperty(Return type) {
-                if (!defaultPropertiesByPrimitive.ContainsKey(type)) throw new Exception(GetType() + " Does Not Have A Default Property for Primitive: " + type);
-                return new PropertySupplier(defaultPropertiesByPrimitive[type]);
-            }
+            public PropertySupplier GetDefaultProperty(Direction direction) =>
+                new PropertySupplier(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]));
+
+            public PropertySupplier GetDefaultProperty(Return type) =>
+                new PropertySupplier(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]));
+
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
                 Primitive value = (property.direction.HasValue ? GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :
                 GetPropertyHandler(property).Get((T)block, property));

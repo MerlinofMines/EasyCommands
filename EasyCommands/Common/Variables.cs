@@ -96,9 +96,9 @@ namespace IngameScript {
         public class AggregateConditionVariable : Variable {
             public AggregationMode aggregationMode;
             public BlockCondition blockCondition;
-            public EntityProvider entityProvider;
+            public Selector entityProvider;
 
-            public AggregateConditionVariable(AggregationMode aggregation, BlockCondition condition, EntityProvider provider) {
+            public AggregateConditionVariable(AggregationMode aggregation, BlockCondition condition, Selector provider) {
                 aggregationMode = aggregation;
                 blockCondition = condition;
                 entityProvider = provider;
@@ -120,32 +120,20 @@ namespace IngameScript {
         }
 
         public class AggregatePropertyVariable : Variable {
-            public PropertyAggregate aggregationType;
-            public EntityProvider entityProvider;
+            public Aggregator aggregator;
+            public Selector entityProvider;
             public PropertySupplier property;
 
-            public AggregatePropertyVariable(PropertyAggregate aggregation, EntityProvider provider, PropertySupplier p) {
-                aggregationType = aggregation;
+            public AggregatePropertyVariable(Aggregator agg, Selector provider, PropertySupplier p) {
+                aggregator = agg;
                 entityProvider = provider;
                 property = p;
             }
 
             public Primitive GetValue() {
-                List<Object> blocks = entityProvider.GetEntities();
-
-                if(aggregationType == PropertyAggregate.COUNT) {
-                    return ResolvePrimitive(blocks.Count);
-                }
-
                 BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
-
                 PropertySupplier p = property.Resolve(handler, Return.NUMERIC);
-
-                List<Primitive> propertyValues = blocks
-                    .Select(b => handler.GetPropertyValue(b, p))
-                    .ToList();
-
-                return Aggregate(propertyValues, aggregationType);
+                return aggregator(entityProvider.GetEntities(), b => handler.GetPropertyValue(b, p));
             }
         }
 
@@ -177,14 +165,14 @@ namespace IngameScript {
 
         public class ListAggregateVariable : Variable {
             public Variable expectedList;
-            public PropertyAggregate aggregation;
+            public Aggregator aggregator;
 
-            public ListAggregateVariable(Variable list, PropertyAggregate agg) {
+            public ListAggregateVariable(Variable list, Aggregator agg) {
                 expectedList = list;
-                aggregation = agg;
+                aggregator = agg;
             }
 
-            public Primitive GetValue() => Aggregate(CastList(expectedList.GetValue()).GetValues().Select(v => v.GetValue()).ToList(), aggregation);
+            public Primitive GetValue() => aggregator(CastList(expectedList.GetValue()).GetValues(), v => ((Variable)v).GetValue());
         }
 
         public class IndexVariable : Variable {
@@ -255,21 +243,5 @@ namespace IngameScript {
         }
 
         public static KeyedVariable AsKeyedVariable(Variable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);
-
-        public static Primitive Aggregate(List<Primitive> propertyValues, PropertyAggregate aggregationType) {
-            switch (aggregationType) {
-                case PropertyAggregate.COUNT:
-                    return ResolvePrimitive(propertyValues.Count);
-                case PropertyAggregate.SUM:
-                    return SumAggregator(propertyValues);
-                case PropertyAggregate.AVG:
-                    return AverageAggregator(propertyValues);
-                case PropertyAggregate.MIN:
-                    return MinAggregator(propertyValues);
-                case PropertyAggregate.MAX:
-                    return MaxAggregator(propertyValues);
-                default: throw new Exception("Unknown Aggregation type: " + aggregationType);
-            }
-        }
     }
 }

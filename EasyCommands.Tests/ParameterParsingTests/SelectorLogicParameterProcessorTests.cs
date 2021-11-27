@@ -16,8 +16,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("recharge the \"batteries\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.AreEqual(Block.BATTERY, sep.GetBlockType());
             Assert.IsTrue(sep.isGroup);
             Assert.IsTrue(sep.selector is StaticVariable);
@@ -30,7 +30,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("recharge \"batteries\" whose ratio < 0.5");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
+            Assert.IsTrue(bc.entityProvider is ConditionalSelector);
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on \"batteries\" @ 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
         }
 
         [TestMethod]
@@ -48,8 +48,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on \"batteries\"[0]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
             List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
@@ -61,8 +61,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("set my display[0] to \"Offset: \" + [myOffset]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
             List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
@@ -74,7 +74,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on \"batteries\" @0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
         }
 
         [TestMethod]
@@ -83,9 +83,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("set the \"batteries\" whose ratio < 0.5 @0 to recharge");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            Assert.IsTrue(iep.provider is ConditionalEntityProvider);
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
+            Assert.IsTrue(iep.selector is ConditionalSelector);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("drain the \"cargo containers\" whose \"gold ingot\" amount < 0.5");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
+            Assert.IsTrue(bc.entityProvider is ConditionalSelector);
         }
 
         [TestMethod]
@@ -103,8 +103,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the \"Boom Door Program\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.AreEqual(Block.PROGRAM, sep.GetBlockType());
         }
 
@@ -114,8 +114,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the $a sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is AmbiguousStringVariable);
             AmbiguousStringVariable variable = (AmbiguousStringVariable)sep.selector;
             Assert.AreEqual("a", CastString(variable.GetValue()));
@@ -128,8 +128,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the (a + \" test\") sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)sep.selector;
             Assert.AreEqual("a test", CastString(variable.GetValue()));
@@ -142,8 +142,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the a sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is AmbiguousStringVariable);
             Assert.AreEqual(Block.SOUND, sep.blockType);
         }
@@ -154,8 +154,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the a[0] sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.AreEqual(Block.SOUND, sep.blockType);
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable variable = (ListIndexVariable)sep.selector;
@@ -173,8 +173,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the a[0][1] sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.AreEqual(Block.SOUND, sep.blockType);
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable second = (ListIndexVariable)sep.selector;
@@ -198,13 +198,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the $mySirens[0]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
             List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
-            Assert.IsTrue(iep.provider is SelectorEntityProvider);
-            SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(iep.selector is BlockSelector);
+            BlockSelector variableSelector = (BlockSelector)iep.selector;
             Assert.IsTrue(variableSelector.selector is AmbiguousStringVariable);
             AmbiguousStringVariable variable = (AmbiguousStringVariable)variableSelector.selector;
             Assert.AreEqual("mySirens", CastString(variable.GetValue()));
@@ -216,8 +216,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on $(mySirens[0])");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable selector = (ListIndexVariable)sep.selector;
             List<Variable> listIndexes = CastList(selector.index.GetValue()).GetValues();
@@ -234,8 +234,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on $(mySirens[0]) sirens");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.AreEqual(Block.SOUND, sep.blockType);
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable selector = (ListIndexVariable)sep.selector;
@@ -253,14 +253,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on $(mySirens[0])[1]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
             List<Variable> outerIndex = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, outerIndex.Count);
             Assert.AreEqual(1f, outerIndex[0].GetValue().value);
 
-            Assert.IsTrue(iep.provider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(iep.selector is BlockSelector);
+            BlockSelector sep = (BlockSelector)iep.selector;
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable selector = (ListIndexVariable)sep.selector;
             List<Variable> innerIndex = CastList(selector.index.GetValue()).GetValues();
@@ -277,13 +277,13 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the $mySirens sirens [0]");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
             List<Variable> listIndexes = CastList(iep.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
-            Assert.IsTrue(iep.provider is SelectorEntityProvider);
-            SelectorEntityProvider variableSelector = (SelectorEntityProvider)iep.provider;
+            Assert.IsTrue(iep.selector is BlockSelector);
+            BlockSelector variableSelector = (BlockSelector)iep.selector;
             Assert.IsTrue(variableSelector.selector is AmbiguousStringVariable);
             AmbiguousStringVariable variable = (AmbiguousStringVariable)variableSelector.selector;
             Assert.AreEqual("mySirens", CastString(variable.GetValue()));
@@ -297,8 +297,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the $a");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is SelectorEntityProvider);
-            SelectorEntityProvider sep = (SelectorEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is AmbiguousStringVariable);
             AmbiguousStringVariable variable = (AmbiguousStringVariable)sep.selector;
             Assert.AreEqual("a", CastString(variable.GetValue()));
@@ -312,7 +312,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable variable = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.IsTrue(variable.entityProvider is SelfEntityProvider);
+            Assert.IsTrue(variable.entityProvider is SelfSelector);
             Assert.AreEqual(Block.PROGRAM, variable.entityProvider.GetBlockType());
         }
 
@@ -322,10 +322,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("set my display @0 text to \"hello world\"");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is IndexEntityProvider);
-            IndexEntityProvider iep = (IndexEntityProvider)bc.entityProvider;
-            Assert.IsTrue(iep.provider is SelfEntityProvider);
-            Assert.AreEqual(Block.DISPLAY, iep.provider.GetBlockType());
+            Assert.IsTrue(bc.entityProvider is IndexSelector);
+            IndexSelector iep = (IndexSelector)bc.entityProvider;
+            Assert.IsTrue(iep.selector is SelfSelector);
+            Assert.AreEqual(Block.DISPLAY, iep.selector.GetBlockType());
         }
 
         [TestMethod]
@@ -334,8 +334,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("set all piston height to 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
-            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockTypeSelector);
+            BlockTypeSelector aep = (BlockTypeSelector)bc.entityProvider;
             Assert.AreEqual(Block.PISTON, aep.GetBlockType());
         }
 
@@ -345,8 +345,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("set the height of all pistons to 0");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
-            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockTypeSelector);
+            BlockTypeSelector aep = (BlockTypeSelector)bc.entityProvider;
             Assert.AreEqual(Block.PISTON, aep.GetBlockType());
         }
 
@@ -356,10 +356,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("recharge all batteries whose ratio < 0.25");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is ConditionalEntityProvider);
-            ConditionalEntityProvider cep = (ConditionalEntityProvider)bc.entityProvider;
-            Assert.IsTrue(cep.provider is AllEntityProvider);
-            AllEntityProvider aep = (AllEntityProvider)cep.provider;
+            Assert.IsTrue(bc.entityProvider is ConditionalSelector);
+            ConditionalSelector cep = (ConditionalSelector)bc.entityProvider;
+            Assert.IsTrue(cep.selector is BlockTypeSelector);
+            BlockTypeSelector aep = (BlockTypeSelector)cep.selector;
             Assert.AreEqual(Block.BATTERY, aep.GetBlockType());
         }
 
@@ -369,8 +369,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the light");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
-            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockTypeSelector);
+            BlockTypeSelector aep = (BlockTypeSelector)bc.entityProvider;
             Assert.AreEqual(Block.LIGHT, aep.GetBlockType());
         }
 
@@ -380,8 +380,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("turn on the lights");
             Assert.IsTrue(command is BlockCommand);
             BlockCommand bc = (BlockCommand)command;
-            Assert.IsTrue(bc.entityProvider is AllEntityProvider);
-            AllEntityProvider aep = (AllEntityProvider)bc.entityProvider;
+            Assert.IsTrue(bc.entityProvider is BlockTypeSelector);
+            BlockTypeSelector aep = (BlockTypeSelector)bc.entityProvider;
             Assert.AreEqual(Block.LIGHT, aep.GetBlockType());
         }
     }

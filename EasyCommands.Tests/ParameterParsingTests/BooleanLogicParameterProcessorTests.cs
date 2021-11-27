@@ -79,7 +79,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
             AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
-            Assert.IsTrue(condition.entityProvider is AllEntityProvider);
+            Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
             Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
             PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
@@ -87,7 +87,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
-            Assert.IsTrue(metCommand.entityProvider is AllEntityProvider);
+            Assert.IsTrue(metCommand.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.GENERATOR, metCommand.entityProvider.GetBlockType());
         }
 
@@ -102,7 +102,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(UniOperand.NOT, variable.operand);
             Assert.IsTrue(variable.a is AggregateConditionVariable);
             AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;
-            Assert.IsTrue(condition.entityProvider is AllEntityProvider);
+            Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
             Assert.AreEqual(AggregationMode.ALL, condition.aggregationMode);
             PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
@@ -110,7 +110,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
             BlockCommand metCommand = (BlockCommand)conditionalCommand.conditionMetCommand;
-            Assert.IsTrue(metCommand.entityProvider is AllEntityProvider);
+            Assert.IsTrue(metCommand.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.GENERATOR, metCommand.entityProvider.GetBlockType());
         }
     }

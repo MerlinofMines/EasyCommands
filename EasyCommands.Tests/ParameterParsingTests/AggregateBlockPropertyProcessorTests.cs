@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
@@ -7,6 +8,8 @@ using static IngameScript.Program;
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class AggregateBlockPropertyProcessorTests {
+        List<object> aggregationList = new List<object> { 1, 2, 3 };
+
         [TestMethod]
         public void AssignCountOfBlocks() {
             var program = MDKFactory.CreateProgram<Program>();
@@ -15,7 +18,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 3f); //Count
         }
 
         [TestMethod]
@@ -28,7 +31,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.condition;
             Assert.IsTrue(comparison.a is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)comparison.a;
-            Assert.AreEqual(PropertyAggregate.COUNT, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 3f); //Count
             Assert.IsTrue(comparison.b is StaticVariable);
             Assert.AreEqual(0f, comparison.b.GetValue().value);
         }
@@ -41,7 +44,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
         }
 
         [TestMethod]
@@ -52,7 +55,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.AVG, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 2f); //Avg
         }
 
         [TestMethod]
@@ -63,7 +66,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.MIN, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 1f); //Min
         }
 
         [TestMethod]
@@ -74,7 +77,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.MAX, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 3f); //Max
         }
 
         [TestMethod]
@@ -85,7 +88,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
         }
 
         [TestMethod]
@@ -96,7 +99,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
             Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType);
             Assert.AreEqual("gold ingot", aggregate.property.attributeValue.GetValue().value);
         }
@@ -109,7 +112,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.AVG, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 2f); //Avg
         }
 
         [TestMethod]
@@ -120,7 +123,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.AVG, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 2f); //Avg
         }
 
         [TestMethod]
@@ -131,7 +134,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.AVG, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 2f); //Avg
         }
 
         [TestMethod]
@@ -142,62 +145,66 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.AVG, aggregate.aggregationType);
-            Assert.IsTrue(aggregate.entityProvider is AllEntityProvider);
+            VerifyAggregator(aggregate.aggregator, 2f); //Avg
+            Assert.IsTrue(aggregate.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.GUN, aggregate.entityProvider.GetBlockType());
         }
 
         [TestMethod]
-        public void AssignAvgOfBlocksUsingImplicitAggregate() {
+        public void AssignSumOfBlocksUsingImplicitAggregate() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to the \"test gun\" range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
-            Assert.IsTrue(aggregate.entityProvider is SelectorEntityProvider);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
+            Assert.IsTrue(aggregate.entityProvider is BlockSelector);
             Assert.AreEqual(Block.GUN, aggregate.entityProvider.GetBlockType());
         }
 
         [TestMethod]
-        public void AssignAvgOfBlocksUsingImplicitAggregateInParentheses() {
+        public void AssignSumOfBlocksUsingImplicitAggregateInParentheses() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to the ( \"test gun\" range )" );
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
-            Assert.IsTrue(aggregate.entityProvider is SelectorEntityProvider);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
+            Assert.IsTrue(aggregate.entityProvider is BlockSelector);
             Assert.AreEqual(Block.GUN, aggregate.entityProvider.GetBlockType());
         }
 
         [TestMethod]
-        public void AssignAvgOfBlocksUsingImplicitAggregateAndImplicitSelector() {
+        public void AssignSumOfBlocksUsingImplicitAggregateAndImplicitSelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to the gun range");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
-            Assert.IsTrue(aggregate.entityProvider is AllEntityProvider);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
+            Assert.IsTrue(aggregate.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.GUN, aggregate.entityProvider.GetBlockType());
         }
 
         [TestMethod]
-        public void AssignAvgOfBlocksUsingImplicitAggregateAndMySelector() {
+        public void AssignSumOfBlocksUsingImplicitAggregateAndMySelector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign \"a\" to my location");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.AreEqual(PropertyAggregate.SUM, aggregate.aggregationType);
+            VerifyAggregator(aggregate.aggregator, 6f); //Sum
             Assert.AreEqual(Property.POSITION + "", aggregate.property.propertyType);
-            Assert.IsTrue(aggregate.entityProvider is SelfEntityProvider);
+            Assert.IsTrue(aggregate.entityProvider is SelfSelector);
             Assert.AreEqual(Block.PROGRAM, aggregate.entityProvider.GetBlockType());
+        }
+
+        void VerifyAggregator(Aggregator aggregator, float expectedValue) {
+            Assert.AreEqual(expectedValue, CastNumber(aggregator(aggregationList, ResolvePrimitive)));
         }
     }
 }

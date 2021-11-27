@@ -198,7 +198,6 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.condition;
             Assert.IsTrue(comparison.a is ListAggregateVariable);
             ListAggregateVariable listAggregate = (ListAggregateVariable)comparison.a;
-            Assert.AreEqual(PropertyAggregate.COUNT, listAggregate.aggregation);
             Assert.IsTrue(listAggregate.expectedList is ListIndexVariable);
             ListIndexVariable listIndex = (ListIndexVariable)listAggregate.expectedList;
             Assert.IsTrue(listIndex.expectedList is InMemoryVariable);
