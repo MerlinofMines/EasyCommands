@@ -48,7 +48,7 @@ namespace IngameScript {
                         (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule<AmbiguiousStringCommandParameter>(
                     name => PROGRAM.functions.ContainsKey(name.value),
-                    name => new FunctionDefinitionCommandParameter(Function.GOSUB, PROGRAM.functions[name.value])),
+                    name => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value])),
                 NoValueRule<AmbiguiousStringCommandParameter>(b => new StringCommandParameter(b.value, false))),
 
             OneValueRule<ListCommandParameter, StringCommandParameter>(
@@ -117,7 +117,7 @@ namespace IngameScript {
             //FunctionProcessor
             OneValueRule<StringCommandParameter, FunctionCommandParameter>(
                 requiredLeft<FunctionCommandParameter>(),
-                (name, function) => new FunctionDefinitionCommandParameter(function.GetValue().value, PROGRAM.functions[name.value])),
+                (name, function) => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value], function.GetValue().value)),
 
             //AssignmentProcessor
             TwoValueRule<AssignmentCommandParameter, GlobalCommandParameter, StringCommandParameter>(
@@ -335,7 +335,7 @@ namespace IngameScript {
                     for (int i = 0; i < p.functionDefinition.parameterNames.Count; i++) {
                         inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
                     }
-                    Command command = new FunctionCommand(p.functionType, p.functionDefinition, inputParameters);
+                    Command command = new FunctionCommand(p.switchExecution, p.functionDefinition, inputParameters);
                     return new CommandReferenceParameter(command);
                 }),
 

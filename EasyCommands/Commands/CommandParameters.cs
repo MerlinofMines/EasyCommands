@@ -172,16 +172,16 @@ namespace IngameScript {
             public ControlCommandParameter(Control value) : base(value) {}
         }
 
-        public class FunctionCommandParameter : ValueCommandParameter<Function> {
-            public FunctionCommandParameter(Function value) : base(value) {}
+        public class FunctionCommandParameter : ValueCommandParameter<bool> {
+            public FunctionCommandParameter(bool shouldSwitch) : base(shouldSwitch) {}
         }
 
         public class FunctionDefinitionCommandParameter : SimpleCommandParameter {
-            public Function functionType;
+            public bool switchExecution;
             public FunctionDefinition functionDefinition;
 
-            public FunctionDefinitionCommandParameter(Function type, FunctionDefinition definition) {
-                functionType = type;
+            public FunctionDefinitionCommandParameter(FunctionDefinition definition, bool shouldSwitch = false) {
+                switchExecution = shouldSwitch;
                 functionDefinition = definition;
             }
         }

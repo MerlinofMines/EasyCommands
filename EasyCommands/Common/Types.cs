@@ -27,7 +27,6 @@ namespace IngameScript {
         public enum Direction { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE, NONE }
         public enum Control { RESTART, STOP, REPEAT, PAUSE }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
-        public enum Function { GOTO, GOSUB, SWITCH }
         public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST }
         public enum LogLevel { TRACE, DEBUG, INFO, SCRIPT_ONLY }
         #endregion

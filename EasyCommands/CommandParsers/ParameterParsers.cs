@@ -117,8 +117,8 @@ namespace IngameScript {
             //Special Command Words
             AddWords(Words("times", "iterations"), new IteratorCommandParameter());
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
-            AddWords(Words("call", "gosub"), new FunctionCommandParameter(Function.GOSUB));
-            AddWords(Words("goto"), new FunctionCommandParameter(Function.GOTO));
+            AddWords(Words("call", "gosub"), new FunctionCommandParameter(false));
+            AddWords(Words("goto"), new FunctionCommandParameter(true));
             AddWords(Words("listen", "channel"), new ListenCommandParameter());
             AddWords(Words("send"), new SendCommandParameter());
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
@@ -261,7 +261,7 @@ namespace IngameScript {
             RegisterToString<VariableCommandParameter>(p => "[Variable]");
             RegisterToString<VariableSelectorCommandParameter>(p => "[VariableSelector]");
             RegisterToString<IndexSelectorCommandParameter>(p => "[IndexSelector]");
-            RegisterToString<FunctionDefinitionCommandParameter>(p => "Function[type=" + p.functionType + ",name=" + p.functionDefinition.functionName + "]");
+            RegisterToString<FunctionDefinitionCommandParameter>(p => "Function[switch=" + p.switchExecution + ",name=" + p.functionDefinition.functionName + "]");
             RegisterToString<ConditionCommandParameter>(p => "[Condition]");
             RegisterToString<BlockConditionCommandParameter>(p => "[BlockCondition]");
             RegisterToString<CommandReferenceParameter>(p => "[Command]");

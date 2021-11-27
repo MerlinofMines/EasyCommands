@@ -76,14 +76,14 @@ namespace IngameScript {
         }
 
         public class FunctionCommand : Command {
-            public Function type;
+            public bool switchExecution;
             public FunctionDefinition functionDefinition;
             public Dictionary<String, Variable> inputParameters;
 
             MultiActionCommand function;
 
-            public FunctionCommand(Function functionType, FunctionDefinition definition, Dictionary<string, Variable> parameters) {
-                type = functionType;
+            public FunctionCommand(bool shouldSwitch, FunctionDefinition definition, Dictionary<string, Variable> parameters) {
+                switchExecution = shouldSwitch;
                 functionDefinition = definition;
                 inputParameters = parameters;
                 function = null;
@@ -97,18 +97,14 @@ namespace IngameScript {
                         currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue().DeepCopy());
                     }
                 }
-                switch (type) {
-                    case Function.GOSUB:
-                        return function.Execute();
-                    case Function.GOTO:
-                        currentThread.Command = function;
-                        currentThread.SetName(functionDefinition.functionName);
-                        return false;
-                    default:
-                        throw new Exception("Unsupported Function Type: " + type);
-                }
+
+                if (!switchExecution) return function.Execute();
+
+                currentThread.Command = function;
+                currentThread.SetName(functionDefinition.functionName);
+                return false;
             }
-            public override Command Clone() => new FunctionCommand(type, functionDefinition, inputParameters);
+            public override Command Clone() => new FunctionCommand(switchExecution, functionDefinition, inputParameters);
             public override void Reset() => function = null;
         }
 
