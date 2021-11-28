@@ -47,11 +47,11 @@ namespace IngameScript {
             { "empty", GetStaticVariable(new KeyedList()) }
         };
 
-        Dictionary<ProgramState, Tuple<String, bool>> programStateMap = new Dictionary<ProgramState, Tuple<string, bool>> {
-            { ProgramState.RUNNING, Tuple.Create("Running", true) },
-            { ProgramState.PAUSED, Tuple.Create("Paused", false) },
-            { ProgramState.STOPPED, Tuple.Create("Stopped", false) },
-            { ProgramState.COMPLETE, Tuple.Create("Complete", false) }
+        Dictionary<ProgramState, KeyValuePair<String, bool>> programStateMap = new Dictionary<ProgramState, KeyValuePair<string, bool>> {
+            { ProgramState.RUNNING, new KeyValuePair<String, bool>("Running", true) },
+            { ProgramState.PAUSED, new KeyValuePair<String, bool>("Paused", false) },
+            { ProgramState.STOPPED, new KeyValuePair<String, bool>("Stopped", false) },
+            { ProgramState.COMPLETE, new KeyValuePair<String, bool>("Complete", false) }
         };
 
         String defaultFunction;
@@ -140,8 +140,8 @@ namespace IngameScript {
 
                 //Update State
                 var stateTuple = programStateMap[state];
-                Info(stateTuple.Item1);
-                Runtime.UpdateFrequency = stateTuple.Item2 ? updateFrequency : UpdateFrequency.None;
+                Info(stateTuple.Key);
+                Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
             } catch(Exception e) {
                 Info("Exception Occurred: ");
                 Info(e.Message);
