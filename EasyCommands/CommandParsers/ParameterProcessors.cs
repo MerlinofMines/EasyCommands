@@ -474,7 +474,7 @@ namespace IngameScript {
 
             foreach (ParameterProcessor processor in processors) {
                 sortedParameterProcessors[processor] = processor.Rank;
-                if (processorRanks.Contains(processor.Rank)) processorRanks.Add(processor.Rank);
+                processorRanks.Add(processor.Rank);
             }
         }
 
