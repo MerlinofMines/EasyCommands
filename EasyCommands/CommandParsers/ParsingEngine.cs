@@ -1,0 +1,158 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace IngameScript {
+    partial class Program {
+        public List<ParsingTask> parsingTasks = NewList<ParsingTask>();
+        public delegate bool ParsingTask();
+
+        bool ParseCommands() {
+            int parsedAmount = 0;
+            if (String.IsNullOrWhiteSpace(PROGRAM.Me.CustomData)) {
+                Info("Welcome to EasyCommands!");
+                Info("Add Commands to Custom Data");
+                return false;
+            } else if (!PROGRAM.Me.CustomData.Equals(customData)) {
+                customData = PROGRAM.Me.CustomData;
+                commandStrings = customData.Trim().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                    .ToList();
+
+                Info("Parsing Custom Data");
+                functions.Clear();
+                ClearAllThreads();
+
+                int implicitMainOffset = 1;
+                if (!commandStrings[0].StartsWith(":")) {
+                    commandStrings.Insert(0, ":main");
+                    implicitMainOffset--;
+                }
+
+                var functionIndices = NewList<int>();
+                for (int i = commandStrings.Count - 1; i >= 0; i--) {
+                    if (commandStrings[i].StartsWith(":")) { functionIndices.Add(i); }
+                }
+
+                foreach (int i in functionIndices) {
+                    String functionString = commandStrings[i].Remove(0, 1).Trim();
+                    List<Token> nameAndParams = ParseTokens(functionString);
+                    String functionName = nameAndParams[0].original;
+                    nameAndParams.RemoveAt(0);
+                    FunctionDefinition definition = new FunctionDefinition(functionName, nameAndParams.Select(t => t.original).ToList());
+                    functions[functionName] = definition;
+                }
+
+                foreach (int i in functionIndices) {
+                    int startingLineNumber = i + 1 + implicitMainOffset;
+                    String functionString = commandStrings[i].Remove(0, 1).Trim();
+                    List<Token> nameAndParams = ParseTokens(functionString);
+                    String functionName = nameAndParams[0].original;
+
+                    parsingTasks.Add(() => {
+                        int lineNumber = startingLineNumber;
+                        List<CommandLine> commandLines = commandStrings
+                            .GetRange(i + 1, commandStrings.Count - (i + 1))
+                            .Select(str => new CommandLine(str, lineNumber++))
+                            .Where(line => line.commandParameters.Count > 0)
+                            .ToList();
+                        commandStrings.RemoveRange(i, commandStrings.Count - i);
+                        parsingTasks.Add(new ParseCommmandTask(commandLines, 0, true, command => {
+                            if (!(command is MultiActionCommand)) command = new MultiActionCommand(NewList<Command>(command));
+                            functions[functionName].function = (MultiActionCommand)command;
+                            defaultFunction = functionName;
+                        }).GetTask());
+                        return true;
+                    });
+                }
+                parsedAmount++;
+            }
+
+            while (parsedAmount++ < functionParseAmount && parsingTasks.Count > 0 ) {
+                if(parsingTasks[0]()) parsingTasks.RemoveAt(0);
+            }
+
+            if (parsingTasks.Count > 0) Info("Parsing Script...");
+
+            return parsingTasks.Count == 0;
+        }
+
+        public class ParseCommmandTask {
+            List<Command> resolvedCommands = NewList<Command>();
+            List<CommandLine> commandStrings = NewList<CommandLine>();
+            int index;
+            bool parseSiblings;
+            Action<Command> action;
+
+            public ParseCommmandTask(List<CommandLine> CommandStrings, int Index, bool ParseSiblings, Action<Command> Action) {
+                commandStrings = CommandStrings;
+                index = Index;
+                parseSiblings = ParseSiblings;
+                action = Action;
+            }
+
+            public ParsingTask GetTask() => () => {
+                Command command;
+                if (ParseCommand(out command)) {
+                    action(command);
+                    return true;
+                } else return false;
+            };
+
+            bool ParseCommand(out Command command) {
+                command = null;
+                while (index < commandStrings.Count - 1) { //Parse Sibling & Child Commands, if any
+                    CommandLine current = commandStrings[index];
+                    CommandLine next = commandStrings[index + 1];
+                    if (current.depth > next.depth) break; //End, break
+                    if (current.depth < next.depth) { //I'm a parent of next line
+                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index + 1, true, myCommand => current.commandParameters.Add(new CommandReferenceParameter(myCommand))).GetTask());
+                        return false;
+                    }
+                    if (next.commandParameters.Count > 0 && next.commandParameters[0] is ElseCommandParameter) {//Handle Otherwise
+                        current.commandParameters.Add(next.commandParameters[0]);
+                        next.commandParameters.RemoveAt(0);
+                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index + 1, false, myCommand => {
+                            current.commandParameters.Add(new CommandReferenceParameter(myCommand));
+                        }).GetTask());
+                        return false;
+                    }
+
+                    if (!parseSiblings) break; //Only parsing myself
+                    resolvedCommands.Add(PROGRAM.ParseCommand(current.commandParameters, current.lineNumber));
+                    commandStrings.RemoveAt(index);
+                    return false;
+                }
+
+                //Parse Last one, which has become current
+                resolvedCommands.Add(PROGRAM.ParseCommand(commandStrings[index].commandParameters, commandStrings[index].lineNumber));
+                commandStrings.RemoveAt(index);
+
+                command = resolvedCommands.Count > 1 ? new MultiActionCommand(resolvedCommands) : resolvedCommands[0];
+                return true;
+            }
+        }
+
+        public Command ParseCommand(String commandLine, int lineNumber = 0) =>
+            ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
+
+        Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
+            CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
+
+            if (command == null) throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);
+            return command.value;
+        }
+
+        public class CommandLine {
+            public int depth, lineNumber;
+            public List<CommandParameter> commandParameters;
+
+            public CommandLine(String command, int line) {
+                depth = command.TakeWhile(Char.IsWhiteSpace).Count();
+                commandParameters = PROGRAM.ParseCommandParameters(PROGRAM.ParseTokens(command));
+                lineNumber = line;
+            }
+        }
+    }
+}
