@@ -20,8 +20,8 @@ namespace IngameScript {
                 commandStrings = customData.Trim().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
                     .ToList();
 
-                Info("Parsing Custom Data");
                 functions.Clear();
+                parsingTasks.Clear();
                 ClearAllThreads();
 
                 int implicitMainOffset = 1;
@@ -50,32 +50,52 @@ namespace IngameScript {
                     List<Token> nameAndParams = ParseTokens(functionString);
                     String functionName = nameAndParams[0].original;
 
-                    parsingTasks.Add(() => {
-                        int lineNumber = startingLineNumber;
-                        List<CommandLine> commandLines = commandStrings
-                            .GetRange(i + 1, commandStrings.Count - (i + 1))
-                            .Select(str => new CommandLine(str, lineNumber++))
-                            .Where(line => line.commandParameters.Count > 0)
-                            .ToList();
-                        commandStrings.RemoveRange(i, commandStrings.Count - i);
+                    parsingTasks.Add(new ParseCommandLineTask(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).ToList(), startingLineNumber, commandLines => {
                         parsingTasks.Add(new ParseCommmandTask(commandLines, 0, true, command => {
                             if (!(command is MultiActionCommand)) command = new MultiActionCommand(NewList<Command>(command));
                             functions[functionName].function = (MultiActionCommand)command;
                             defaultFunction = functionName;
                         }).GetTask());
-                        return true;
-                    });
+                    }).GetTask());
+                    commandStrings.RemoveRange(i, commandStrings.Count - i);
                 }
                 parsedAmount++;
             }
 
-            while (parsedAmount++ < functionParseAmount && parsingTasks.Count > 0 ) {
+            while (parsedAmount++ < commandParseAmount && parsingTasks.Count > 0 ) {
                 if(parsingTasks[0]()) parsingTasks.RemoveAt(0);
             }
 
             if (parsingTasks.Count > 0) Info("Parsing Script...");
 
             return parsingTasks.Count == 0;
+        }
+
+        public class ParseCommandLineTask {
+            int startingIndex;
+            List<String> commandStrings;
+            List<CommandLine> commandLines = NewList<CommandLine>();
+            Action<List<CommandLine>> action;
+
+            public ParseCommandLineTask(List<String> CommandStrings, int StartingIndex, Action<List<CommandLine>> Action) {
+                startingIndex = StartingIndex;
+                commandStrings = CommandStrings;
+                action = Action;
+            }
+
+            public ParsingTask GetTask() => () => {
+                int i = 0;
+                while (i < PROGRAM.commandParameterParseAmount && commandStrings.Count > 0) {
+                    CommandLine newLine = new CommandLine(commandStrings[0], startingIndex++);
+                    commandStrings.RemoveAt(0);
+                    i+=newLine.commandParameters.Count;
+                    if(newLine.commandParameters.Count > 0) commandLines.Add(newLine);
+                }
+                if (commandStrings.Count == 0) {
+                    action(commandLines);
+                    return true;
+                } else return false;
+            };
         }
 
         public class ParseCommmandTask {

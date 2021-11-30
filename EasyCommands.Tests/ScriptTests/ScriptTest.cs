@@ -52,7 +52,7 @@ namespace EasyCommands.Tests.ScriptTests
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             program = MDKFactory.CreateProgram<Program>(config);
-            program.functionParseAmount = 1000;
+            program.commandParseAmount = 1000;
             program.logLevel = Program.LogLevel.SCRIPT_ONLY;
 
             // Default behavior for broadcast messages

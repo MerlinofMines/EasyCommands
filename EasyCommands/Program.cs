@@ -21,11 +21,11 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("EasyCommands.Tests")]
 namespace IngameScript {
     public partial class Program : MyGridProgram {
-        //Debug
         #region mdk preserve
         public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
         public LogLevel logLevel = LogLevel.INFO;
-        public int functionParseAmount = 1;
+        public int commandParseAmount = 1;
+        public int commandParameterParseAmount = 100;
         public int maxAsyncThreads = 50;
         public int maxQueuedThreads = 50;
         public int maxItemTransfers = 10;
