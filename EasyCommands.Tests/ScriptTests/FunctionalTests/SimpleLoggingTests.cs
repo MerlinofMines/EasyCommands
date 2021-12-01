@@ -22,6 +22,23 @@ print 'Hello World'
         }
 
         [TestMethod]
+        public void PrintCorrectLineNumberWhenUnableToParseWithIgnoredCommentsAtTop() {
+            String script = @"
+#This main function cannot be parsed
+:main
+print 'Hello World'
+'Hello World'
+";
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 4"));
+            }
+        }
+
+        [TestMethod]
         public void PrintCorrectLineNumberWhenUnableToParseAndImpliedMain() {
             String script = @"
 print 'Hello World'
@@ -32,6 +49,21 @@ print 'Hello World'
                 test.RunOnce();
 
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 2"));
+            }
+        }
+
+        [TestMethod]
+        public void PrintCorrectLineNumberWhenUnableToParseAndImpliedMainWithCommentsAtTop() {
+            String script = @"
+#This is what Im supposed to do
+print 'Hello World'
+'Hello World'
+";
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 3"));
             }
         }
 

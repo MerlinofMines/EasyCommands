@@ -16,15 +16,24 @@ namespace IngameScript {
                 Info("Add Commands to Custom Data");
                 return false;
             } else if (!PROGRAM.Me.CustomData.Equals(customData)) {
+                int implicitMainOffset = 1;
+
                 customData = PROGRAM.Me.CustomData;
-                commandStrings = customData.Trim().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                commandStrings = customData
+                    .Trim()
+                    .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                    .SkipWhile(line => {
+                        var skip = string.IsNullOrWhiteSpace(line) || line.Trim().StartsWith("#");
+                        if (skip) implicitMainOffset++;
+                        return skip;
+                    })
                     .ToList();
+
 
                 functions.Clear();
                 parsingTasks.Clear();
                 ClearAllThreads();
 
-                int implicitMainOffset = 1;
                 if (!commandStrings[0].StartsWith(":")) {
                     commandStrings.Insert(0, ":main");
                     implicitMainOffset--;

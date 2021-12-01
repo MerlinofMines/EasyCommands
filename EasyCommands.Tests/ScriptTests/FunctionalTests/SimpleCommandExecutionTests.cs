@@ -43,6 +43,42 @@ print 'Hello World'
             }
         }
 
+        [TestMethod]
+        public void commentsAtTheTopOfScriptAreIgnored() {
+            String script = @"
+#This function comment should be ignored
+:main
+#This is a comment
+print 'Hello World'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void commentsAndWhitespaceAtTheTopOfScriptAreIgnored() {
+            String script = @"
+#This function comment should be ignored
+    
+#And of course it should still be ignored
+:main
+#This is a comment
+print 'Hello World'
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+            }
+        }
+
 
         [TestMethod]
         public void indentedCommentsAreIgnored() {
