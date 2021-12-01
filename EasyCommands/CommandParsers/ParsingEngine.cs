@@ -32,7 +32,8 @@ namespace IngameScript {
 
                 functions.Clear();
                 parsingTasks.Clear();
-                ClearAllThreads();
+
+                ClearAllState();
 
                 if (!commandStrings[0].StartsWith(":")) {
                     commandStrings.Insert(0, ":main");

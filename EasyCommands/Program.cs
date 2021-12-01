@@ -41,11 +41,7 @@ namespace IngameScript {
 
         List<Thread> threadQueue = NewList<Thread>();
         List<Thread> asyncThreadQueue = NewList<Thread>();
-        Dictionary<String, Variable> globalVariables = new Dictionary<string, Variable> {
-            { "pi", GetStaticVariable(Math.PI) },
-            { "e", GetStaticVariable(Math.E) },
-            { "empty", GetStaticVariable(new KeyedList()) }
-        };
+        Dictionary<String, Variable> globalVariables = NewDictionary<String, Variable>();
 
         Dictionary<ProgramState, KeyValuePair<String, bool>> programStateMap = new Dictionary<ProgramState, KeyValuePair<string, bool>> {
             { ProgramState.RUNNING, new KeyValuePair<String, bool>("Running", true) },
@@ -58,9 +54,14 @@ namespace IngameScript {
         String customData = null;
         List<String> commandStrings = NewList<String>();
 
-        public void ClearAllThreads() {
+        public void ClearAllState() {
             asyncThreadQueue.Clear();
             threadQueue.Clear();
+            globalVariables = new Dictionary<string, Variable> {
+                    { "pi", GetStaticVariable(Math.PI) },
+                    { "e", GetStaticVariable(Math.E) },
+                    { "empty", GetStaticVariable(new KeyedList()) }
+                };
         }
 
         public Thread GetCurrentThread() => currentThread;

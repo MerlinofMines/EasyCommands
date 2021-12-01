@@ -160,10 +160,10 @@ namespace IngameScript {
             public override bool Execute() {
                 switch (controlType) {
                     case Control.STOP:
-                        PROGRAM.ClearAllThreads();
+                        PROGRAM.ClearAllState();
                         throw new InterruptException(ProgramState.STOPPED);
                     case Control.RESTART:
-                        PROGRAM.ClearAllThreads();
+                        PROGRAM.ClearAllState();
                         throw new InterruptException(ProgramState.RUNNING);
                     case Control.PAUSE:
                         executed = !executed;

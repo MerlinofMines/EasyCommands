@@ -197,6 +197,30 @@ print 'Hello New World'
         }
 
         [TestMethod]
+        public void updatedScriptClearsGlobalVariables() {
+            String script = @"
+:main
+set global myValue to ""Hello World""
+print myValue
+";
+
+            String newScript = @"
+:main
+print myValue";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World", test.Logger[0]);
+                test.setScript(newScript);
+                test.Logger.Clear();
+                test.RunOnce();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("myValue", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void pauseContinuesExecutionAfterResuming() {
             String script = @"
 :main
