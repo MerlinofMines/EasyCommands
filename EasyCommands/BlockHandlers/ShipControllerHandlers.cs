@@ -52,29 +52,29 @@ namespace IngameScript {
             public ShipControllerHandler() {
                 AddBooleanHandler(Property.LOCKED, b => b.HandBrake, (b, v) => b.HandBrake = v);
                 AddDirectionHandlers(Property.VELOCITY, Direction.NONE,
-                    DirectionalHandler(NumericHandler(b => (float)b.GetShipSpeed()), Direction.NONE),
-                    DirectionalHandler(NumericHandler(b => (float)VelocityVector(b).Y), Direction.UP),
-                    DirectionalHandler(NumericHandler(b => (float)-VelocityVector(b).Y), Direction.DOWN),
-                    DirectionalHandler(NumericHandler(b => (float)-VelocityVector(b).X), Direction.LEFT),
-                    DirectionalHandler(NumericHandler(b => (float)VelocityVector(b).X), Direction.RIGHT),
-                    DirectionalHandler(NumericHandler(b => (float)-VelocityVector(b).Z), Direction.FORWARD),
-                    DirectionalHandler(NumericHandler(b => (float)VelocityVector(b).Z), Direction.BACKWARD));
+                    TypeHandler(NumericHandler(b => (float)b.GetShipSpeed()), Direction.NONE),
+                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).Y), Direction.UP),
+                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).Y), Direction.DOWN),
+                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).X), Direction.LEFT),
+                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).X), Direction.RIGHT),
+                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).Z), Direction.FORWARD),
+                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).Z), Direction.BACKWARD));
                 AddDirectionHandlers(Property.INPUT, Direction.NONE,
-                    DirectionalHandler(NumericHandler(b => b.MoveIndicator.Length()), Direction.NONE),
-                    DirectionalHandler(NumericHandler(b => b.MoveIndicator.Y), Direction.UP),
-                    DirectionalHandler(NumericHandler(b => -b.MoveIndicator.Y), Direction.DOWN),
-                    DirectionalHandler(NumericHandler(b => -b.MoveIndicator.X), Direction.LEFT),
-                    DirectionalHandler(NumericHandler(b => b.MoveIndicator.X), Direction.RIGHT),
-                    DirectionalHandler(NumericHandler(b => -b.MoveIndicator.Z), Direction.FORWARD),
-                    DirectionalHandler(NumericHandler(b => b.MoveIndicator.Z), Direction.BACKWARD));
+                    TypeHandler(NumericHandler(b => b.MoveIndicator.Length()), Direction.NONE),
+                    TypeHandler(NumericHandler(b => b.MoveIndicator.Y), Direction.UP),
+                    TypeHandler(NumericHandler(b => -b.MoveIndicator.Y), Direction.DOWN),
+                    TypeHandler(NumericHandler(b => -b.MoveIndicator.X), Direction.LEFT),
+                    TypeHandler(NumericHandler(b => b.MoveIndicator.X), Direction.RIGHT),
+                    TypeHandler(NumericHandler(b => -b.MoveIndicator.Z), Direction.FORWARD),
+                    TypeHandler(NumericHandler(b => b.MoveIndicator.Z), Direction.BACKWARD));
                 AddDirectionHandlers(Property.ROLL_INPUT, Direction.NONE,
-                    DirectionalHandler(NumericHandler(b => (float)Math.Sqrt(b.RotationIndicator.LengthSquared() + Math.Pow(b.RollIndicator, 2))), Direction.NONE),
-                    DirectionalHandler(NumericHandler(b => -b.RotationIndicator.X), Direction.UP),
-                    DirectionalHandler(NumericHandler(b => b.RotationIndicator.X), Direction.DOWN),
-                    DirectionalHandler(NumericHandler(b => -b.RotationIndicator.Y), Direction.LEFT),
-                    DirectionalHandler(NumericHandler(b => b.RotationIndicator.Y), Direction.RIGHT),
-                    DirectionalHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
-                    DirectionalHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
+                    TypeHandler(NumericHandler(b => (float)Math.Sqrt(b.RotationIndicator.LengthSquared() + Math.Pow(b.RollIndicator, 2))), Direction.NONE),
+                    TypeHandler(NumericHandler(b => -b.RotationIndicator.X), Direction.UP),
+                    TypeHandler(NumericHandler(b => b.RotationIndicator.X), Direction.DOWN),
+                    TypeHandler(NumericHandler(b => -b.RotationIndicator.Y), Direction.LEFT),
+                    TypeHandler(NumericHandler(b => b.RotationIndicator.Y), Direction.RIGHT),
+                    TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
+                    TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
 
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
                 defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;

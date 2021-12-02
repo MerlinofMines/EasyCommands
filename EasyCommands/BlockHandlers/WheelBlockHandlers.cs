@@ -25,8 +25,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.ANGLE, b => (float)(-b.SteerAngle*180/Math.PI), (b, v) => { b.SteeringOverride = (float)(v * Math.PI / 144); b.MaxSteerAngle = 1; }, .1f);
                 AddBooleanHandler(Property.LOCKED, (b) => b.Brake, (b, v) => b.Brake = v);
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    DirectionalHandler(TerminalBlockPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
-                    DirectionalHandler(NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v), Direction.LEFT, Direction.RIGHT));
+                    TypeHandler(TerminalBlockPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
+                    TypeHandler(NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v), Direction.LEFT, Direction.RIGHT));
 
                 AddNumericHandler(Property.VELOCITY, b => b.PropulsionOverride, (b,v) => b.PropulsionOverride = v, 0.1f);
                 AddNumericHandler(Property.STRENGTH, b => b.Strength, (b, v) => b.Strength = v, 10);

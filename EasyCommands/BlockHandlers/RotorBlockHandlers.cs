@@ -26,8 +26,8 @@ namespace IngameScript {
             public RotorBlockHandler(Func<IMyMotorStator, bool> filter) {
                 AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    DirectionalHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
-                    DirectionalHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg= v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
+                    TypeHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
+                    TypeHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg= v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
                 AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
                 AddNumericHandler(Property.LEVEL, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });

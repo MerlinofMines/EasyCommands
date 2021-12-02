@@ -22,8 +22,8 @@ namespace IngameScript {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    DirectionalHandler(NumericHandler(b => b.MaxLimit, (b, v) => b.MaxLimit = v, 1), Direction.UP, Direction.FORWARD),
-                    DirectionalHandler(NumericHandler(b => b.MinLimit, (b, v) => b.MinLimit = v, 1), Direction.DOWN, Direction.BACKWARD));
+                    TypeHandler(NumericHandler(b => b.MaxLimit, (b, v) => b.MaxLimit = v, 1), Direction.UP, Direction.FORWARD),
+                    TypeHandler(NumericHandler(b => b.MinLimit, (b, v) => b.MinLimit = v, 1), Direction.DOWN, Direction.BACKWARD));
                 AddPropertyHandler(Property.LEVEL, new PistonHeightHandler());
                 AddNumericHandler(Property.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;

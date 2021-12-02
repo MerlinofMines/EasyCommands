@@ -79,12 +79,12 @@ namespace IngameScript {
                 AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>((b, p) => p.attributeValue.GetValue(), (b, p, v) => b.ApplyAction(CastString(p.attributeValue.GetValue())), ResolvePrimitive(0)));
 
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Up)), Direction.UP),
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Down)), Direction.DOWN),
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Left)), Direction.LEFT),
-                    DirectionalHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Right)), Direction.RIGHT));
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Up)), Direction.UP),
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Down)), Direction.DOWN),
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Left)), Direction.LEFT),
+                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Right)), Direction.RIGHT));
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
             }

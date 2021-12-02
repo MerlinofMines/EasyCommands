@@ -22,7 +22,11 @@ namespace IngameScript {
         public class ProgramBlockHandler : FunctionalBlockHandler<IMyProgrammableBlock> {
             public ProgramBlockHandler() : base() {
                 AddBooleanHandler(Property.COMPLETE, block => !block.IsRunning);
-                AddStringHandler(Property.RUN, (block) => "", (block, value) => block.TryRun(value));
+                AddStringHandler(Property.TEXT, block => block.TerminalRunArgument);
+                AddReturnHandlers(Property.RUN, Return.STRING,
+                    TypeHandler(StringHandler(b => b.IsRunning.ToString(), (b, v) => b.TryRun(v)), Return.STRING),
+                    TypeHandler(BooleanHandler(b => b.IsRunning, (b, v) => { if (v) b.TryRun(""); else b.Enabled = false; }), Return.BOOLEAN));
+
                 defaultPropertiesByPrimitive[Return.STRING] = Property.RUN;
             }
         }

@@ -124,20 +124,17 @@ namespace IngameScript {
             }
         }
 
-        public class SimpleDirectionalTypedHandler<T> : PropertyHandler<T> {
-            Dictionary<Direction, PropertyHandler<T>> directionalHandlers;
+        public delegate PropertyHandler<T> GetPropertyHandler<T>(PropertySupplier supplier);
 
-            public SimpleDirectionalTypedHandler(Dictionary<Direction, PropertyHandler<T>> handlers, Direction defaultDirection) {
-                directionalHandlers = handlers;
-                GetDirection = (b, p, d) => GetHandler(d, defaultDirection).GetDirection(b, p, d);
-                SetDirection = (b, p, d, v) => GetHandler(d, defaultDirection).SetDirection(b, p, d, v);
-                Get = (b, p) => GetDirection(b, p, defaultDirection);
-                Set = (b, p, v) => SetDirection(b, p, defaultDirection, v);
-                IncrementDirection = (b, p, d, v) => GetHandler(d, defaultDirection).IncrementDirection(b, p, d, v);
-                Increment = (b, p, v) => IncrementDirection(b, p, defaultDirection, v);
+        public class SimplePropertySupplierBasedHandler<T> : PropertyHandler<T> {
+            public SimplePropertySupplierBasedHandler(GetPropertyHandler<T> GetHandler) {
+                Get = (b, p) => GetHandler(p).Get(b, p);
+                Set = (b, p, v) => GetHandler(p).Set(b, p, v);
+                GetDirection = (b, p, d) => GetHandler(p).GetDirection(b, p, d);
+                SetDirection = (b, p, d, v) => GetHandler(p).SetDirection(b, p, d, v);
+                IncrementDirection = (b, p, d, v) => GetHandler(p).IncrementDirection(b, p, d, v);
+                Increment = (b, p, v) => GetHandler(p).Increment(b, p, v);
             }
-
-            PropertyHandler<T> GetHandler(Direction d, Direction defaultDirection) => directionalHandlers.ContainsKey(d) ? directionalHandlers[d] : directionalHandlers[defaultDirection];
         }
 
         public interface BlockHandler {
@@ -276,20 +273,27 @@ namespace IngameScript {
                 AddPropertyHandler(property, ListHandler(Get, Set));
             }
 
-            public void AddDirectionHandlers(Property property, Direction defaultDirection, params DirectionHandler<T>[] handlers) {
+            public void AddDirectionHandlers(Property property, Direction defaultDirection, params TypeHandler<T,Direction>[] handlers) {
                 AddPropertyHandler(property, DirectionalTypedHandler(defaultDirection, handlers));
             }
 
-            public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params DirectionHandler<T>[] handlers) {
-                var directionHandlers = NewDictionary<Direction, PropertyHandler<T>>();
-                foreach (DirectionHandler<T> handler in handlers) foreach (Direction direction in handler.supportedDirections) directionHandlers.Add(direction, handler.handler);
-                return new SimpleDirectionalTypedHandler<T>(directionHandlers, defaultDirection);
+            public void AddReturnHandlers(Property property, Return defaultReturn, params TypeHandler<T, Return>[] handlers) {
+                AddPropertyHandler(property, ReturnTypedHandler(defaultReturn, handlers));
             }
 
-            public DirectionHandler<T> DirectionalHandler(PropertyHandler<T> h, params Direction[] directions) => new DirectionHandler<T> {
+            public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) => TypedHandler(defaultDirection, p => p.direction.GetValueOrDefault(defaultDirection), handlers);
+            public PropertyHandler<T> ReturnTypedHandler(Return defaultReturn, params TypeHandler<T, Return>[] handlers) => TypedHandler(defaultReturn, p => (p.propertyValue ?? GetStaticVariable(true)).GetValue().returnType, handlers);
+
+            public TypeHandler<T, U> TypeHandler<U>(PropertyHandler<T> h, params U[] values) => new TypeHandler<T, U> {
                 handler = h,
-                supportedDirections = directions
+                supportedTypes = values
             };
+
+            PropertyHandler<T> TypedHandler<U>(U defaultType, Func<PropertySupplier,U> Resolver, params TypeHandler<T,U>[] handlers) {
+                var typeHandlers = NewDictionary<U, PropertyHandler<T>>();
+                foreach (TypeHandler<T,U> handler in handlers) foreach (U type in handler.supportedTypes) typeHandlers.Add(type, handler.handler);
+                return new SimplePropertySupplierBasedHandler<T>(p => typeHandlers.GetValueOrDefault(Resolver(p), typeHandlers[defaultType]));
+            }
 
             public PropertyHandler<T> BooleanHandler(GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) => TypedPropertyHandler(Get, Set, CastBoolean, true);
             public PropertyHandler<T> StringHandler(GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) => TypedPropertyHandler(Get, Set, CastString, "");
@@ -300,9 +304,9 @@ namespace IngameScript {
             PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set ?? ((b, v) => { }), Cast, delta);
         }
 
-        public class DirectionHandler<T> {
+        public class TypeHandler<T, U> {
             public PropertyHandler<T> handler;
-            public Direction[] supportedDirections;
+            public U[] supportedTypes;
         }
     }
 }

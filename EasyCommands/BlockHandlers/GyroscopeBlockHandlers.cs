@@ -26,12 +26,12 @@ namespace IngameScript {
                 AddNumericHandler(Property.RANGE, b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
 
                 var rollHandler = DirectionalTypedHandler(Direction.UP,
-                    DirectionalHandler(NumericHandler(b => b.Pitch, (b,v) => b.Pitch = v), Direction.UP),
-                    DirectionalHandler(NumericHandler(b => -b.Pitch, (b, v) => b.Pitch = -v), Direction.DOWN),
-                    DirectionalHandler(NumericHandler(b => -b.Yaw, (b, v) => b.Yaw = -v), Direction.LEFT),
-                    DirectionalHandler(NumericHandler(b => b.Yaw, (b, v) => b.Yaw = v), Direction.RIGHT),
-                    DirectionalHandler(NumericHandler(b => b.Roll, (b, v) => b.Roll = v), Direction.CLOCKWISE),
-                    DirectionalHandler(NumericHandler(b => -b.Roll, (b, v) => b.Roll = -v), Direction.COUNTERCLOCKWISE));
+                    TypeHandler(NumericHandler(b => b.Pitch, (b,v) => b.Pitch = v), Direction.UP),
+                    TypeHandler(NumericHandler(b => -b.Pitch, (b, v) => b.Pitch = -v), Direction.DOWN),
+                    TypeHandler(NumericHandler(b => -b.Yaw, (b, v) => b.Yaw = -v), Direction.LEFT),
+                    TypeHandler(NumericHandler(b => b.Yaw, (b, v) => b.Yaw = v), Direction.RIGHT),
+                    TypeHandler(NumericHandler(b => b.Roll, (b, v) => b.Roll = v), Direction.CLOCKWISE),
+                    TypeHandler(NumericHandler(b => -b.Roll, (b, v) => b.Roll = -v), Direction.COUNTERCLOCKWISE));
 
                 AddPropertyHandler(Property.ROLL_INPUT, rollHandler);
                 AddPropertyHandler(Property.INPUT, rollHandler);
