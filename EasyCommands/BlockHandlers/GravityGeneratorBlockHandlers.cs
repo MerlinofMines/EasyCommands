@@ -30,15 +30,9 @@ namespace IngameScript {
             public GravityGeneratorBlockHandler() {
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b, v) => b.GravityAcceleration = v, 0.25f);
                 AddDirectionHandlers(Property.RANGE, Direction.NONE,
-                    TypeHandler(new SimplePropertyHandler<IMyGravityGenerator>(
-                        (b, p) => ResolvePrimitive(new Vector3D(b.FieldSize)),
-                        (b, p, v) => {
-                            if (v.returnType == Return.VECTOR) b.FieldSize = CastVector(v);
-                            else {
-                                var size = CastNumber(v);
-                                b.FieldSize = new Vector3(size, size, size);
-                            }
-                        }, ResolvePrimitive(25)), Direction.NONE),
+                    TypeHandler(ReturnTypedHandler(Return.VECTOR,
+                        TypeHandler(VectorHandler(b => b.FieldSize, (b, v) => b.FieldSize = v), Return.VECTOR),
+                        TypeHandler(NumericHandler(b => b.FieldSize.Length(), (b, v) => b.FieldSize = new Vector3(v, v, v), 25), Return.NUMERIC)), Direction.NONE),
                     TypeHandler(NumericHandler(b => b.FieldSize.Y, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, v, b.FieldSize.Z)), Direction.UP, Direction.DOWN),
                     TypeHandler(NumericHandler(b => b.FieldSize.X, (b, v) => b.FieldSize = new Vector3(v, b.FieldSize.Y, b.FieldSize.Z)), Direction.LEFT, Direction.RIGHT),
                     TypeHandler(NumericHandler(b => b.FieldSize.Z, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, b.FieldSize.Y, v)), Direction.FORWARD, Direction.BACKWARD)

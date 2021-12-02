@@ -104,7 +104,7 @@ print ""Range: "" + a
         }
 
         [TestMethod]
-        public void setGravityGeneratorRange() {
+        public void setGravityGeneratorRangeVector() {
             String script = @"
 set ""test gravityGenerator"" range to 2:4:6
 ";
@@ -114,6 +114,20 @@ set ""test gravityGenerator"" range to 2:4:6
                 test.RunUntilDone();
 
                 mockGravityGenerator.VerifySet(b => b.FieldSize = new Vector3(2,4,6));
+            }
+        }
+
+        [TestMethod]
+        public void setGravityGeneratorRangeNumeric() {
+            String script = @"
+set ""test gravityGenerator"" range to 2
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGenerator>();
+                test.MockBlocksOfType("test gravityGenerator", mockGravityGenerator);
+                test.RunUntilDone();
+
+                mockGravityGenerator.VerifySet(b => b.FieldSize = new Vector3(2, 2, 2));
             }
         }
 
