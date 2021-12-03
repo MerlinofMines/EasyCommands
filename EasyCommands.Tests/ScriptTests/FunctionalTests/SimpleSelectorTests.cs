@@ -99,6 +99,34 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void MySelectorMeaningAll() {
+            using (var test = new ScriptTest(@"turn on my battery")) {
+                Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();
+
+                test.MockBlocksOfType("Battery 1", mockBattery);
+
+                test.RunOnce();
+
+                mockBattery.VerifySet(b => b.ChargeMode = ChargeMode.Auto);
+            }
+        }
+
+        [TestMethod]
+        public void MySelectorMeaningAllGroup() {
+            using (var test = new ScriptTest(@"Print ""Total Batteries: "" + the count of my batteries")) {
+                Mock<IMyBatteryBlock> mockBattery1 = new Mock<IMyBatteryBlock>();
+                Mock<IMyBatteryBlock> mockBattery2 = new Mock<IMyBatteryBlock>();
+
+                test.MockBlocksOfType("Battery 1", mockBattery1);
+                test.MockBlocksOfType("Battery 2", mockBattery2);
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Total Batteries: 2"));
+            }
+        }
+
+        [TestMethod]
         public void NumericIndexSelector() {
             using (var test = new ScriptTest(@"turn on the ""test pistons"" @ 0")) {
                 var mockPiston1 = new Mock<IMyPistonBase>();

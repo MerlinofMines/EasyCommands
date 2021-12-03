@@ -110,15 +110,15 @@ namespace IngameScript {
         }
 
         public class SelfSelector : Selector {
-            public Block blockType;
+            public Block? blockType;
 
-            public SelfSelector(Block type) {
+            public SelfSelector(Block? type) {
                 blockType = type;
             }
 
-            public Block GetBlockType() => blockType;
+            public Block GetBlockType() => blockType.GetValueOrDefault(Block.PROGRAM);
 
-            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType, (b) => b.EntityId.Equals(PROGRAM.Me.EntityId));
+            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(GetBlockType(), (b) => blockType.HasValue ? true : b.EntityId.Equals(PROGRAM.Me.EntityId));
         }
 
         public class BlockTypeSelector : Selector {

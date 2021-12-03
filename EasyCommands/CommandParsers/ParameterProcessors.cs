@@ -64,9 +64,10 @@ namespace IngameScript {
                 (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.GetValue().value, list.value))),
 
             //SelfSelectorProcessor
-            OneValueRule<SelfCommandParameter, BlockTypeCommandParameter>(
+            TwoValueRule<SelfCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(
                 optionalRight<BlockTypeCommandParameter>(),
-                (p, blockType) => new SelectorCommandParameter(new SelfSelector(blockType.HasValue() ? blockType.GetValue().value : Block.PROGRAM))),
+                optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null))),
 
             //VariableSelectorProcessor
             TwoValueRule<VariableCommandParameter, BlockTypeCommandParameter, GroupCommandParameter>(

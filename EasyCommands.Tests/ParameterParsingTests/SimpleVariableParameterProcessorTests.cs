@@ -291,6 +291,27 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVariableToCountOfGroupSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set \"myValue\" to the count of \"My Batteries\" batteries");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+        }
+
+        [TestMethod]
+        public void AssignVariableToCountOfImplicitSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set \"myValue\" to the count of \"My Batteries\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+        }
+
+        [TestMethod]
+        public void AssignVariableToCountOfAllGroupSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("set \"myValue\" to the count of my batteries");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+        }
+
+        [TestMethod]
         public void AssignVariableToMySelectorProperty() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("set \"myPosition\" to my position");
