@@ -66,6 +66,42 @@ set the ""rotor"" upper limit to 30
         }
 
         [TestMethod]
+        public void increaseUpperLimit() {
+            String script = @"
+increase the ""rotor"" upper limit by 10
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(20);
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 30);
+            }
+        }
+
+        [TestMethod]
+        public void decreaseUpperLimit() {
+            String script = @"
+decrease the ""rotor"" upper limit by 10
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(20);
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 10);
+            }
+        }
+
+        [TestMethod]
         public void setLowerLimit() {
             String script = @"
 set the ""rotor"" lower limit to 30
@@ -123,7 +159,7 @@ rotate the ""rotor"" to -30
         }
 
         [TestMethod]
-        public void increaseRotorAngle() {
+        public void rotateTheRotorAngleByAmount() {
             String script = @"
 rotate the ""rotor"" clockwise by 30
 ";
@@ -138,6 +174,46 @@ rotate the ""rotor"" clockwise by 30
                 test.RunUntilDone();
 
                 mockRotor.VerifySet(b => b.UpperLimitDeg = 30);
+                mockRotor.VerifySet(b => b.TargetVelocityRPM = 1);
+            }
+        }
+
+        [TestMethod]
+        public void increaseTheRotorAngleByAmount() {
+            String script = @"
+increase the ""rotor"" by 30
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
+                mockRotor.Setup(r => r.Angle).Returns(0);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 30);
+                mockRotor.VerifySet(b => b.TargetVelocityRPM = 1);
+            }
+        }
+
+        [TestMethod]
+        public void increaseTheRotorAngleAdds10() {
+            String script = @"
+increase the ""rotor"" angle
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
+                mockRotor.Setup(r => r.Angle).Returns(0);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 10);
                 mockRotor.VerifySet(b => b.TargetVelocityRPM = 1);
             }
         }

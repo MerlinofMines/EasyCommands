@@ -39,7 +39,6 @@ namespace IngameScript {
         public class CloseBracketCommandParameter : SimpleCommandParameter { }
         public class IteratorCommandParameter : SimpleCommandParameter { }
         public class ReverseCommandParameter : SimpleCommandParameter { }
-        public class RelativeCommandParameter : SimpleCommandParameter { }
         public class WaitCommandParameter : SimpleCommandParameter { }
         public class SendCommandParameter : SimpleCommandParameter { }
         public class ListenCommandParameter : SimpleCommandParameter { }
@@ -94,12 +93,12 @@ namespace IngameScript {
             public TransferCommandParameter(bool v) : base(v) {}
         }
 
-        public class AssignmentCommandParameter : SimpleCommandParameter {
-            public bool useReference;
+        public class AssignmentCommandParameter : ValueCommandParameter<bool> {
+            public AssignmentCommandParameter(bool reference = false) : base(reference) { }
+        }
 
-            public AssignmentCommandParameter(bool reference = false) {
-                useReference = reference;
-            }
+        public class IncrementCommandParameter : ValueCommandParameter<bool> {
+            public IncrementCommandParameter(bool increase = true) : base(increase) { }
         }
 
         public class VariableAssignmentCommandParameter : SimpleCommandParameter {

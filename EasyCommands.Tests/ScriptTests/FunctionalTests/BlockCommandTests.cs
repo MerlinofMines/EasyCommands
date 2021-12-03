@@ -37,8 +37,60 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void IncrementPropertyWithActionAndDirection() {
+        public void IncrementPropertyOnly() {
+            using (ScriptTest test = new ScriptTest(@"increase the ""test beacon"" range")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(p => p.Radius).Returns(1000);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 2000);
+            }
+        }
+
+        [TestMethod]
+        public void RaisePropertyDirection() {
+            using (ScriptTest test = new ScriptTest(@"raise the ""test beacon"" range")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(p => p.Radius).Returns(1000);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 2000);
+            }
+        }
+
+        [TestMethod]
+        public void RaisePropertyDirectionByAmount() {
             using (ScriptTest test = new ScriptTest(@"raise the ""test beacon"" range by 100")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(p => p.Radius).Returns(1000);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 1100);
+            }
+        }
+
+        [TestMethod]
+        public void DecrementPropertyOnly() {
+            using (ScriptTest test = new ScriptTest(@"decrease the ""test beacon"" range")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(p => p.Radius).Returns(2000);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 1000);
+            }
+        }
+
+        [TestMethod]
+        public void IncrementPropertyWithActionAndDirection() {
+            using (ScriptTest test = new ScriptTest(@"increase the ""test beacon"" range by 100")) {
                 Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
                 test.MockBlocksOfType("test beacon", mockBeacon);
                 mockBeacon.Setup(p => p.Radius).Returns(100);
@@ -51,7 +103,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void IncrementPropertyWithActionAndDirectionWithoutProperty() {
-            using (ScriptTest test = new ScriptTest(@"raise the ""test beacon"" by 100")) {
+            using (ScriptTest test = new ScriptTest(@"increase the ""test beacon"" by 100")) {
                 Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
                 test.MockBlocksOfType("test beacon", mockBeacon);
                 mockBeacon.Setup(p => p.Radius).Returns(100);

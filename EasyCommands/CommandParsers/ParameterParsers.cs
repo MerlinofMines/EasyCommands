@@ -47,12 +47,11 @@ namespace IngameScript {
             //Action Words
             AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
             AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate", "apply"), new AssignmentCommandParameter());
-            AddWords(Words("increase", "raise", "extend", "expand"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("add"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("subtact"), new AssignmentCommandParameter(), new RelativeCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("decrease", "retract", "reduce"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
             AddWords(Words("reverse"), new ReverseCommandParameter());
-            AddWords(Words("by"), new RelativeCommandParameter());
+            AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
+            AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
+            AddWords(Words("increase", "increment", "add", "by"), new IncrementCommandParameter());
+            AddWords(Words("decrease", "decrement", "reduce", "subtract"), new IncrementCommandParameter(false));
             AddWords(Words("global"), new GlobalCommandParameter());
 
             //Value Words

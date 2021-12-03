@@ -23,6 +23,7 @@ namespace IngameScript {
             public String propertyType;
             public Variable attributeValue, propertyValue;
             public Direction? direction;
+            public bool? increment;
 
             public PropertySupplier() { }
 
@@ -82,11 +83,18 @@ namespace IngameScript {
                 return copy;
             }
 
+            public PropertySupplier WithIncrement(bool increment) {
+                PropertySupplier copy = Copy();
+                copy.increment= increment;
+                return copy;
+            }
+
             PropertySupplier Copy() => new PropertySupplier {
                     propertyType = propertyType, 
                     attributeValue = attributeValue,
                     propertyValue = propertyValue,
-                    direction = direction
+                    direction = direction,
+                    increment = increment
                 };
         }
     }

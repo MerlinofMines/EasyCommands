@@ -122,15 +122,15 @@ namespace IngameScript {
             //AssignmentProcessor
             TwoValueRule<AssignmentCommandParameter, GlobalCommandParameter, StringCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
-                (p, g, name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.useReference, g.HasValue())),
+                (p, g, name) => new VariableAssignmentCommandParameter(name.GetValue().value, p.value, g.HasValue())),
             TwoValueRule<AssignmentCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, list, value) => list.HasValue() && list.GetValue().value is ListIndexVariable && value.HasValue(),
-                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.GetValue().value, value.GetValue().value, p.useReference))),
+                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.GetValue().value, value.GetValue().value, p.value))),
             TwoValueRule<AssignmentCommandParameter, GlobalCommandParameter, VariableCommandParameter>(
                 optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, g, name) => name.HasValue() && name.GetValue().value is InMemoryVariable,
-                (p, g, name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.useReference, g.HasValue())),
+                (p, g, name) => new VariableAssignmentCommandParameter(((InMemoryVariable)name.GetValue().value).variableName, p.value, g.HasValue())),
 
             //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
@@ -586,8 +586,8 @@ namespace IngameScript {
         static DataProcessor<T> rightList<T>(bool required) where T: class, CommandParameter =>
             new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => false, df => p => df.SetValue(p));
 
-        static DataProcessor<T> leftList<T>(bool required) where T : class, CommandParameter =>
-            new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => false);
+        static DataProcessor<T> eitherList<T>(bool required) where T : class, CommandParameter =>
+            new DataProcessor<T>(new ListValueDataFetcher<T>(required), df => p => df.SetValue(p), df => p => df.SetValue(p));
 
         //ParameterProcessors
         public interface ParameterProcessor : IComparable<ParameterProcessor> {
@@ -806,7 +806,7 @@ namespace IngameScript {
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = requiredEither<AssignmentCommandParameter>();
-            var relativeProcessor = requiredEither<RelativeCommandParameter>();
+            var incrementProcessor = eitherList<IncrementCommandParameter>(true);
             var variableProcessor = requiredEither<VariableCommandParameter>();
             var propertyProcessor = requiredEither<PropertyCommandParameter>();
             var directionProcessor = requiredEither<DirectionCommandParameter>();
@@ -814,7 +814,7 @@ namespace IngameScript {
             var notProcessor = requiredEither<NotCommandParameter>();
             var processors = NewList<DataProcessor>(
                 assignmentProcessor,
-                relativeProcessor,
+                incrementProcessor,
                 variableProcessor,
                 propertyProcessor,
                 directionProcessor,
@@ -843,8 +843,15 @@ namespace IngameScript {
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);
                 }
 
+                if (incrementProcessor.f.HasValue()) {
+                    propertySupplier = propertySupplier.WithIncrement(((ListValueDataFetcher<IncrementCommandParameter>)incrementProcessor.f)
+                        .GetValues()
+                        .Select(v => v.value)
+                        .Aggregate((a, b) => a && b));
+                }
+
                 if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
-                else if (AllSatisfied(relativeProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
+                else if (AllSatisfied(incrementProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
                 else blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
 

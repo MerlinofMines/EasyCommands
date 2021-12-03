@@ -79,8 +79,9 @@ namespace IngameScript {
         public delegate Primitive GetPropertyDirection<T>(T block, PropertySupplier property, Direction direction);
         public delegate void SetProperty<T>(T block, PropertySupplier property, Primitive value);
         public delegate void SetPropertyDirection<T>(T block, PropertySupplier property, Direction direction, Primitive value);
-        public delegate void IncrementProperty<T>(T block, PropertySupplier property, Primitive deltaValue);
-        public delegate void IncrementPropertyDirection<T>(T block, PropertySupplier property, Direction direction, Primitive deltaValue);
+        public delegate void IncrementProperty<T>(T block, PropertySupplier property);
+        public delegate void IncrementPropertyValue<T>(T block, PropertySupplier property, Primitive deltaValue);
+        public delegate void IncrementPropertyValueDirection<T>(T block, PropertySupplier property, Direction direction, Primitive deltaValue);
         public delegate void MovePropertyValue<T>(T block, PropertySupplier property, Direction direction);
         public delegate void ReversePropertyValue<T>(T block, PropertySupplier property);
 
@@ -98,7 +99,8 @@ namespace IngameScript {
             public SetProperty<T> Set;
             public SetPropertyDirection<T> SetDirection;
             public IncrementProperty<T> Increment;
-            public IncrementPropertyDirection<T> IncrementDirection;
+            public IncrementPropertyValue<T> IncrementValue;
+            public IncrementPropertyValueDirection<T> IncrementValueDirection;
             public MovePropertyValue<T> Move;
             public ReversePropertyValue<T> Reverse;
         }
@@ -109,13 +111,14 @@ namespace IngameScript {
                 Set = Setter;
                 GetDirection = (b, p, d) => Get(b, p);
                 SetDirection = (b, p, d, v) => Set(b, p, v);
-                Increment = (b, p, v) => Set(b, p, Get(b, p).Plus(v));
-                IncrementDirection = (b, p, d, v) => Increment(b, p, Multiply(v, d));
-                Move = (b, p, d) => Set(b, p, Get(b, p).Plus(Multiply(delta, d)));
+                Increment = (b, p) => IncrementValue(b, p, delta);
+                IncrementValue = (b, p, v) => Set(b, p, Get(b, p).Plus(Multiply(v, p)));
+                IncrementValueDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(v, p)));
+                Move = (b, p, d) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(delta, p)));
                 Reverse = (b, p) => Set(b, p, Get(b, p).Not());
             }
 
-            Primitive Multiply(Primitive p, Direction d) => (d == Direction.DOWN) ? p.Not() : p;
+            Primitive Multiply(Primitive p, PropertySupplier property) => property.increment.GetValueOrDefault(true) ? p : p.Not();
         }
 
         public class SimpleTypedHandler<T, U> : SimplePropertyHandler<T> {
@@ -132,8 +135,10 @@ namespace IngameScript {
                 Set = (b, p, v) => GetHandler(p).Set(b, p, v);
                 GetDirection = (b, p, d) => GetHandler(p).GetDirection(b, p, d);
                 SetDirection = (b, p, d, v) => GetHandler(p).SetDirection(b, p, d, v);
-                IncrementDirection = (b, p, d, v) => GetHandler(p).IncrementDirection(b, p, d, v);
-                Increment = (b, p, v) => GetHandler(p).Increment(b, p, v);
+                IncrementValueDirection = (b, p, d, v) => GetHandler(p).IncrementValueDirection(b, p, d, v);
+                IncrementValue = (b, p, v) => GetHandler(p).IncrementValue(b, p, v);
+                Increment = (b, p) => GetHandler(p).Increment(b, p);
+                Move = (b, p, d) => GetHandler(p).Move(b, p, d);
             }
         }
 
@@ -224,16 +229,20 @@ namespace IngameScript {
                         GetPropertyHandler(property).Set((T)block, property, value);
                     }
                 } else {
-                    GetPropertyHandler(property).Move((T)block, property, property.direction.Value);
+                    GetPropertyHandler(property).Move((T)block, property, property.direction.GetValueOrDefault(defaultDirection));
                 }
             }
 
             public void IncrementPropertyValue(Object block, PropertySupplier property) {
-                Primitive value = property.propertyValue.GetValue();
-                if(property.direction != null) {
-                    GetPropertyHandler(property).IncrementDirection((T)block, property, property.direction.Value, value);
+                if (property.propertyValue == null) {
+                    GetPropertyHandler(property).Increment((T)block, property);
                 } else {
-                    GetPropertyHandler(property).Increment((T)block, property, value);
+                    Primitive value = property.propertyValue.GetValue();
+                    if (property.direction != null) {
+                        GetPropertyHandler(property).IncrementValueDirection((T)block, property, property.direction.Value, value);
+                    } else {
+                        GetPropertyHandler(property).IncrementValue((T)block, property, value);
+                    }
                 }
             }
 

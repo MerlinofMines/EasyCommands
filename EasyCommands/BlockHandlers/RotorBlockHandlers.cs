@@ -55,11 +55,12 @@ namespace IngameScript {
                 GetDirection = (b, p, d) => Get(b, p);
                 Set = (b, p, v) => RotateToValue(b, v);
                 SetDirection = (b, p, d, v) => RotateToValue(b, v, d);
-                IncrementDirection = (b, p, d, v) => {
+                IncrementValueDirection = (b, p, d, v) => {
                     if (d == Direction.CLOCKWISE || d == Direction.UP) RotateToValue(b, Get(b, p).Plus(v), d);
                     if (d == Direction.COUNTERCLOCKWISE || d == Direction.DOWN) RotateToValue(b, Get(b, p).Minus(v), d);
                 };
-                Increment = (b, p, v) => IncrementDirection(b, p, Direction.CLOCKWISE, v);
+                IncrementValue = (b, p, v) => IncrementValueDirection(b, p, Direction.CLOCKWISE, v);
+                Increment = (b, p) => IncrementValue(b, p, ResolvePrimitive(10));
                 Move = (b, p, d) => {
                     if (d == Direction.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
                     if (d == Direction.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
