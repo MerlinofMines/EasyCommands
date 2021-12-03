@@ -32,6 +32,129 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void IncrementVariable() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("increase i");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.IsNull(incrementCommand.variable);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariablePre() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("++i");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.IsNull(incrementCommand.variable);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariablePost() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("i++");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.IsNull(incrementCommand.variable);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariableValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("increase i by 2");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual(2f, incrementCommand.variable.GetValue().value);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariableByVariableValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("increase i by j");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.IsTrue(incrementCommand.variable is AmbiguousStringVariable);
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual("j", ((AmbiguousStringVariable)incrementCommand.variable).value);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariableValuePost() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("i+=2");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual(2f, incrementCommand.variable.GetValue().value);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void IncrementVariableValuePostVariable() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("i+=j");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.IsTrue(incrementCommand.variable is AmbiguousStringVariable);
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual("j", ((AmbiguousStringVariable)incrementCommand.variable).value);
+            Assert.IsTrue(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void DecrementVariablePre() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("--i");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.IsNull(incrementCommand.variable);
+            Assert.IsFalse(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void DecrementVariablePost() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("i--");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.IsNull(incrementCommand.variable);
+            Assert.IsFalse(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void DecrementVariableValue() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("decrease i by 2");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual(2f, incrementCommand.variable.GetValue().value);
+            Assert.IsFalse(incrementCommand.increment);
+        }
+
+        [TestMethod]
+        public void DecrementVariableValuePost() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("i-=2");
+            Assert.IsTrue(command is VariableIncrementCommand);
+            VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
+            Assert.AreEqual("i", incrementCommand.variableName);
+            Assert.AreEqual(2f, incrementCommand.variable.GetValue().value);
+            Assert.IsFalse(incrementCommand.increment);
+        }
+
+        [TestMethod]
         public void AssignGlobalVariable() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign global \"a\" to 2");

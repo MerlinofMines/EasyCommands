@@ -35,7 +35,7 @@ set blockCount to the count of all terminals
 set i to 0
 until i >= blockCount
   set terminal[i] name to ""Block "" + (i + 1)
-  set i to i + 1
+  i++
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {

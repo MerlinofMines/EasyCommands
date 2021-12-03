@@ -16,8 +16,8 @@ assign maxRotorRPM to 3.5
 assign myRotors to 'test rotors'
 assign i to 0
 until i >= count of $myRotors
-  async call setVelocity i
-  assign i to i + 1
+  async setVelocity i
+  i++
 
 :setVelocity ""index""
 assign myVelocity to $myRotors @ index velocity

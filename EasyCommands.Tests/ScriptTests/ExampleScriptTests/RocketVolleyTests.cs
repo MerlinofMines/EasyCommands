@@ -39,7 +39,7 @@ if i >= count of $rocketGroup rockets
 tell $rocketGroup rockets @ i to shoot
 tell $rocketGroup rockets to not shoot
 wait fireTickInterval ticks
-assign global i to i + 1
+i++
 goto ""fireLoop""
 ";
             using (var test = new ScriptTest(script)) {

@@ -22,8 +22,8 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
 
-        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "+", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->"};
-        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-" };
+        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=" };
+        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-", "+" };
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
@@ -50,8 +50,8 @@ namespace IngameScript {
             AddWords(Words("reverse"), new ReverseCommandParameter());
             AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
             AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("increase", "increment", "add", "by"), new IncrementCommandParameter());
-            AddWords(Words("decrease", "decrement", "reduce", "subtract"), new IncrementCommandParameter(false));
+            AddWords(Words("increase", "increment", "add", "by", "++", "+="), new IncrementCommandParameter());
+            AddWords(Words("decrease", "decrement", "reduce", "subtract", "--", "-="), new IncrementCommandParameter(false));
             AddWords(Words("global"), new GlobalCommandParameter());
 
             //Value Words

@@ -132,6 +132,32 @@ namespace IngameScript {
             }
         }
 
+        public class VariableIncrementCommand : Command {
+            public String variableName;
+            public bool increment;
+            public Variable variable;
+
+            public VariableIncrementCommand(String VariableName, bool Increment, Variable Variable) {
+                variableName = VariableName;
+                increment = Increment;
+                variable = Variable;
+            }
+
+            public override bool Execute() {
+                Primitive delta = variable != null ? variable.GetValue() : ResolvePrimitive(1);
+                if (!increment) delta = delta.Not();
+
+                Variable newValue = new StaticVariable(PROGRAM.GetVariable(variableName).GetValue().Plus(delta));
+
+                if (PROGRAM.GetCurrentThread().threadVariables.ContainsKey(variableName)) {
+                    PROGRAM.GetCurrentThread().threadVariables[variableName] = newValue;
+                } else {
+                    PROGRAM.globalVariables[variableName] = newValue;
+                }
+                return true;
+            }
+        }
+
         public class ListVariableAssignmentCommand : Command {
             public ListIndexVariable list;
             public Variable value;
