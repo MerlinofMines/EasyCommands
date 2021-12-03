@@ -123,6 +123,8 @@ namespace IngameScript {
             AddUniOperation<Vector3D>(UniOperand.NOT, a => -a);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => a + b);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTACT, (a, b) => a - b);
+            AddBiOperation<Vector3D, float>(BiOperand.ADD, (a, b) => Vector3D.Multiply(a, (a.Length() + b) / a.Length()));
+            AddBiOperation<Vector3D, float>(BiOperand.SUBTACT, (a, b) => Vector3D.Multiply(a, (a.Length() - b) / a.Length()));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.MULTIPLY, (a, b) => Vector3D.Cross(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(a, b.Length()));
             AddBiOperation<Vector3D, float>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(a, b));

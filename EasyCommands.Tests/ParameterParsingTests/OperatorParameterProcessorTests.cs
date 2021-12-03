@@ -203,6 +203,54 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignVectorNumericAddition() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"1:0:0\" + 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, variable.operand);
+            Assert.AreEqual(new Vector3D(3, 0, 0), CastVector(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignVectorNumericSubtraction() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"1:0:0\" - 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
+            Assert.AreEqual(new Vector3D(-1, 0, 0), CastVector(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignVectorNumericMultiplication() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"1:0:0\" * 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
+            Assert.AreEqual(new Vector3D(2, 0, 0), CastVector(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignVectorNumericDivision() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"2:0:0\" / 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
+            Assert.AreEqual(new Vector3D(1, 0, 0), CastVector(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignVectorMultiplication() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to \"0:1:0\" * \"1:0:0\"");
