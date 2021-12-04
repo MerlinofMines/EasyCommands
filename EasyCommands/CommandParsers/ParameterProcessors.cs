@@ -286,6 +286,15 @@ namespace IngameScript {
             //ListIndexAsVariableProcessor
             NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
+            //TernaryConditionProcessor
+            FourValueRule<TernaryConditionIndicatorParameter, VariableCommandParameter, VariableCommandParameter, TernaryConditionSeparatorParameter, VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<TernaryConditionSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
+                (i,conditionValue,positiveValue,seperator,negativeValue) => new VariableCommandParameter(new TernaryConditionVariable() {
+                    condition = conditionValue.GetValue().value,
+                    positiveValue = positiveValue.GetValue().value,
+                    negativeValue = negativeValue.GetValue().value
+                })),
+
             //IfProcessor
             OneValueRule<IfCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),

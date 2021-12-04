@@ -444,6 +444,25 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void TernaryOperator() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign e to a > b ? c : d + 1");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is TernaryConditionVariable);
+            TernaryConditionVariable variable = (TernaryConditionVariable)assignment.variable;
+            Assert.IsTrue(variable.condition is ComparisonVariable);
+            ComparisonVariable condition = (ComparisonVariable)variable.condition;
+            Assert.IsTrue(condition.a is AmbiguousStringVariable);
+            Assert.IsTrue(condition.b is AmbiguousStringVariable);
+            Assert.AreEqual("a", ((AmbiguousStringVariable)condition.a).value);
+            Assert.AreEqual("b", ((AmbiguousStringVariable)condition.b).value);
+            Assert.IsTrue(variable.positiveValue is AmbiguousStringVariable);
+            Assert.AreEqual("c", ((AmbiguousStringVariable)variable.positiveValue).value);
+            Assert.IsTrue(variable.negativeValue is BiOperandVariable);
+        }
+
+        [TestMethod]
         public void ComparisonBeforeBooleanLogic() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign c to a > 0 and b < 1");

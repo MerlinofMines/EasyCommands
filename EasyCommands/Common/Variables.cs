@@ -49,6 +49,11 @@ namespace IngameScript {
             public Primitive GetValue() => ResolvePrimitive(comparator(a.GetValue(), b.GetValue()));
         }
 
+        public class TernaryConditionVariable : Variable {
+            public Variable condition, positiveValue, negativeValue;
+            public Primitive GetValue() => CastBoolean(condition.GetValue()) ? positiveValue.GetValue() : negativeValue.GetValue();
+        }
+
         public class UniOperandVariable : Variable {
             public Variable a;
             public UniOperand operand;

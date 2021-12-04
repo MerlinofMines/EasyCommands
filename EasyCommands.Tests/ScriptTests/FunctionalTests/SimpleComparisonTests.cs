@@ -454,5 +454,29 @@ Print ""My Value: "" + (myList does not contain 7)")) {
                 Assert.AreEqual("My Value: False", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void TernaryOperationReturnPositiveValue() {
+            using (var test = new ScriptTest(@"
+set myValue to 2 > 1 ? ""Value 1"" : ""Value 2""
+Print ""My Value: "" + myValue")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: Value 1", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void TernaryOperationReturnNegativeValue() {
+            using (var test = new ScriptTest(@"
+set myValue to 1 > 2 ? ""Value 1"" : ""Value 2""
+Print ""My Value: "" + myValue")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: Value 2", test.Logger[0]);
+            }
+        }
     }
 }
