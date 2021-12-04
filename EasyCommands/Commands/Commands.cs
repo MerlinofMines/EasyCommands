@@ -420,5 +420,41 @@ namespace IngameScript {
             public override Command Clone() => new MultiActionCommand(commandsToExecute, loopCount);
             public void Loop(int times) { loopsLeft += times; }
         }
+
+        public class ForEachCommand : Command {
+            public string iterator;
+            public Variable list;
+            public Command command;
+            List<Variable> listElements = null;
+            bool executed = true;
+
+            public ForEachCommand(string Iterator, Variable List, Command Command) {
+                iterator = Iterator;
+                list = List;
+                command = Command;
+            }
+
+            public override bool Execute() {
+                if (listElements == null) listElements = CastList(list.GetValue()).GetValues();
+
+                if (executed && listElements.Count > 0) {
+                    PROGRAM.GetCurrentThread().threadVariables[iterator] = listElements[0];
+                    listElements.RemoveAt(0);
+                    executed = false;
+                }
+
+                if (!executed) executed = command.Execute();
+                if (executed) command.Reset();
+
+                return executed && listElements.Count == 0;
+            }
+
+            public override void Reset() {
+                listElements = null;
+                executed = true;
+            }
+
+            public override Command Clone() => new ForEachCommand(iterator, list, command);
+        }
     }
 }

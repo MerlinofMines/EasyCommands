@@ -192,14 +192,48 @@ Print ""myList[2] = "" + myList[2]
         }
 
         [TestMethod]
-        public void IterateOverSimpleList() {
+        public void IterateOverSimpleListUsingUntil() {
             String script = @"
 :main
 assign myList to [1, 2, 3]
 assign i to 0
 until i >= count of myList[]
   Print ""myList["" + i + ""] = "" + myList[i]
-  assign i to i + 1
+  i++
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("myList[0] = 1"));
+                Assert.IsTrue(test.Logger.Contains("myList[1] = 2"));
+                Assert.IsTrue(test.Logger.Contains("myList[2] = 3"));
+            }
+        }
+
+        [TestMethod]
+        public void IterateOverSimpleListUsingForEach() {
+            String script = @"
+:main
+assign myList to [1, 2, 3]
+for each item in myList
+  Print ""Item = "" + item
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Item = 1"));
+                Assert.IsTrue(test.Logger.Contains("Item = 2"));
+                Assert.IsTrue(test.Logger.Contains("Item = 3"));
+            }
+        }
+
+        [TestMethod]
+        public void IterateOverSimpleListUsingForEachIndexes() {
+            String script = @"
+:main
+assign myList to [1, 2, 3]
+for each i in 0..count of myList[] - 1
+  Print ""myList["" + i + ""] = "" + myList[i]
 ";
             using (var test = new ScriptTest(script)) {
                 test.RunUntilDone();
@@ -414,7 +448,44 @@ Print ""Size of Values: "" + count of myValues[]
         }
 
         [TestMethod]
-        public void IterateOverListByKeys() {
+        public void IterateOverListByKeysUsingForEach() {
+            String script = @"
+:main
+assign myList to [1,2,3, ""key1"" -> ""value1"", ""key2"" -> ""value2""]
+Print ""Keys: "" + myList keys
+for each key in myList keys
+  Print ""myList["" + key + ""] = "" + myList[key]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Keys: [key1,key2]"));
+                Assert.IsTrue(test.Logger.Contains("myList[key1] = value1"));
+                Assert.IsTrue(test.Logger.Contains("myList[key2] = value2"));
+            }
+        }
+
+        [TestMethod]
+        public void IterateOverListByKeysUsingForEachIndexes() {
+            String script = @"
+:main
+assign myList to [1,2,3, ""key1"" -> ""value1"", ""key2"" -> ""value2""]
+assign myKeys to myList keys
+Print ""Keys: "" + myKeys
+for each i in 0..count of myKeys[] - 1
+  Print ""myList["" + myKeys[i] + ""] = "" + myList[myKeys[i]]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Keys: [key1,key2]"));
+                Assert.IsTrue(test.Logger.Contains("myList[key1] = value1"));
+                Assert.IsTrue(test.Logger.Contains("myList[key2] = value2"));
+            }
+        }
+
+        [TestMethod]
+        public void IterateOverListByKeysUsingUntil() {
             String script = @"
 :main
 assign myList to [1,2,3]

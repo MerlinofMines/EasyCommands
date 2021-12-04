@@ -38,6 +38,7 @@ namespace IngameScript {
         public class ListSeparatorCommandParameter : SimpleCommandParameter { }
         public class CloseBracketCommandParameter : SimpleCommandParameter { }
         public class IteratorCommandParameter : SimpleCommandParameter { }
+        public class RepeatCommandParameter : SimpleCommandParameter { }
         public class ReverseCommandParameter : SimpleCommandParameter { }
         public class WaitCommandParameter : SimpleCommandParameter { }
         public class SendCommandParameter : SimpleCommandParameter { }
@@ -213,8 +214,8 @@ namespace IngameScript {
             public CommandReferenceParameter(Command value) : base(value) { }
         }
 
-        public class IterationCommandParameter : ValueCommandParameter<Variable> {
-            public IterationCommandParameter(Variable value) : base(value) {}
+        public class RepetitionCommandParameter : ValueCommandParameter<Variable> {
+            public RepetitionCommandParameter(Variable value) : base(value) {}
         }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode> {

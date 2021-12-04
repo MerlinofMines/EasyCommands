@@ -114,7 +114,7 @@ namespace IngameScript {
             AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
 
             //Special Command Words
-            AddWords(Words("times", "iterations"), new IteratorCommandParameter());
+            AddWords(Words("times", "iterations"), new RepeatCommandParameter());
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(false));
             AddWords(Words("goto"), new FunctionCommandParameter(true));
@@ -128,6 +128,7 @@ namespace IngameScript {
             AddWords(Words("->"), new KeyedVariableCommandParameter());
             AddWords(Words("?"), new TernaryConditionIndicatorParameter());
             AddWords(Words(":"), new TernaryConditionSeparatorParameter());
+            AddWords(Words("each", "every"), new IteratorCommandParameter());
 
             //Conditional Words
             AddWords(Words("if"), new IfCommandParameter(false, false, false));
@@ -148,7 +149,7 @@ namespace IngameScript {
 
             //Aggregation Words
             AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));
-            AddWords(Words("all", "every", "each"), new AggregationModeCommandParameter(AggregationMode.ALL));
+            AddWords(Words("all"), new AggregationModeCommandParameter(AggregationMode.ALL));
             AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
             AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
             AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b))));
@@ -260,7 +261,7 @@ namespace IngameScript {
             RegisterToString<ConditionCommandParameter>(p => "[Condition]");
             RegisterToString<BlockConditionCommandParameter>(p => "[BlockCondition]");
             RegisterToString<CommandReferenceParameter>(p => "[Command]");
-            RegisterToString<IterationCommandParameter>(p => "[Iteration]");
+            RegisterToString<RepetitionCommandParameter>(p => "[Repeat]");
             RegisterToString<SelectorCommandParameter>(p => "[Selector]");
             RegisterToString<ThatCommandParameter>(p => "That");
             RegisterToString<AssignmentCommandParameter>(p => "[Action]");

@@ -122,6 +122,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParameterParsingTests\IteratorParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\ParsingTestUtility.cs" />
     <Compile Include="ParameterParsingTests\OperatorParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\ListParameterProcessorTests.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="ScriptTests\BlockHandlerTests\CargoBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\ConnectorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\JumpDriveBlockTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\IterationCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleAggregationTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />

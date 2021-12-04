@@ -270,10 +270,10 @@ namespace IngameScript {
                 (aggregation, selector) => aggregation.value != AggregationMode.NONE && selector.HasValue(),
                 (aggregation, selector) => selector.GetValue()),
 
-            //IteratorProcessor
-            OneValueRule<IteratorCommandParameter, VariableCommandParameter>(
+            //RepetitionProcessor
+            OneValueRule<RepeatCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(),
-                (p, var) => new IterationCommandParameter(var.GetValue().value)),
+                (p, var) => new RepetitionCommandParameter(var.GetValue().value)),
 
             //TransferCommandProcessor
             FourValueRule<TransferCommandParameter, SelectorCommandParameter, SelectorCommandParameter, VariableCommandParameter, VariableCommandParameter>(
@@ -289,7 +289,7 @@ namespace IngameScript {
             //TernaryConditionProcessor
             FourValueRule<TernaryConditionIndicatorParameter, VariableCommandParameter, VariableCommandParameter, TernaryConditionSeparatorParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<TernaryConditionSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
-                (i,conditionValue,positiveValue,seperator,negativeValue) => new VariableCommandParameter(new TernaryConditionVariable() {
+                (i, conditionValue, positiveValue, seperator, negativeValue) => new VariableCommandParameter(new TernaryConditionVariable() {
                     condition = conditionValue.GetValue().value,
                     positiveValue = positiveValue.GetValue().value,
                     negativeValue = negativeValue.GetValue().value
@@ -328,68 +328,76 @@ namespace IngameScript {
                 (i, v) => new CommandReferenceParameter(new VariableIncrementCommand(((AmbiguousStringVariable)v.GetValue().value).value, i.value, null))),
 
             //PrintCommandProcessor
-            OneValueRule<PrintCommandParameter,VariableCommandParameter>(
+            OneValueRule<PrintCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,var) => new CommandReferenceParameter(new PrintCommand(var.GetValue().value))),
+                (p, var) => new CommandReferenceParameter(new PrintCommand(var.GetValue().value))),
 
             //WaitProcessor
-            OneValueRule<WaitCommandParameter,VariableCommandParameter>(
+            OneValueRule<WaitCommandParameter, VariableCommandParameter>(
                 optionalRight<VariableCommandParameter>(),
-                (p,time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.0167f)))),
+                (p, time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.0167f)))),
 
             //FunctionCallCommandProcessor
-            OneValueRule<FunctionDefinitionCommandParameter,VariableCommandParameter>(
+            OneValueRule<FunctionDefinitionCommandParameter, VariableCommandParameter>(
                 rightList<VariableCommandParameter>(true),
-                (p,variables) => ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues().Count == p.functionDefinition.parameterNames.Count,
-                (p,variables) => {
+                (p, variables) => ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues().Count >= p.functionDefinition.parameterNames.Count,
+                (p, variables) => {
                     List<VariableCommandParameter> parameters = ((ListValueDataFetcher<VariableCommandParameter>)variables).GetValues();
                     var inputParameters = NewDictionary<string, Variable>();
-                    for (int i = 0; i < p.functionDefinition.parameterNames.Count; i++) {
+                    var parameterCount = p.functionDefinition.parameterNames.Count;
+                    for (int i = 0; i < parameterCount; i++) {
                         inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
                     }
-                    Command command = new FunctionCommand(p.switchExecution, p.functionDefinition, inputParameters);
-                    return new CommandReferenceParameter(command);
+                    var results = NewList<CommandParameter>(new CommandReferenceParameter(new FunctionCommand(p.switchExecution, p.functionDefinition, inputParameters)));
+                    if (parameters.Count > parameterCount) results.AddRange(parameters.GetRange(parameterCount, parameters.Count - parameterCount));
+                    return results;
                 }),
 
             //VariableAssignmentProcessor
-            OneValueRule<VariableAssignmentCommandParameter,VariableCommandParameter>(
+            OneValueRule<VariableAssignmentCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().value, p.useReference, p.isGlobal))),
+                (p, var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.GetValue().value, p.useReference, p.isGlobal))),
 
             //SendCommandProcessor
             //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
-            TwoValueRule<SendCommandParameter,VariableCommandParameter,VariableCommandParameter>(
-                requiredRight<VariableCommandParameter>(),requiredRight<VariableCommandParameter>(),
-                (p,message,tag) => new CommandReferenceParameter(new SendCommand(message.GetValue().value, tag.GetValue().value))),
+            TwoValueRule<SendCommandParameter, VariableCommandParameter, VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, message, tag) => new CommandReferenceParameter(new SendCommand(message.GetValue().value, tag.GetValue().value))),
 
             //ListenCommandProcessor
-            OneValueRule<ListenCommandParameter,VariableCommandParameter>(
+            OneValueRule<ListenCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
-                (p,var) => new CommandReferenceParameter(new ListenCommand(var.GetValue().value))),
+                (p, var) => new CommandReferenceParameter(new ListenCommand(var.GetValue().value))),
 
             //ControlProcessor 
             NoValueRule<ControlCommandParameter>((p) => new CommandReferenceParameter(new ControlCommand(p.value))),
 
             //IterationProcessor
-            OneValueRule<IterationCommandParameter,CommandReferenceParameter>(
+            OneValueRule<RepetitionCommandParameter, CommandReferenceParameter>(
                 requiredEither<CommandReferenceParameter>(),
-                (p,command) => new CommandReferenceParameter(new MultiActionCommand(NewList(command.GetValue().value), p.value))),
+                (p, command) => new CommandReferenceParameter(new MultiActionCommand(NewList(command.GetValue().value), p.value))),
 
             //QueueProcessor
-            OneValueRule<QueueCommandParameter,CommandReferenceParameter>(
+            OneValueRule<QueueCommandParameter, CommandReferenceParameter>(
                 requiredRight<CommandReferenceParameter>(),
-                (p,command) => new CommandReferenceParameter(new QueueCommand(command.GetValue().value,p.value))),
+                (p, command) => new CommandReferenceParameter(new QueueCommand(command.GetValue().value, p.value))),
+
+            //IteratorProcessor
+            ThreeValueRule<IteratorCommandParameter, VariableCommandParameter, VariableCommandParameter, CommandReferenceParameter>(
+                requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredEither<CommandReferenceParameter>(),
+                (i, item, list, command) => list.Satisfied() && command.Satisfied() && item.Satisfied() & item.GetValue().value is AmbiguousStringVariable,
+                (i, item, list, command) => new CommandReferenceParameter(new ForEachCommand(((AmbiguousStringVariable)item.GetValue().value).value, list.GetValue().value, command.GetValue().value))),
 
             //ConditionalCommandProcessor
             //condition command
             //condition command otherwise command
-            ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
-                requiredRight<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
+            ThreeValueRule<ConditionCommandParameter, CommandReferenceParameter, ElseCommandParameter, CommandReferenceParameter>(
+                requiredRight<CommandReferenceParameter>(), optionalRight<ElseCommandParameter>(), optionalRight<CommandReferenceParameter>(),
                 ConvertConditionalCommand),
             //command condition
             //command condition otherwise command
-            ThreeValueRule<ConditionCommandParameter,CommandReferenceParameter,ElseCommandParameter,CommandReferenceParameter>(
-                requiredLeft<CommandReferenceParameter>(),optionalRight<ElseCommandParameter>(),optionalRight<CommandReferenceParameter>(),
+            ThreeValueRule<ConditionCommandParameter, CommandReferenceParameter, ElseCommandParameter, CommandReferenceParameter>(
+                requiredLeft<CommandReferenceParameter>(), optionalRight<ElseCommandParameter>(), optionalRight<CommandReferenceParameter>(),
                 ConvertConditionalCommand)
         );
 
