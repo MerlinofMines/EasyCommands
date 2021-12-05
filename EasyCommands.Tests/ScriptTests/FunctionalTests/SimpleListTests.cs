@@ -727,6 +727,91 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void ReverseListUsingIndexReversal() {
+            String script = @"
+:main
+assign myList to [1,2,3,4,5]
+Print ""Before: "" + myList
+assign myList to myList[4..0]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5]"));
+                Assert.IsTrue(test.Logger.Contains("After: [5,4,3,2,1]"));
+            }
+        }
+
+        [TestMethod]
+        public void ReverseListUsingReversedKeyword() {
+            String script = @"
+:main
+assign myList to [1,2,3,4,5]
+Print ""Before: "" + myList
+assign myList to reversed myList
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5]"));
+                Assert.IsTrue(test.Logger.Contains("After: [5,4,3,2,1]"));
+            }
+        }
+
+        [TestMethod]
+        public void SortListOfNumbersUsingSortedKeyword() {
+            String script = @"
+:main
+assign myList to [2,3,1,5,4]
+Print ""Before: "" + myList
+assign myList to sorted myList
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [2,3,1,5,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [1,2,3,4,5]"));
+            }
+        }
+
+        [TestMethod]
+        public void ReversedSortedListOfNumbersUsingSortedKeyword() {
+            String script = @"
+:main
+assign myList to [2,3,1,5,4]
+Print ""Before: "" + myList
+assign myList to reversed sorted myList
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [2,3,1,5,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [5,4,3,2,1]"));
+            }
+        }
+
+        [TestMethod]
+        public void SortListOfStringsUsingSortedKeyword() {
+            String script = @"
+:main
+assign myList to [""one"",""two"",""three"",""four"",""five""]
+Print ""Before: "" + myList
+assign myList to sorted myList
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [one,two,three,four,five]"));
+                Assert.IsTrue(test.Logger.Contains("After: [five,four,one,three,two]"));
+            }
+        }
+
+        [TestMethod]
         public void InsertIntoMiddleOfListOfVariableSize() {
             String script = @"
 :main

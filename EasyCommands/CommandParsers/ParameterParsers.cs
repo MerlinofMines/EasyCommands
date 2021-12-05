@@ -185,6 +185,8 @@ namespace IngameScript {
             AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
             AddWords(Words("@"), new IndexCommandParameter());
             AddWords(Words("tick", "ticks"), new LeftUniOperationCommandParameter(UniOperand.TICKS));
+            AddWords(Words("sorted"), new UniOperationCommandParameter(UniOperand.SORT));
+            AddWords(Words("reversed"), new UniOperationCommandParameter(UniOperand.REVERSE));
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());

@@ -118,7 +118,7 @@ namespace IngameScript {
 
             public Block GetBlockType() => blockType.GetValueOrDefault(Block.PROGRAM);
 
-            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(GetBlockType(), (b) => blockType.HasValue ? true : b.EntityId.Equals(PROGRAM.Me.EntityId));
+            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(GetBlockType(), (b) => (blockType.HasValue && blockType.Value != Block.DISPLAY) || b.EntityId.Equals(PROGRAM.Me.EntityId));
         }
 
         public class BlockTypeSelector : Selector {

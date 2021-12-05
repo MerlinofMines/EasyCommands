@@ -31,7 +31,7 @@ namespace IngameScript {
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST }
         public enum BiOperand { ADD, SUBTACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE, CAST, CONTAINS };
-        public enum UniOperand { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS, VALUES, TICKS };
+        public enum UniOperand { NOT, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS, VALUES, TICKS, REVERSE, SORT };
         public enum AggregationMode {ANY, ALL, NONE }
     }
 }

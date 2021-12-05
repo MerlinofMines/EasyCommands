@@ -23,6 +23,7 @@ namespace EasyCommands.Tests.ScriptTests
     {
         public Program program;
         public Mock<IMyProgrammableBlock> me;
+        public Mock<IMyTextSurface> display;
         MockGridTerminalSystem mockGrid;
         int entityIdCounter = 1000;
 
@@ -45,7 +46,9 @@ namespace EasyCommands.Tests.ScriptTests
             // And other required config for mocking
             mockGrid = new MockGridTerminalSystem();
             me = new Mock<IMyProgrammableBlock>();
+            display = new Mock<IMyTextSurface>();
             MockBlocksOfType("Script Program", me);
+            MockEntityUtility.MockTextSurfaces(me, display);
 
             MDKFactory.ProgramConfig config = default;
             config.GridTerminalSystem = mockGrid;

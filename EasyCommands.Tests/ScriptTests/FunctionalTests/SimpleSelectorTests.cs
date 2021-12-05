@@ -112,6 +112,21 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void MySelectorDisplays() {
+            using (var test = new ScriptTest(@"set my display text to ""Hello World!""")) {
+                Mock<IMyProgrammableBlock> otherBlock = new Mock<IMyProgrammableBlock>();
+                Mock<IMyTextSurface> mockSurface = new Mock<IMyTextSurface>();
+                MockEntityUtility.MockTextSurfaces(otherBlock, mockSurface);
+
+                test.RunOnce();
+
+                test.display.Verify(b => b.WriteText("Hello World!", false));
+                mockSurface.VerifyNoOtherCalls();
+
+            }
+        }
+
+        [TestMethod]
         public void MySelectorMeaningAllGroup() {
             using (var test = new ScriptTest(@"Print ""Total Batteries: "" + the count of my batteries")) {
                 Mock<IMyBatteryBlock> mockBattery1 = new Mock<IMyBatteryBlock>();

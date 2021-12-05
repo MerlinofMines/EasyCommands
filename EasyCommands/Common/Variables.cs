@@ -225,7 +225,7 @@ namespace IngameScript {
             List<Primitive> GetIndexValues() => CastList(index.GetValue()).GetValues().Select(i => i.GetValue()).ToList();
         }
 
-        public class KeyedVariable : Variable {
+        public class KeyedVariable : Variable, IComparable<KeyedVariable> {
             public Variable Key;
             public Variable Value;
 
@@ -245,6 +245,8 @@ namespace IngameScript {
 
             public override bool Equals(Object variable) => GetKey() == ((KeyedVariable)variable).GetKey() && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
             public override int GetHashCode() => base.GetHashCode();
+
+            public int CompareTo(KeyedVariable other) => (int)CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, GetValue(), other.GetValue()));
         }
 
         public static KeyedVariable AsKeyedVariable(Variable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);
