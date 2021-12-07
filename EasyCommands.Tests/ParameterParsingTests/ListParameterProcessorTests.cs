@@ -84,7 +84,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void AssignMultipleVariableIndexesToStaticValue() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign myList[0 .. 2 + [4]] to \"value\"");
+            var command = program.ParseCommand("assign myList[(0 .. 2) + [4]] to \"value\"");
             Assert.IsTrue(command is ListVariableAssignmentCommand);
             ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
             Assert.IsTrue(assignmentCommand.list.expectedList is InMemoryVariable);

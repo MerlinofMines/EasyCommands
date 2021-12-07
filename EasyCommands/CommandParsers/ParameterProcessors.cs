@@ -141,6 +141,23 @@ namespace IngameScript {
                 requiredRight<VariableCommandParameter>(),
                 (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.GetValue().value))),
 
+            //ListPropertyAggregationProcessor
+            OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
+                requiredLeft<PropertyAggregationCommandParameter>(),
+                (list, aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
+
+            //ListComparisonProcessor
+            ThreeValueRule<ListIndexCommandParameter, ComparisonCommandParameter, VariableCommandParameter, AggregationModeCommandParameter>(
+                requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
+                (list, comparison, value, aggregation) => {
+                    AggregationMode mode = AggregationMode.ALL;
+                    if (aggregation.HasValue()) mode = aggregation.GetValue().value;
+                    return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
+                }),
+
+            //ListIndexAsVariableProcessor
+            NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
+
             //UniOperationProcessor
             OneValueRule<UniOperationCommandParameter, VariableCommandParameter>(
                 requiredRight<VariableCommandParameter>(),
@@ -180,20 +197,6 @@ namespace IngameScript {
             TwoValueRule<OrCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.GetValue().value, right.GetValue().value))),
-
-            //ListPropertyAggregationProcessor
-            OneValueRule<ListIndexCommandParameter, PropertyAggregationCommandParameter>(
-                requiredLeft<PropertyAggregationCommandParameter>(),
-                (list, aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.GetValue().value))),
-
-            //ListComparisonProcessor
-            ThreeValueRule<ListIndexCommandParameter, ComparisonCommandParameter, VariableCommandParameter, AggregationModeCommandParameter>(
-                requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
-                (list, comparison, value, aggregation) => {
-                    AggregationMode mode = AggregationMode.ALL;
-                    if (aggregation.HasValue()) mode = aggregation.GetValue().value;
-                    return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
-                }),
 
             //Tier3OperationProcessor
             TwoValueRule<BiOperandTier3Operand, VariableCommandParameter, VariableCommandParameter>(
@@ -282,9 +285,6 @@ namespace IngameScript {
             FourValueRule<TransferCommandParameter, SelectorCommandParameter, SelectorCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.GetValue().value, s2.GetValue().value, v1.GetValue().value, v2.HasValue() ? v2.GetValue().value : null))),
-
-            //ListIndexAsVariableProcessor
-            NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
             //TernaryConditionProcessor
             FourValueRule<TernaryConditionIndicatorParameter, VariableCommandParameter, VariableCommandParameter, TernaryConditionSeparatorParameter, VariableCommandParameter>(
