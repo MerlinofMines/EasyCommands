@@ -43,7 +43,7 @@ namespace IngameScript {
                             .DefaultIfEmpty(EmptyList())
                             .First();
                     default:
-                        throw new Exception("Cannot lookup collection value by Primitive Type: " + key.returnType);
+                        throw new Exception("Cannot lookup collection value for value: " + key.value);
                 }
             }
 
@@ -57,7 +57,7 @@ namespace IngameScript {
                     if (existing == null) {
                         keyedValues.Add(new KeyedVariable(GetStaticVariable(keyString), value));
                     } else existing.Value = value;
-                } else throw new Exception("Cannot set collection value by Primitive Type: " + key.returnType);
+                } else throw new Exception("Cannot set collection value by value: " + key.value);
             }
 
             public KeyedList Combine(KeyedList other) {

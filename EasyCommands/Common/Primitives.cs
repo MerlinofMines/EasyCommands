@@ -89,7 +89,7 @@ namespace IngameScript {
                 case Return.BOOLEAN: return (bool)p.value;
                 case Return.NUMERIC: return CastNumber(p) > 0;
                 case Return.STRING: return bool.Parse(CastString(p));
-                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " To Boolean");
+                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " To Boolean");
             }
         }
 
@@ -99,7 +99,7 @@ namespace IngameScript {
                 case Return.NUMERIC: return (float)p.value;
                 case Return.STRING: return float.Parse(CastString(p));
                 case Return.VECTOR: return (float)(CastVector(p)).Length();
-                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " To Number");
+                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " To Number");
             }
         }
 
@@ -119,7 +119,7 @@ namespace IngameScript {
                     Vector3D vector;
                     if (GetVector(CastString(p), out vector)) return vector;
                     goto default;
-                default: throw new Exception("Cannot convert Primitive Type: " + p.returnType + " to Vector");
+                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " to Vector");
             }
         }
 
@@ -135,7 +135,7 @@ namespace IngameScript {
                 case Return.VECTOR:
                     var vector = CastVector(p);
                     return new Color((int)vector.X, (int)vector.Y, (int)vector.Z);
-                default: throw new Exception("Cannot convert Primitive type: " + p.returnType + " to Color");
+                default: throw new Exception("Cannot convert Primitive type: " + PROGRAM.returnToString[p.returnType] + " to Color");
             }
         }
 

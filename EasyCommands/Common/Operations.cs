@@ -32,7 +32,7 @@ namespace IngameScript {
             if (!BiOperations.ContainsKey(type)
                 || !BiOperations[type].ContainsKey(a.returnType)
                 || !BiOperations[type][a.returnType].ContainsKey(b.returnType)) {
-                throw new Exception("Cannot perform operation: " + type + " on types: " + a.returnType + ", " + b.returnType);
+                throw new Exception("Cannot perform operation: " + PROGRAM.biOperandToString[type] + " on types: " + PROGRAM.returnToString[a.returnType] + ", " + PROGRAM.returnToString[b.returnType]);
             }
             return BiOperations[type][a.returnType][b.returnType](a, b);
         }
@@ -40,7 +40,7 @@ namespace IngameScript {
         public Primitive PerformOperation(UniOperand type, Primitive a) {
             if (!UniOperations.ContainsKey(type)
                 || !UniOperations[type].ContainsKey(a.returnType)) { 
-                throw new Exception("Cannot perform operation: " + type + " on type: " + a.returnType);
+                throw new Exception("Cannot perform operation: " + PROGRAM.uniOperandToString[type] + " on type: " + PROGRAM.returnToString[a.returnType]);
             }
             return UniOperations[type][a.returnType](a);
         }

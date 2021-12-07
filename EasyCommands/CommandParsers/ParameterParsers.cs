@@ -25,6 +25,17 @@ namespace IngameScript {
         string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=" };
         string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-", "+", "?", ":" };
 
+        Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>();
+        Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>();
+        Dictionary<Return, String> returnToString = new Dictionary<Return, String> {
+            { Return.BOOLEAN, "boolean" },
+            { Return.NUMERIC, "number" },
+            { Return.STRING, "string" },
+            { Return.VECTOR, "vector" },
+            { Return.COLOR, "color" },
+            { Return.LIST, "list" }
+        };
+
         public void InitializeParsers() {
             //Ignored words that have no command parameters
             AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds"), new IgnoreCommandParameter());
@@ -163,30 +174,35 @@ namespace IngameScript {
             AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
             AddWords(Words("or", "|", "||"), new OrCommandParameter());
             AddWords(Words("not", "!", "isnt", "arent", "stop"), new NotCommandParameter());
-            AddWords(Words("absolute", "abs"), new UniOperationCommandParameter(UniOperand.ABS));
-            AddWords(Words("sqrt"), new UniOperationCommandParameter(UniOperand.SQRT));
-            AddWords(Words("sin"), new UniOperationCommandParameter(UniOperand.SIN));
-            AddWords(Words("cosine", "cos"), new UniOperationCommandParameter(UniOperand.COS));
-            AddWords(Words("tangent", "tan"), new UniOperationCommandParameter(UniOperand.TAN));
-            AddWords(Words("arcsin", "asin"), new UniOperationCommandParameter(UniOperand.ASIN));
-            AddWords(Words("arcos", "acos"), new UniOperationCommandParameter(UniOperand.ACOS));
-            AddWords(Words("arctan", "atan"), new UniOperationCommandParameter(UniOperand.ATAN));
-            AddWords(Words("round", "rnd"), new UniOperationCommandParameter(UniOperand.ROUND));
-            AddWords(Words("keys", "indexes"), new LeftUniOperationCommandParameter(UniOperand.KEYS));
-            AddWords(Words("values"), new LeftUniOperationCommandParameter(UniOperand.VALUES));
-            AddWords(Words("multiply", "*"), new BiOperandTier1Operand(BiOperand.MULTIPLY));
-            AddWords(Words("divide", "/"), new BiOperandTier1Operand(BiOperand.DIVIDE));
-            AddWords(Words("mod", "%"), new BiOperandTier1Operand(BiOperand.MOD));
-            AddWords(Words("dot", "."), new BiOperandTier1Operand(BiOperand.DOT));
-            AddWords(Words("as", "cast"), new BiOperandTier1Operand(BiOperand.CAST));
-            AddWords(Words("pow", "exp", "^"), new BiOperandTier1Operand(BiOperand.EXPONENT));
-            AddWords(Words("plus", "+"), new BiOperandTier2Operand(BiOperand.ADD));
-            AddWords(Words("minus", "-"), new BiOperandTier2Operand(BiOperand.SUBTACT));
-            AddWords(Words(".."), new BiOperandTier3Operand(BiOperand.RANGE));
             AddWords(Words("@"), new IndexCommandParameter());
-            AddWords(Words("tick", "ticks"), new LeftUniOperationCommandParameter(UniOperand.TICKS));
-            AddWords(Words("sorted"), new UniOperationCommandParameter(UniOperand.SORT));
-            AddWords(Words("reversed"), new UniOperationCommandParameter(UniOperand.REVERSE));
+
+            AddRightUniOperationWords(Words("absolute", "abs"), UniOperand.ABS);
+            AddRightUniOperationWords(Words("sqrt"), UniOperand.SQRT);
+            AddRightUniOperationWords(Words("sin"), UniOperand.SIN);
+            AddRightUniOperationWords(Words("cosine", "cos"), UniOperand.COS);
+            AddRightUniOperationWords(Words("tangent", "tan"), UniOperand.TAN);
+            AddRightUniOperationWords(Words("arcsin", "asin"), UniOperand.ASIN);
+            AddRightUniOperationWords(Words("arcos", "acos"), UniOperand.ACOS);
+            AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
+            AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
+            AddRightUniOperationWords(Words("reversed"), UniOperand.REVERSE);
+            AddRightUniOperationWords(Words("sorted"), UniOperand.SORT);
+
+            AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
+            AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
+            AddLeftUniOperationWords(Words("values"), UniOperand.VALUES);
+
+            AddTier1OperationWords(Words("multiply", "*"), BiOperand.MULTIPLY);
+            AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
+            AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
+            AddTier1OperationWords(Words("dot", "."), BiOperand.DOT);
+            AddTier1OperationWords(Words("as", "cast"), BiOperand.CAST);
+            AddTier1OperationWords(Words("pow", "exp", "^"), BiOperand.EXPONENT);
+
+            AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
+            AddTier2OperationWords(Words("minus", "-"), BiOperand.SUBTACT);
+
+            AddTier3OperationWords(Words(".."), BiOperand.RANGE);
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
@@ -289,6 +305,31 @@ namespace IngameScript {
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
             if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
             else AddWords(words, new PropertyCommandParameter(property));
+        }
+
+        void AddRightUniOperationWords(String[] words, UniOperand operand) {
+            AddWords(words, new UniOperationCommandParameter(operand));
+            uniOperandToString[operand] = words[0];
+        }
+
+        void AddLeftUniOperationWords(String[] words, UniOperand operand) {
+            AddWords(words, new LeftUniOperationCommandParameter(operand));
+            uniOperandToString[operand] = words[0];
+        }
+
+        void AddTier1OperationWords(String[] words, BiOperand operand) {
+            AddWords(words, new BiOperandTier1Operand(operand));
+            biOperandToString[operand] = words[0];
+        }
+
+        void AddTier2OperationWords(String[] words, BiOperand operand) {
+            AddWords(words, new BiOperandTier2Operand(operand));
+            biOperandToString[operand] = words[0];
+        }
+
+        void AddTier3OperationWords(String[] words, BiOperand operand) {
+            AddWords(words, new BiOperandTier3Operand(operand));
+            biOperandToString[operand] = words[0];
         }
 
         //Assume group words are just blockWords with "s" added to the end
