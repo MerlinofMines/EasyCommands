@@ -161,11 +161,6 @@ namespace IngameScript {
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
-            //Tier3OperationProcessor
-            TwoValueRule<BiOperandTier3Operand, VariableCommandParameter, VariableCommandParameter>(
-                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
-
             //VariableComparisonProcessor
             TwoValueRule<ComparisonCommandParameter, VariableCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -199,6 +194,11 @@ namespace IngameScript {
                     if (aggregation.HasValue()) mode = aggregation.GetValue().value;
                     return new VariableCommandParameter(new ListAggregateConditionVariable(mode, list.value, comparison.GetValue().value, value.GetValue().value));
                 }),
+
+            //Tier3OperationProcessor
+            TwoValueRule<BiOperandTier3Operand, VariableCommandParameter, VariableCommandParameter>(
+                requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.GetValue().value, b.GetValue().value))),
 
             //KeyedVariableProcessor
             TwoValueRule<KeyedVariableCommandParameter, VariableCommandParameter, VariableCommandParameter>(

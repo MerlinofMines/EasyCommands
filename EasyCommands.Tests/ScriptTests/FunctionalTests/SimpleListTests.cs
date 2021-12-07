@@ -245,6 +245,23 @@ for each i in 0..count of myList[] - 1
         }
 
         [TestMethod]
+        public void IterateOverSimpleListInReverseUsingForEachIndexes() {
+            String script = @"
+:main
+assign myList to [1, 2, 3]
+for each i in count of myList[] - 1 .. 0
+  Print ""myList["" + i + ""] = "" + myList[i]
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual("myList[2] = 3", test.Logger[0]);
+                Assert.AreEqual("myList[1] = 2", test.Logger[1]);
+                Assert.AreEqual("myList[0] = 1", test.Logger[2]);
+            }
+        }
+
+        [TestMethod]
         public void AssignListIndexNewValue() {
             String script = @"
 :main
