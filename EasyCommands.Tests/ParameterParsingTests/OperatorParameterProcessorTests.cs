@@ -186,8 +186,92 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
             Assert.AreEqual(1f, CastNumber(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtraction() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"test\" - t");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("est", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionMultipleCharacters() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - eco");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("snd", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionEmptyString() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - \"\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("second", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionLastCharacter() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - d");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("secon", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionDoesNotContain() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - f");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("second", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionSubString() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - 2");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("seco", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignSimpleStringSubtractionSubStringMoreThanLength() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"second\" - 6");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.AreEqual("", CastString(variable.GetValue()));
         }
 
         [TestMethod]
@@ -222,7 +306,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
             Assert.AreEqual(new Vector3D(-1, 0, 0), CastVector(variable.GetValue()));
         }
 
@@ -299,6 +383,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignStringMod() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to test % t");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MOD, variable.operand);
+            Assert.AreEqual("es", CastString(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignVectorMod() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to \"1:1:0\" % \"0:1:0\"");
@@ -355,7 +451,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is BiOperandVariable);
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTACT, variable.operand);
+            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
             Assert.IsTrue(variable.a is AmbiguousStringVariable);
             Assert.IsTrue(variable.b is StaticVariable);
         }

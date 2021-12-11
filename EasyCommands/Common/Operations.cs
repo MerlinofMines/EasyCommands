@@ -66,7 +66,7 @@ namespace IngameScript {
             //List
             AddBiOperation<KeyedList, object>(BiOperand.ADD, (a, b) => Combine(a, b));
             AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
-            AddBiOperation<KeyedList, object>(BiOperand.SUBTACT, (a, b) => a.Remove(CastList(ResolvePrimitive(b))));
+            AddBiOperation<KeyedList, object>(BiOperand.SUBTRACT, (a, b) => a.Remove(CastList(ResolvePrimitive(b))));
             AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => {
                 var range = Enumerable.Range((int)Math.Min(a, b), (int)(Math.Abs(b - a) + 1)).Select(i => GetStaticVariable(i));
                 if (a > b) range = range.Reverse();
@@ -109,7 +109,7 @@ namespace IngameScript {
             AddUniOperation<Vector3D>(UniOperand.SQRT, a => Math.Sqrt(a.Length()));
             AddUniOperation<float>(UniOperand.TICKS, a => a / 60);
             AddBiOperation<float, float>(BiOperand.ADD, (a, b) => a + b);
-            AddBiOperation<float, float>(BiOperand.SUBTACT, (a, b) => a - b);
+            AddBiOperation<float, float>(BiOperand.SUBTRACT, (a, b) => a - b);
             AddBiOperation<float, float>(BiOperand.MULTIPLY, (a, b) => a * b);
             AddBiOperation<float, float>(BiOperand.DIVIDE, (a, b) => a / b);
             AddBiOperation<float, float>(BiOperand.MOD, (a, b) => a % b);
@@ -120,23 +120,22 @@ namespace IngameScript {
             //String
             AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)));
             AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)) + b);
-            AddBiOperation<string, string>(BiOperand.SUBTACT, (a, b) => a.Replace(b, ""));
+            AddBiOperation<string, string>(BiOperand.SUBTRACT, (a, b) => a.Contains(b) ? a.Remove(a.IndexOf(b)) + a.Substring(a.IndexOf(b) + b.Length) :  a);
             AddBiOperation<string, string>(BiOperand.MOD, (a, b) => a.Replace(b, ""));
-            AddBiOperation<string, float>(BiOperand.SUBTACT, (a, b) => a.Substring(Convert.ToInt32(b)));
+            AddBiOperation<string, float>(BiOperand.SUBTRACT, (a, b) => b >= a.Length ? "" : a.Substring(0, (int)(a.Length - b)));
             AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
 
             //Vector
             AddUniOperation<Vector3D>(UniOperand.NOT, a => -a);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => a + b);
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTACT, (a, b) => a - b);
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTRACT, (a, b) => a - b);
             AddBiOperation<Vector3D, float>(BiOperand.ADD, (a, b) => Vector3D.Multiply(a, (a.Length() + b) / a.Length()));
-            AddBiOperation<Vector3D, float>(BiOperand.SUBTACT, (a, b) => Vector3D.Multiply(a, (a.Length() - b) / a.Length()));
+            AddBiOperation<Vector3D, float>(BiOperand.SUBTRACT, (a, b) => Vector3D.Multiply(a, (a.Length() - b) / a.Length()));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.MULTIPLY, (a, b) => Vector3D.Cross(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(a, b.Length()));
             AddBiOperation<Vector3D, float>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(a, b));
             AddBiOperation<Vector3D, float>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(a, b));
             AddBiOperation<float, Vector3D>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(b, a));
-            AddBiOperation<float, Vector3D>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(b, a));
 
             //Modding a vector by another vector is asking to perform vector rejection.
             //See https://en.wikipedia.org/wiki/Vector_projection
@@ -145,7 +144,7 @@ namespace IngameScript {
             //Color
             AddUniOperation<Color>(UniOperand.NOT, a => new Color(255 - a.R, 255 - a.G, 255 - a.B));
             AddBiOperation<Color, Color>(BiOperand.ADD, (a, b) => a + b);
-            AddBiOperation<Color, Color>(BiOperand.SUBTACT, (a, b) => new Color(Math.Max(a.R - b.R, 0), Math.Max(a.G - b.G,0), Math.Max(a.B - b.B, 0)));
+            AddBiOperation<Color, Color>(BiOperand.SUBTRACT, (a, b) => new Color(Math.Max(a.R - b.R, 0), Math.Max(a.G - b.G,0), Math.Max(a.B - b.B, 0)));
             AddBiOperation<Color, float>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(a, b));
             AddBiOperation<float, Color>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(b, a));
             AddBiOperation<Color, float>(BiOperand.DIVIDE, (a, b) => Color.Multiply(a, 1/b));

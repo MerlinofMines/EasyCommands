@@ -30,7 +30,7 @@ namespace IngameScript {
             }
 
             public Primitive Plus(Primitive p) => PROGRAM.PerformOperation(BiOperand.ADD, this, p);
-            public Primitive Minus(Primitive p) => PROGRAM.PerformOperation(BiOperand.SUBTACT, this, p);
+            public Primitive Minus(Primitive p) => PROGRAM.PerformOperation(BiOperand.SUBTRACT, this, p);
             public Primitive Multiply(Primitive p) => PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
             public Primitive Divide(Primitive p) => PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
             public int Compare(Primitive p) => Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));

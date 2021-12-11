@@ -182,7 +182,7 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("cosine", "cos"), UniOperand.COS);
             AddRightUniOperationWords(Words("tangent", "tan"), UniOperand.TAN);
             AddRightUniOperationWords(Words("arcsin", "asin"), UniOperand.ASIN);
-            AddRightUniOperationWords(Words("arcos", "acos"), UniOperand.ACOS);
+            AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
             AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
             AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
             AddRightUniOperationWords(Words("reversed"), UniOperand.REVERSE);
@@ -196,12 +196,12 @@ namespace IngameScript {
             AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
             AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
             AddTier1OperationWords(Words("dot", "."), BiOperand.DOT);
-            AddTier1OperationWords(Words("as", "cast"), BiOperand.CAST);
             AddTier1OperationWords(Words("pow", "exp", "^"), BiOperand.EXPONENT);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
-            AddTier2OperationWords(Words("minus", "-"), BiOperand.SUBTACT);
+            AddTier2OperationWords(Words("minus", "-"), BiOperand.SUBTRACT);
 
+            AddTier3OperationWords(Words("as", "cast"), BiOperand.CAST);
             AddTier3OperationWords(Words(".."), BiOperand.RANGE);
 
             //List Words
