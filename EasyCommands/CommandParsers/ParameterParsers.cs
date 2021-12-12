@@ -70,9 +70,9 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddPropertyWords(Words("height", "length", "level"), Property.LEVEL);
-            AddPropertyWords(Words("angle"), Property.ANGLE);
-            AddPropertyWords(Words("speed", "velocity", "rate", "pace"), Property.VELOCITY);
+            AddPropertyWords(PluralWords("height", "length", "level"), Property.LEVEL);
+            AddPropertyWords(PluralWords("angle"), Property.ANGLE);
+            AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
             AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake"), Property.LOCKED);
@@ -81,44 +81,44 @@ namespace IngameScript {
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish"), Property.COMPLETE);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
-            AddPropertyWords(Words("fontsize", "size"), Property.FONT_SIZE);
-            AddPropertyWords(Words("text", "message"), Property.TEXT);
-            AddPropertyWords(Words("color"), Property.COLOR);
+            AddPropertyWords(PluralWords("fontsize", "size"), Property.FONT_SIZE);
+            AddPropertyWords(PluralWords("text", "message"), Property.TEXT);
+            AddPropertyWords(PluralWords("color"), Property.COLOR);
             AddPropertyWords(Words("power", "powered"), Property.POWER);
             AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
             AddPropertyWords(Words("disable", "disabled", "disarm", "disarmed"), Property.ENABLE, false);
             AddPropertyWords(Words("music", "song"), Property.SONG);
             AddPropertyWords(Words("silent", "silence"), Property.SILENCE);
-            AddPropertyWords(Words("volume", "intensity", "output"), Property.VOLUME);
-            AddPropertyWords(Words("range", "distance", "limit", "radius", "capacity", "delay"), Property.RANGE);
-            AddPropertyWords(Words("blinkinterval", "interval"), Property.BLINK_INTERVAL);
-            AddPropertyWords(Words("blinklength"), Property.BLINK_LENGTH);
-            AddPropertyWords(Words("blinkoffset", "offset"), Property.OFFSET);
-            AddPropertyWords(Words("falloff"), Property.FALLOFF);
+            AddPropertyWords(AllWords(PluralWords("volume", "output"), Words("intensity", "intensities")), Property.VOLUME);
+            AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("radius", "radii", "capacity", "capacities")), Property.RANGE);
+            AddPropertyWords(PluralWords("blinkinterval", "interval"), Property.BLINK_INTERVAL);
+            AddPropertyWords(PluralWords("blinklength"), Property.BLINK_LENGTH);
+            AddPropertyWords(PluralWords("blinkoffset", "offset"), Property.OFFSET);
+            AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
             AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
             AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging", "broadcast", "broadcasting"), Property.SUPPLY);
             AddPropertyWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), Property.SUPPLY, false);
-            AddPropertyWords(Words("ratio", "percentage", "percent", "progress", "completion"), Property.RATIO);
-            AddPropertyWords(Words("input", "pilot", "user"), Property.INPUT);
-            AddPropertyWords(Words("roll", "rollInput"), Property.ROLL_INPUT);
+            AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
+            AddPropertyWords(PluralWords("input", "pilot", "user"), Property.INPUT);
+            AddPropertyWords(PluralWords("roll", "rollInput"), Property.ROLL_INPUT);
             AddPropertyWords(Words("auto", "refill", "drain", "draining"), Property.AUTO);
-            AddPropertyWords(Words("override", "overrides", "overridden"), Property.OVERRIDE);
-            AddPropertyWords(Words("direction"), Property.DIRECTION);
-            AddPropertyWords(Words("coordinates", "position", "location"), Property.POSITION);
+            AddPropertyWords(AllWords(PluralWords("override"), Words("overridden")), Property.OVERRIDE);
+            AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
+            AddPropertyWords(PluralWords("coordinate", "position", "location"), Property.POSITION);
             AddPropertyWords(Words("target", "destination", "waypoint"), Property.TARGET);
-            AddPropertyWords(Words("waypoints"), Property.WAYPOINTS);
+            AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
-            AddPropertyWords(Words("strength", "force", "gravity", "torque"), Property.STRENGTH);
-            AddPropertyWords(Words("countdown"), Property.COUNTDOWN);
+            AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
+            AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
             AddPropertyWords(Words("name", "label"), Property.NAME);
+            AddPropertyWords(Words("names", "labels"), Property.NAMES);
             AddPropertyWords(Words("show", "showing"), Property.SHOW);
             AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
             AddPropertyWords(Words("actions"), Property.ACTIONS);
-            AddPropertyWords(Words("names"), Property.NAMES);
 
             //ValueProperty Words
-            AddWords(Words("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
+            AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
             AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
             AddWords(Words("action"), new ValuePropertyCommandParameter(ValueProperty.ACTION));
             AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
@@ -301,6 +301,10 @@ namespace IngameScript {
         }
 
         String[] Words(params String[] words) => words;
+
+        String[] AllWords(params String[][] words) => words.Aggregate((a, b) => a.Concat(b).ToArray());
+
+        String[] PluralWords(params String[] words) => words.Concat(words.Select(w => w + "s")).ToArray();
 
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
             if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
