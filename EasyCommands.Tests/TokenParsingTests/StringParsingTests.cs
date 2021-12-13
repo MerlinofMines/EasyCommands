@@ -78,6 +78,15 @@ namespace EasyCommands.Tests.TokenParsingTests {
         }
 
         [TestMethod]
+        public void EscapedSingleQuotes() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var tokens = program.ParseTokens("print `It's awesome!`");
+            Assert.AreEqual(2, tokens.Count);
+            Assert.AreEqual("print", tokens[0].original);
+            Assert.AreEqual("It's awesome!", tokens[1].original);
+        }
+
+        [TestMethod]
         public void DoubleQuotesInsideSingleQuotes() {
             var program = MDKFactory.CreateProgram<Program>();
             var tokens = program.ParseTokens("tell the \"test program\" to 'run \"goto testFunction\"'");

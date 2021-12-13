@@ -378,27 +378,20 @@ namespace IngameScript {
             return commandParameters;
         }
 
-        //Taken shamelessly from https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        public List<Token> ParseTokens(String commandString) {
-            if (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) return NewList<Token>();
-
-            List<Token> singleQuoteTokens = commandString.Trim().Split('\'')
-            .SelectMany((element, index) => index % 2 == 0  // If even index
-                ? ParseDoubleQuotes(element)  // Split the item
-                : new Token[] { new Token(element, true, true) })  // Keep the entire item
+        public List<Token> ParseTokens(String commandString) => (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) ? NewList<Token>() :
+            ParseSurrounded(commandString, new[] { '`', '\'', '\"' },
+                u => u.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .SelectMany(ParseSeparateTokens)
+                    .Select(v => new Token(v, false, false))
+                    .ToArray())
             .ToList();
 
-            return singleQuoteTokens;
-        }
-
-        Token[] ParseDoubleQuotes(String commandString) =>
-            commandString.Trim().Split('"')
-                .Select((element, index) => index % 2 == 0  // If even index
-                    ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(ParseSeparateTokens)
-                    .Select(t => new Token(t, false, false))  // Split the item
-                    : new Token[] { new Token(element, true, false) })  // Keep the entire item
-                .SelectMany(element => element)
+        Token[] ParseSurrounded(String token, char[] characters, Func<String, Token[]> parseSubTokens) =>
+            characters.Length == 0 ? parseSubTokens(token) :
+                token.Trim().Split(characters[0])
+                .SelectMany((element, index) => index % 2 == 0  // If even index
+                    ? ParseSurrounded(element, characters.RemoveIndices(NewList(0)), parseSubTokens)  // Split the item
+                    : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
                 .ToArray();
 
         String[] ParseSeparateTokens(String command) {
