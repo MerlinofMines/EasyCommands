@@ -172,6 +172,6 @@ namespace IngameScript {
 
         static int HexToInt(string hex) => int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier);
 
-        static string IntToHex(int hex) => hex.ToString("X");
+        static string IntToHex(int hex) => hex.ToString("X2");
     }
 }
