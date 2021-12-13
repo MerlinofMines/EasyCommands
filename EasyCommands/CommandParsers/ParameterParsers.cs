@@ -283,7 +283,7 @@ namespace IngameScript {
             RegisterToString<SelectorCommandParameter>(p => "[Selector]");
             RegisterToString<ThatCommandParameter>(p => "That");
             RegisterToString<AssignmentCommandParameter>(p => "[Action]");
-            RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType +"]");
+            RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType + "]");
         }
 
         Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = NewDictionary<Type, Func<CommandParameter, object>>();
@@ -379,18 +379,18 @@ namespace IngameScript {
         }
 
         public List<Token> ParseTokens(String commandString) => (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) ? NewList<Token>() :
-            ParseSurrounded(commandString, new[] { '`', '\'', '\"' },
+            ParseSurrounded(commandString, "`\'\"",
                 u => u.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .SelectMany(ParseSeparateTokens)
                     .Select(v => new Token(v, false, false))
                     .ToArray())
             .ToList();
 
-        Token[] ParseSurrounded(String token, char[] characters, Func<String, Token[]> parseSubTokens) =>
+        Token[] ParseSurrounded(String token, string characters, Func<String, Token[]> parseSubTokens) =>
             characters.Length == 0 ? parseSubTokens(token) :
                 token.Trim().Split(characters[0])
                 .SelectMany((element, index) => index % 2 == 0  // If even index
-                    ? ParseSurrounded(element, characters.RemoveIndices(NewList(0)), parseSubTokens)  // Split the item
+                    ? ParseSurrounded(element, characters.Remove(0,1), parseSubTokens)  // Split the item
                     : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
                 .ToArray();
 

@@ -18,7 +18,9 @@ using VRage;
 using VRageMath;
 using System.Runtime.CompilerServices;
 
+#pragma warning disable ProhibitedMemberRule // Prohibited Type Or Member
 [assembly: InternalsVisibleTo("EasyCommands.Tests")]
+#pragma warning restore ProhibitedMemberRule // Prohibited Type Or Member
 namespace IngameScript {
     public partial class Program : MyGridProgram {
         #region mdk preserve
