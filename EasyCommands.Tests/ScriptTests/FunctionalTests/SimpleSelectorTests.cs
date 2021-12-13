@@ -256,6 +256,37 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void MultiAndConditionalIndexSelector() {
+            using (var test = new ScriptTest(@"turn on the power to ""test batteries"" that are recharging and whose level > 10000 and that are off")) {
+                var mockBattery1 = new Mock<IMyBatteryBlock>();
+                var mockBattery2 = new Mock<IMyBatteryBlock>();
+                var mockBattery3 = new Mock<IMyBatteryBlock>();
+                test.MockBlocksInGroup("test batteries", mockBattery1, mockBattery2, mockBattery3);
+
+                mockBattery1.Setup(p => p.ChargeMode).Returns(ChargeMode.Recharge);
+                mockBattery2.Setup(p => p.ChargeMode).Returns(ChargeMode.Auto);
+                mockBattery3.Setup(p => p.ChargeMode).Returns(ChargeMode.Recharge);
+
+                mockBattery1.Setup(p => p.CurrentStoredPower).Returns(5000);
+                mockBattery2.Setup(p => p.CurrentStoredPower).Returns(11000);
+                mockBattery3.Setup(p => p.CurrentStoredPower).Returns(12000);
+
+                mockBattery1.Setup(p => p.Enabled).Returns(false);
+                mockBattery2.Setup(p => p.Enabled).Returns(false);
+                mockBattery3.Setup(p => p.Enabled).Returns(false);
+
+                test.RunOnce();
+
+                mockBattery1.Verify(p => p.ChargeMode);
+                mockBattery1.Verify(p => p.CurrentStoredPower);
+                mockBattery1.VerifyNoOtherCalls();
+                mockBattery2.Verify(p => p.ChargeMode);
+                mockBattery2.VerifyNoOtherCalls();
+                mockBattery3.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
         public void OrConditionalIndexSelector() {
             using (var test = new ScriptTest(@"turn on the power to ""test batteries"" that are recharging or whose level > 10000")) {
                 var mockBattery1 = new Mock<IMyBatteryBlock>();

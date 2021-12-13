@@ -21,6 +21,8 @@ namespace IngameScript {
     partial class Program {
         public delegate bool BlockCondition(Object block, Block blockType);
         public delegate bool PrimitiveComparator(Primitive a, Primitive b);
+        public BlockCondition AndCondition(BlockCondition a, BlockCondition b) => new BlockCondition((block, blockType) => a(block, blockType) && b(block, blockType));
+        public BlockCondition OrCondition(BlockCondition a, BlockCondition b) => new BlockCondition((block, blockType) => a(block, blockType) || b(block, blockType));
 
         public static BlockCondition BlockPropertyCondition(PropertySupplier property, PrimitiveComparator comparator, Variable comparisonValue) => (block, blockType) => {
             Primitive value = comparisonValue.GetValue();

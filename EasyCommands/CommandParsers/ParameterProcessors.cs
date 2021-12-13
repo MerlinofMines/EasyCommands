@@ -211,10 +211,10 @@ namespace IngameScript {
             //BlockConditionProcessors
             ThreeValueRule<AndCommandParameter, BlockConditionCommandParameter, ThatCommandParameter, BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p, left, with, right) => new BlockConditionCommandParameter((block, blockType) => left.GetValue().value(block, blockType) && right.GetValue().value(block, blockType))),
+                (p, left, with, right) => new BlockConditionCommandParameter(PROGRAM.AndCondition(left.GetValue().value, right.GetValue().value))),
             ThreeValueRule<OrCommandParameter, BlockConditionCommandParameter, ThatCommandParameter, BlockConditionCommandParameter>(
                 requiredLeft<BlockConditionCommandParameter>(), optionalRight<ThatCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
-                (p, left, with, right) => new BlockConditionCommandParameter((block, blockType) => left.GetValue().value(block, blockType) || right.GetValue().value(block, blockType))),
+                (p, left, with, right) => new BlockConditionCommandParameter(PROGRAM.OrCondition(left.GetValue().value, right.GetValue().value))),
 
             //ThatBlockConditionProcessor
             FourValueRule<ThatCommandParameter, ComparisonCommandParameter, PropertyCommandParameter, DirectionCommandParameter, VariableCommandParameter>(
