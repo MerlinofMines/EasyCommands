@@ -829,6 +829,23 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void SortListByKeys() {
+            String script = @"
+:main
+assign myList to [""one"" -> 1, ""two"" -> 2, ""three"" -> 3]
+Print ""Before: "" + myList
+assign myList to myList[sorted myList keys]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [one->1,two->2,three->3]"));
+                Assert.IsTrue(test.Logger.Contains("After: [one->1,three->3,two->2]"));
+            }
+        }
+
+        [TestMethod]
         public void InsertIntoMiddleOfListOfVariableSize() {
             String script = @"
 :main

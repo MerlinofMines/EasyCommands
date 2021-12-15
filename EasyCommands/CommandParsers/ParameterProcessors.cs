@@ -158,14 +158,14 @@ namespace IngameScript {
             //ListIndexAsVariableProcessor
             NoValueRule<ListIndexCommandParameter>(list => new VariableCommandParameter(list.value)),
 
-            //UniOperationProcessor
-            OneValueRule<UniOperationCommandParameter, VariableCommandParameter>(
-                requiredRight<VariableCommandParameter>(),
-                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
-
             //AfterUniOperationProcessor
             OneValueRule<LeftUniOperationCommandParameter, VariableCommandParameter>(
                 requiredLeft<VariableCommandParameter>(),
+                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
+
+            //UniOperationProcessor
+            OneValueRule<UniOperationCommandParameter, VariableCommandParameter>(
+                requiredRight<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.GetValue().value))),
 
             //Tier1OperationProcessor
