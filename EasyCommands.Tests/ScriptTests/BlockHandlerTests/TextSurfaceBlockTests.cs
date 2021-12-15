@@ -25,6 +25,24 @@ set the ""text panel"" display text to ""Hello World""
         }
 
         [TestMethod]
+        public void SetTextPanelGroupText() {
+            String script = @"
+set the ""text panels"" display group text to ""Hello World""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTextPanel = new Mock<IMyTextPanel>();
+                var mockTextPanel2 = new Mock<IMyTextPanel>();
+                test.MockBlocksInGroup("text panels", mockTextPanel, mockTextPanel2);
+
+                test.RunUntilDone();
+
+                mockTextPanel.Verify(b => b.WriteText("Hello World", false));
+                mockTextPanel2.Verify(b => b.WriteText("Hello World", false));
+            }
+        }
+
+        [TestMethod]
         public void SetTextPanelTextMultiLine() {
             String script = @"
 set the ""text panel"" display text to ""Hello World\nThis is my life""
@@ -86,6 +104,47 @@ set the ""test program"" display @ 0 text to ""Hello World""
                 test.RunUntilDone();
 
                 mockDisplay.Verify(b => b.WriteText("Hello World", false));
+            }
+        }
+
+        /**
+         * Since Blocks with displays often have more than 1, ensure that we are still referring to
+         * a block, not a block group.
+         */
+        [TestMethod]
+        public void SetProgrammableBlockDisplaysText() {
+            String script = @"
+set the ""test program"" displays @ 0 text to ""Hello World""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockProgram = new Mock<IMyProgrammableBlock>();
+                var mockDisplay = new Mock<IMyTextSurface>();
+
+                MockTextSurfaces(mockProgram, mockDisplay);
+
+                test.MockBlocksOfType("test program", mockProgram);
+
+                test.RunUntilDone();
+
+                mockDisplay.Verify(b => b.WriteText("Hello World", false));
+            }
+        }
+
+        /**
+ * Since Blocks with displays often have more than 1, ensure that we are still referring to
+ * a block, not a block group.
+ */
+        [TestMethod]
+        public void SetMyDisplaysText() {
+            String script = @"
+set my displays @ 0 text to ""Hello World""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                test.display.Verify(b => b.WriteText("Hello World", false));
             }
         }
 

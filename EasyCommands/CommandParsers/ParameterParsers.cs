@@ -228,7 +228,7 @@ namespace IngameScript {
             AddBlockWords(Words("welder"), Block.WELDER);
             AddBlockWords(Words("grinder"), Block.GRINDER);
             AddBlockWords(Words("door", "hangar", "bay", "gate"), Block.DOOR);
-            AddBlockWords(Words("display", "screen", "lcd"), Block.DISPLAY);
+            AddBlockWords(PluralWords("display", "screen", "lcd"), Words(""), Block.DISPLAY);
             AddBlockWords(Words("speaker", "alarm", "siren"), Block.SOUND);
             AddBlockWords(Words("camera"), Block.CAMERA);
             AddBlockWords(Words("sensor"), Block.SENSOR);
