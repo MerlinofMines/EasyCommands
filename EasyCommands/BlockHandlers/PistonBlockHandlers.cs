@@ -44,10 +44,10 @@ namespace IngameScript {
 
         static void ExtendPistonToValue(IMyPistonBase piston, float value) {
             if (piston.CurrentPosition < value) {
-                piston.SetValue("UpperLimit", value);
+                piston.MaxLimit = value;
                 piston.Extend();
             } else {
-                piston.SetValue("LowerLimit", value);
+                piston.MinLimit = value;
                 piston.Retract();
             }
         }

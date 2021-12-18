@@ -28,7 +28,6 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"reverse the ""test piston""")) {
                 Mock<IMyPistonBase> mockPiston = new Mock<IMyPistonBase>();
                 test.MockBlocksOfType("test piston", mockPiston);
-                mockPiston.Setup(p => p.Velocity).Returns(1);
 
                 test.RunUntilDone();
 
