@@ -155,7 +155,11 @@ namespace IngameScript {
 
             //NotProcessor
             OneValueRule(Type<NotCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.NOT, right.value))),
+                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.REVERSE, right.value))),
+
+            //ReverseProcessor
+            OneValueRule(Type<ReverseCommandParameter>, requiredRight<VariableCommandParameter>(),
+                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.REVERSE, right.value))),
 
             //AndProcessor
             TwoValueRule(Type<AndCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -226,7 +230,7 @@ namespace IngameScript {
 
             //IfProcessor
             OneValueRule(Type<IfCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.NOT, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
+                (p, var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.REVERSE, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
 
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(

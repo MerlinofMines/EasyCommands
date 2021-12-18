@@ -78,7 +78,7 @@ namespace IngameScript {
             AddUniOperation<KeyedList>(UniOperand.SORT, a => new KeyedList(a.keyedValues.OrderBy(k => k).ToArray()));
 
             //Booleans
-            AddUniOperation<bool>(UniOperand.NOT, a => !a);
+            AddUniOperation<bool>(UniOperand.REVERSE, a => !a);
             AddBiOperation<bool, bool>(BiOperand.AND, (a, b) => a && b);
             AddBiOperation<bool, bool>(BiOperand.OR, (a, b) => a || b);
             AddBiOperation<String, object>(BiOperand.CONTAINS, (a, b) => a.Contains(CastString(ResolvePrimitive(b))));
@@ -95,7 +95,7 @@ namespace IngameScript {
             AddBiOperation<KeyedList, KeyedList>(BiOperand.COMPARE, (a, b) => Enumerable.SequenceEqual(a.keyedValues, b.keyedValues));
 
             //Numeric
-            AddUniOperation<float>(UniOperand.NOT, a => -a);
+            AddUniOperation<float>(UniOperand.REVERSE, a => -a);
             AddUniOperation<float>(UniOperand.ABS, a => Math.Abs(a));
             AddUniOperation<float>(UniOperand.SQRT, a => Math.Sqrt(a));
             AddUniOperation<float>(UniOperand.SIN, a => Math.Sin(a));
@@ -118,6 +118,7 @@ namespace IngameScript {
             AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
 
             //String
+            AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));
             AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)));
             AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)) + b);
             AddBiOperation<string, string>(BiOperand.SUBTRACT, (a, b) => a.Contains(b) ? a.Remove(a.IndexOf(b)) + a.Substring(a.IndexOf(b) + b.Length) :  a);
@@ -126,7 +127,7 @@ namespace IngameScript {
             AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
 
             //Vector
-            AddUniOperation<Vector3D>(UniOperand.NOT, a => -a);
+            AddUniOperation<Vector3D>(UniOperand.REVERSE, a => -a);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => a + b);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTRACT, (a, b) => a - b);
             AddBiOperation<Vector3D, float>(BiOperand.ADD, (a, b) => Vector3D.Multiply(a, (a.Length() + b) / a.Length()));
@@ -142,7 +143,7 @@ namespace IngameScript {
             AddBiOperation<Vector3D, Vector3D>(BiOperand.MOD, (a, b) => Vector3D.Reject(a, b));
 
             //Color
-            AddUniOperation<Color>(UniOperand.NOT, a => new Color(255 - a.R, 255 - a.G, 255 - a.B));
+            AddUniOperation<Color>(UniOperand.REVERSE, a => new Color(255 - a.R, 255 - a.G, 255 - a.B));
             AddBiOperation<Color, Color>(BiOperand.ADD, (a, b) => a + b);
             AddBiOperation<Color, Color>(BiOperand.SUBTRACT, (a, b) => new Color(Math.Max(a.R - b.R, 0), Math.Max(a.G - b.G,0), Math.Max(a.B - b.B, 0)));
             AddBiOperation<Color, float>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(a, b));

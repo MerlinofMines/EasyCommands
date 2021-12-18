@@ -99,7 +99,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             Assert.IsTrue(conditionalCommand.condition is UniOperandVariable);
             UniOperandVariable variable = (UniOperandVariable)conditionalCommand.condition;
-            Assert.AreEqual(UniOperand.NOT, variable.operand);
+            Assert.AreEqual(UniOperand.REVERSE, variable.operand);
             Assert.IsTrue(variable.a is AggregateConditionVariable);
             AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;
             Assert.IsTrue(condition.entityProvider is BlockTypeSelector);

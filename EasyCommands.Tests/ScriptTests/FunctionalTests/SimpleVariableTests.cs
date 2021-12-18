@@ -237,5 +237,96 @@ Print ""a is: "" + a
                 Assert.IsTrue(test.Logger.Contains("a is: 1"));
             }
         }
+
+        [TestMethod]
+        public void ReverseBoolean() {
+            var script = @"
+set a to true
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ReverseNumber() {
+            var script = @"
+set a to 3
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: -3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ReverseString() {
+            var script = @"
+set a to ""myString""
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: gnirtSym", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ReverseVector() {
+            var script = @"
+set a to 1:2:3
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: -1:-2:-3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ReverseColor() {
+            var script = @"
+set a to #FF00FF
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: #00FF00", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ReverseList() {
+            var script = @"
+set a to [""one""-> 1,2,3]
+Print ""a: "" + reverse a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: [3,2,one->1]", test.Logger[0]);
+            }
+        }
+
     }
 }

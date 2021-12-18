@@ -761,6 +761,23 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void ReverseListUsingReverseKeyword() {
+            String script = @"
+:main
+assign myList to [1,2,3,4,5]
+Print ""Before: "" + myList
+assign myList to reverse myList
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4,5]"));
+                Assert.IsTrue(test.Logger.Contains("After: [5,4,3,2,1]"));
+            }
+        }
+
+        [TestMethod]
         public void ReverseListUsingReversedKeyword() {
             String script = @"
 :main

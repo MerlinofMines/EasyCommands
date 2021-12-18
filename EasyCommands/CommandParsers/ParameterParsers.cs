@@ -58,7 +58,7 @@ namespace IngameScript {
             //Action Words
             AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
             AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate", "apply"), new AssignmentCommandParameter());
-            AddWords(Words("reverse"), new ReverseCommandParameter());
+            AddWords(Words("reverse", "reversed"), new ReverseCommandParameter());
             AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
             AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
             AddWords(Words("increase", "increment", "add", "by", "++", "+="), new IncrementCommandParameter());
@@ -185,7 +185,6 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
             AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
             AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
-            AddRightUniOperationWords(Words("reversed"), UniOperand.REVERSE);
             AddRightUniOperationWords(Words("sorted"), UniOperand.SORT);
 
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);

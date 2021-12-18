@@ -196,7 +196,7 @@ namespace IngameScript {
                 }
 
                 if (notValue) {
-                    variableValue = new UniOperandVariable(UniOperand.NOT, variableValue);
+                    variableValue = new UniOperandVariable(UniOperand.REVERSE, variableValue);
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);
                 }
 

@@ -43,7 +43,7 @@ namespace IngameScript {
                     PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                     BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
                     if (property != null) supplier = WithPropertyType(property.value.propertyType);
-                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.WithPropertyValue(new UniOperandVariable(UniOperand.NOT, propertyValue ?? GetStaticVariable(true)));
+                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 } else {
                     supplier = WithPropertyType(propertyString);
                 }
