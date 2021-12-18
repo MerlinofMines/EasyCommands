@@ -144,6 +144,8 @@
     <Compile Include="BlockHandlers\WarheadBlockHandlers.cs" />
     <Compile Include="BlockHandlers\WheelBlockHandlers.cs" />
     <Compile Include="BlockHandlers\EngineBlockHandlers.cs" />
+    <Compile Include="CommandParsers\DataProcessors.cs" />
+    <Compile Include="CommandParsers\ProcessingEngine.cs" />
     <Compile Include="CommandParsers\ParsingEngine.cs" />
     <Compile Include="CommandParsers\ParameterParsers.cs" />
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
