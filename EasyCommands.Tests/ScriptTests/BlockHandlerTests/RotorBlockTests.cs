@@ -119,6 +119,78 @@ set the ""rotor"" lower limit to 30
         }
 
         [TestMethod]
+        public void rotateTheRotorClockwise() {
+            String script = @"
+rotate the ""rotor"" clockwise
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.TargetVelocityRPM).Returns(-1);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.TargetVelocityRPM = 1);
+            }
+        }
+
+        [TestMethod]
+        public void rotateTheRotorCounterClockwise() {
+            String script = @"
+rotate the ""rotor"" counterclockwise
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.TargetVelocityRPM).Returns(1);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.TargetVelocityRPM = -1);
+            }
+        }
+
+        [TestMethod]
+        public void increaseTheRotorHeight() {
+            String script = @"
+increase the ""rotor"" height
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.Displacement).Returns(0);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.Displacement = 0.1f);
+            }
+        }
+
+        [TestMethod]
+        public void decreaseTheRotorHeight() {
+            String script = @"
+decrease the ""rotor"" height
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(r => r.Displacement).Returns(0);
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.Displacement = -0.1f);
+            }
+        }
+
+        [TestMethod]
         public void setRotorAngleGreaterThanMovesClockwise() {
             String script = @"
 rotate the ""rotor"" to 30
