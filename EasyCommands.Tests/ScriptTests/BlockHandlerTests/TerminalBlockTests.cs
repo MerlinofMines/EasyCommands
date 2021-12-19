@@ -327,5 +327,56 @@ show the ""test terminal""
                 action.Verify(p => p.Apply(mockBlock.Object));
             }
         }
+
+        [TestMethod]
+        public void ApplyBlockVariableAction() {
+            String script = @"
+set myAction to ""Action1""
+apply the ""test terminal"" myAction action";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
+
+        [TestMethod]
+        public void ApplyVariableActionName() {
+            String script = @"
+set myAction to ""Action1""
+apply myAction action to the ""test terminal""";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
+
+        [TestMethod]
+        public void TellSelectorToApplyVariableAction() {
+            String script = @"
+set myAction to ""Action1""
+tell the ""test terminal"" to apply the myAction action";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
     }
 }

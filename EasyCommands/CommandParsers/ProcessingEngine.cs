@@ -105,8 +105,15 @@ namespace IngameScript {
             OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
                 (name, function) => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value], function.value)),
 
+
+            //ValuePropertyProcessor
+            //Needs to check left, then right, which is opposite the typical checks.
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<StringCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(GetStaticVariable(v.value)))),
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(new AmbiguousStringVariable(v.value)))),
+            OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
+            OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
 
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
@@ -117,13 +124,6 @@ namespace IngameScript {
 
             //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
-
-            //ValuePropertyProcessor
-            //Needs to check left, then right, which is opposite the typical checks.
-            OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
-            OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<PropertyAggregationCommandParameter>(),
