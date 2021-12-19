@@ -15,9 +15,21 @@ Default Directional Properties
 ## "Complete" property
 * Read-only
 * Primitive Type: Bool
-* Keywords: ```done, ready, complete, finished```
+* Keywords: ```done, ready, complete, finished, pressurized, depressurized```
 
-Returns true if the airvent is not actively pressurizing or depressuring, false otherwise.
+Returns true if the airvent is not actively pressurizing or depressuring, false otherwise.  Note the "pressurized" and "depressurized" both return true if the airvent is not in progress.
+To determine the full state of the air vent, use this property in combination with the "Pressurize" property.
+
+Due to a quark of Space Engineers, sometimes completely depressurized is not registered as "Complete" by Space Engineers.  As a work around, this property considers a pressurized ratio < 0.0001 as Complete.
+
+```
+#Pressurize Property to depressurize Air Lock Vent
+depressurize the "Air Lock Vent"
+
+#Complete Property to wait until we are finished depresssurizing
+until the "Air Lock Vent" is depressurized
+  Print "Please wait..."
+```
 
 ## "Run" property
 * Read-only
@@ -25,11 +37,6 @@ Returns true if the airvent is not actively pressurizing or depressuring, false 
 * Keywords: ```run, running```
 
 The opposite of "complete".  Returns true if the airvent is actively pressuring or depressuring, false otherwise.
-
-```
-until the "Air Lock Vent" is complete
-  Print "Please wait..."
-```
 
 ```
 while the "Air Lock Vent" is running
@@ -41,7 +48,8 @@ while the "Air Lock Vent" is running
 * Keywords: ```pressurize, pressurized```
 * Inverse Keywords: ```depressurize, depressurized```
 
-Gets or sets whether the air vent is currently pressurized.  If the Vent is de-pressurized, de-pressurizing, or pressurizing, this will return false.
+Gets or sets whether the air vent pressurizing mode (pressurizing or de-pressuring).  This property does not indicate the actual pressurization state, but rather the mode.  To get the
+pressurization state, use this property in combination with either the "Complete" or "Run" property. 
 
 ```
 until the "Air Vent" is pressurized
@@ -52,6 +60,25 @@ until the "Air Vent" is pressurized
 depressurize the "Air Vent"
 when the "Air Vent" is complete
   open the "External Door"
+```
+## Examples
+
+Here's a full example to get all possible Air Vent states.  Substitute with your own air vent to test yourself.
+
+```
+set myAirVent to "Airlock Vent"
+
+if $myAirVent is pressurizing and $myAirVent is pressurized
+  set my display to myAirVent + " is completely pressurized"
+else if $myAirVent is pressurizing and $myAirVent is running
+  set my display myAirVent + " is pressurizing"
+else if $myAirVent is depressurizing and $myAirVent is depressurized
+  set my display myAirVent + " is completely depressurized"
+else if $myAirVent is depressurizing and $myAirVent is not complete
+  set my display myAirVent + " is depressurizing"
+
+increase my display text by "\nLevel: " + $myAirVent level
+replay
 ```
 
 ## "Ratio" property

@@ -25,23 +25,26 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b,v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
                 AddPropertyHandler(ValueProperty.CREATE, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) > 0),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p); }
                 }) ;
                 AddPropertyHandler(ValueProperty.DESTROY, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) > 0),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p.attributeValue.GetValue(), v); }
-                });
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
+                 });
 
                 AddPropertyHandler(ValueProperty.AMOUNT, new PropertyHandler<IMyAssembler>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
-                    Set = (b, p, v) => AddQueueItem(b, p.attributeValue.GetValue(), v)
+                    Set = (b, p, v) => AddQueueItem(b, p)
                 });
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
 
+            float GetRequestedAmount(PropertySupplier p) => CastNumber(NewList(p.attributeValue.GetValue(), (p.propertyValue ?? GetStaticVariable(1)).GetValue()).Find(v => v.returnType == Return.NUMERIC) ?? ResolvePrimitive(1));
+            string GetRequestedItemFilter(PropertySupplier p) => CastString(NewList(p.attributeValue.GetValue(), (p.propertyValue ?? GetStaticVariable("*")).GetValue()).Find(v => v.returnType == Return.STRING) ?? ResolvePrimitive("*"));
+
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
-                var definitions = PROGRAM.GetItemBluePrints(CastString(p.attributeValue.GetValue()));
+                var definitions = PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p));
                 var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
                 MyFixedPoint value = currentItems
@@ -52,19 +55,9 @@ namespace IngameScript {
                 return (float)value;
             }
 
-            void AddQueueItem(IMyAssembler b, Primitive v1, Primitive v2) {
-                string itemString = CastString(v1.returnType == Return.STRING ? v1 : v2);
-
-                float amount = 1f;
-                if (v1.returnType == Return.NUMERIC) {
-                    amount = CastNumber(v1);
-                } else if (v2.returnType == Return.NUMERIC) {
-                    amount = CastNumber(v2);
-                }
-
-                List<MyDefinitionId> blueprints = PROGRAM.GetItemBluePrints(itemString);
-
-                foreach(MyDefinitionId bp in blueprints) {
+            void AddQueueItem(IMyAssembler b, PropertySupplier p) {
+                float amount = GetRequestedAmount(p);
+                foreach(MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p))) {
                     b.AddQueueItem(bp, (MyFixedPoint)amount);
                 }
             }

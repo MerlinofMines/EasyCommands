@@ -345,3 +345,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
+docs/docs.projitems
+docs/docs.shproj

@@ -73,6 +73,30 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void SetAssemblerToAuto() {
+            using (ScriptTest test = new ScriptTest(@"set ""test assembler"" to auto")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.CooperativeMode = true);
+            }
+        }
+
+        [TestMethod]
+        public void TellAssemblerToCooperate() {
+            using (ScriptTest test = new ScriptTest(@"tell ""test assembler"" to cooperate")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.CooperativeMode = true);
+            }
+        }
+
+        [TestMethod]
         public void GetAssemblerSteelPlateAmountWithEmptyQueue() {
             using (ScriptTest test = new ScriptTest(@"Print ""Steel Plate Remaining: "" + ""test assembler"" ""steel plate"" amount")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
@@ -137,6 +161,34 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void IsTheAssemblerCreatingSteelPlate() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Creating Steel Plate: "" + ""test assembler"" is creating ""steel plate""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("SteelPlate", 100));
+                mockAssembler.Setup(b => b.Mode).Returns(MyAssemblerMode.Assembly);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Creating Steel Plate: True"));
+            }
+        }
+
+        [TestMethod]
+        public void DestroyingSteelPlateIsNotCreating() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Creating Steel Plate: "" + ""test assembler"" is creating ""steel plate""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("SteelPlate", 100));
+                mockAssembler.Setup(b => b.Mode).Returns(MyAssemblerMode.Disassembly);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Creating Steel Plate: False"));
+            }
+        }
+
+        [TestMethod]
         public void DestroySteelPlate() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to destroy ""steel plate""")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
@@ -159,6 +211,34 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 mockAssembler.VerifySet(b => b.Mode = MyAssemblerMode.Disassembly);
                 mockAssembler.Verify(b => b.AddQueueItem(MockBlueprint("SteelPlate"), (MyFixedPoint)10));
+            }
+        }
+
+        [TestMethod]
+        public void IsTheAssemblerDestroyingSteelPlate() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Destroying Steel Plate: "" + ""test assembler"" is destroying ""steel plate""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("SteelPlate", 100));
+                mockAssembler.Setup(b => b.Mode).Returns(MyAssemblerMode.Disassembly);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Destroying Steel Plate: True"));
+            }
+        }
+
+        [TestMethod]
+        public void AssemblingSteelPlateIsNotDestroying() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Destroying Steel Plate: "" + ""test assembler"" is creating ""steel plate""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("SteelPlate", 100));
+                mockAssembler.Setup(b => b.Mode).Returns(MyAssemblerMode.Disassembly);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Destroying Steel Plate: False"));
             }
         }
     }

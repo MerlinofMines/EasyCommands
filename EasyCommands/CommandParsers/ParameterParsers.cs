@@ -78,7 +78,7 @@ namespace IngameScript {
             AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
-            AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish"), Property.COMPLETE);
+            AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("fontsize", "size"), Property.FONT_SIZE);
@@ -96,12 +96,12 @@ namespace IngameScript {
             AddPropertyWords(PluralWords("blinkoffset", "offset"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
             AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
-            AddPropertyWords(Words("pressure", "pressurize", "pressurized", "supply", "supplying", "generate", "discharge", "discharging", "broadcast", "broadcasting"), Property.SUPPLY);
-            AddPropertyWords(Words("stockpile", "depressurize", "depressurized", "gather", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting"), Property.SUPPLY, false);
+            AddPropertyWords(Words("pressure", "pressurize", "pressurizing", "supply", "supplying", "generate", "generating", "discharge", "discharging", "broadcast", "broadcasting", "assemble", "assembling"), Property.SUPPLY);
+            AddPropertyWords(Words("stockpile", "depressurize", "depressurizing", "gather", "gathering", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting", "disassemble", "disassembling"), Property.SUPPLY, false);
             AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
             AddPropertyWords(PluralWords("input", "pilot", "user"), Property.INPUT);
             AddPropertyWords(PluralWords("roll", "rollInput"), Property.ROLL_INPUT);
-            AddPropertyWords(Words("auto", "refill", "drain", "draining"), Property.AUTO);
+            AddPropertyWords(Words("auto", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
             AddPropertyWords(AllWords(PluralWords("override"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
             AddPropertyWords(PluralWords("coordinate", "position", "location"), Property.POSITION);
@@ -121,8 +121,8 @@ namespace IngameScript {
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
             AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
             AddWords(Words("action"), new ValuePropertyCommandParameter(ValueProperty.ACTION));
-            AddWords(Words("assemble", "assembling", "produce", "producing", "create", "creating", "build", "building"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
-            AddWords(Words("disassemble", "disassembling", "destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
+            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
+            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
 
             //Special Command Words
             AddWords(Words("times", "iterations"), new RepeatCommandParameter());
