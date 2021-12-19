@@ -130,6 +130,7 @@
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\TransferCommandProcessorTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\AirVentBlockTests.cs" />
+    <Compile Include="ScriptTests\BlockHandlerTests\BeaconBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\ThrustBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\ProgramBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\DoorBlockTests.cs" />

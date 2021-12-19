@@ -146,6 +146,7 @@ Most block handlers have a shared set of properties in addition to specific prop
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
 * [Batteries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/battery "Battery Handler")
+* [Beacons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/beacon "Beacon Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
 
 
