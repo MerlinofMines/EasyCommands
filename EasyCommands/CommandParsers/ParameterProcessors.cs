@@ -162,7 +162,7 @@ namespace IngameScript {
         }
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
-            var assignmentProcessor = requiredEither<AssignmentCommandParameter>();
+            var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);
             var incrementProcessor = eitherList<IncrementCommandParameter>(true);
             var variableProcessor = requiredEither<VariableCommandParameter>();
             var propertyProcessor = requiredEither<PropertyCommandParameter>();

@@ -105,6 +105,9 @@ namespace IngameScript {
             OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
                 (name, function) => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value], function.value)),
 
+            OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<StringCommandParameter>(),
+                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(GetStaticVariable(v.value)))),
+
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
                 (p, g, name) => new VariableAssignmentCommandParameter(name.value, p.value, g.HasValue())),

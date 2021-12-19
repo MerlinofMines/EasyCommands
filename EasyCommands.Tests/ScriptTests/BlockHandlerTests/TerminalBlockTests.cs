@@ -297,5 +297,35 @@ show the ""test terminal""
                 action.Verify(p => p.Apply(mockBlock.Object));
             }
         }
+
+        [TestMethod]
+        public void ApplyActionOnSelector() {
+            String script = @"apply the ""Action1"" action on the ""test terminal"" ";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
+
+        [TestMethod]
+        public void TellSelectorToApplyAction() {
+            String script = @"tell the ""test terminal"" to apply the ""Action1"" action";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                var action = MockAction(mockBlock, "Action1");
+
+                test.RunUntilDone();
+
+                action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
     }
 }
