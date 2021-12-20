@@ -75,7 +75,7 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake"), Property.LOCKED);
+            AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
@@ -104,8 +104,8 @@ namespace IngameScript {
             AddPropertyWords(Words("auto", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
             AddPropertyWords(AllWords(PluralWords("override"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
-            AddPropertyWords(PluralWords("coordinate", "position", "location"), Property.POSITION);
-            AddPropertyWords(Words("target", "destination", "waypoint"), Property.TARGET);
+            AddPropertyWords(PluralWords("position", "location"), Property.POSITION);
+            AddPropertyWords(Words("target", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
@@ -262,7 +262,7 @@ namespace IngameScript {
             AddBlockWords(Words("ejector"), Block.EJECTOR);
             AddBlockWords(Words("decoy"), Block.DECOY);
             AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
-            AddBlockWords(Words("laser", "laserAntenna"), Block.LASER_ANTENNA);
+            AddBlockWords(Words("laser", "laserantenna"), Block.LASER_ANTENNA);
             AddBlockWords(Words("terminal"), Block.TERMINAL);
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
 

@@ -34,6 +34,18 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void SetTheLaserAntennaCoords() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test laser"" coords to ""1:2:3""")) {
+                Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
+                test.MockBlocksOfType("test laser", mockLaserAntenna);
+
+                test.RunUntilDone();
+
+                mockLaserAntenna.Verify(b => b.SetTargetCoords("GPS:Target:1:2:3:"));
+            }
+        }
+
+        [TestMethod]
         public void SetTheLaserAntennaTargetImplicit() {
             using (ScriptTest test = new ScriptTest(@"set the ""test laser"" to ""1:2:3""")) {
                 Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
@@ -61,6 +73,18 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void LockTheLaserAntenna() {
             using (ScriptTest test = new ScriptTest(@"lock the ""test laser""")) {
+                Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
+                test.MockBlocksOfType("test laser", mockLaserAntenna);
+
+                test.RunUntilDone();
+
+                mockLaserAntenna.VerifySet(b => b.IsPermanent = true);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheLaserAntennaToPermanent() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test laser"" to permanent")) {
                 Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
                 test.MockBlocksOfType("test laser", mockLaserAntenna);
 
