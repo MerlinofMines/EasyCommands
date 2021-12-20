@@ -148,5 +148,6 @@ Most block handlers have a shared set of properties in addition to specific prop
 * [Batteries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/battery "Battery Handler")
 * [Beacons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/beacon "Beacon Handler")
 * [Cameras](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/camera "Camera Handler")
+* [Doors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/door "Door Handler")
 * [Laser Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
