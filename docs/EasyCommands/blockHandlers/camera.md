@@ -22,12 +22,10 @@ Enables or Disables the given block
 #Enable Block
 enable "My Camera"
 set "My Camera" to enabled
-turn on "My Camera"
 
 #Disable Block
 disable "My Camera"
 set "My Camera" to disabled
-turn off "My Camera"
 ```
 
 ## "Power" Property
