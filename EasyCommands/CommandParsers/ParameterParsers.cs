@@ -95,7 +95,7 @@ namespace IngameScript {
             AddPropertyWords(PluralWords("blinklength"), Property.BLINK_LENGTH);
             AddPropertyWords(PluralWords("blinkoffset", "offset"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
-            AddPropertyWords(Words("trigger", "triggered", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
+            AddPropertyWords(Words("trigger", "triggered", "detect", "detected", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
             AddPropertyWords(Words("pressure", "pressurize", "pressurizing", "supply", "supplying", "generate", "generating", "discharge", "discharging", "broadcast", "broadcasting", "assemble", "assembling"), Property.SUPPLY);
             AddPropertyWords(Words("stockpile", "depressurize", "depressurizing", "gather", "gathering", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting", "disassemble", "disassembling"), Property.SUPPLY, false);
             AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
