@@ -140,10 +140,13 @@ tell "My Assembler" to destroy 10 "steel plate, interior plate"
 ```
 
 ## "Amount" Property
+* Requires a String Attribute indicating the [Item(s)](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") to get amounts for.
 * Primitive Type: Numeric
 * Keywords: ```amount, amounts```
 
 This property is similar to create/destroy, but the read value is a numeric.  This allows you to get the amount of item(s) being produced.
+
+Note that this property *does not* look for the amount of items in the Assembler's Inventory.  It is the amount of items in the Assembler's Production Queue.  To get the amount of item's in the Assembler's inventory, you will need to use the [Inventory Handler](https://spaceengineers.merlinofmines.com/EasyCommands/inventory "Inventory Item Handler")
 
 Also, this property does not automatically switch the Assembler mode.  
 

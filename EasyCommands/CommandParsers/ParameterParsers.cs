@@ -255,7 +255,7 @@ namespace IngameScript {
             AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
             AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
-            AddBlockWords(Words("cargo", "container", "inventory"), Words("containers", "inventories"), Block.CARGO);
+            AddBlockWords(Words("cargo", "container", "inventory", "inventories"), Words("containers"), Block.CARGO);
             AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
             AddBlockWords(Words("collector"), Block.COLLECTOR);

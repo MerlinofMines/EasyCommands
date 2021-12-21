@@ -27,6 +27,10 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, i => (float)i.CurrentVolume * 1000); //Volumes are returned in kL, convert to L
                 AddStringHandler(Property.NAME, b => GetOwner(b).CustomName, (b, v) => GetOwner(b).CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => GetOwner(b).ShowInInventory, (b, v) => GetOwner(b).ShowInInventory = v);
+
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
+                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SHOW;
             }
 
             public override void GetInstances(IMyTerminalBlock block, List<IMyInventory> instances) {

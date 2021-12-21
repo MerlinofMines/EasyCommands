@@ -96,6 +96,77 @@ print ""Ore Amount: "" + a
         }
 
         [TestMethod]
+        public void getCargoAmountFromMultipleInventoriesOnSameBlock() {
+            String script = @"
+assign ""a"" to ""mock cargo"" inventories ""ore"" amount
+print ""Ore Amount: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory1 = new Mock<IMyInventory>();
+                var mockInventory2 = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory1, mockInventory2);
+
+                MockInventoryItems(mockInventory1, MockOre("Iron", 200), MockOre("Stone", 100));
+                MockInventoryItems(mockInventory2, MockOre("Iron", 100), MockOre("Stone", 50));
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Ore Amount: 450", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void getCargoAmountFromSpecificInventoryOfBlockWithMultipleInventories() {
+            String script = @"
+assign ""a"" to ""mock cargo"" inventories[1] ""ore"" amount
+print ""Ore Amount: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory1 = new Mock<IMyInventory>();
+                var mockInventory2 = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory1, mockInventory2);
+
+                MockInventoryItems(mockInventory1, MockOre("Iron", 200), MockOre("Stone", 100));
+                MockInventoryItems(mockInventory2, MockOre("Iron", 100), MockOre("Stone", 50));
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Ore Amount: 150", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void getCargoAmountFromBlockGroupInventories() {
+            String script = @"
+assign ""a"" to ""mock cargo"" group inventories ""ore"" amount
+print ""Ore Amount: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer1 = new Mock<IMyCargoContainer>();
+                var mockContainer2 = new Mock<IMyCargoContainer>();
+                var mockInventory1 = new Mock<IMyInventory>();
+                var mockInventory2 = new Mock<IMyInventory>();
+                MockInventories(mockContainer1, mockInventory1);
+                MockInventories(mockContainer2, mockInventory2);
+
+                MockInventoryItems(mockInventory1, MockOre("Iron", 200), MockOre("Stone", 100));
+                MockInventoryItems(mockInventory2, MockOre("Iron", 100), MockOre("Stone", 50));
+
+                test.MockBlocksInGroup("mock cargo", mockContainer1, mockContainer2);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Ore Amount: 450", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void HideCargoInventory() {
             String script = @"
 hide the ""mock cargo"" inventory

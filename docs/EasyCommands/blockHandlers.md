@@ -142,6 +142,11 @@ turn on the "Elevator Piston"
 ## Common Block Handler Properties
 Most block handlers have a shared set of properties in addition to specific properties for that block type.  See [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler") for more information, as well as information on how to get and set properties for unsupported block types.
 
+## Managing Inventories and Production Queues
+You can also manage inventories and production queues using the [Inventory](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler") and [Assembler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Block Handler") Block Handlers.
+
+Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") for information on how to specify items and blueprints to these Block Handlers.
+
 ## Supported Block Handlers
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
@@ -149,5 +154,6 @@ Most block handlers have a shared set of properties in addition to specific prop
 * [Beacons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/beacon "Beacon Handler")
 * [Cameras](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/camera "Camera Handler")
 * [Doors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/door "Door Handler")
+* [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
 * [Laser Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
