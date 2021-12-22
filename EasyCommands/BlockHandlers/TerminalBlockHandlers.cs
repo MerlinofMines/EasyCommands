@@ -37,13 +37,13 @@ namespace IngameScript {
                 (b, p) => ResolvePrimitive(GetPropertyConverter(b, propertyId).GetValue(b, propertyId)),
                 (b, p, v) => GetPropertyConverter(b, propertyId).SetValue(b, propertyId, v), delta) { }
 
-            static Dictionary<String, TerminalPropertyConverter> TerminalPropertyValueConversion = new Dictionary<String, TerminalPropertyConverter> {
-                { "StringBuilder", PropertyConverter((b,p) => b.GetValue<StringBuilder>(p).ToString(), (b,p,v) => b.SetValue(p, new StringBuilder(CastString(v))))},
-                { "Boolean", PropertyConverter((b,p) => b.GetValueBool(p), (b,p,v) => b.SetValueBool(p, CastBoolean(v)))},
-                { "Single", PropertyConverter((b,p) => b.GetValueFloat(p), (b,p,v) => b.SetValueFloat(p, CastNumber(v)))},
-                { "Int64", PropertyConverter((b,p) => (float)b.GetValue<long>(p), (b,p,v) => b.SetValue(p, (long)CastNumber(v)))},
-                { "Color", PropertyConverter((b,p) => b.GetValueColor(p), (b,p,v) => b.SetValueColor(p, CastColor(v)))}
-            };
+            static Dictionary<String, TerminalPropertyConverter> TerminalPropertyValueConversion = NewDictionary(
+                KeyValuePair("StringBuilder", PropertyConverter((b, p) => b.GetValue<StringBuilder>(p).ToString(), (b, p, v) => b.SetValue(p, new StringBuilder(CastString(v))))),
+                KeyValuePair("Boolean", PropertyConverter((b, p) => b.GetValueBool(p), (b, p, v) => b.SetValueBool(p, CastBoolean(v)))),
+                KeyValuePair( "Single", PropertyConverter((b, p) => b.GetValueFloat(p), (b, p, v) => b.SetValueFloat(p, CastNumber(v)))),
+                KeyValuePair( "Int64", PropertyConverter((b, p) => (float)b.GetValue<long>(p), (b, p, v) => b.SetValue(p, (long)CastNumber(v)))),
+                KeyValuePair("Color", PropertyConverter((b, p) => b.GetValueColor(p), (b, p, v) => b.SetValueColor(p, CastColor(v))))
+            );
 
             static TerminalPropertyConverter GetPropertyConverter(T block, String propertyId) {
                 var property = block.GetProperty(propertyId);

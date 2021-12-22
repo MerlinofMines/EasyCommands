@@ -5,7 +5,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 using System;
 using System.Collections;
 using System.Collections.Generic;
- using System.Linq;
+using System.Linq;
 using System.Text;
 using VRage;
 using VRage.Collections;
@@ -19,8 +19,10 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        //Utilities for constructing collections with few characters
         static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
-        static Dictionary<T, U> NewDictionary<T, U>() => new Dictionary<T, U>();
+        static Dictionary<T, U> NewDictionary<T, U>(params KeyValuePair<T, U>[] elements) => elements.ToDictionary(e => e.Key, e => e.Value);
+        static KeyValuePair<T, U> KeyValuePair<T, U>(T key, U value) => new KeyValuePair<T, U>(key, value);
 
         public class KeyedList {
             public List<KeyedVariable> keyedValues;

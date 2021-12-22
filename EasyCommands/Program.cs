@@ -45,12 +45,12 @@ namespace IngameScript {
         List<Thread> asyncThreadQueue = NewList<Thread>();
         Dictionary<String, Variable> globalVariables = NewDictionary<String, Variable>();
 
-        Dictionary<ProgramState, KeyValuePair<String, bool>> programStateMap = new Dictionary<ProgramState, KeyValuePair<string, bool>> {
-            { ProgramState.RUNNING, new KeyValuePair<String, bool>("Running", true) },
-            { ProgramState.PAUSED, new KeyValuePair<String, bool>("Paused", false) },
-            { ProgramState.STOPPED, new KeyValuePair<String, bool>("Stopped", false) },
-            { ProgramState.COMPLETE, new KeyValuePair<String, bool>("Complete", false) }
-        };
+        Dictionary<ProgramState, KeyValuePair<String, bool>> programStateMap = NewDictionary(
+            KeyValuePair(ProgramState.RUNNING, KeyValuePair("Running", true)),
+            KeyValuePair(ProgramState.PAUSED, KeyValuePair("Paused", false)),
+            KeyValuePair(ProgramState.STOPPED, KeyValuePair("Stopped", false)),
+            KeyValuePair(ProgramState.COMPLETE, KeyValuePair("Complete", false))
+        );
 
         String defaultFunction;
         String customData = null;
@@ -59,11 +59,11 @@ namespace IngameScript {
         public void ClearAllState() {
             asyncThreadQueue.Clear();
             threadQueue.Clear();
-            globalVariables = new Dictionary<string, Variable> {
-                    { "pi", GetStaticVariable(Math.PI) },
-                    { "e", GetStaticVariable(Math.E) },
-                    { "empty", GetStaticVariable(new KeyedList()) }
-                };
+            globalVariables = NewDictionary(
+                KeyValuePair("pi", GetStaticVariable(Math.PI)),
+                KeyValuePair("e", GetStaticVariable(Math.E)),
+                KeyValuePair("empty", GetStaticVariable(new KeyedList()))
+            );
         }
 
         public Thread GetCurrentThread() => currentThread;

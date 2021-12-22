@@ -27,14 +27,14 @@ namespace IngameScript {
 
         Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>();
         Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>();
-        Dictionary<Return, String> returnToString = new Dictionary<Return, String> {
-            { Return.BOOLEAN, "boolean" },
-            { Return.NUMERIC, "number" },
-            { Return.STRING, "string" },
-            { Return.VECTOR, "vector" },
-            { Return.COLOR, "color" },
-            { Return.LIST, "list" }
-        };
+        Dictionary<Return, String> returnToString = NewDictionary(
+            KeyValuePair(Return.BOOLEAN, "boolean"),
+            KeyValuePair(Return.NUMERIC, "number"),
+            KeyValuePair(Return.STRING, "string"),
+            KeyValuePair(Return.VECTOR, "vector"),
+            KeyValuePair(Return.COLOR, "color"),
+            KeyValuePair(Return.LIST, "list")
+        );
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
