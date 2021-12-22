@@ -180,22 +180,16 @@ namespace IngameScript {
 
             CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.Satisfied() && x != directionProcessor && x != propertyProcessor);
             Convert<SelectorCommandParameter> convert = (p) => {
-                Action<BlockHandler, Object> blockAction;
-                PropertyCommandParameter property = propertyProcessor.GetValue();
-                DirectionCommandParameter direction = directionProcessor.GetValue();
-                VariableCommandParameter variable = variableProcessor.GetValue();
-                bool notValue = notProcessor.Satisfied();
-
-                PropertySupplier propertySupplier = propertyProcessor.Satisfied() ? property.value : new PropertySupplier();
+                PropertySupplier propertySupplier = propertyProcessor.Satisfied() ? propertyProcessor.GetValue().value : new PropertySupplier();
                 if (directionProcessor.Satisfied()) propertySupplier = propertySupplier.WithDirection(directionProcessor.GetValue().value);
 
                 Variable variableValue = GetStaticVariable(true);
                 if (variableProcessor.Satisfied()) {
-                    variableValue = variable.value;
+                    variableValue = variableProcessor.GetValue().value;
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);
                 }
 
-                if (notValue) {
+                if (notProcessor.Satisfied()) {
                     variableValue = new UniOperandVariable(UniOperand.REVERSE, variableValue);
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);
                 }
@@ -206,6 +200,7 @@ namespace IngameScript {
                         .Aggregate((a, b) => a && b));
                 }
 
+                Action<BlockHandler, Object> blockAction;
                 if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AllSatisfied(incrementProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
