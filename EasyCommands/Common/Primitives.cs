@@ -68,21 +68,10 @@ namespace IngameScript {
             { "black", Color.Black}
         };
 
-        public static List<Return> GetTypes(Type type) {
-            if (type == typeof(object)) return ((Return[])Enum.GetValues(typeof(Return))).ToList();
-            Return primitiveType;
-            if (!PrimitiveTypeMap.TryGetValue(type, out primitiveType)) throw new Exception("No Primitive Type present for type: " + type);
-            return NewList<Return>(primitiveType);
-        }
+        public static List<Return> GetTypes(Type type) => type != typeof(object) ? NewList(PrimitiveTypeMap[type])
+            : ((Return[])Enum.GetValues(typeof(Return))).ToList();
 
-        public static Primitive ResolvePrimitive(object o) {
-            var type = PrimitiveTypeMap[o.GetType()];
-            if (o is double) {
-                return new Primitive(type, Convert.ToSingle((double)o));
-            } else if (o is int) {
-                return new Primitive(type, Convert.ToSingle((int)o));
-            } else return new Primitive(type, o);
-        }
+        public static Primitive ResolvePrimitive(object o) => new Primitive(PrimitiveTypeMap[o.GetType()], (o is double || o is int) ? Convert.ToSingle(o) : o);
 
         public static bool CastBoolean(Primitive p) {
             switch (p.returnType) {
