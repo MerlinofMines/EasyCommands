@@ -1,8 +1,8 @@
-﻿# Decoy Block Handler
-This Block Handler handles Decoys, which will automatically attract enemy fire when enabled.
+﻿# Drill Block Handler
+This Block Handler handles Drills, which can be used to gather ores and other raw materials quickly.
 
-* Block Type Keywords: ```decoy```
-* Block Type Group Keywords: ```decoys```
+* Block Type Keywords: ```drill```
+* Block Type Group Keywords: ```drills```
 
 Default Primitive Properties:
 * String - Name
@@ -16,15 +16,15 @@ Default Primitive Properties:
 Enables or Disables the given block
 
 ```
-#Enable Decoy
-enable "My Decoy"
-set "My Decoy" to enabled
-turn on "My Decoy"
+#Enable Drill
+enable "My Drill"
+set "My Drill" to enabled
+turn on "My Drill"
 
 #Disable Block
-disable "My Decoy"
-set "My Decoy" to disabled
-turn off "My Decoy"
+disable "My Drill"
+set "My Drill" to disabled
+turn off "My Drill"
 ```
 
 ## "Power" Property
@@ -35,10 +35,10 @@ Turns on or off power to the block.  Effectively the same as the Enabled propert
 
 ```
 #Turn on
-turn on power to "My Decoy"
-power on "My Decoy"
+turn on power to "My Drill"
+power on "My Drill"
 
 #Turn off
-turn off "My Decoy"
-power off "My Decoy"
+turn off "My Drill"
+power off "My Drill"
 ```
