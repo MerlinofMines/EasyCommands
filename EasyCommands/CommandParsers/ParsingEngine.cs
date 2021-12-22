@@ -124,10 +124,9 @@ namespace IngameScript {
 
             public ParsingTask GetTask() => () => {
                 Command command;
-                if (ParseCommand(out command)) {
-                    action(command);
-                    return true;
-                } else return false;
+                var parsed = ParseCommand(out command);
+                if (parsed) action(command);
+                return parsed;
             };
 
             bool ParseCommand(out Command command) {
