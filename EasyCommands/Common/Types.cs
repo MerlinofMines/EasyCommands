@@ -29,7 +29,7 @@ namespace IngameScript {
         public enum Direction { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE, NONE }
         public enum Control { RESTART, STOP, REPEAT, PAUSE }
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
-        public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST }
+        public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST, DEFAULT }
         public enum BiOperand { ADD, SUBTRACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE, CAST, CONTAINS };
         public enum UniOperand { REVERSE, ABS, SQRT, SIN, COS, TAN, ASIN, ACOS, ATAN, ROUND, KEYS, VALUES, TICKS, SORT };
         public enum AggregationMode {ANY, ALL, NONE }

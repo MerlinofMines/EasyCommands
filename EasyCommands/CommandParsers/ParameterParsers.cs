@@ -410,12 +410,12 @@ namespace IngameScript {
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
             primitive = null;
-            Vector3D vector;
+            var vector = GetVector(token);
             Double numeric;
-            Color color;
+            var color = GetColor(token);
             if (Double.TryParse(token, out numeric)) primitive = ResolvePrimitive((float)numeric);
-            if (GetVector(token, out vector)) primitive = ResolvePrimitive(vector);
-            if (GetColor(token, out color)) primitive = ResolvePrimitive(color);
+            if (vector.HasValue) primitive = ResolvePrimitive(vector.Value);
+            if (color.HasValue) primitive = ResolvePrimitive(color.Value);
             return primitive != null;
         }
 

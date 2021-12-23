@@ -38,6 +38,50 @@ namespace IngameScript {
             public Primitive DeepCopy() => ResolvePrimitive((value is KeyedList) ? ((KeyedList)value).DeepCopy() : value);
         }
 
+        delegate Object Converter(Primitive p);
+        static KeyValuePair<Return, Converter> CastFunction(Return r, Converter func) => KeyValuePair(r, func);
+        static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + PROGRAM.returnToString[p.returnType] + " to " + PROGRAM.returnToString[returnType]); };
+
+        static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
+            KeyValuePair(typeof(bool), NewDictionary(
+                CastFunction(Return.BOOLEAN, p => p.value),
+                CastFunction(Return.NUMERIC, p => CastNumber(p) > 0),
+                CastFunction(Return.STRING, p => bool.Parse(CastString(p))),
+                CastFunction(Return.DEFAULT, Failure(Return.BOOLEAN))
+            )),
+            KeyValuePair(typeof(float), NewDictionary(
+                CastFunction(Return.BOOLEAN, p => CastBoolean(p) ? 0f : -1f),
+                CastFunction(Return.NUMERIC, p => (float)p.value),
+                CastFunction(Return.STRING, p => float.Parse(CastString(p))),
+                CastFunction(Return.VECTOR, p => (float)CastVector(p).Length()),
+                CastFunction(Return.DEFAULT, Failure(Return.NUMERIC))
+            )),
+            KeyValuePair(typeof(string), NewDictionary(
+                CastFunction(Return.VECTOR, p => VectorToString(CastVector(p))),
+                CastFunction(Return.COLOR, p => ColorToString(CastColor(p))),
+                CastFunction(Return.LIST, p => CastList(p).Print()),
+                CastFunction(Return.DEFAULT, p => "" + p.value)
+
+            )),
+            KeyValuePair(typeof(Vector3D), NewDictionary(
+                CastFunction(Return.STRING, p => GetVector(CastString(p)).Value),
+                CastFunction(Return.VECTOR, p => p.value),
+                CastFunction(Return.COLOR, p => CastColor(p).ToVector3()),
+                CastFunction(Return.DEFAULT, Failure(Return.COLOR))
+            )),
+            KeyValuePair(typeof(Color), NewDictionary(
+                CastFunction(Return.NUMERIC, p => new Color(CastNumber(p))),
+                CastFunction(Return.STRING, p => GetColor(CastString(p)).Value),
+                CastFunction(Return.VECTOR, p => new Color((int)CastVector(p).X, (int)CastVector(p).Y, (int)CastVector(p).Z)),
+                CastFunction(Return.COLOR, p => p.value),
+                CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
+            )),
+            KeyValuePair(typeof(KeyedList), NewDictionary(
+                CastFunction(Return.LIST, p => p.value),
+                CastFunction(Return.DEFAULT, p => new KeyedList(GetStaticVariable(p.value)))
+            ))
+            );
+
         static Dictionary<Type, Return> PrimitiveTypeMap = NewDictionary(
             KeyValuePair(typeof(bool), Return.BOOLEAN),
             KeyValuePair(typeof(string), Return.STRING),
@@ -73,86 +117,26 @@ namespace IngameScript {
 
         public static Primitive ResolvePrimitive(object o) => new Primitive(PrimitiveTypeMap[o.GetType()], (o is double || o is int) ? Convert.ToSingle(o) : o);
 
-        public static bool CastBoolean(Primitive p) {
-            switch (p.returnType) {
-                case Return.BOOLEAN: return (bool)p.value;
-                case Return.NUMERIC: return CastNumber(p) > 0;
-                case Return.STRING: return bool.Parse(CastString(p));
-                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " To Boolean");
-            }
-        }
+        public static T Cast<T>(Primitive p) => (T)castFunctions[typeof(T)].GetValueOrDefault(p.returnType, castFunctions[typeof(T)][Return.DEFAULT])(p);
 
-        public static float CastNumber(Primitive p) {
-            switch (p.returnType) {
-                case Return.BOOLEAN: return CastBoolean(p) ? 0 : -1;
-                case Return.NUMERIC: return (float)p.value;
-                case Return.STRING: return float.Parse(CastString(p));
-                case Return.VECTOR: return (float)(CastVector(p)).Length();
-                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " To Number");
-            }
-        }
+        public static bool CastBoolean(Primitive p) => Cast<bool>(p);
+        public static float CastNumber(Primitive p) => Cast<float>(p);
+        public static string CastString(Primitive p) => Cast<string>(p).Replace("\\n", "\n");
+        public static Vector3D CastVector(Primitive p) => Cast<Vector3D>(p);
+        public static Color CastColor(Primitive p) => Cast<Color>(p);
+        public static KeyedList CastList(Primitive p) => Cast<KeyedList>(p);
+        
+        public static Color? GetColor(String s) => (s.StartsWith("#") && s.Length == 7) ?
+            new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2))) :
+            (colors.ContainsKey(s.ToLower()) ? colors[s.ToLower()] : (Color?)null);
 
-        public static string CastString(Primitive p) {
-            var value = p.value.ToString();
-            if (p.returnType == Return.VECTOR) value = VectorToString(CastVector(p));
-            if (p.returnType == Return.COLOR) value = ColorToString(CastColor(p));
-            if (p.returnType == Return.LIST) value = CastList(p).Print();
-            return value.Replace("\\n", "\n");
-        }
-
-        public static Vector3D CastVector(Primitive p) {
-            switch (p.returnType) {
-                case Return.VECTOR: 
-                    return (Vector3D)p.value;
-                case Return.STRING:
-                    Vector3D vector;
-                    if (GetVector(CastString(p), out vector)) return vector;
-                    goto default;
-                default: throw new Exception("Cannot convert Primitive Type: " + PROGRAM.returnToString[p.returnType] + " to Vector");
-            }
-        }
-
-        public static Color CastColor(Primitive p) {
-            switch (p.returnType) {
-                case Return.COLOR: return (Color)p.value;
-                case Return.STRING:
-                    Color color;
-                    if (GetColor(CastString(p), out color)) return color;
-                    goto default;
-                case Return.NUMERIC:
-                    return new Color(CastNumber(p));
-                case Return.VECTOR:
-                    var vector = CastVector(p);
-                    return new Color((int)vector.X, (int)vector.Y, (int)vector.Z);
-                default: throw new Exception("Cannot convert Primitive type: " + PROGRAM.returnToString[p.returnType] + " to Color");
-            }
-        }
-
-        public static KeyedList CastList(Primitive p) => p.returnType == Return.LIST ? (KeyedList)p.value : new KeyedList(GetStaticVariable(p.value));
-
-        public static bool GetColor(String s, out Color color) {
-            Color? possibleColor = null;
-            if (colors.ContainsKey(s.ToLower())) possibleColor = colors[s.ToLower()];
-            else if (s.StartsWith("#") && s.Length == 7) {
-                possibleColor = new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2)));
-            }
-            color = possibleColor.GetValueOrDefault(Color.White);
-            return possibleColor.HasValue;
-        }
-
-        public static bool GetVector(String s, out Vector3D vector) {
-            vector = Vector3D.Zero;
+        public static Vector3D? GetVector(String s) {
             var components = NewList<double>();
-            string[] vectorStrings = s.Split(':');
-
-            foreach (string component in vectorStrings) {
+            foreach (string component in s.Split(':')) {
                 double result;
                 if (Double.TryParse(component, out result)) components.Add(result);
             }
-
-            if (components.Count() != 3) return false;
-            vector = new Vector3D(components[0], components[1], components[2]);
-            return true;
+            return components.Count() == 3 ? new Vector3D(components[0], components[1], components[2]) : (Vector3D?)null;
         }
 
         static string VectorToString(Vector3D vector) => vector.X + ":" + vector.Y + ":" + vector.Z;

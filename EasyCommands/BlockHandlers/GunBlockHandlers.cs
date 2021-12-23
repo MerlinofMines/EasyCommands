@@ -29,16 +29,11 @@ namespace IngameScript {
             }
 
             Vector3D GetTarget(IMyLargeTurretBase turret) {
-                Vector3D target = Vector3D.Zero;
+                Vector3D? target = Vector3D.Zero;
                 var customTarget = GetCustomProperty(turret, "target");
-                if (customTarget == null || !GetVector(customTarget, out target)) {
-                    if (turret.HasTarget) {
-                        target = GetPosition(turret.GetTargetedEntity());
-                    } else {
-                        target = Vector3D.Zero;
-                    }
-                }
-                return target;
+                if (customTarget != null) target = GetVector(customTarget);
+                else if (turret.HasTarget) target = GetPosition(turret.GetTargetedEntity());
+                return target.Value;
             }
 
             void ResetTarget(IMyLargeTurretBase turret) {
