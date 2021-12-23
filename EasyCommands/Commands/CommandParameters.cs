@@ -80,6 +80,10 @@ namespace IngameScript {
             }
         }
 
+        public class BiOperandTier0Operand : ValueCommandParameter<BiOperand> {
+            public BiOperandTier0Operand(BiOperand value) : base(value) { }
+        }
+
         public class BiOperandTier1Operand : ValueCommandParameter<BiOperand> {
             public BiOperandTier1Operand(BiOperand value) : base(value) {}
         }

@@ -191,10 +191,11 @@ namespace IngameScript {
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
             AddLeftUniOperationWords(Words("values"), UniOperand.VALUES);
 
+            AddWords(Words("dot", "."), new BiOperandTier0Operand(BiOperand.DOT));
+
             AddTier1OperationWords(Words("multiply", "*"), BiOperand.MULTIPLY);
             AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
             AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
-            AddTier1OperationWords(Words("dot", "."), BiOperand.DOT);
             AddTier1OperationWords(Words("pow", "exp", "^"), BiOperand.EXPONENT);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);

@@ -115,6 +115,7 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperand.MOD, (a, b) => a % b);
             AddBiOperation<float, float>(BiOperand.EXPONENT, (a, b) => Math.Pow(a, b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
+            AddBiOperation<Color, Vector3D>(BiOperand.DOT, (a, b) => (a.ToVector3()*255).Dot(b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
 
             //String
@@ -145,7 +146,7 @@ namespace IngameScript {
             //Color
             AddUniOperation<Color>(UniOperand.REVERSE, a => new Color(255 - a.R, 255 - a.G, 255 - a.B));
             AddBiOperation<Color, Color>(BiOperand.ADD, (a, b) => a + b);
-            AddBiOperation<Color, Color>(BiOperand.SUBTRACT, (a, b) => new Color(Math.Max(a.R - b.R, 0), Math.Max(a.G - b.G,0), Math.Max(a.B - b.B, 0)));
+            AddBiOperation<Color, Color>(BiOperand.SUBTRACT, (a, b) => new Color(a.R - b.R, a.G - b.G, a.B - b.B));
             AddBiOperation<Color, float>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(a, b));
             AddBiOperation<float, Color>(BiOperand.MULTIPLY, (a, b) => Color.Multiply(b, a));
             AddBiOperation<Color, float>(BiOperand.DIVIDE, (a, b) => Color.Multiply(a, 1/b));

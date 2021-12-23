@@ -25,6 +25,7 @@ namespace IngameScript {
 
         public static Variable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
         public static Variable EmptyList() => GetStaticVariable(new KeyedList());
+        public Variable VectorVariable(double x, double y, double z) => GetStaticVariable(new Vector3D(x, y, z));
 
         public class StaticVariable : Variable {
             public Primitive primitive;

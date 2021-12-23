@@ -138,7 +138,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
-        public void AssignSquaeRootValue() {
+        public void AssignSquareRootValue() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to sqrt 9 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);

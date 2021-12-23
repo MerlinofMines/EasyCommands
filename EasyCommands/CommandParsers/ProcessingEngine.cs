@@ -143,6 +143,10 @@ namespace IngameScript {
             OneValueRule(Type<UniOperationCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),
 
+            //Tier0OperationProcessor
+            TwoValueRule(Type<BiOperandTier0Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
+
             //Tier1OperationProcessor
             TwoValueRule(Type<BiOperandTier1Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
