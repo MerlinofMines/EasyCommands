@@ -56,7 +56,7 @@ namespace IngameScript {
                 AddPropertyHandler(Property.OVERRIDE, dampenerHandler);
                 AddPropertyHandler(Property.AUTO, dampenerHandler);
                 AddBooleanHandler(Property.LOCKED, b => b.HandBrake, (b, v) => b.HandBrake = v);
-                AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());//Todo, need to convert to world coords?
+                AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
                 AddNumericHandler(Property.LEVEL, b => b.CalculateShipMass().TotalMass);
                 AddDirectionHandlers(Property.VELOCITY, Direction.NONE,
                     TypeHandler(NumericHandler(b => (float)b.GetShipSpeed(), (b,v) => (b as IMyRemoteControl).SpeedLimit = v), Direction.NONE),
