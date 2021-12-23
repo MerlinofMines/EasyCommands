@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetVectorX() {
-            using (var test = new ScriptTest(@"Print ""X: "" + (0:1:2).X")) {
+            using (var test = new ScriptTest(@"Print ""X: "" + (0:1:2).x")) {
                 test.RunOnce();
 
                 Assert.AreEqual("X: 0", test.Logger[0]);
@@ -25,7 +25,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetVectorY() {
-            using (var test = new ScriptTest(@"Print ""Y: "" + (0:1:2).Y")) {
+            using (var test = new ScriptTest(@"Print ""Y: "" + (0:1:2).y")) {
                 test.RunOnce();
 
                 Assert.AreEqual("Y: 1", test.Logger[0]);
@@ -34,7 +34,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetVectorZ() {
-            using (var test = new ScriptTest(@"Print ""Z: "" + (0:1:2).Z")) {
+            using (var test = new ScriptTest(@"Print ""Z: "" + (0:1:2).z")) {
                 test.RunOnce();
 
                 Assert.AreEqual("Z: 2", test.Logger[0]);

@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetColorR() {
-            using (var test = new ScriptTest(@"Print ""R: "" + red.R")) {
+            using (var test = new ScriptTest(@"Print ""R: "" + red.r")) {
                 test.RunOnce();
 
                 Assert.AreEqual("R: 255", test.Logger[0]);
@@ -25,7 +25,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetColorG() {
-            using (var test = new ScriptTest(@"Print ""G: "" + green.G")) {
+            using (var test = new ScriptTest(@"Print ""G: "" + green.g")) {
                 test.RunOnce();
 
                 Assert.AreEqual("G: 128", test.Logger[0]);
@@ -34,7 +34,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetColorB() {
-            using (var test = new ScriptTest(@"Print ""B: "" + blue.B")) {
+            using (var test = new ScriptTest(@"Print ""B: "" + blue.b")) {
                 test.RunOnce();
 
                 Assert.AreEqual("B: 255", test.Logger[0]);

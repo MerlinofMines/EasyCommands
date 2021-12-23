@@ -63,12 +63,12 @@ namespace IngameScript {
                 KeyValuePair("pi", GetStaticVariable(Math.PI)),
                 KeyValuePair("e", GetStaticVariable(Math.E)),
                 KeyValuePair("empty", GetStaticVariable(new KeyedList())),
-                KeyValuePair("X", VectorVariable(1 ,0, 0)),
-                KeyValuePair("R", VectorVariable(1 ,0, 0)),
-                KeyValuePair("Y", VectorVariable(0, 1, 0)),
-                KeyValuePair("G", VectorVariable(0, 1, 0)),
-                KeyValuePair("Z", VectorVariable(0, 0, 1)),
-                KeyValuePair("B", VectorVariable(0, 0, 1))
+                KeyValuePair("x", VectorVariable(1 ,0, 0)),
+                KeyValuePair("y", VectorVariable(0, 1, 0)),
+                KeyValuePair("z", VectorVariable(0, 0, 1)),
+                KeyValuePair("r", VectorVariable(1 ,0, 0)),
+                KeyValuePair("g", VectorVariable(0, 1, 0)),
+                KeyValuePair("b", VectorVariable(0, 0, 1))
             );
         }
 
