@@ -39,7 +39,7 @@ namespace IngameScript {
         }
 
         delegate Object Converter(Primitive p);
-        static KeyValuePair<Return, Converter> CastFunction(Return r, Converter func) => KeyValuePair(r, func);
+        static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair<T, Converter>(r, func);
         static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + PROGRAM.returnToString[p.returnType] + " to " + PROGRAM.returnToString[returnType]); };
 
         static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
@@ -93,16 +93,16 @@ namespace IngameScript {
             KeyValuePair(typeof(KeyedList), Return.LIST)
         );
 
-        static Dictionary<string, Func<Primitive, object>> castMap = new Dictionary<string, Func<Primitive, object>> {
-            { "bool", p => CastBoolean(p) },
-            { "string", CastString },
-            { "number", p => CastNumber(p) },
-            { "vector", p => CastVector(p) },
-            { "color", p => CastColor(p) },
-            { "list", CastList }
-        };
+        static Dictionary<string, Converter> castMap = NewDictionary(
+            CastFunction("bool", p => CastBoolean(p)),
+            CastFunction("string", CastString),
+            CastFunction("number", p => CastNumber(p)),
+            CastFunction("vector", p => CastVector(p)),
+            CastFunction("color", p => CastColor(p)),
+            CastFunction("list", CastList)
+        );
 
-        static Dictionary<String, Color> colors = NewDictionary(
+        static Dictionary<string, Color> colors = NewDictionary(
             KeyValuePair("red", Color.Red),
             KeyValuePair("blue", Color.Blue),
             KeyValuePair("green", Color.Green),
