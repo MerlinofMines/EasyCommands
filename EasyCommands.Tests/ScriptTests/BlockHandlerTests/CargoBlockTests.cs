@@ -53,6 +53,27 @@ print ""Cargo Volume: "" + a
         }
 
         [TestMethod]
+        public void getCargoWeight() {
+            String script = @"
+assign ""a"" to ""mock cargo"" weight
+print ""Cargo Weight: "" + a + ""Kg""
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+
+                mockInventory.Setup(i => i.CurrentMass).Returns(200);
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Cargo Weight: 200Kg", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void getCargoRatio() {
             String script = @"
 assign ""a"" to ""mock cargo"" ratio

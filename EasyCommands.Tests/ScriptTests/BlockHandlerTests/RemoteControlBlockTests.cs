@@ -11,6 +11,42 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class RemoteControlBlockTests {
         [TestMethod]
+        public void EnableTheRemoteControl() {
+            using (ScriptTest test = new ScriptTest(@"enable the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.IsMainCockpit = true);
+            }
+        }
+
+        [TestMethod]
+        public void DisableTheCockpit() {
+            using (ScriptTest test = new ScriptTest(@"disable the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.IsMainCockpit = false);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOnTheCockpitDampeners() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test remote control"" dampeners")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.DampenersOverride = true);
+            }
+        }
+
+        [TestMethod]
         public void IsTheRemoteControlOn() {
             using (ScriptTest test = new ScriptTest(@"Print ""Remote Control On: "" + the ""test remote control"" is on")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
@@ -111,6 +147,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheCockpitGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test remote control"" gravity")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                mockRemoteControl.Setup(b => b.GetTotalGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Gravity: 1:2:3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void IsTheRemoteControlDocking() {
             using (ScriptTest test = new ScriptTest(@"Print ""Docking: "" + ""test remote control"" is docking")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
@@ -158,7 +207,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockRemoteControl.Verify(b => b.ClearWaypoints());
-                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("Waypoint", new Vector3D(4, 5, 6))));
+                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("Waypoint 1", new Vector3D(4, 5, 6))));
             }
         }
 
@@ -185,9 +234,9 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetTheRemoteControlWaypoints() {
             using (ScriptTest test = new ScriptTest(@"
 set myWaypoints to []
-set myWaypoints [""Waypoint 1""] to 1:2:3
-set myWaypoints [""Waypoint 2""] to 4:5:6
-set myWaypoints [""Waypoint 3""] to 7:8:9
+set myWaypoints [""My Waypoint 1""] to 1:2:3
+set myWaypoints [""My Waypoint 2""] to 4:5:6
+set myWaypoints [""My Waypoint 3""] to 7:8:9
 set the ""test remote control"" waypoints to myWaypoints")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
@@ -195,9 +244,9 @@ set the ""test remote control"" waypoints to myWaypoints")) {
                 test.RunUntilDone();
 
                 mockRemoteControl.Verify(b => b.ClearWaypoints());
-                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("Waypoint 1", new Vector3D(1, 2, 3))));
-                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("Waypoint 2", new Vector3D(4, 5, 6))));
-                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("Waypoint 3", new Vector3D(7, 8, 9))));
+                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("My Waypoint 1", new Vector3D(1, 2, 3))));
+                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("My Waypoint 2", new Vector3D(4, 5, 6))));
+                mockRemoteControl.Verify(b => b.AddWaypoint(new MyWaypointInfo("My Waypoint 3", new Vector3D(7, 8, 9))));
             }
         }
 
@@ -337,7 +386,7 @@ set the ""test remote control"" waypoints to myWaypoints")) {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Input: 7", test.Logger[0]);
+                Assert.AreEqual("Input: 2:3:6", test.Logger[0]);
             }
         }
 
@@ -429,7 +478,7 @@ set the ""test remote control"" waypoints to myWaypoints")) {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Roll: 7", test.Logger[0]);
+                Assert.AreEqual("Roll: 2:3:6", test.Logger[0]);
             }
         }
 

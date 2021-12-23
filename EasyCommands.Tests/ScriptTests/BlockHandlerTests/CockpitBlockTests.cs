@@ -10,6 +10,54 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class CockpitBlockTests {
         [TestMethod]
+        public void EnableTheCockpit() {
+            using (ScriptTest test = new ScriptTest(@"enable the ""test cockpit""")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.IsMainCockpit = true);
+            }
+        }
+
+        [TestMethod]
+        public void DisableTheCockpit() {
+            using (ScriptTest test = new ScriptTest(@"disable the ""test cockpit""")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.IsMainCockpit = false);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOnTheCockpitDampeners() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test cockpit"" dampeners")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.DampenersOverride = true);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheCockpitToAuto() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test cockpit"" to auto")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.DampenersOverride = true);
+            }
+        }
+
+        [TestMethod]
         public void TellTheCockpitToBrake() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test cockpit"" to brake")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
@@ -42,6 +90,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockCockpit.VerifySet(b => b.HandBrake = true);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test cockpit"" gravity")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                mockCockpit.Setup(b => b.GetTotalGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Gravity: 1:2:3", test.Logger[0]);
             }
         }
 
@@ -145,7 +206,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Input: 7", test.Logger[0]);
+                Assert.AreEqual("Input: 2:3:6", test.Logger[0]);
             }
         }
 
@@ -237,7 +298,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Roll: 7", test.Logger[0]);
+                Assert.AreEqual("Roll: 2:3:6", test.Logger[0]);
             }
         }
 

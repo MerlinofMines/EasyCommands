@@ -70,12 +70,12 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddPropertyWords(PluralWords("height", "length", "level"), Property.LEVEL);
+            AddPropertyWords(AllWords(PluralWords("height", "length", "level"), Words("weight", "mass")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "freeze", "brake", "handbrake", "permanent"), Property.LOCKED);
+            AddPropertyWords(Words("lock", "locked", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
@@ -100,9 +100,9 @@ namespace IngameScript {
             AddPropertyWords(Words("stockpile", "depressurize", "depressurizing", "gather", "gathering", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting", "disassemble", "disassembling"), Property.SUPPLY, false);
             AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
             AddPropertyWords(PluralWords("input", "pilot", "user"), Property.INPUT);
-            AddPropertyWords(PluralWords("roll", "rollInput"), Property.ROLL_INPUT);
-            AddPropertyWords(Words("auto", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
-            AddPropertyWords(AllWords(PluralWords("override"), Words("overridden")), Property.OVERRIDE);
+            AddPropertyWords(PluralWords("roll", "rollInput", "rotation"), Property.ROLL_INPUT);
+            AddPropertyWords(Words("auto", "autopilot", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
+            AddPropertyWords(AllWords(PluralWords("override", "dampener"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
             AddPropertyWords(PluralWords("position", "location"), Property.POSITION);
             AddPropertyWords(Words("target", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
@@ -233,7 +233,7 @@ namespace IngameScript {
             AddBlockWords(Words("sensor"), Block.SENSOR);
             AddBlockWords(Words("beacon"), Block.BEACON);
             AddBlockWords(Words("antenna"), Block.ANTENNA);
-            AddBlockWords(Words("ship", "rover", "cockpit", "seat"), Block.COCKPIT);
+            AddBlockWords(Words("ship", "rover", "cockpit", "seat", "station"), Block.COCKPIT);
             AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
             AddBlockWords(Words("thruster"), Block.THRUSTER);
             AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);

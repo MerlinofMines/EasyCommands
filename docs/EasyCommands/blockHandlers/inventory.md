@@ -70,6 +70,17 @@ This property returns a value between 0 and 1 representing the % of cargo space 
 Print "Cargo Percent used: " + "My Cargo" percent
 ```
 
+## "Weight" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```weight, mass, level```
+
+Returns the current mass of the inventory, in Kg.
+
+```
+Print "Inventory Weight: " + "My Cargo" weight
+```
+
 ## "Amount" Property
 * Requires a String Attribute indicating the [Item(s)](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") to get amounts for.
 * Read-only

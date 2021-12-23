@@ -23,7 +23,6 @@ namespace IngameScript {
         static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
         static Dictionary<T, U> NewDictionary<T, U>(params KeyValuePair<T, U>[] elements) => elements.ToDictionary(e => e.Key, e => e.Value);
         static KeyValuePair<T, U> KeyValuePair<T, U>(T key, U value) => new KeyValuePair<T, U>(key, value);
-
         public class KeyedList {
             public List<KeyedVariable> keyedValues;
 
