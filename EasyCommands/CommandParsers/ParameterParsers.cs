@@ -70,30 +70,31 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddPropertyWords(AllWords(PluralWords("height", "length", "level"), Words("weight", "mass")), Property.LEVEL);
+            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size"), Words("weight", "mass")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
             AddPropertyWords(Words("lock", "locked", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
-            AddPropertyWords(Words("run", "running", "execute", "executing"), Property.RUN);
+            AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
-            AddPropertyWords(PluralWords("fontsize", "size"), Property.FONT_SIZE);
+            AddPropertyWords(PluralWords("font"), Property.FONT);
             AddPropertyWords(PluralWords("text", "message"), Property.TEXT);
             AddPropertyWords(PluralWords("color"), Property.COLOR);
+            AddPropertyWords(PluralWords("background"), Property.BACKGROUND);
             AddPropertyWords(Words("power", "powered"), Property.POWER);
             AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
             AddPropertyWords(Words("disable", "disabled", "disarm", "disarmed"), Property.ENABLE, false);
-            AddPropertyWords(Words("music", "song"), Property.SONG);
+            AddPropertyWords(Words("music", "song", "image"), Property.MEDIA);
+            AddPropertyWords(Words("songs", "images"), Property.MEDIA_LIST);
             AddPropertyWords(Words("silent", "silence"), Property.SILENCE);
             AddPropertyWords(AllWords(PluralWords("volume", "output"), Words("intensity", "intensities")), Property.VOLUME);
             AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("radius", "radii", "capacity", "capacities")), Property.RANGE);
-            AddPropertyWords(PluralWords("blinkinterval", "interval"), Property.BLINK_INTERVAL);
-            AddPropertyWords(PluralWords("blinklength"), Property.BLINK_LENGTH);
-            AddPropertyWords(PluralWords("blinkoffset", "offset"), Property.OFFSET);
+            AddPropertyWords(PluralWords("interval"), Property.INTERVAL);
+            AddPropertyWords(PluralWords("offset", "padding"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
             AddPropertyWords(Words("trigger", "triggered", "detect", "detected", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
             AddPropertyWords(Words("pressure", "pressurize", "pressurizing", "supply", "supplying", "generate", "generating", "discharge", "discharging", "broadcast", "broadcasting", "assemble", "assembling"), Property.SUPPLY);
@@ -104,7 +105,7 @@ namespace IngameScript {
             AddPropertyWords(Words("auto", "autopilot", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
             AddPropertyWords(AllWords(PluralWords("override", "dampener"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
-            AddPropertyWords(PluralWords("position", "location"), Property.POSITION);
+            AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
             AddPropertyWords(Words("target", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
@@ -133,7 +134,7 @@ namespace IngameScript {
             AddWords(Words("send"), new SendCommandParameter());
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
-            AddWords(Words("async", "background", "parallel"), new QueueCommandParameter(true));
+            AddWords(Words("async", "parallel"), new QueueCommandParameter(true));
             AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
             AddWords(Words("take"), new TransferCommandParameter(false));
             AddWords(Words("->"), new KeyedVariableCommandParameter());

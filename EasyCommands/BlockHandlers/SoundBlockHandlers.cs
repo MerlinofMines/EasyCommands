@@ -24,9 +24,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v,1);
                 AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v,50);
                 AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60);
-                AddStringHandler(Property.SONG, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
+                AddStringHandler(Property.MEDIA, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
                 AddBooleanHandler(Property.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
-                defaultPropertiesByPrimitive[Return.STRING] = Property.SONG;
+                defaultPropertiesByPrimitive[Return.STRING] = Property.MEDIA;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;
                 defaultPropertiesByDirection[Direction.UP] = Property.VOLUME;
             }

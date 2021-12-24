@@ -21,12 +21,42 @@ namespace IngameScript {
     partial class Program {
         public class TextSurfaceHandler : MultiInstanceBlockHandler<IMyTextSurface> {
             public TextSurfaceHandler() {
-                AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => b.WriteText(v));
-                AddColorHandler(Property.COLOR, b => b.FontColor, (b, v) => b.FontColor = v);
-                AddNumericHandler(Property.FONT_SIZE, b => b.FontSize, (b, v) => b.FontSize = v, 1);
+                var fontSizeHandler = NumericHandler(b => b.FontSize, (b, v) => b.FontSize = v, 0.5f);
+                var fontColorHandler = ColorHandler(b => b.ContentType == ContentType.SCRIPT ? b.ScriptForegroundColor : b.FontColor, (b, v) => { if (b.ContentType == ContentType.SCRIPT) b.ScriptForegroundColor = v; else b.FontColor = v; });
+
+                AddBooleanHandler(Property.ENABLE, b => b.ContentType != ContentType.NONE, (b, v) => b.ContentType = v ? ContentType.TEXT_AND_IMAGE : ContentType.NONE);
+                AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => { b.ContentType = ContentType.TEXT_AND_IMAGE; b.WriteText(v); });
+                AddStringHandler(Property.MEDIA, b => b.CurrentlyShownImage ?? "", (b,v) => SetImages(b,CastList(ResolvePrimitive(v))));
+                AddStringHandler(Property.RUN, b => b.Script ?? "", (b, v) => { b.ContentType = ContentType.SCRIPT; b.Script = v; });
+                AddNumericHandler(Property.OFFSET, b => b.TextPadding, (b, v) => b.TextPadding = v, 1);
+                AddBooleanHandler(Property.RATIO, b => b.PreserveAspectRatio, (b, v) => b.PreserveAspectRatio = v);
+                AddListHandler(Property.MEDIA_LIST, b => {
+                    var images = NewList<string>();
+                    b.GetSelectedImages(images);
+                    return new KeyedList(images.Select(i => GetStaticVariable(i)).ToArray());
+                }, SetImages);
+                AddStringHandler(Property.POSITION, b => (b.Alignment + "").ToLower(), (b, v) => b.Alignment = v == "center" ? TextAlignment.CENTER : v == "right" ? TextAlignment.RIGHT : TextAlignment.LEFT);
+                AddNumericHandler(Property.INTERVAL, b => b.ChangeInterval, (b, v) => b.ChangeInterval = v, 1);
+                AddPropertyHandler(Property.LEVEL, fontSizeHandler);
+                AddPropertyHandler(Property.COLOR, fontColorHandler);
+                AddColorHandler(Property.BACKGROUND, b => b.ContentType == ContentType.SCRIPT ? b.ScriptBackgroundColor : b.BackgroundColor, (b, v) => { if (b.ContentType == ContentType.SCRIPT) b.ScriptBackgroundColor = v; else b.BackgroundColor = v; });
+                AddReturnHandlers(Property.FONT, Return.STRING,
+                    TypeHandler(StringHandler(b => b.Font, (b,v) => b.Font = v), Return.STRING),
+                    TypeHandler(fontSizeHandler, Return.NUMERIC),
+                    TypeHandler(fontColorHandler, Return.COLOR));
+
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
-                defaultPropertiesByDirection[Direction.UP] = Property.FONT_SIZE;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
+                defaultPropertiesByPrimitive[Return.LIST] = Property.MEDIA_LIST;
+                defaultPropertiesByDirection[Direction.UP] = Property.TEXT;
+            }
+
+            void SetImages(IMyTextSurface block, KeyedList images) {
+                block.ContentType = ContentType.TEXT_AND_IMAGE;
+                block.ClearImagesFromSelection();
+                block.AddImagesToSelection(images.keyedValues.Select(i => CastString(i.GetValue())).ToList());
             }
 
             public override string Name(IMyTextSurface block) => block.DisplayName;

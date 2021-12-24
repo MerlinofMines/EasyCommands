@@ -23,8 +23,8 @@ namespace IngameScript {
             public LightBlockHandler() {
                 AddColorHandler(Property.COLOR, (b) => b.Color, (b, v) => b.Color = v);
                 AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
-                AddNumericHandler(Property.BLINK_INTERVAL, (b) => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
-                AddNumericHandler(Property.BLINK_LENGTH, (b) => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
+                AddNumericHandler(Property.INTERVAL, (b) => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
+                AddNumericHandler(Property.LEVEL, (b) => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
                 AddNumericHandler(Property.OFFSET, (b) => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
                 AddNumericHandler(Property.VOLUME, (b) => b.Intensity, (b, v) => b.Intensity = v, 1f);
                 AddNumericHandler(Property.FALLOFF, (b) => b.Falloff, (b, v) => b.Falloff = v, 0.5f);

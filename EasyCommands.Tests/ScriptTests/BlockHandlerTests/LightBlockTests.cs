@@ -19,10 +19,10 @@ namespace EasyCommands.Tests.ScriptTests
 :lightshow
 set the ""cool light"" color to ""blue""
 set the ""cool light"" intensity to 10
-set the ""cool light"" blinkInterval to 0.5
-set the ""cool light"" blinkOffset to 0.25
+set the ""cool light"" interval to 0.5
+set the ""cool light"" offset to 0.25
 set the ""cool light"" falloff to 1
-set the ""cool light"" blinkLength to 2
+set the ""cool light"" length to 2
 turn on the ""cool light""
 ";
 
@@ -66,9 +66,9 @@ set the ""cool light"" color to ""255:128:0""
             String script = @"
 :lightshow
 set the ""intense light"" intensity to 10
-set the ""intense light"" blinkInterval to 0.5
-set the ""intense light"" blinkOffset to 0.25
-set the ""intense light"" blinkLength to 2
+set the ""intense light"" interval to 0.5
+set the ""intense light"" offset to 0.25
+set the ""intense light"" length to 2
 set the ""cool light"" color to ""blue""
 set the ""cool light"" falloff to 1
 turn on the ""cool light""
@@ -101,8 +101,8 @@ turn on the ""intense light""
             String script = @"
 :lightshow
 set the ""single light"" intensity to 10
-set the ""hangar lights"" blinkInterval to 0.5
-set the ""hangar lights"" blinkOffset to 0.25
+set the ""hangar lights"" interval to 0.5
+set the ""hangar lights"" offset to 0.25
 turn on the ""hangar lights""
 ";
 
