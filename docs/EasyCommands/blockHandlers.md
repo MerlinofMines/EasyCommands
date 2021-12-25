@@ -149,6 +149,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 
 ## Supported Block Handlers
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
+* [Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/antenna "Antenna Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
 * [Batteries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/battery "Battery Handler")
 * [Beacons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/beacon "Beacon Handler")
@@ -164,6 +165,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
 * [Laser Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
+* [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
 * [Refineries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/refinery "Refinery Handler")
 * [Remote Controls](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
