@@ -3,7 +3,7 @@ This block handler can be used to get information about inventories for any bloc
 
 Note that this block handler does not extend from Terminal Block, so this Block Handler *does not* have properties defined in the Reference: [Terminal Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler").
 
-Note that many blocks have multiple inventories, so make sure you are querying the right inventory when looking for items/capacity.
+Also note that many blocks have multiple inventories, so make sure you are querying the right inventory when looking for items/capacity.
 
 Reference: [Items](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/items "Items and Blueprints")
 

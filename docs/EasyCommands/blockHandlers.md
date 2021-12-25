@@ -157,6 +157,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Collectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/collector "Collector Handler")
 * [Connectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/connector "Connector Handler")
 * [Decoys](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/decoy "Decoy Handler")
+* [Displays](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/display "Display Handler")
 * [Doors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/door "Door Handler")
 * [Drills](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/drill "Drill Handler")
 * [Ejectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/ejector "Ejector Handler")

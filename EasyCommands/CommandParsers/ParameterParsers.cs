@@ -83,7 +83,7 @@ namespace IngameScript {
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("font"), Property.FONT);
             AddPropertyWords(PluralWords("text", "message"), Property.TEXT);
-            AddPropertyWords(PluralWords("color"), Property.COLOR);
+            AddPropertyWords(PluralWords("color", "foreground"), Property.COLOR);
             AddPropertyWords(PluralWords("background"), Property.BACKGROUND);
             AddPropertyWords(Words("power", "powered"), Property.POWER);
             AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
