@@ -25,8 +25,8 @@ namespace IngameScript {
                 { Block.DECOY, new FunctionalBlockHandler<IMyDecoy>() },
                 { Block.DETECTOR, new OreDetectorHandler() },
                 { Block.DISPLAY, new TextSurfaceHandler() },
-                { Block.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
                 { Block.DOOR, new DoorBlockHandler() },
+                { Block.DRILL, new FunctionalBlockHandler<IMyShipDrill>() },
                 { Block.EJECTOR, new EjectorBlockHandler() },
                 { Block.ENGINE, new EngineBlockHandler<IMyPowerProducer>("Engine") },
                 { Block.GEAR, new LandingGearHandler() },
@@ -47,6 +47,7 @@ namespace IngameScript {
                 { Block.PROJECTOR, new ProjectorBlockHandler() },
                 { Block.REACTOR, new EngineBlockHandler<IMyReactor>() },
                 { Block.REMOTE, new RemoteControlBlockHandler()},
+                { Block.REFINERY, new FunctionalBlockHandler<IMyRefinery>() },
                 { Block.ROTOR, new RotorBlockHandler(b => !IsHinge(b)) },
                 { Block.SOLAR_PANEL, new EngineBlockHandler<IMySolarPanel>() },
                 { Block.SORTER, new SorterBlockerHandler() },
@@ -60,8 +61,7 @@ namespace IngameScript {
                 { Block.TURBINE, new EngineBlockHandler<IMyPowerProducer>("WindTurbine") },
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
                 { Block.WARHEAD, new WarheadBlockHandler() },
-                { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() },
-                { Block.REFINERY, new FunctionalBlockHandler<IMyRefinery>() }
+                { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() }
             };
 
             public static BlockHandler GetBlockHandler(Block blockType) {
