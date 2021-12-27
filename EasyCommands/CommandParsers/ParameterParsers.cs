@@ -243,7 +243,7 @@ namespace IngameScript {
             AddBlockWords(Words("turret"), Block.TURRET);
             AddBlockWords(Words("generator"), Block.GENERATOR);
             AddBlockWords(Words("tank"), Block.TANK);
-            AddBlockWords(Words("gear"), Block.GEAR);
+            AddBlockWords(Words("magnet", "gear"), Block.MAGNET);
             AddBlockWords(Words("battery"), Words("batteries"), Block.BATTERY);
             AddBlockWords(Words("chute", "parachute"), Block.PARACHUTE);
             AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);

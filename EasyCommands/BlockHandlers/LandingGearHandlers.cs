@@ -25,7 +25,6 @@ namespace IngameScript {
                 var lockHandler = BooleanHandler(b => b.IsLocked, (b, v) => { if (v) b.Lock(); else b.Unlock(); });
                 AddPropertyHandler(Property.LOCKED, lockHandler);
                 AddPropertyHandler(Property.CONNECTED, lockHandler);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.LOCKED;
             }
         }
     }
