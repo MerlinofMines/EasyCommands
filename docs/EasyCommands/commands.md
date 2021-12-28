@@ -11,7 +11,7 @@ print "I'm not a comment!"
 ```
 
 ## Nested Commands
-Some commands require sub-commands as one of the parameters.  Things like conditional commands and for each commands.  For these commands, it is possible to run multiple sub commands by grouping them using spaces.  For example, both of the print commands below would be run if and only if the lights are on.
+Nested commands are a way of executing multiple commands, sequentially, as a unit.  This allows you to execute a series of commands when a condition is met (or not met).
 
 ```
 if the lights are on
@@ -28,6 +28,22 @@ Print "You're using power!"
 ```
 
 There's no requirement that you use 1 vs 2 vs 4 spaces for nesting commands together, but you'll need to use consistent spacing for a set of nested commands to be interpreted correctly.
+
+### Nesting Spaces
+
+You can further nest spaces if you want to use nested commands inside of another nested command.  Just make sure that all the items intended to be part of one nested command have the same spacing
+
+```
+if "outer door" is open
+  turn on the "outer lights"
+  if the "inner door is open"
+    turn on the "inner lights"
+    turn on the generator
+  else
+    close the "outer door"
+    wait 1
+  wait 3
+```
 
 ## Print Command
 The simplest thing you can do with EasyCommands is output text to the Programmable Block.  This text will be visible when viewing the Programmable Block from the terminal menu.

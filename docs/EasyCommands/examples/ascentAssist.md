@@ -1,25 +1,29 @@
 ﻿# Automated Ascent Assist
+No more thrust overrides!  Let Automated Ascent Assist do the work for you.
+
+![Ascent Assist](https://i.imgur.com/SLnlLnf.gif)
 
 This script uses a PID loop to control your thrusters output, based on a desired speed up to the max of 100.0.
 
-This script ensures you do not go over 100m/s, while getting you as close to it as possible using the least amount of thrust.
+This script ensures you do not go over 100m/s, while getting you as close to it as possible using the least amount of thrust & hydrogen.
 
-It automatically adjusts for changes in gravitational strength as you get farther from the planet.  No more thrust overrides!
-
-Let Automated Ascent Assist do the work for you.
+It automatically adjusts for changes in gravitational strength as you get farther from the planet.  
 
 ```
 :main
-set desiredSpeed to 80
+wait
+
+:goUp
+set desiredSpeed to 90
 set Kp to 0.1
 set Kd to 0.02
 set Ki to 0.008
 
-#Test
-
 set i to 0
 set d to 0
 set previousError to desiredSpeed
+
+turn off the "Fighter Cockpit" dampeners
 goto ascendAssist
 
 :ascendAssist
@@ -47,6 +51,6 @@ set "Up Hydrogen Thrusters" ratio to newValue
 set thrusterLimit to the avg "Up Hydrogen Thrusters" limit
 Print "Current Limit: " + thrusterLimit
 
-replay
-
+if "Fighter Cockpit" gravity > 0
+  replay
 ```
