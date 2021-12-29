@@ -22,9 +22,8 @@ Have fun and happy scripting!
 
 ## How to Install
 First, download or Subscribe to EasyCommands
-* https://steamcommunity.com/sharedfiles/filedetails/?id=2698315573
-
-* https://github.com/MerlinofMines/EasyCommands/releases
+* [Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=2698315573)
+* [GitHub](https://github.com/MerlinofMines/EasyCommands/releases)
 
 To use, simply install this script onto your Programmable Block (or blocks!) of choice.  Then, in the custom data of that programmable block, put in a line separated list of commands that you'd like to execute.
 
