@@ -58,6 +58,7 @@ When set, this property will set the height of the piston directly.  Internally,
 
 Setting this property will not change the velocity of the piston directly.  So if the velocity of the piston is 0, setting this property will not work correctly.
 
+This property can also be moved and reversed.  If this property is moved upwards, the piston is extended.  If the property is moved downward, the piston is retracted.
 
 ```
 #Get the Current Height
@@ -65,6 +66,15 @@ Print "Current Height: " + "My Piston" height
 
 #Set the Height
 set "My Piston" height to 5
+
+#Extend the Piston
+extend "My Piston"
+
+#Retract the piston
+retract "My Piston"
+
+#Reverse the piston
+reverse "My Piston"
 ```
 
 ## "Velocity" Property
@@ -88,13 +98,11 @@ set "My Piston" velocity to 5
 
 Get/Sets the Piston's upper/lower limits.  Takes in an optional direction to indicate whether you are getting or setting the upper or lower limit.  If no direction is specified, the upper limit is used.
 
-This property can also be moved and reversed.  If this property is moved upwards, the piston is extended.  If the property is moved downward, the piston is retracted.
-
 ### Supported Directions
-Up - Upper Limit
-Down - Lower Limit
-Forward - Forward Limit
-Backwards - Lower Limit
+* Up - Upper Limit
+* Down - Lower Limit
+* Forward - Forward Limit
+* Backwards - Lower Limit
 
 ```
 #Get the upper Limit
@@ -108,13 +116,4 @@ set "My Piston" upper limit to 6
 
 #Set the lower limit
 set "My Piston" lower limit to 4
-
-#Extend the Piston
-extend "My Piston"
-
-#Retract the piston
-retract "My Piston"
-
-#Reverse the piston
-reverse "My Piston"
 ```
