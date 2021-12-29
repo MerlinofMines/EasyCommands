@@ -2,8 +2,8 @@
 
 This handler lets you control pistons, including setting the height, velocity, and limits.
 
-* Block Type Keywords: ``` , ```
-* Block Type Group Keywords: ``` , ```
+* Block Type Keywords: ```piston```
+* Block Type Group Keywords: ```pistons```
 
 Default Primitive Properties:
 * Bool - Enabled
