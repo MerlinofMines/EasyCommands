@@ -12,11 +12,13 @@ When getting user input, the value will be between 0 (no input) and 1 (max input
 
 Finer grained control can retrieved when using a mouse or joystick.
 
+Check out the [Crane-Like Drill Arm With Mouse and Keyboard](https://spaceengineers.merlinofmines.com/EasyCommands/examples/craneDrill "Crane-Like Drill Arm With Mouse and Keyboard") example to see handling user input in action.
+
 ## Handling Movement Input
 
 Movement refers to WASDE + Space, corresponding to the 6 movement directions, respectively.
 
-Keywords: ```input, inputs, movement, movements, user, users, pilot, pilots```
+Keywords: ```input, user, pilot```
 
 ### Supported Directions
 Assuming default controls:
@@ -30,6 +32,8 @@ Assuming default controls:
 ## Handling Rotational Input
 
 Rotation refers to the arrow keys + QE, corresponding to the 6 rotational directions, respectively.
+
+Keywords: ```roll, rollInput, rotation```
 
 ### Supported Directions
 * Up - Up Arrow / Mouse Down
