@@ -1,6 +1,6 @@
 ﻿# Items and Blueprints
 
-EasyCommands provides a set of user friendly words for retrieving almost all items in the version of the game.\
+EasyCommands provides a set of user friendly words for retrieving almost all items in the version of the game.
 
 These user friendly words can be used for Items and Blueprints.  Items includes keywords for each unique item in the game, as well as keywords for groups of related items (ore, weapons, tools, etc).
 

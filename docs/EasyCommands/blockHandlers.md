@@ -175,5 +175,6 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Rotors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/rotor "Rotor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
+* [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
 * [Wind Turbines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turbine "Wind Turbine Handler")
