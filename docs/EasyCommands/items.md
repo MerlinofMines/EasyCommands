@@ -197,8 +197,6 @@ Note that item groups are not supported for Blueprints (unlike for items).
 * ZoneChip - ```zone chip```
 
 #### Tools
-All Tools: ```tools```
-
 Grinders:
 * Basic Grinder - ```grinder```
 * Enhanced Grinder - ```enhanced grinder```
@@ -218,7 +216,6 @@ Drills:
 * Elite Drill - ```elite drill```
 
 #### Bottles
-All bottles: ```bottles```
 * Hydrogen Bottle: ```hydrogen bottle```
 * Oxygen Bottle: ```oxygen bottle```
 
