@@ -58,14 +58,14 @@ rotate the "test rotor" clockwise
 
 The below lists out supported directions.  Note that not all block handlers nor all block properties support all directions.  The supported directions for a given Block Property depend on the BlockHandler and will be listed next to the property for that block type.  For example, a piston has an "upper" and a "lower" limit.  An antenna has a limit.  The "Limit" property has directional support on a piston but not on an antenna.
 
-Up: ```up, upwards, upward, upper```
-Down: ```down, downward, downwards, lower```
-Left: ```left, lefthand```
-Right: ```right, righthand```
-Forward: ```forward, forwards, front```
-Backwards: ```backward, backwards, back```
-Clockwise: ```clockwise, clock```
-Counter Clockwise: ```counter, counterclock, counterclockwise```
+* Up: ```up, upwards, upward, upper```
+* Down: ```down, downward, downwards, lower```
+* Left: ```left, lefthand```
+* Right: ```right, righthand```
+* Forward: ```forward, forwards, front```
+* Backwards: ```backward, backwards, back```
+* Clockwise: ```clockwise, clock```
+* Counter Clockwise: ```counter, counterclock, counterclockwise```
 
 There are also some words that indicate ```action direction```, such as:
 
@@ -163,6 +163,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Drills](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/drill "Drill Handler")
 * [Ejectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/ejector "Ejector Handler")
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
+* [Guns](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gun "Gun Handler")
 * [Hinges](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/hinge "Hinge Handler")
 * [Hydrogen Engines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/engine "Hydrogen Engine Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
@@ -175,6 +176,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Rotors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/rotor "Rotor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
+* [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
 * [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
 * [Wind Turbines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turbine "Wind Turbine Handler")
