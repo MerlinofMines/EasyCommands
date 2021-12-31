@@ -36,6 +36,25 @@ namespace IngameScript {
             KeyValuePair(Return.LIST, "list")
         );
 
+        static Dictionary<string, Converter> castMap = NewDictionary(
+            CastFunction("bool", p => CastBoolean(p)),
+            CastFunction("string", CastString),
+            CastFunction("number", p => CastNumber(p)),
+            CastFunction("vector", p => CastVector(p)),
+            CastFunction("color", p => CastColor(p)),
+            CastFunction("list", CastList)
+        );
+
+        static Dictionary<string, Color> colors = NewDictionary(
+            KeyValuePair("red", Color.Red),
+            KeyValuePair("blue", Color.Blue),
+            KeyValuePair("green", Color.Green),
+            KeyValuePair("orange", Color.Orange),
+            KeyValuePair("yellow", Color.Yellow),
+            KeyValuePair("white", Color.White),
+            KeyValuePair("black", Color.Black)
+        );
+
         public void InitializeParsers() {
             //Ignored words that have no command parameters
             AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds"), new IgnoreCommandParameter());
@@ -174,7 +193,7 @@ namespace IngameScript {
             AddWords(Words(")"), new CloseParenthesisCommandParameter());
             AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
             AddWords(Words("or", "|", "||"), new OrCommandParameter());
-            AddWords(Words("not", "!", "isnt", "arent", "stop"), new NotCommandParameter());
+            AddWords(Words("not", "!", "stop"), new NotCommandParameter());
             AddWords(Words("@"), new IndexCommandParameter());
 
             AddRightUniOperationWords(Words("absolute", "abs"), UniOperand.ABS);
@@ -186,7 +205,7 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
             AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
             AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
-            AddRightUniOperationWords(Words("sorted"), UniOperand.SORT);
+            AddRightUniOperationWords(Words("sort, sorted"), UniOperand.SORT);
 
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
@@ -229,7 +248,7 @@ namespace IngameScript {
             AddBlockWords(Words("welder"), Block.WELDER);
             AddBlockWords(Words("grinder"), Block.GRINDER);
             AddBlockWords(Words("door", "hangar", "bay", "gate"), Block.DOOR);
-            AddBlockWords(PluralWords("display", "screen", "lcd"), Words(""), Block.DISPLAY);
+            AddBlockWords(PluralWords("display", "screen", "lcd"), Words(), Block.DISPLAY);
             AddBlockWords(Words("speaker", "alarm", "siren"), Block.SOUND);
             AddBlockWords(Words("camera"), Block.CAMERA);
             AddBlockWords(Words("sensor"), Block.SENSOR);
@@ -254,10 +273,10 @@ namespace IngameScript {
             AddBlockWords(Words("reactor"), Block.REACTOR);
             AddBlockWords(Words("solar"), Block.SOLAR_PANEL);
             AddBlockWords(Words("sorter"), Block.SORTER);
-            AddBlockWords(Words("gyro", "gyroscopes"), Block.GYROSCOPE);
+            AddBlockWords(Words("gyro", "gyroscope"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
             AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
-            AddBlockWords(Words("cargo", "container", "inventory", "inventories"), Words("containers"), Block.CARGO);
+            AddBlockWords(Words("cargo", "container", "inventory", "inventories"), Words("cargos", "containers"), Block.CARGO);
             AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
             AddBlockWords(Words("collector"), Block.COLLECTOR);

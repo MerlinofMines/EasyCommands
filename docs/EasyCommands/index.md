@@ -18,6 +18,8 @@ It's that easy! Now, you can invoke this program however you like: a push-button
 
 Check out the list of [Examples](https://spaceengineers.merlinofmines.com/EasyCommands/examples "Examples") to jump start your scripting, or take a look through the various sections in this website to get an idea of all the cool things you can do with EasyCommands. 
 
+Once you're familiar with how EasyCommands works, feel free to use the [Cheat Sheet](https://spaceengineers.merlinofmines.com/EasyCommands/cheatsheet) for quick access to reserved keywords.
+
 Have fun and happy scripting!
 
 ## How to Install

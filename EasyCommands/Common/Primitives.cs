@@ -93,25 +93,6 @@ namespace IngameScript {
             KeyValuePair(typeof(KeyedList), Return.LIST)
         );
 
-        static Dictionary<string, Converter> castMap = NewDictionary(
-            CastFunction("bool", p => CastBoolean(p)),
-            CastFunction("string", CastString),
-            CastFunction("number", p => CastNumber(p)),
-            CastFunction("vector", p => CastVector(p)),
-            CastFunction("color", p => CastColor(p)),
-            CastFunction("list", CastList)
-        );
-
-        static Dictionary<string, Color> colors = NewDictionary(
-            KeyValuePair("red", Color.Red),
-            KeyValuePair("blue", Color.Blue),
-            KeyValuePair("green", Color.Green),
-            KeyValuePair("orange", Color.Orange),
-            KeyValuePair("yellow", Color.Yellow),
-            KeyValuePair("white", Color.White),
-            KeyValuePair("black", Color.Black)
-        );
-
         public static List<Return> GetTypes(Type type) => type != typeof(object) ? NewList(PrimitiveTypeMap[type])
             : ((Return[])Enum.GetValues(typeof(Return))).ToList();
 
