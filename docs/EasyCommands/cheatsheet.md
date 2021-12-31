@@ -22,7 +22,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 ### Block Types (Single, Group)
 * Air Vent - ```airvent, vent```, ```airvents, vents```
 * Antenna - ```antenna```, ```antennas```
-* Assembler - ```assembler, assemblers```
+* Assembler - ```assembler```, ```assemblers```
 * Battery - ```battery```, ```batteries```
 * Beacon - ```beacon```, ```beacons```
 * Camera - ```camera```, ```cameras```
@@ -30,12 +30,12 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Collector - ```collector```, ```collectors```
 * Connector - ```connector```, ```connectors```
 * Decoy - ```decoy```, ```decoys```
-* Display - ```display, displays, screen, screens, lcd, lcds```, ``` ```
+* Display - ```display, displays, screen, screens, lcd, lcds``` (no group keywords)
 * Door - ```door, hangar, bay, gate```, ```doors, hangars, bays, gates```
 * Drill - ```drill```, ```drills```
 * Ejector - ```ejector```, ```ejectors```
 * Gravity Generator - ```gravitygenerator```, ```gravitygenerators```
-* Gravity Sphere Generator - ````gravitysphere``, ```gravityspheres```
+* Gravity Sphere Generator - ```gravitysphere```, ```gravityspheres```
 * Grinder - ```grinder```, ```grinders```
 * Gun - ```gun, rocket, missile, launcher```, ```guns, rockets, missiles, launchers```
 * Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
@@ -46,7 +46,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Laser Antenna - ```laser, laserantenna```, ```lasers, laserantennas```
 * Light - ```light, spotlight```, ```lights, spotlights```
 * Landing Gear - ```gear, magnet```, ```gears, magnets``` (also Magnets)
-* Merge Block - ```merge```, ``` ```
+* Merge Block - ```merge``` (no group keywords)
 * O2/H2 Generator - ```generator```, ```generators```
 * Ore Detector - ```detector```, ```detectors```
 * Parachute - ```chute, parachute```, ```chutes, parachutes```
@@ -77,8 +77,10 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```
 * Color - ```color, foreground```
-* Complete ```done, ready, complete, finished, built, finish, pressurized, depressurized```
-* Connected - ```connect, connected, join, joined, attach, attached, dock, docked, docking``` (```disconnect, disconnected, separate, separated, detach, detached, undock, undocked```)
+* Complete - ```done, ready, complete, finished, built, finish, pressurized, depressurized```
+* Connected -
+  * ```connect, connected, join, joined, attach, attached, dock, docked, docking```
+  * (```disconnect, disconnected, separate, separated, detach, detached, undock, undocked```)
 * Countdown - ```countdown, countdowns```
 * Direction - ```direction, directions```
 * Enable - ```enable, enabled, arm, armed```, (```disable, disabled, disarm, disarmed```)
@@ -87,7 +89,9 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Input - ```input, inputs, pilot, pilots, user, users```
 * Interval - ```interval```
 * Level - ```height, heights, length, lengths, level, levels, size, sizes, weight, mass```
-* Locked - ```lock, locked, freeze, frozen, brake, braking, handbrake, permanenet```, (```unlock, unlocked, unfreeze```)
+* Locked - 
+  * ```lock, locked, freeze, frozen, brake, braking, handbrake, permanenet```
+  * (```unlock, unlocked, unfreeze```)
 * Media - ```song, image```
 * Media List - ```songs, images```
 * Name - ```name, label```
@@ -105,7 +109,9 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Show - ```show, showing```, (```hide, hiding```)
 * Silence - ```silent, silence```
 * Strength - ```strength, strengths, force, forces, torque, torques, gravity, gravities```
-* Supply - ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```, (```stockpile, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
+* Supply - 
+  * ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```
+  * (```stockpile, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
 * Target (also Waypoint) - ```target, destination, waypoint, coords, coordinates```
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages```
@@ -166,8 +172,8 @@ These properties require a Variable value as part of the property
 * Bind - ```bind, tie, link``` - Bind 
 * Global - ```global``` - Global Variable
 * Increment - ```increase, increment, add, by, ++, +=``` (Also used to increment block properties)
-* Decrement -```decrease, decrement, reduce, subtract, --, -=``` (Also used to decrement block properties)
-* Keyed Variable```->``` (Used in Collections)
+* Decrement - ```decrease, decrement, reduce, subtract, --, -=``` (Also used to decrement block properties)
+* Keyed Variable - ```->``` (Used in Collections)
 
 ## Conditions
 * Condition - ```if, unless, while, until, when```
@@ -211,7 +217,7 @@ These properties require a Variable value as part of the property
 
 ## Aggregations
 * Average - ```average, avg```
-* Count - ```count, numer```
+* Count - ```count, number```
 * Maximum - ```max, maximum```
 * Minimum - ```min, minimum```
 * Sum - ```sum, total```
