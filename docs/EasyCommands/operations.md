@@ -316,11 +316,12 @@ Returns the dot product of the given two vectors.
 
 Keywords: ```.```
 
-## Exponent
+## Exponent (Also XOR)
 Behavior varies based on the input types.
 
-Keywords: ```^, pow, exp```
+Keywords: ```^, pow, exp, xor```
 
+**(Bool, Bool**): Performs the XOR operation on the two given bools.
 **(Number, Number)**: Raises the first number to t`e power of the second number
 **(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
 

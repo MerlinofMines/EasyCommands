@@ -419,6 +419,30 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignBoolExponentAsXOR() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to true ^ false");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsTrue(CastBoolean(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignBoolExponentAsXORWhenFalse() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to true xor true");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is BiOperandVariable);
+            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsFalse(CastBoolean(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignVectorExponentAsAngleBetween() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to \"0:0:1\" ^ \"1:0:0\"");

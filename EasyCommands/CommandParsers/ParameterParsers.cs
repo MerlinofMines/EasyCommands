@@ -197,7 +197,7 @@ namespace IngameScript {
             AddTier1OperationWords(Words("multiply", "*"), BiOperand.MULTIPLY);
             AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
             AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
-            AddTier1OperationWords(Words("pow", "exp", "^"), BiOperand.EXPONENT);
+            AddTier1OperationWords(Words("pow", "exp", "^", "xor"), BiOperand.EXPONENT);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
             AddTier2OperationWords(Words("minus", "-"), BiOperand.SUBTRACT);
