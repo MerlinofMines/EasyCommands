@@ -169,10 +169,10 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Hydrogen Engines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/engine "Hydrogen Engine Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
 * Jump Drives
-* Landing Gear
+* [Landing Gears](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/landingGear "Landing Gear / Magnet Handler")
 * [Laser Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
 * [Lights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/light "Light Handler")
-* Magnets
+* [Magnets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/landingGear "Landing Gear / Magnet Handler")
 * Merge Blocks
 * O2/H2 Generators
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
