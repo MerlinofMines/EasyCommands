@@ -192,7 +192,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * Tanks (Oxygen and Hydrogen)
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
 * Thrusters
-* Timer Blocks
+* [Timer Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/timer "Timer Block Handler")
 * [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
 * [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")

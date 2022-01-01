@@ -66,13 +66,14 @@ set the "Trap Warhead" delay to 10 seconds
 * Primitive Type: Bool
 * Keywords: ```countdown```
 
-When retrieving, returns where the warhead is currently counting down to detonation.
+When retrieving, returns whether the warhead is currently counting down to detonation.
 
 When setting, will either start or stop the countdown based on the input value.
 
 ```
 #Check if counting down
 if the "Trap Warhead" countdown is on
+  Print "Timer is ticking..."
 
 #start the countdown
 start the "Trap Warhead" countdown
