@@ -174,7 +174,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Lights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/light "Light Handler")
 * [Magnets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/landingGear "Landing Gear / Magnet Handler")
 * [Merge Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/merge "Merge Block Handler")
-* O2/H2 Generators
+* [O2/H2 Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/generator "O2/H2 Generator Handler")
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
 * Parachutes
 * [Pistons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/piston "Piston Handler")
@@ -189,7 +189,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Sorters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sorter "Sorter Block Handler")
 * Sound Blocks
 * [Spherical Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravitySphere "Spherical Gravity Generator Handler")
-* Tanks (Oxygen and Hydrogen)
+* [Tanks (Oxygen and Hydrogen)](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/tank "O2/H2 Tank Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
 * Thrusters
 * [Timer Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/timer "Timer Block Handler")
