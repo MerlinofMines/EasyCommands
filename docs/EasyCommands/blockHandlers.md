@@ -146,9 +146,9 @@ You can also manage inventories and production queues using the [Inventory](http
 
 Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") for information on how to specify items and blueprints to these Block Handlers.
 
-## Supported Block Handlers
+## Supported Block Handlers (still documenting)
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
-* [Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/antenna "Antenna Handler")
+* [Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/antenna "Antenna Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
 * [Batteries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/battery "Battery Handler")
 * [Beacons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/beacon "Beacon Handler")
@@ -161,22 +161,40 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Doors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/door "Door Handler")
 * [Drills](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/drill "Drill Handler")
 * [Ejectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/ejector "Ejector Handler")
+* Gravity Generators
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
 * [Guns](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gun "Gun Handler")
+* Gyroscopes
 * [Hinges](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/hinge "Hinge Handler")
 * [Hydrogen Engines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/engine "Hydrogen Engine Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
-* [Laser Antenna](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
+* Jump Drives
+* Landing Gear
+* [Laser Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
+* [Lights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/light "Light Handler")
+* Magnets
+* Merge Blocks
+* O2/H2 Generators
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
+* Parachutes
 * [Pistons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/piston "Piston Handler")
+* Programmable Blocks
+* Projectors
 * [Reactors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/reactor "Reactor Handler")
 * [Refineries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/refinery "Refinery Handler")
 * [Remote Controls](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler")
 * [Rotors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/rotor "Rotor Handler")
 * [Sensors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sensor "Sensor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
+* Sorters
+* Sound Blocks
+* Spherical Gravity Generators
+* Tanks (Oxygen and Hydrogen)
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
+* Thrusters
+* Timer Blocks
 * [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
 * [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
+* Wheel Suspension
 * [Wind Turbines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turbine "Wind Turbine Handler")
