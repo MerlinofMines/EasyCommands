@@ -5,11 +5,7 @@ This Block Handler handles O2/H2 Generators.  It enables you to turn them on or 
 * Block Type Group Keywords: ```generators```
 
 Default Primitive Properties:
-* Bool - Auto
-* Numeric - Ratio
-
-Default Directional Properties
-* Up - Ratio
+* Bool - Enabled
 
 ## "Enabled" Property
 * Primitive Type: Bool
