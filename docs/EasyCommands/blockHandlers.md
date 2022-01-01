@@ -173,7 +173,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Laser Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
 * [Lights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/light "Light Handler")
 * [Magnets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/landingGear "Landing Gear / Magnet Handler")
-* Merge Blocks
+* [Merge Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/merge "Merge Block Handler")
 * O2/H2 Generators
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
 * Parachutes
