@@ -50,7 +50,7 @@ unlock "My Turret"
 * Primitive Type: Vector
 * Keywords: ```target, targets```
 
-Gets/Sets whether the turret's current target.  When getting, will return either the manually set target, or the position of the targeted entity.  If the gatling turret has no target, it will return 0:0:0.
+Gets/Sets whether the turret's current target.  When getting, will return either the manually set target, or the position of the targeted entity.  If the turret has no target, it will return 0:0:0.
 
 When setting this property, the turret's target will be set to the static coordinates.  So if you set this to a moving target, it *will not auto track*
 
@@ -67,7 +67,7 @@ set "My Turret" target to my position
 * Primitive Type: Vector
 * Keywords: ```targetVelocity```
 
-Gets/Sets the velocity of the turret's current target, in world coordinates.  If the gatling turret has no target, it will return 0:0:0.
+Gets/Sets the velocity of the turret's current target, in world coordinates.  If the turret has no target, it will return 0:0:0.
 
 When setting this property, the turret will be set to track the target assuming it maintains the velocity vector you've specified.  This is intended to be used in combination with the target property for manually tracking targets.
 

@@ -13,7 +13,6 @@ Block Types define a mapping between specific keywords and a specific type of bl
 
 Block Properties allow you to interact with properties of a given set of blocks, based on the [Selector's](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") block type.  Many blocks share the same properties, but the behavior is different for that block type.  For example, the "Range" property on a Gatling Turret will set the Gatling Turret's firing range, whereas "Range" on an antenna will set it's broadcasting distance.
 
-
 ## Getting and Setting Block Properties
 
 Before I get into the supported Block Handlers, let's go over some basics of Block Properties.  These basics apply to all Block Handlers, so as you are reading through specific BlockHandlers, keep the behavior described below in mind.  The BlockHandler descriptions reference these concepts without explaining them in detail.
@@ -174,6 +173,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Refineries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/refinery "Refinery Handler")
 * [Remote Controls](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler")
 * [Rotors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/rotor "Rotor Handler")
+* [Sensors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sensor "Sensor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
 * [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
