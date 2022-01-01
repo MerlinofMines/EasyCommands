@@ -187,6 +187,7 @@ namespace IngameScript {
             AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b))));
             AddWords(Words("count", "number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
+            AddWords(Words("list", "collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
 
             //Operations Words
             AddWords(Words("("), new OpenParenthesisCommandParameter());

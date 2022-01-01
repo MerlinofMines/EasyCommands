@@ -240,6 +240,46 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void ListOfEmptySelectorListReturnsZero() {
+            using (var test = new ScriptTest(@"Print ""My Values: "" + the list of ""test piston"" heights")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Values: []", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ListOfOneItemReturnsListOfOneItem() {
+            using (var test = new ScriptTest(@"Print ""My Values: "" + the list of ""test piston"" heights")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(5f);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Values: [5]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ListOfMultipleItemsReturnsListWithAllItems() {
+            using (var test = new ScriptTest(@"Print ""My Values: "" + the list of ""test piston"" heights")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                var mockPiston3 = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston, mockPiston2, mockPiston3);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(5f);
+                mockPiston2.Setup(b => b.CurrentPosition).Returns(3f);
+                mockPiston3.Setup(b => b.CurrentPosition).Returns(5f);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Values: [5,3,5]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void SumOfConditionalSelector() {
             using (var test = new ScriptTest(@"Print ""My Value: "" + the total height of ""test pistons"" that are on")) {
                 var mockPiston = new Mock<IMyPistonBase>();

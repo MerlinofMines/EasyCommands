@@ -196,7 +196,7 @@ These properties require a Variable value as part of the property
 * Arccos - ```arccos, acos```
 * Arctan - ```arctan, atan```
 * Round - ```round, rnd```
-* Sort - ```sort, sorted```
+* Sort - ```sorted```
 * Multiply - ```multiply, *```
 * Divide - ```divide, /```
 * Modulus - ```mod, %```

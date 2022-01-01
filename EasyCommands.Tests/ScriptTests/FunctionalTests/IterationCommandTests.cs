@@ -79,8 +79,8 @@ assign myList to [1,2,3]
 
 iterate myList 3 times
 
-:iterate list
-for each item in list
+:iterate myList
+for each item in myList
   print ""My Item: "" + item
 ";
             using (var test = new ScriptTest(script)) {
