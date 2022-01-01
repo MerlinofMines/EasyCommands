@@ -205,7 +205,7 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
             AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
             AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
-            AddRightUniOperationWords(Words("sort, sorted"), UniOperand.SORT);
+            AddRightUniOperationWords(Words("sort", "sorted"), UniOperand.SORT);
 
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
