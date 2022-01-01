@@ -35,7 +35,7 @@ increase the "Base Antenna" range by 1000
 ```
 
 ## Read only Properties
-Not all properties can be updated.  These properties will be labelel "Read-only" and can only be retrieved.  Examples include be "Position", "Direction", "Properties", etc.
+Not all properties can be updated.  These properties will be labeled "Read-only" and can only be retrieved.  Examples include be "Position", "Direction", "Properties", etc.
 
 ## Moving Properties
 
@@ -178,8 +178,8 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
 * Parachutes
 * [Pistons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/piston "Piston Handler")
-* Programmable Blocks
-* Projectors
+* [Programmable Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/program "Programmable Block Handler")
+* [Projectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/projector "Projector Handler")
 * [Reactors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/reactor "Reactor Handler")
 * [Refineries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/refinery "Refinery Handler")
 * [Remote Controls](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler")
