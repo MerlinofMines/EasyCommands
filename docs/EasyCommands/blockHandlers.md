@@ -161,7 +161,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Doors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/door "Door Handler")
 * [Drills](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/drill "Drill Handler")
 * [Ejectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/ejector "Ejector Handler")
-* Gravity Generators
+* [Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravityGenerator "Gravity Generator Handler")
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
 * [Guns](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gun "Gun Handler")
 * Gyroscopes
@@ -188,7 +188,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Sorters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sorter "Sorter Block Handler")
 * Sound Blocks
-* Spherical Gravity Generators
+* [Spherical Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravitySphere "Spherical Gravity Generator Handler")
 * Tanks (Oxygen and Hydrogen)
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
 * Thrusters
