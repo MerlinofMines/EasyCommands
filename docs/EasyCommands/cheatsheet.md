@@ -196,7 +196,7 @@ These properties require a Variable value as part of the property
 * Arccos - ```arccos, acos```
 * Arctan - ```arctan, atan```
 * Round - ```round, rnd```
-* Sort - ```sorted```
+* Sort - ```sort, sorted```
 * Multiply - ```multiply, *```
 * Divide - ```divide, /```
 * Modulus - ```mod, %```
@@ -218,6 +218,7 @@ These properties require a Variable value as part of the property
 ## Aggregations
 * Average - ```average, avg```
 * Count - ```count, number```
+* List - ```list, collection```
 * Maximum - ```max, maximum```
 * Minimum - ```min, minimum```
 * Sum - ```sum, total```

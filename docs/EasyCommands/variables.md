@@ -230,6 +230,20 @@ if the number of "Exterior Spotlights" < 5
   Print "They're going after at the lights! Pull em back"
 ```
 
+#### List
+Returns a list representing the values for each block in the given selector.
+
+Keywords: ```list, collection```
+
+```
+set myRanges to the list of "My Beacon" ranges
+Print "My Beacon Ranges are: " + myRanges
+
+for each rangeValue in myRanges
+  Print "Beacon Range: " + rangeValue
+```
+
+
 #### Sum
 Returns the sum of the provided property values across all the blocks in the given selector.  Most useful for numeric properties.  Returns 0 if there are no blocks in the given selector.
 
