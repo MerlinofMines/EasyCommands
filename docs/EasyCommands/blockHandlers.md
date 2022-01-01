@@ -176,7 +176,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Merge Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/merge "Merge Block Handler")
 * [O2/H2 Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/generator "O2/H2 Generator Handler")
 * [Ore Detectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/detector "Ore Detector Handler")
-* Parachutes
+* [Parachutes](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/parachute "Parachute Handler")
 * [Pistons](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/piston "Piston Handler")
 * [Programmable Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/program "Programmable Block Handler")
 * [Projectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/projector "Projector Handler")
