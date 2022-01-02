@@ -415,7 +415,7 @@ otherwise
   Print "Waiting for a request to come inside..."
 ```
 ### Breaking While/Until/When Command
-You can break out of a While/Until/When Conditional Command using the ```break``` keywords.  This will immediately halt execution of the for each and proceed to the next command after the conditional command.
+You can break out of a While/Until/When Conditional Command using the ```break``` keywords.  This will immediately halt execution of the While/Until/When and proceed to the next command after the conditional command.
 
 ```
 set myList to []
@@ -429,7 +429,7 @@ print "My List: " + myList
 #My List: [1,2,3]
 ```
 
-Breaking from a While/Until/When Conditional command only breaks out of the immediate While/Until/When Conditional command.  If you perform a while/until/when inside a while/until/when , and break from the inner for each, it will continue iterating through the outer while/until/when.
+Breaking from a While/Until/When command only breaks out of the immediate While/Until/When command.  If you perform a While/Until/When inside a While/Until/When, and break from the inner while/until/when, it will continue iterating through the outer While/Until/When.
 
 ```
 set j to 0
@@ -456,10 +456,7 @@ print "My List: " + myList
 #My List: [1,2,3,5]
 ```
 
-Continue acts similarly to break in that it only affects the immediate For Each command.
-
-
-
+Continue acts similarly to break in that it only affects the immediate While/Until/When command.
 
 ## For Each Command
 
