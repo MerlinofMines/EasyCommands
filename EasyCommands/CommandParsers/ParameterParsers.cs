@@ -231,10 +231,36 @@ namespace IngameScript {
             AddWords(Words(","), new ListSeparatorCommandParameter());
 
             //Control Types
-            AddWords(Words("restart", "reset", "reboot"), new ControlCommandParameter(Control.RESTART));
-            AddWords(Words("repeat", "loop", "rerun", "replay"), new ControlCommandParameter(Control.REPEAT));
-            AddWords(Words("exit"), new ControlCommandParameter(Control.STOP));
-            AddWords(Words("pause"), new ControlCommandParameter(Control.PAUSE));
+            AddControlWords(Words("restart", "reset", "reboot"), thread => {
+                PROGRAM.ClearAllState();
+                throw new InterruptException(ProgramState.RUNNING);
+            });
+            AddControlWords(Words("repeat", "loop", "rerun", "replay"), thread => {
+                thread.Command = thread.Command.Clone();
+                return false;
+            });
+            AddControlWords(Words("exit"), thread => {
+                PROGRAM.ClearAllState();
+                throw new InterruptException(ProgramState.STOPPED);
+            });
+            AddControlWords(Words("pause"), thread => {
+                if (PROGRAM.state != ProgramState.PAUSED) throw new InterruptException(ProgramState.PAUSED);
+                return true;
+             });
+            AddControlWords(Words("break"), thread => {
+                GetInterrupableCommand("break").Break();
+                return false;
+            });
+            AddControlWords(Words("continue"), thread => {
+                GetInterrupableCommand("continue").Continue();
+                return false;
+            });
+            AddControlWords(Words("return"), thread => {
+                FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>(command => true);
+                if (currentFunction == null) throw new Exception("Invalid use of return command");
+                currentFunction.function = new NullCommand();
+                return false;
+            });
 
             //Blocks
             AddBlockWords(Words("piston"), Block.PISTON);
@@ -326,6 +352,10 @@ namespace IngameScript {
         String[] AllWords(params String[][] words) => words.Aggregate((a, b) => a.Concat(b).ToArray());
 
         String[] PluralWords(params String[] words) => words.Concat(words.Select(w => w + "s")).ToArray();
+
+        void AddControlWords(String[] words, ControlFunction function) {
+            AddWords(words, new CommandReferenceParameter(new ControlCommand { controlFunction = function }));
+        }
 
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
             if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));

@@ -219,26 +219,5 @@ print myValue";
                 Assert.AreEqual("myValue", test.Logger[0]);
             }
         }
-
-        [TestMethod]
-        public void pauseContinuesExecutionAfterResuming() {
-            String script = @"
-:main
-#This is a comment
-print 'Hello World'
-pause
-print 'Hello Again'
-";
-
-            using (var test = new ScriptTest(script)) {
-                test.RunUntilState(Program.ProgramState.PAUSED);
-                Assert.AreEqual(1, test.Logger.Count);
-                Assert.AreEqual("Hello World", test.Logger[0]);
-                test.Logger.Clear();
-                test.RunUntilDone();
-                Assert.AreEqual(1, test.Logger.Count);
-                Assert.AreEqual("Hello Again", test.Logger[0]);
-            }
-        }
     }
 }

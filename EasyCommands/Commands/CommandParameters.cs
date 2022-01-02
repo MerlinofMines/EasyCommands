@@ -170,10 +170,6 @@ namespace IngameScript {
             public IndexSelectorCommandParameter(Variable value) : base(value) {}
         }
 
-        public class ControlCommandParameter : ValueCommandParameter<Control> {
-            public ControlCommandParameter(Control value) : base(value) {}
-        }
-
         public class FunctionCommandParameter : ValueCommandParameter<bool> {
             public FunctionCommandParameter(bool shouldSwitch) : base(shouldSwitch) {}
         }

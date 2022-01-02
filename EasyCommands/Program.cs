@@ -127,8 +127,8 @@ namespace IngameScript {
                     return;
                 }
             } catch (Exception e) {
-                Info("Exception Occurred During Parsing: ");
-                Info(e.Message);
+                Print("Exception Occurred During Parsing:");
+                Print(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
@@ -152,8 +152,8 @@ namespace IngameScript {
                 Info(stateTuple.Key);
                 Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
             } catch(Exception e) {
-                Info("Exception Occurred: ");
-                Info(e.Message);
+                Print("Exception Occurred:");
+                Print(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
@@ -209,6 +209,9 @@ namespace IngameScript {
             public Dictionary<String, Variable> threadVariables = NewDictionary<string, Variable>();
             String prefix;
             String name;
+
+            public T GetCurrentCommand<T>(Func<Command, bool> filter) where T : class =>
+                Command.SearchCurrentCommand(command => command is T && filter(command)) as T;
 
             public Thread(Command command, string p, string n) {
                 Command = command;

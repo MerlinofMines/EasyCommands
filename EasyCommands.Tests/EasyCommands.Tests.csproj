@@ -154,6 +154,7 @@
     <Compile Include="ScriptTests\BlockHandlerTests\CargoBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\ConnectorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\JumpDriveBlockTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\ControlCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\IterationCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleAggregationTests.cs" />

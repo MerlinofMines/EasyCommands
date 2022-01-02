@@ -28,9 +28,15 @@ namespace IngameScript {
             }
         }
 
+        public interface InterruptableCommand {
+            void Break();
+            void Continue();
+        }
+
         public abstract class Command {
             public virtual void Reset() { }
             public virtual Command Clone() => this;
+            public virtual Command SearchCurrentCommand(Func<Command, bool> filter) => filter(this) ? this : null;
 
             //Returns true if the program has finished execution.
             public abstract bool Execute();
@@ -80,7 +86,7 @@ namespace IngameScript {
             public FunctionDefinition functionDefinition;
             public Dictionary<String, Variable> inputParameters;
 
-            MultiActionCommand function;
+            public Command function;
 
             public FunctionCommand(bool shouldSwitch, FunctionDefinition definition, Dictionary<string, Variable> parameters) {
                 switchExecution = shouldSwitch;
@@ -92,7 +98,7 @@ namespace IngameScript {
             public override bool Execute() {
                 Thread currentThread = PROGRAM.GetCurrentThread();
                 if (function == null) {
-                    function = (MultiActionCommand)PROGRAM.functions[functionDefinition.functionName].function.Clone();
+                    function = PROGRAM.functions[functionDefinition.functionName].function.Clone();
                     foreach(string key in inputParameters.Keys) {
                         currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue().DeepCopy());
                     }
@@ -106,6 +112,8 @@ namespace IngameScript {
             }
             public override Command Clone() => new FunctionCommand(switchExecution, functionDefinition, inputParameters);
             public override void Reset() => function = null;
+
+            public override Command SearchCurrentCommand(Func<Command, bool> filter) => function.SearchCurrentCommand(filter) ?? base.SearchCurrentCommand(filter);
         }
 
         public class VariableAssignmentCommand : Command {
@@ -175,35 +183,18 @@ namespace IngameScript {
             }
         }
 
+        public delegate bool ControlFunction(Thread currentThread);
+
+        public InterruptableCommand GetInterrupableCommand(string controlStatement) {
+            InterruptableCommand breakCommand = GetCurrentThread().GetCurrentCommand<InterruptableCommand>(command => !(command is ConditionalCommand) || ((ConditionalCommand)command).alwaysEvaluate);
+            if (breakCommand == null) throw new Exception("Invalid use of " + controlStatement + " command");
+            return breakCommand;
+        }
+
+
         public class ControlCommand : Command {
-            public Control controlType;
-            bool executed = false;
-
-            public ControlCommand(Control type) {
-                controlType = type;
-            }
-
-            public override bool Execute() {
-                switch (controlType) {
-                    case Control.STOP:
-                        PROGRAM.ClearAllState();
-                        throw new InterruptException(ProgramState.STOPPED);
-                    case Control.RESTART:
-                        PROGRAM.ClearAllState();
-                        throw new InterruptException(ProgramState.RUNNING);
-                    case Control.PAUSE:
-                        executed = !executed;
-                        if (executed) throw new InterruptException(ProgramState.PAUSED);
-                        else return true;
-                    case Control.REPEAT:
-                        Thread currentThread = PROGRAM.GetCurrentThread();
-                        currentThread.Command = currentThread.Command.Clone();
-                        return false;
-                    default: throw new Exception("Unsupported Control Type: " + controlType);
-                }
-            }
-
-            public override Command Clone() => new ControlCommand(controlType);
+            public ControlFunction controlFunction;
+            public override bool Execute() => controlFunction(PROGRAM.currentThread);
         }
 
         public class WaitCommand : Command {
@@ -318,24 +309,24 @@ namespace IngameScript {
             }
         }
 
-        public class ConditionalCommand : Command {
+        public class ConditionalCommand : Command, InterruptableCommand {
             public Variable condition;
-            public bool alwaysEvaluate = false;
-            public bool evaluated = false;
-            public bool evaluatedValue = false;
-            public bool isExecuting = false;
-            public Command conditionMetCommand;
-            public Command conditionNotMetCommand;
+            public bool alwaysEvaluate, evaluated, evaluatedValue, isExecuting, shouldBreak;
+            public Command conditionMetCommand, conditionNotMetCommand;
 
             public ConditionalCommand(Variable conditionVariable, Command metCommand, Command notMetCommand, bool alwaysEval) {
                 condition = conditionVariable;
                 conditionMetCommand = metCommand;
                 conditionNotMetCommand = notMetCommand;
                 alwaysEvaluate = alwaysEval;
-                if (alwaysEval) UpdateAlwaysEvaluate();
             }
 
             public override bool Execute() {
+                if (shouldBreak) {
+                    Reset();
+                    return true;
+                }
+
                 bool conditionMet = EvaluateCondition();
                 bool commandResult = conditionMet ? conditionMetCommand.Execute() : conditionNotMetCommand.Execute();
 
@@ -346,10 +337,8 @@ namespace IngameScript {
                 if (isExecuting) return false; //Keep executing subcommand
 
                 //Finished Executing.  Reset Commands
-                conditionMetCommand.Reset();
-                conditionNotMetCommand.Reset();
+                Reset();
 
-                //throw new Exception("Stop!");
                 return alwaysEvaluate ? !conditionMet : commandResult;
             }
 
@@ -358,28 +347,34 @@ namespace IngameScript {
                 conditionNotMetCommand.Reset();
                 evaluated = false;
                 isExecuting = false;
+                shouldBreak = false;
             }
             public override Command Clone() => new ConditionalCommand(condition, conditionMetCommand.Clone(), conditionNotMetCommand.Clone(), alwaysEvaluate);
 
-            private void UpdateAlwaysEvaluate() {
-                alwaysEvaluate = true;
-                if (conditionMetCommand is ConditionalCommand) ((ConditionalCommand)conditionMetCommand).UpdateAlwaysEvaluate();
-                if (conditionNotMetCommand is ConditionalCommand) ((ConditionalCommand)conditionNotMetCommand).UpdateAlwaysEvaluate();
-            }
-
-            private bool EvaluateCondition() {
+            bool EvaluateCondition() {
                 if ((!isExecuting && alwaysEvaluate) || !evaluated) {
                     evaluatedValue = CastBoolean(condition.GetValue());
                     evaluated = true;
                 }
                 return evaluatedValue;
             }
+
+            public override Command SearchCurrentCommand(Func<Command, bool> filter) =>
+                (evaluatedValue ? conditionMetCommand.SearchCurrentCommand(filter) : conditionNotMetCommand.SearchCurrentCommand(filter))
+                    ?? base.SearchCurrentCommand(filter);
+
+            public void Continue() {
+                Reset();
+            }
+
+            public void Break() {
+                shouldBreak = true;
+            }
         }
 
         public class MultiActionCommand : Command {
-            public List<Command> commandsToExecute;
+            public List<Command> commandsToExecute, currentCommands = null;
             public Variable loopCount;
-            List<Command> currentCommands = null;
             int loopsLeft;
 
             public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) : this(commandsToExecute, new StaticVariable(ResolvePrimitive(loops))) {
@@ -410,8 +405,8 @@ namespace IngameScript {
                     Debug("Command is handled, continuing to next command");
                 }
 
-                if (currentCommands.Count > 0) return false;
-                if (loopsLeft == 0) return true;
+                if (currentCommands != null && currentCommands.Count > 0) return false;
+                if (loopsLeft <= 0) return true;
 
                 Reset();
                 return false;
@@ -419,9 +414,11 @@ namespace IngameScript {
             public override void Reset() { currentCommands = null; }
             public override Command Clone() => new MultiActionCommand(commandsToExecute, loopCount);
             public void Loop(int times) { loopsLeft += times; }
+
+            public override Command SearchCurrentCommand(Func<Command, bool> filter) => currentCommands[0].SearchCurrentCommand(filter) ?? base.SearchCurrentCommand(filter);
         }
 
-        public class ForEachCommand : Command {
+        public class ForEachCommand : Command, InterruptableCommand {
             public string iterator;
             public Variable list;
             public Command command;
@@ -437,6 +434,8 @@ namespace IngameScript {
             public override bool Execute() {
                 if (listElements == null) listElements = CastList(list.GetValue()).GetValues();
 
+                if (executed && listElements.Count == 0) return true;
+
                 if (executed && listElements.Count > 0) {
                     PROGRAM.GetCurrentThread().threadVariables[iterator] = listElements[0];
                     listElements.RemoveAt(0);
@@ -446,15 +445,29 @@ namespace IngameScript {
                 if (!executed) executed = command.Execute();
                 if (executed) command.Reset();
 
-                return executed && listElements.Count == 0;
+                return executed && (listElements == null || listElements.Count == 0);
             }
 
             public override void Reset() {
                 listElements = null;
                 executed = true;
+                command.Reset();
             }
 
-            public override Command Clone() => new ForEachCommand(iterator, list, command);
+            public override Command Clone() => new ForEachCommand(iterator, list, command.Clone());
+
+            public override Command SearchCurrentCommand(Func<Command, bool> filter) => command.SearchCurrentCommand(filter) ?? base.SearchCurrentCommand(filter);
+
+            public void Break() {
+                executed = true;
+                listElements = NewList<Variable>();
+                command.Reset();
+            }
+
+            public void Continue() {
+                executed = true;
+                command.Reset();
+            }
         }
     }
 }

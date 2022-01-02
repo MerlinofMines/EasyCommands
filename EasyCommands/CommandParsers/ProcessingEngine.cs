@@ -297,9 +297,6 @@ namespace IngameScript {
             OneValueRule(Type<ListenCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, var) => new CommandReferenceParameter(new ListenCommand(var.value))),
 
-            //ControlProcessor 
-            NoValueRule(Type<ControlCommandParameter>, (p) => new CommandReferenceParameter(new ControlCommand(p.value))),
-
             //IterationProcessor
             OneValueRule(Type<RepetitionCommandParameter>, requiredEither<CommandReferenceParameter>(),
                 (p, command) => new CommandReferenceParameter(new MultiActionCommand(NewList(command.value), p.value))),
