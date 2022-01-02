@@ -10,7 +10,7 @@ turn on "My Merge Blocks"
 ```
 
 Default Primitive Properties:
-* Bool - Connected
+* Bool - Enabled
 
 ## "Enabled" Property
 * Primitive Type: Bool
@@ -48,33 +48,37 @@ power off "My Merge Block"
 ```
 
 ## "Locked" Property
-* Read-only
 * Primitive Type: Bool
 * Keywords: ```lock, locked```
 * Inverse Keywords: ```unlock, unlocked```
 
-Returns whether the merge block is currently connected to another merge block. This property is read-only.  To unlock a merge block you need to turn it off.
+Returns whether the merge block is currently connected to another merge block. This property is read-only.  When set, this property enables or disables the merge block (the only way to connect/disconnect).
 
 ```
 if "My Merge Block" is locked
   Print "Merge block is locked"
 
-#To unlock a merge block
-disable "My Merge Block"
+#Enables the merge block
+lock "My Merge Block"
+
+#Disables the merge block
+unlock "My Merge Block"
 ```
 
 ## "Connected" Property
-* Read-only
 * Primitive Type: Bool
 * Keywords: ```connected, attached, docked, joined```
 * Inverse Keywords: ```disconnected, detached, undocked, separated```
 
-Same as Locked.  Returns whether the merge block is currently connected to another merge block.
+Same as Locked.  Returns whether the merge block is currently connected to another merge block.  This property is read-only.  When set, this property enables or disables the merge block (the only way to connect/disconnect).
 
 ```
 if "My Merge Block" is connected
   Print "Merge block is connected"
 
-#To unlock a merge block
-disable "My Merge Block"
+#Enables the merge block
+connect "My Merge Block"
+
+#Disables the merge block
+disconnect "My Merge Block"
 ```
