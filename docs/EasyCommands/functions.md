@@ -59,6 +59,51 @@ goto "myFunction2"
 
 This is effectively changing what function is currently considered "active" by the program.  The current function, no matter its state of execution, is abandoned in favor of the new active program.  Furthermore, any commands to "restart", "loop", "start" will now restart the new function.  This behavior effectively enables "modes" for your program to run in where the modes are intended to be exclusive. 
 
+## Returning from a function
+Sometimes you might want to return from a function early (meaning if some condition is met, short circuit).  You can return from a function using the ```return``` keywords.
+
+```
+#Doesn't do anything
+doSomething 2
+
+#Prints "Input is: 3"
+doSomething 3
+
+:doSomething myInput
+if myInput is 2
+  return
+
+Print "Input is: " + 3
+```
+
+A more interesting example using this would be to end an asynchronous thread based on a condition checked elsewhere:
+
+```
+set global stopListening to false
+async doSomething
+wait 3 seconds
+set global stopListening to true
+
+:doListen
+if stopListening
+  return
+Print "Doing something!"
+replay
+```
+
+You cannot return a value as part of the return statement (like you can do in some languages).  Return is only for short-circuiting evaluation.
+
+If you want to "return a value" from a function, just set a variable with the name you desire and you can reference it after the function completes:
+
+```
+calculateValue 4
+Print "Return Value: " + returnValue
+#Return Value: 8
+
+:calculateValue myValue
+set returnValue to myValue * 2
+```
+
 ## Multi-Threading
 As with any command you can call functions asynchronously.  This effectively enables "threads" on your program so you can do multiple things with one program.  This is useful for doing things like controlling multiple airlocks from one program, or whatever else you'd like to have your program multi-task.  
 

@@ -414,6 +414,52 @@ when the "Come Inside" sensor is triggered
 otherwise
   Print "Waiting for a request to come inside..."
 ```
+### Breaking While/Until/When Command
+You can break out of a While/Until/When Conditional Command using the ```break``` keywords.  This will immediately halt execution of the for each and proceed to the next command after the conditional command.
+
+```
+set myList to []
+set i to 0
+until i > 5
+  i++
+  if i % 4 is 0
+    break
+  increase myList by i
+print "My List: " + myList
+#My List: [1,2,3]
+```
+
+Breaking from a While/Until/When Conditional command only breaks out of the immediate While/Until/When Conditional command.  If you perform a while/until/when inside a while/until/when , and break from the inner for each, it will continue iterating through the outer while/until/when.
+
+```
+set j to 0
+until i > 3
+  set i to 0
+  until j > 3
+    if i = j
+      break
+  print "Continuing..."
+```
+
+### Continuing a While/Until/When Command
+Sometimes you might want to keep running a conditional command but restart the current command execution.  You can do this with the ```continue``` keywords.
+
+```
+set myList to []
+set i to 0
+until i > 5
+  i++
+  if i % 4 is 0
+    continue
+  increase myList by i
+print "My List: " + myList
+#My List: [1,2,3,5]
+```
+
+Continue acts similarly to break in that it only affects the immediate For Each command.
+
+
+
 
 ## For Each Command
 
@@ -477,6 +523,44 @@ for each i in 0..count of myList[] - 1
   set my display text to "myItem[" + i + "] = " + myList[i]
   wait 1
 ```
+
+### Breaking a For Each Command
+You can break out of the a For Each command using the ```break``` keywords.  This will immediately halt execution of the for each and proceed to the next command after the for each command.
+
+```
+set myList to []
+for each i in 1..5
+  if i % 4 is 0
+    break
+  increase myList by i
+print "My List: " + myList
+#My List: [1,2,3]
+```
+
+Breaking from a for each command only breaks out of the immediate For Each command.  If you perform a for each inside a for each, and break from the inner for each, it will continue iterating through the outer for each.
+
+```
+for each i in 0..3
+  for each j in 0..3
+    if i = j
+      break
+  print "Continuing..."
+```
+
+### Continuing a For Each Command
+Sometimes you might want to keep iterating over a for each, but "skip" the current item.  You can do this with the ```continue``` keywords.
+
+```
+set myList to []
+for each i in 1..5
+  if i % 4 is 0
+    continue
+  increase myList by i
+print "My List: " + myList
+#My List: [1,2,3,5]
+```
+
+Continue acts similarly to break in that it only affects the immediate For Each command.
 
 ## Function Command
 [Functions](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions") allow you to create re-usable and invokable pieces of script which can be called from within your script, and from external sources (see [Invoking Your Script](https://spaceengineers.merlinofmines.com/EasyCommands/invoking "Invoking Your Script")).  

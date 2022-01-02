@@ -148,6 +148,9 @@ These properties require a Variable value as part of the property
 * Repeat - ```repeat, loop, rerun, replay```
 * Exit - ```exit```
 * Pause - ```pause```
+* Break - ```break```
+* Continue - ```continue```
+* Return - ```return```
 
 ### Action Words
 * Action - ```move, go, tell, turn, rotate, set, apply``` (also can be used for variable assignment)

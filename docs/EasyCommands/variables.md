@@ -243,7 +243,6 @@ for each rangeValue in myRanges
   Print "Beacon Range: " + rangeValue
 ```
 
-
 #### Sum
 Returns the sum of the provided property values across all the blocks in the given selector.  Most useful for numeric properties.  Returns 0 if there are no blocks in the given selector.
 
