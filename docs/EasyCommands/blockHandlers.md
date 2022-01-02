@@ -191,7 +191,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Spherical Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravitySphere "Spherical Gravity Generator Handler")
 * [Tanks (Oxygen and Hydrogen)](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/tank "O2/H2 Tank Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
-* Thrusters
+* [Thrusters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/thruster "Thruster Block Handler")
 * [Timer Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/timer "Timer Block Handler")
 * [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
 * [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
