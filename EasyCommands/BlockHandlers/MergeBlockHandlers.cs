@@ -21,33 +21,9 @@ namespace IngameScript {
     partial class Program {
         public class MergeBlockHandler : FunctionalBlockHandler<IMyShipMergeBlock> {
             public MergeBlockHandler() : base() {
-                AddBooleanHandler(Property.LOCKED, IsMerged);
-                AddBooleanHandler(Property.CONNECTED, IsMerged);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
-            }
-
-            //https://forum.keenswh.com/threads/merge-block-lock-state-checking.7378572/
-            //Credit goes to JoeTheDestroyer
-            bool IsMerged(IMyShipMergeBlock b) {
-                if (b.IsConnected) return false;
-
-                //Find direction that block merges to
-                Matrix mat;
-                b.Orientation.GetMatrix(out mat);
-                Vector3I right1 = new Vector3I(mat.Right);
-
-                //Check if there is a block in front of merge face
-                IMySlimBlock sb = b.CubeGrid.GetCubeBlock(b.Position + right1);
-                if (sb == null) return false;
-
-                //Check if the other block is actually a merge block
-                IMyShipMergeBlock mrg2 = sb.FatBlock as IMyShipMergeBlock;
-                if (mrg2 == null) return false;
-
-                //Check that other block is correctly oriented
-                mrg2.Orientation.GetMatrix(out mat);
-                Vector3I right2 = new Vector3I(mat.Right);
-                return right2 == -right1;
+                var connectHandler = BooleanHandler(b => b.IsConnected, (b, v) => b.Enabled = v);
+                AddPropertyHandler(Property.LOCKED, connectHandler);
+                AddPropertyHandler(Property.CONNECTED, connectHandler);
             }
         }
     }
