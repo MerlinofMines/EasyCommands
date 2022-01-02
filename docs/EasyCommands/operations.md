@@ -230,44 +230,38 @@ set the "Remote Control" destination to myVector
 
 ### Comparison
 
-There are a few different comparisons supported by EasyCommands, and against a few different BiOperand combinations.
+There are a few different comparisons supported by EasyCommands.  Comparison support and behavior changes slightly based on the input types, see below for description.
 
-Keywords:
-```
-#Less Than
-less than
-<
-below
+#### Equals
+Keywords: ```is, are, equal, equals, =, ==```
 
-#Less than or equal to
-<=
+#### Not Equals
+Keywords: ```is not, are not, !=, is not equal, not equal```
 
-#Equal
-is
-are
-equal
-equals
-=
-==
+#### Less Than
+Keywords: ```less than, <, below```
 
-#Greater than or equal to
->=
+#### Greater Than
+Keywords: ```greater than, >, more than, above```
 
-#Greater than
-greater than
-more than
->
-above
-```
+#### Greater Than Or Equal
+Keywords: ```>=```
 
-**(Boolean, Boolean)**: compares booleans.  true is greater than false.  True is equal to true and false is equal to false
-**(String, String)**: compares strings using lexicographical order
-**(Number, Number)**: compares two numbers
-**(Vector, Vector)**: supports equality.  Other comparisons not supported
-**(Color, Color)**: Compares two Colors using their packed integer value
-**(List, List)**: Compares two lists for equality (membership and order).  Other comparisons not supported
-**(Vector, Number)**: Compares the vector's length against the given number
-**(Number, Vector)**: compares the number against the given vector's length
+* **(Boolean, Boolean)**: compares booleans.  true is greater than false.  True is equal to true and false is equal to false
+
+* **(String, String)**: compares strings using lexicographical order
+
+* **(Number, Number)**: compares two numbers
+
+* **(Vector, Vector)**: supports equality.  Other comparisons not supported
+
+* **(Color, Color)**: Compares two Colors using their packed integer value
+
+* **(List, List)**: Compares two lists for equality (membership and order).  Other comparisons not supported
+
+* **(Vector, Number)**: Compares the vector's length against the given number
+
+* **(Number, Vector)**: compares the number against the given vector's length
 
 ### Contains
 Checks whether the first operand contains the given value. (a contains b).  Behavior varies based on input types.
