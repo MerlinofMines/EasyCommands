@@ -5,7 +5,6 @@ This Block Handler handles Wheel Suspension (not wheels directly, but still cont
 * Block Type Group Keywords: ```wheels, suspension```
 
 Default Primitive Properties:
-* Bool - Enabled
 * Numeric - Height
 
 Default Directional Properties

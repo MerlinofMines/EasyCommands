@@ -187,7 +187,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Sensors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sensor "Sensor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Sorters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sorter "Sorter Block Handler")
-* Sound Blocks
+* [Sound Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sound "Sound Block Handler")
 * [Spherical Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravitySphere "Spherical Gravity Generator Handler")
 * [Tanks (Oxygen and Hydrogen)](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/tank "O2/H2 Tank Handler")
 * [Terminal Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler")
