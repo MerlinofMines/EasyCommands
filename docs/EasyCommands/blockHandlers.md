@@ -146,7 +146,7 @@ You can also manage inventories and production queues using the [Inventory](http
 
 Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") for information on how to specify items and blueprints to these Block Handlers.
 
-## Supported Block Handlers (still documenting)
+## Supported Block Handlers
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
 * [Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/antenna "Antenna Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
@@ -168,7 +168,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Hinges](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/hinge "Hinge Handler")
 * [Hydrogen Engines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/engine "Hydrogen Engine Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")
-* Jump Drives
+* [Jump Drives](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/jumpDrive "Jump Drive Handler")
 * [Landing Gears](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/landingGear "Landing Gear / Magnet Handler")
 * [Laser Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/laserAntenna "Laser Antenna Handler")
 * [Lights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/light "Light Handler")
