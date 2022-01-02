@@ -60,3 +60,25 @@ Another possibility is that you are trying to call a function from within itself
 * Make sure your selectors are working by printing out their names:
   * ``` Print $mySelector names ```, or
   * ```Print mySelector blockType names```
+
+### Pausing/Slowing Down Script Execution
+Sometimes your program may run too fast to see what's happening effectively.
+
+There are a couple things you can do to slow down execution and see what's happening.
+
+First, you can use the "Pause" command anywhere to pause the script.  This will pause the script in its exact state, and will pick up where you left off when you run the program again (without an argument) hitting "run".  In this way, you can pause execution at a given moment, maybe right after you print some output to the screen.
+
+You can also set the Runtime Frequency of the script manually.  "Edit" the program and change execution to your desired frequency:
+
+```
+public UpdateFrequency updateFrequency = UpdateFrequency.Update10;
+```
+
+Note that EasyCommands assumes you are running every tick, so waiting "1 second" on Update10 will actually wait 10 seconds.
+
+Supported Values:
+* ```UpdateFrequency.Update1``` - Script runs once every tick (the default)
+* ```UpdateFrequency.Update10``` - Script runs once every 10 ticks
+* ```UpdateFrequency.Update100``` - Script runs once every 100 ticks
+* ```UpdateFrequency.None``` - Script runs 1 tick per time you click "Run".  Effectively pasues after each execution.
+* ```UpdateFrequency.Once``` - Script runs 1 tick per time you click "Run".  Effectively pasues after each execution.

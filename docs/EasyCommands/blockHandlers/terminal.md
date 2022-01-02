@@ -1,4 +1,4 @@
-## Terminal Block Handler
+# Terminal Block Handler
 
 The most basic block handler is the Terminal Block Handler, which supports any block that is a TerminalBlock.  Almost all other BlockHandlers inherit from this and so also have these properties.  The only exceptions to this are Displays and Inventories.
 
