@@ -119,7 +119,7 @@ If you don't start your program with a function name, all the commands up until 
 
 ## Conditional Calls to Functions
 
-Just like a multi-command command, a function call made by a time-sensitive condition will execute the entire function before checking the condition again.  So the following command will always execute all of the "blink" logic before re-checking the "pistons" height.
+All commands inside of a conditional command will be executed before checking the condition again.  So the following command will always execute all of the "blink" logic before re-checking the "pistons" height.
 
 ```
 until "pistons" height > 10
@@ -132,27 +132,8 @@ turn off the "lights"
 wait 1
 ```
 
-This is true even if you make an async call to "blink". The only time when a function, once invoked, would not complete its execution is if either (1) the program is stopped or restarted 
-(2) the program is given another command to run directly either through the console, another program block invocing it, or a command is given through a channel being listened to, which causes the program to stop executing any function.
-(3) a goto <function> is invoked inside function itself, meaning it breaks immediately and begins executing the new function
-(4) the function is called async, and one of the following commands invokes goto <function>, meaning it breaks immediately and begins executing the new function.
-  
-So let's say, for whatever reason, I *really* need to stop the execution of my function as soon as my condition is no longer met.  How can I do that?
-
-You can accomplish this by making the function call async and then checking the condition again using a when clause:
-
-```
-:main
-until "pistons" height > 9.9
-  async call "function"
-  when "pistons" height > 9.9 goto "stopFunction"
-
-:function
-turn on the "lights"
-wait 1
-turn off the "lights"
-wait 1
-
-:stopFunction
-wait 1
-```
+The only time when a related list of commands, once invoked, would not complete their execution is if one of the following occurs:
+* the program is stopped or restarted 
+* a "return" command is executed inside of a function
+* a "break" command is executed inside of a condition or for each command
+* a "goto functionName" command is executed, meaning it breaks immediately and begins executing the new function
