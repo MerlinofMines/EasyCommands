@@ -41,8 +41,8 @@ else
 
 :controlReverseSirens
 if $myCockpit backwards velocity > 1
-  if $reverseSirens are off
-    turn on the $reverseSirens
+  if $reverseSirens are not playing
+    play the $reverseSirens
 else
-  turn off the $reverseSirens
+  silence the $reverseSirens
 ```
