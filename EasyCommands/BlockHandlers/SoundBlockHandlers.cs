@@ -21,14 +21,20 @@ namespace IngameScript {
     partial class Program {
         public class SoundBlockHandler : FunctionalBlockHandler<IMySoundBlock> {
             public SoundBlockHandler() {
-                AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v,1);
-                AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v,50);
-                AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 60);
-                AddStringHandler(Property.MEDIA, (b) => b.SelectedSound, (b, v) => b.SelectedSound = v);
-                AddBooleanHandler(Property.POWER, (b) => { var p = GetCustomProperty(b, "Playing"); return p == "True"; }, (b, v) => { if (v) b.Play(); else b.Stop(); SetCustomProperty(b, "Playing", v + ""); });
+                AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v, 0.1f);
+                AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v, 50);
+                AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 10);
+                AddPropertyHandler(Property.MEDIA, ReturnTypedHandler(Return.STRING,
+                    TypeHandler(BooleanHandler((b) => b.DetailedInfo.Contains("Loop timer"), (b, v) => { if (v) b.Play(); else b.Stop(); }), Return.BOOLEAN),
+                    TypeHandler(StringHandler(b => b.SelectedSound, (b, v) => b.SelectedSound = v), Return.STRING)));
+
+                AddListHandler(Property.MEDIA_LIST, b => {
+                    var availableSounds = NewList<string>();
+                    b.GetSounds(availableSounds);
+                    return new KeyedList(availableSounds.Select(sound => GetStaticVariable(sound)).ToArray());
+                });
                 defaultPropertiesByPrimitive[Return.STRING] = Property.MEDIA;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;
-                defaultPropertiesByDirection[Direction.UP] = Property.VOLUME;
             }
         }
     }

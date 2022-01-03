@@ -92,8 +92,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Locked - 
   * ```lock, locked, freeze, frozen, brake, braking, handbrake, permanenet```
   * (```unlock, unlocked, unfreeze```)
-* Media - ```song, image```
-* Media List - ```songs, images```
+* Media - ```sound, music, song, track, image, play, playing, unsilence``` (```silent, silence, quiet```)
+* Media List - ```sounds, songs, images, tracks```
 * Name - ```name, label```
 * Names - ```names, labels```
 * Offset (also Padding)- ```offset, padding```
@@ -107,7 +107,6 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Roll Input - ```roll, rolls, rollInput, rollInputs, rotation, rotations```
 * Run - ```run, running, execute, executing, script```
 * Show - ```show, showing```, (```hide, hiding```)
-* Silence - ```silent, silence```
 * Strength - ```strength, strengths, force, forces, torque, torques, gravity, gravities```
 * Supply - 
   * ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```

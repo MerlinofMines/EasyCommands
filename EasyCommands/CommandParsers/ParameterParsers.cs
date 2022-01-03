@@ -89,7 +89,7 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size"), Words("weight", "mass")), Property.LEVEL);
+            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period"), Words("weight", "mass")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
@@ -107,9 +107,9 @@ namespace IngameScript {
             AddPropertyWords(Words("power", "powered"), Property.POWER);
             AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
             AddPropertyWords(Words("disable", "disabled", "disarm", "disarmed"), Property.ENABLE, false);
-            AddPropertyWords(Words("music", "song", "image"), Property.MEDIA);
-            AddPropertyWords(Words("songs", "images"), Property.MEDIA_LIST);
-            AddPropertyWords(Words("silent", "silence"), Property.SILENCE);
+            AddPropertyWords(Words("music", "sound", "song", "track", "image", "play", "playing", "unsilence"), Property.MEDIA);
+            AddPropertyWords(Words("silence", "silent", "quiet"), Property.MEDIA, false);
+            AddPropertyWords(Words("sounds", "songs", "images", "tracks"), Property.MEDIA_LIST);
             AddPropertyWords(AllWords(PluralWords("volume", "output"), Words("intensity", "intensities")), Property.VOLUME);
             AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("radius", "radii", "capacity", "capacities")), Property.RANGE);
             AddPropertyWords(PluralWords("interval"), Property.INTERVAL);

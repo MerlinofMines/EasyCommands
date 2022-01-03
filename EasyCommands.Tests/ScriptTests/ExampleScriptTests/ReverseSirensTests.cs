@@ -19,10 +19,10 @@ namespace EasyCommands.Tests.ScriptTests
             String script = @"
 :reverseSirens
   if ""rover cockpit"" backwards velocity > 1
-    if ""reverse sirens"" are off
-      turn on the ""reverse sirens""
+    if ""reverse sirens"" are not playing
+      play the ""reverse sirens""
   else
-    turn off the ""reverse sirens""
+    silence the ""reverse sirens""
 ";
             using (var test = new ScriptTest(script))
             {
@@ -30,7 +30,7 @@ namespace EasyCommands.Tests.ScriptTests
                 mockRoverCockpit.Setup(b => b.WorldMatrix).Returns(MatrixD.CreateWorld(Vector3D.Zero));
                 mockRoverCockpit.Setup(b => b.GetShipVelocities()).Returns(new MyShipVelocities(new Vector3D(0, 0, 2), Vector3D.Zero));
                 var mockReverseSirens = new Mock<IMySoundBlock>();
-                mockReverseSirens.Setup(b => b.CustomData).Returns("Playing=False");
+                mockReverseSirens.Setup(b => b.DetailedInfo).Returns("");
 
                 test.MockBlocksOfType("rover cockpit", mockRoverCockpit);
                 test.MockBlocksInGroup("reverse sirens", mockReverseSirens);

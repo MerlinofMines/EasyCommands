@@ -216,7 +216,7 @@ namespace IngameScript {
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
                 Primitive value = (property.direction.HasValue ? GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :
                 GetPropertyHandler(property).Get((T)block, property));
-                if (property.propertyValue != null && !CastBoolean(property.propertyValue.GetValue())) value = value.Not();
+                if (property.inverse) value = value.Not();
                 return value;
             }
 
@@ -291,7 +291,7 @@ namespace IngameScript {
             }
 
             public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) => TypedHandler(defaultDirection, p => p.direction.GetValueOrDefault(defaultDirection), handlers);
-            public PropertyHandler<T> ReturnTypedHandler(Return defaultReturn, params TypeHandler<T, Return>[] handlers) => TypedHandler(defaultReturn, p => (p.propertyValue ?? GetStaticVariable(true)).GetValue().returnType, handlers);
+            public PropertyHandler<T> ReturnTypedHandler(Return defaultReturn, params TypeHandler<T, Return>[] handlers) => TypedHandler(defaultReturn, p => p.propertyValue != null ? p.propertyValue.GetValue().returnType : Return.DEFAULT, handlers);
 
             public TypeHandler<T, U> TypeHandler<U>(PropertyHandler<T> h, params U[] values) => new TypeHandler<T, U> {
                 handler = h,

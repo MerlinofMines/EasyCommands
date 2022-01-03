@@ -24,6 +24,7 @@ namespace IngameScript {
             public Variable attributeValue, propertyValue;
             public Direction? direction;
             public bool? increment;
+            public bool inverse;
 
             public PropertySupplier() { }
 
@@ -43,11 +44,10 @@ namespace IngameScript {
                     PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                     BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
                     if (property != null) supplier = WithPropertyType(property.value.propertyType);
-                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
+                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 } else {
                     supplier = WithPropertyType(propertyString);
                 }
-
                 return supplier;
             }
 
@@ -89,12 +89,19 @@ namespace IngameScript {
                 return copy;
             }
 
+            public PropertySupplier Inverse(bool inverse) {
+                PropertySupplier copy = Copy();
+                copy.inverse = inverse;
+                return copy;
+            }
+
             PropertySupplier Copy() => new PropertySupplier {
                     propertyType = propertyType, 
                     attributeValue = attributeValue,
                     propertyValue = propertyValue,
                     direction = direction,
-                    increment = increment
+                    increment = increment,
+                    inverse = inverse
                 };
         }
     }

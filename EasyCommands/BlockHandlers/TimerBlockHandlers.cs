@@ -22,7 +22,7 @@ namespace IngameScript {
         public class TimerBlockHandler : FunctionalBlockHandler<IMyTimerBlock> {
             public TimerBlockHandler() {
                 AddBooleanHandler(Property.TRIGGER, b => b.IsCountingDown, (b, v) => b.Trigger());
-                AddBooleanHandler(Property.SILENCE, b => b.Silent, (b, v) => b.Silent = v);
+                AddBooleanHandler(Property.MEDIA, b => !b.Silent, (b, v) => b.Silent = !v);
                 AddNumericHandler(Property.RANGE, b => b.TriggerDelay, (b, v) => b.TriggerDelay = v, 1);
                 AddBooleanHandler(Property.COUNTDOWN, b => b.IsCountingDown, (b, v) => { if (v) b.StartCountdown(); else b.StopCountdown(); });
             }
