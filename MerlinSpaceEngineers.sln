@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands", "EasyCommands\EasyCommands.csproj", "{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands.Tests", "EasyCommands.Tests\EasyCommands.Tests.csproj", "{E11779CC-F7DF-416C-8932-8012F3B681EB}"
@@ -28,13 +26,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|x64.ActiveCfg = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|x64.Build.0 = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|Any CPU.ActiveCfg = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|Any CPU.Build.0 = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|x64.ActiveCfg = Debug|x64
-		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|x64.Build.0 = Debug|x64
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|x64.ActiveCfg = Debug|x64
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|x64.Build.0 = Debug|x64

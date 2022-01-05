@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>ce8c102d-3998-414c-990d-92d4a2edf4ce</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>docs</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\gravitySphere.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\hinge.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\rotor.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\solar.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\piston.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\gun.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\sensor.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\landingGear.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\sorter.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\merge.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\gravityGenerator.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\generator.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\tank.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\program.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\projector.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\parachute.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\suspension.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\gyroscope.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\sound.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\jumpDrive.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\thruster.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\timer.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\turret.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\warhead.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\turbine.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\reactor.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\engine.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\EasyCommands.png" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\garageDoorOpener.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\airlock.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\backupLights.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\craneDrill.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\shipFollow.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\examples\autoRefill.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\input.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\debugging.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\items.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\cheatsheet.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\light.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\threads.md" />
+    <Content Include="$(MSBuildThisFileDirectory)_includes\nav.html" />
+    <Content Include="$(MSBuildThisFileDirectory)_layouts\default.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)assets\css\style.scss" />
+    <None Include="$(MSBuildThisFileDirectory)CNAME" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\airvent.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\antenna.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\assembler.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\battery.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\beacon.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\camera.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\cockpit.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\collector.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\connector.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\decoy.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\detector.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\display.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\door.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\drill.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\ejector.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\grinder.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\inventory.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\laserAntenna.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\refinery.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\remote.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\terminal.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\welder.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\collections.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\commands.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\examples.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\examples\ascentAssist.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\execution.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\functions.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\index.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\invoking.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\operations.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\parsing.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\primitives.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\selectors.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\variables.md" />
+    <None Include="$(MSBuildThisFileDirectory)index.md" />
+    <None Include="$(MSBuildThisFileDirectory)_config.yml" />
+  </ItemGroup>
+</Project>
