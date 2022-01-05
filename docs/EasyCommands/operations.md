@@ -300,7 +300,7 @@ set containsValue to myList contains 1
 set containsValue to myList contains ["one", "four"]
 ```
 
-## Division
+### Division
 Behavior varies based on input types.
 
 Keywords: ```/, divide```
@@ -310,7 +310,7 @@ Keywords: ```/, divide```
 * **(Vector, Number)**: Divides the vector by the Number, returning a Vector in the same direction as a with a magnitude reduced by a factor of b.
 * **(Color, Number)**: Divides the color by the Number, returning a Color
 
-## Dot Product
+### Dot Product
 Returns the dot product of the given two vectors.
 
 Keywords: ```.```
@@ -325,7 +325,7 @@ Also, you can use ```myColor.r, myColor.g, myColor.b``` to get the RGB component
 
 See the Vector and Color [Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") for more information.
 
-## Exponent (Also XOR)
+### Exponent (Also XOR)
 Behavior varies based on the input types.
 
 Keywords: ```^, pow, xor```
@@ -334,7 +334,7 @@ Keywords: ```^, pow, xor```
 * **(Number, Number)**: Raises the first number to t`e power of the second number
 * **(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
 
-## Modulus
+### Modulus
 Behavior varies based on input types.
 
 Keywords: ```%, mod```
@@ -342,7 +342,7 @@ Keywords: ```%, mod```
 * **(String, String)**: Removes all instances of b from the string a
 * **(Vector, Vector)**: Performed Vector Rejection of b on the given Vector A, returning the resulting Vector.
 
-## Multiplication
+### Multiplication
 Behavior varies based on input types
 
 Keywords: ```*, multiply```
@@ -354,13 +354,13 @@ Keywords: ```*, multiply```
 * **(Color, Number)**: Returns a Color multiplied by the factor of b
 * **(Number, Color)**: Returns b Color multiplied by the factor of a
 
-## Or
+### Or
 Checks whether either boolean operand is true (a || b).
 
 Keywords:
 ```or, |, ||```
 
-## Range
+### Range
 Creates a Collection consisting of numbers between a and b (inclusive).
 
 This operation is often used for iterating through existing collections by index, or fetching a subset of values from a given collection.  See [Collections](https://spaceengineers.merlinofmines.com/EasyCommands/collections "Collections") for more information on how to use the Range operation to perform various operations on a given Collection.
@@ -378,7 +378,7 @@ for each i in 0..count of myList[] - 1
   Print "myList[" + i + "]: " + myList[i]
 ```
 
-## Subtraction
+### Subtraction
 Behavior varies based on input types.
 
 Keywords: ```-, minus```
