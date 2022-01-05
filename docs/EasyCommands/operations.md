@@ -315,7 +315,7 @@ Returns the dot product of the given two vectors.
 
 Keywords: ```.```
 
-### Accessing Vector and Color Components
+#### Accessing Vector and Color Components
 
 The dot product is used in a clever way in order to get component information for vectors and colors.
 
