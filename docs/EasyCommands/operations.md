@@ -272,7 +272,9 @@ Checks whether the first operand contains the given value. (a contains b).  Beha
 
 Keywords:
 
-```contains```
+```
+contains
+```
 
 * **(String,Any)**: Converts the second operand to a String and then checks if the first operand contains the second operand
 * **(Collection, Any)**: Checks whether a contains b (or all the elements of b if b is a collection)
