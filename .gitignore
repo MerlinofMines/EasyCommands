@@ -10,8 +10,10 @@
 *.userosscache
 *.sln.docstates
 **/Sandbox/*
+
 #MDK Files
 **/MDK/MDK.paths.props
+**/MDK/MDK.options.props
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
