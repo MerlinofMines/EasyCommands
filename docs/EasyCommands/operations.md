@@ -8,7 +8,14 @@ set b to a + 1
 set c to a + b + 1
 ```
 
-There are a few types of Operations: "Uni" (meaning 1 operand), "Bi" (meaning takes 2 operands), and even a "Ternary" operand that takes 3.  UniOperations include operations like "not", "abs", "sin", "cos", "tan", etc.  BiOperations include things like "+", "-", "*", "/", "%", etc.  Note that some UniOperands expect the operand to preceed the operations (such as "keys", and "values")
+There are a few types of Operations:
+* "Uni" (meaning 1 operand),
+* "Bi" (meaning takes 2 operands),
+* "Ternary" operand that takes 3 operands.
+
+UniOperations include operations like ```not, abs, sin, cos, tan``` etc.  Note that some UniOperands expect the operand to preceed the operations (such as ```keys```, and ```values```)
+
+BiOperations include things like "+", "-", "*", "/", "%", etc.
 
 Below is a description of the various operations supported by EasyCommands, including the behavior for different [Primitive Type](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitive Types") input(s) and output type.
 
@@ -32,13 +39,16 @@ Print "Result: " + result
 #Result: 3
 ```
 
-All UniOperand Operations are on tier 1.  Here are the tiers for BiOperand Operations
-Tier 1 BiOperand Operations: ```*, /, %, ., cast, ^```
-Tier 2 BiOperand Operations: ```+, -```
-Tier 3 BiOperand Operations: ```..```
+All UniOperand Operations are evaluated before BiOperatnd Operations.
+
+Here are the tiers for BiOperand Operations:
+* Tier 0 BiOperand Operations: ```.```
+* Tier 1 BiOperand Operations: ```*, /, %, ^```
+* Tier 2 BiOperand Operations: ```+, -```
+* Tier 3 BiOperand Operations: ```.., cast```
 
 ### Changing Order of Operations
-To change the order of operations, use parentheses ```()```.  Anything  in parentheses is evaluated first.  Order of operations within the parantheses follows the same rules as outside.  You can nest parentheses to further change order of operations.
+To change the order of operations, use parentheses ```()```.  Anything in parentheses is evaluated first.  Order of operations within the parantheses follows the same rules as outside.  You can nest parentheses to further change order of operations.
 
 ```
 set result to (1+2)*3
@@ -65,8 +75,8 @@ Behavior varies based on input type.
 
 Keywords: ```abs, absolute```
 
-**(Number)**: Absolute value of the number
-**(Vector)**: Returns the length of the vector
+* **(Number)**: Absolute value of the number
+* **(Vector)**: Returns the length of the vector
 
 ### Arc Cosine
 Performs the arc cosine operation on the given numeric value
@@ -105,10 +115,10 @@ Inverses a given property.  Behavior varies by input type
 Keywords:
 ```not, !, isnt, arent, stop```
 
-**(Boolean)**: inverts the boolean
-**(Number)**: multiplies the number by -1
-**(Vector)**: returns the inverse of the given vector
-**(Color)**: returns the inverse of the given color
+* **(Boolean)**: inverts the boolean
+* **(Number)**: multiplies the number by -1
+* **(Vector)**: returns the inverse of the given vector
+* **(Color)**: returns the inverse of the given color
 
 Example:
 ```
@@ -175,7 +185,7 @@ wait 30 ticks
 #Wait 30 seconds
 wait 30
 ```
-###Values (After)
+### Values (After)
 Gets the values from the given list (ignoring keys).  The list is expected to come before the operand.
 
 Keywords: ```values```
@@ -193,26 +203,20 @@ Behavior varies based on input types.
 
 Keywords: ```plus, +```
 
-**(String, Any)**: Concatenates the first string with the second variable after converting the second variable to a string.
-**(Any, String)**: Concatenates the first variable (as a string) with the second string
-**(Number, Number)**: Adds two numbers together, returning a number
-**(Vector, Vector)**: Performs Vector Addition on the two vectors
-**(Vector, Number)**: Returns a Vector in the same direction as "a" whose length has been increased by "b" amount
-**(Color, Color)**: Adds two colors together by adding together RGB values (capped at 255, of course)
-**(List, Any)**: Adds the second item(s) to the first list, at the end
-**(Any, List)**: Adds the first item(s) to the second list, inserted at the beginning
+* **(String, Any)**: Concatenates the first string with the second variable after converting the second variable to a string.
+* **(Any, String)**: Concatenates the first variable (as a string) with the second string
+* **(Number, Number)**: Adds two numbers together, returning a number
+* **(Vector, Vector)**: Performs Vector Addition on the two vectors
+* **(Vector, Number)**: Returns a Vector in the same direction as "a" whose length has been increased by "b" amount
+* **(Color, Color)**: Adds two colors together by adding together RGB values (capped at 255, of course)
+* **(List, Any)**: Adds the second item(s) to the first list, at the end
+* **(Any, List)**: Adds the first item(s) to the second list, inserted at the beginning
 
 ### And
 Checks whether both boolean operands are true (a && b)
 
 Keywords:
-```
-and
-&
-&&
-but
-yet
-```
+```and, &, &&, but, yet```
 
 ### Cast
 
@@ -267,12 +271,10 @@ Keywords: ```>=```
 Checks whether the first operand contains the given value. (a contains b).  Behavior varies based on input types.
 
 Keywords:
-```
-contains
-```
+```contains```
 
-**(String,Any)**: Converts the second operand to a String and then checks if the first operand contains the second operand
-**(Collection, Any)**: Checks whether a contains b (or all the elements of b if b is a collection)
+* **(String,Any)**: Converts the second operand to a String and then checks if the first operand contains the second operand
+* **(Collection, Any)**: Checks whether a contains b (or all the elements of b if b is a collection)
 
 Examples:
 
@@ -300,54 +302,60 @@ Behavior varies based on input types.
 
 Keywords: ```/, divide```
 
-**(Number, Number)**: Divides the first number by the second
-**(Vector, Vector)**: Divides the first vector by the length of the second vector, returning a Vector
-**(Vector, Number)**: Divides the vector by the Number, returning a Vector in the same direction as a with a magnitude reduced by a factor of b.
-**(Color, Number)**: Divides the color by the Number, returning a Color
+* **(Number, Number)**: Divides the first number by the second
+* **(Vector, Vector)**: Divides the first vector by the length of the second vector, returning a Vector
+* **(Vector, Number)**: Divides the vector by the Number, returning a Vector in the same direction as a with a magnitude reduced by a factor of b.
+* **(Color, Number)**: Divides the color by the Number, returning a Color
 
 ## Dot Product
 Returns the dot product of the given two vectors.
 
 Keywords: ```.```
 
+### Accessing Vector and Color Components
+
+The dot product is used in a clever way in order to get component information for vectors and colors.
+
+You can use ```myVector.x, myVector.y, myVector.z``` to get the components of a given vector.
+
+Also, you can use ```myColor.r, myColor.g, myColor.b``` to get the RGB components of a given color.
+
+See the Vector and Color [Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") for more information.
+
 ## Exponent (Also XOR)
 Behavior varies based on the input types.
 
-Keywords: ```^, pow, exp, xor```
+Keywords: ```^, pow, xor```
 
-**(Bool, Bool**): Performs the XOR operation on the two given bools.
-**(Number, Number)**: Raises the first number to t`e power of the second number
-**(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
+* **(Bool, Bool)**: Performs the XOR operation on the two given bools.
+* **(Number, Number)**: Raises the first number to t`e power of the second number
+* **(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
 
 ## Modulus
 Behavior varies based on input types.
 
 Keywords: ```%, mod```
-**(Number, Number)**: Returns a % b, meaning return the remainder of a / b
-**(String, String)**: Removes all instances of b from the string a
-**(Vector, Vector)**: Performed Vector Rejection of b on the given Vector A, returning the resulting Vector.
+* **(Number, Number)**: Returns a % b, meaning return the remainder of a / b
+* **(String, String)**: Removes all instances of b from the string a
+* **(Vector, Vector)**: Performed Vector Rejection of b on the given Vector A, returning the resulting Vector.
 
 ## Multiplication
 Behavior varies based on input types
 
 Keywords: ```*, multiply```
 
-**(Number, Number)**: Multiplies a by b
-**(Vector, Vector)**: Returns the Vector Cross Product of a and b (order matters!). 
-**(Vector, Number)**: Returns a Vector in the same direction as a with the magnitude multiplied by b
-**(Number, Vector)**: Returns a Vector in the same direction as b with the magnitude multiplied by a
-**(Color, Number)**: Returns a Color multiplied by the factor of b
-**(Number, Color)**: Returns b Color multiplied by the factor of a
+* **(Number, Number)**: Multiplies a by b
+* **(Vector, Vector)**: Returns the Vector Cross Product of a and b (order matters!). 
+* **(Vector, Number)**: Returns a Vector in the same direction as a with the magnitude multiplied by b
+* **(Number, Vector)**: Returns a Vector in the same direction as b with the magnitude multiplied by a
+* **(Color, Number)**: Returns a Color multiplied by the factor of b
+* **(Number, Color)**: Returns b Color multiplied by the factor of a
 
 ## Or
 Checks whether either boolean operand is true (a || b).
 
 Keywords:
-```
-or
-|
-||
-```
+```or, |, ||```
 
 ## Range
 Creates a Collection consisting of numbers between a and b (inclusive).
@@ -372,9 +380,30 @@ Behavior varies based on input types.
 
 Keywords: ```-, minus```
 
-**(Number, Number)**: Returns a - b
-**(String, String)**: Returns a copy of "a" with the first instance of b removed.
-**(String, Number)**: Returns a with the last b characters removed.  if b >= a.length, returns an empty string.
-**(Vector, Number)**: Returns a copy of the vector with it's magnitude reduced by b amount.
-**(Vector, Vector)**: Returns the vector produced by a - b
-**(Color, Color)**: Returns the resulting color from subtract b from a
+* **(Number, Number)**: Returns a - b
+* **(String, String)**: Returns a copy of "a" with the first instance of b removed.
+* **(String, Number)**: Returns a with the last b characters removed.  if b >= a.length, returns an empty string.
+* **(Vector, Number)**: Returns a copy of the vector with it's magnitude reduced by b amount.
+* **(Vector, Vector)**: Returns the vector produced by a - b
+* **(Color, Color)**: Returns the resulting color from subtract b from a
+
+## Ternary Operations
+
+There's only one supported ternary operations, currently.  It uses the first operand as a conditional check.  If the check is true, it returns the 2nd operand; otherwise, it returns the 3rd operand.
+
+The format is: ```conditionVariable ? trueVariable : falseVariable```
+
+```
+set myCondition to true
+set myValue to myCondition ? "True!" : "False!"
+
+Print myValue
+#True!
+
+set myCondition to false
+set myValue to myCondition ? "True!" : "False!"
+
+Print myValue
+#False!
+```
+

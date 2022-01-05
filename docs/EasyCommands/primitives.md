@@ -65,6 +65,17 @@ set the "Remote Control" waypoint to myCoords
 set myPosition to my position
 ```
 
+### Vector Components
+To access components of a given vector, you can use ```myVector.x, myVector.y, myVector.z```
+
+```
+set myVector to 0:1:2
+
+Print "X: " + myVector.x
+Print "Y: " + myVector.y
+Print "Z: " + myVector.z
+```
+
 ## Colors
 
 There are some blocks types that support colors, such as text colors on screen.  You can create colors using special reserved keywords, or by explicitly declaring hex values.
@@ -73,6 +84,17 @@ There are some blocks types that support colors, such as text colors on screen. 
 set myColor to orange
 set myColor to #FFA500
 set my display color to myColor
+```
+
+### Color Components
+To access the color components (RGB) of a given color, you can use ```myColor.r, myColor.g, myColor.b```.  Values returned will be an integer between 0 - 255.
+
+```
+set myColor to #00FF00
+
+Print "R: " + myColor.r
+Print "G: " + myColor.g
+Print "B: " + myColor.b
 ```
 
 ## Collections

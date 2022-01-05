@@ -202,7 +202,7 @@ These properties require a Variable value as part of the property
 * Multiply - ```multiply, *```
 * Divide - ```divide, /```
 * Modulus - ```mod, %```
-* Exponent - ```pow, exp, ^, xor```  (also used for Xor and Angle Between Operations)
+* Exponent - ```pow, ^, xor``` (also used for Xor and Angle Between Operations)
 * Add - ```+, plus```
 * Subtract - ```-, minus```
 * Dot Product - ```dot, .```
