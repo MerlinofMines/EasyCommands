@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C17AB031-FC83-4345-88B2-49960205B7F6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands", "EasyCommands\EasyCommands.csproj", "{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands.Tests", "EasyCommands.Tests\EasyCommands.Tests.csproj", "{E11779CC-F7DF-416C-8932-8012F3B681EB}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "docs", "docs\docs.shproj", "{CE8C102D-3998-414C-990D-92D4A2EDF4CE}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		docs\docs.projitems*{ce8c102d-3998-414c-990d-92d4a2edf4ce}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|x64.ActiveCfg = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Debug|x64.Build.0 = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|Any CPU.ActiveCfg = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|Any CPU.Build.0 = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|x64.ActiveCfg = Debug|x64
+		{577B6CE1-3B5B-4DA8-8F18-5BD0196D9418}.Release|x64.Build.0 = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|x64.ActiveCfg = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|x64.Build.0 = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Release|Any CPU.ActiveCfg = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Release|Any CPU.Build.0 = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Release|x64.ActiveCfg = Debug|x64
+		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Release|x64.Build.0 = Debug|x64
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{E11779CC-F7DF-416C-8932-8012F3B681EB}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4492E44-B1FB-4F10-8FBE-996AFF5D81B4}
+	EndGlobalSection
+EndGlobal
