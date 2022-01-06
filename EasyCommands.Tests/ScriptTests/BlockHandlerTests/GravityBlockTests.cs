@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -9,12 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class GravityBlockTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class GravityBlockTests : ForceLocale {
         [TestMethod]
         public void getGravityGeneratorStrength() {
             String script = @"

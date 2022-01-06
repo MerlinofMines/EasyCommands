@@ -1,16 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleLoggingTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        }
-
+    public class SimpleLoggingTests : ForceLocale {
         [TestMethod]
         public void PrintCorrectLineNumberWhenUnableToParse() {
             String script = @"

@@ -1,18 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class ConditionalParameterProcessorTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-          System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");          
-        }
-
+    public class ConditionalParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleBooleanCondition() {
             var program = MDKFactory.CreateProgram<Program>();

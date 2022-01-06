@@ -1,18 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class LandingGearBlockTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class LandingGearBlockTests : ForceLocale {
         [TestMethod]
         public void TurnOnTheLandingGear() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test landing gear""")) {

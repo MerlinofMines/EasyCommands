@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -8,12 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class WarheadBlockTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class WarheadBlockTests : ForceLocale {
         [TestMethod]
         public void detonateTheBomb() {
             String script = @"

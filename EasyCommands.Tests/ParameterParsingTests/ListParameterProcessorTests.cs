@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -10,12 +9,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class ListParameterProcessorTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class ListParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AssignVariableToBasicStaticList() {
             var program = MDKFactory.CreateProgram<Program>();

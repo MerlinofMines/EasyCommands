@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -8,12 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class RocketVolleyTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class RocketVolleyTests : ForceLocale {
         [TestMethod]
         public void RocketVolleyTest() {
             String script = @"

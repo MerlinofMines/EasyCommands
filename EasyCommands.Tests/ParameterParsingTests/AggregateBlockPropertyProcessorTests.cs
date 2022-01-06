@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using Malware.MDKUtilities;
 using IngameScript;
@@ -8,13 +7,8 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class AggregateBlockPropertyProcessorTests {
+    public class AggregateBlockPropertyProcessorTests : ForceLocale {
         List<object> aggregationList = new List<object> { 1, 2, 3 };
-
-        [TestInitialize]
-        public void InitializeTestClass() {
-              System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");      
-        }
 
         [TestMethod]
         public void AssignCountOfBlocks() {

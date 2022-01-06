@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Sandbox.Common.ObjectBuilders.Definitions;
 using Malware.MDKUtilities;
 using IngameScript;
@@ -8,14 +7,8 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.TokenParsingTests {
     [TestClass]
-    public class ItemParsingTests {
-        Program program = MDKFactory.CreateProgram<Program>();
-
-        [TestInitialize]
-        public void InitializeTestClass()
-        {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
+    public class ItemParsingTests : ForceLocale {
+        Program program = MDKFactory.CreateProgram<Program>();        
 
         [TestMethod]
         public void ParseOres() {

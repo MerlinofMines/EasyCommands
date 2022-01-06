@@ -1,17 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SolarPanelBlockTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class SolarPanelBlockTests : ForceLocale {
         [TestMethod]
         public void GetSolarPanelOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Solar Panel Output: "" + ""test solar panel"" output")) {

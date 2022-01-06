@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Collections.Generic;
 using IngameScript;
 using Malware.MDKUtilities;
@@ -11,11 +10,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleCommandExecutionTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
+    public class SimpleCommandExecutionTests : ForceLocale {
 
         [TestMethod]
         public void printCommandTest() {

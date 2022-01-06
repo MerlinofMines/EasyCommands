@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using IngameScript;
 using Moq;
 using Sandbox.ModAPI.Ingame;
@@ -8,11 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleSelectorTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
+    public class SimpleSelectorTests :ForceLocale {
 
         [TestMethod]
         public void BasicSelector() {

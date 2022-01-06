@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRage;
@@ -8,12 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class BatteryBlockTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class BatteryBlockTests : ForceLocale {
         [TestMethod]
         public void GetTheBatteryLevel() {
             using (ScriptTest test = new ScriptTest(@"Print ""Stored Power: "" + the ""test battery"" level")) {

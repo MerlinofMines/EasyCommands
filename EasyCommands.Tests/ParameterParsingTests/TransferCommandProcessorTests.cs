@@ -1,18 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class TransferCommandProcessorTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class TransferCommandProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleTransfer() {
             var program = MDKFactory.CreateProgram<Program>();

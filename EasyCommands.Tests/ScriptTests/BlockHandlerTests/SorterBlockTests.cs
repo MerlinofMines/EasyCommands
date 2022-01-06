@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Globalization;
 using Sandbox.ModAPI.Ingame;
 using System;
 using System.Collections.Generic;
@@ -11,21 +10,15 @@ using System.Threading.Tasks;
 namespace EasyCommands.Tests.ScriptTests
 {
     [TestClass]
-    public class SorterBlockTests
-    {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class SorterBlockTests : ForceLocale {
         [TestMethod]
-        public void SorterCanDrain()
+        public void SorterCanDrain() 
         {
             String script = @"
 :main
 drain the ""sorters""
 ";
-            using (ScriptTest test = new ScriptTest(script))
+            using (ScriptTest test = new ScriptTest(script)) 
             {
                 var mockSorter = new Mock<IMyConveyorSorter>();
                 test.MockBlocksInGroup("sorters", mockSorter);
@@ -37,7 +30,7 @@ drain the ""sorters""
         }
 
         [TestMethod]
-        public void SorterIsDraining()
+        public void SorterIsDraining() 
         {
             String script = @"
 :main

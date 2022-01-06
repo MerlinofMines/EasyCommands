@@ -1,16 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class MultiThreadingTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class MultiThreadingTests : ForceLocale {
         [TestMethod]
         public void finishedCommandsGetProcessedInSameTick() {
             String script = @"

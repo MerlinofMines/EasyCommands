@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using VRageMath;
@@ -11,12 +10,7 @@ using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class OperatorParameterProcessorTests {
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class OperatorParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AssignAbsoluteValue() {
             var program = MDKFactory.CreateProgram<Program>();

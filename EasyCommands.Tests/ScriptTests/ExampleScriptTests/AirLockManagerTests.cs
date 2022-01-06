@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -9,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class AirLockManagerTests {
+    public class AirLockManagerTests : ForceLocale {
         String script = @"
 :setup
 assign exteriorDoors to 'Exterior Doors'
@@ -41,11 +40,6 @@ else if $airlockVent vent ratio < 0.99
 else
   open the $interiorDoors doors
 ";
-
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        }
 
         [TestMethod]
         public void SensorTriggeredOpensTheOuterDoor() {

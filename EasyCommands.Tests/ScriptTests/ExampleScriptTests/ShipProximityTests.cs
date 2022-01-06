@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -8,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ShipProximityTests {
+    public class ShipProximityTests : ForceLocale {
         string script = @"
 :setup
 assign ""LASER_SCAN_DISTANCE"" to 10000
@@ -33,11 +32,6 @@ else
   assign ""vang"" to acos ( ( distanceVector . velocityVector ) / ( abs distanceVector * abs velocityVector ) )
   assign ""closestDistance"" to sin vang * abs distanceVector
 ";
-
-        [TestInitialize]
-        public void InitializeTestClass() {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
 
         [TestMethod]
         public void GetShipProximity() {

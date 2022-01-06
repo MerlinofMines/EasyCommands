@@ -1,19 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Globalization;
 using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.TokenParsingTests {
     [TestClass]
-    public class StringParsingTests {
-        [TestInitialize]
-        public void InitializeTestClass()
-        {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
-        }
-
+    public class StringParsingTests : ForceLocale {
         [TestMethod]
         public void BasicStrings() {
             var program = MDKFactory.CreateProgram<Program>();
