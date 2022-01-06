@@ -4,7 +4,7 @@ using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleVariableTests : ForceLocale {
+    public class SimpleVariableTests {
         [TestMethod]
         public void TestImplicitVariableAssignmentAndGetValue() {
             var script = @"

@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class CockpitBlockTests : ForceLocale {
+    public class CockpitBlockTests {
         [TestMethod]
         public void EnableTheCockpit() {
             using (ScriptTest test = new ScriptTest(@"enable the ""test cockpit""")) {

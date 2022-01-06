@@ -9,7 +9,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class RemoteControlBlockTests : ForceLocale {
+    public class RemoteControlBlockTests {
         [TestMethod]
         public void EnableTheRemoteControl() {
             using (ScriptTest test = new ScriptTest(@"enable the ""test remote control""")) {

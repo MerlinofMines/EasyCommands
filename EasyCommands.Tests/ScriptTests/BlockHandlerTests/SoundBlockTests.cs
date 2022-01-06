@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SoundBlockBlockTests : ForceLocale {
+    public class SoundBlockBlockTests {
         [TestMethod]
         public void IsSpeakerOn() {
             string script = @"print ""Enabled: "" + ""test speaker"" is on";

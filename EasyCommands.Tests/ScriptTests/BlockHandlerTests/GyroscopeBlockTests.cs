@@ -6,7 +6,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class GyroscopeBlockTests : ForceLocale {
+    public class GyroscopeBlockTests {
         [TestMethod]
         public void DisableGyroscopeAuto() {
             String script = @"

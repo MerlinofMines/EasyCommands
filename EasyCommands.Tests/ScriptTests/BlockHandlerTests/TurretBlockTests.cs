@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class TurretBlockTests : ForceLocale {
+    public class TurretBlockTests {
         [TestMethod]
         public void FireTheTurrets() {
             String script = @"

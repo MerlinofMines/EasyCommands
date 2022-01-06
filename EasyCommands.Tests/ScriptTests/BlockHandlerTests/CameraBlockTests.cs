@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class CameraBlockTests : ForceLocale {
+    public class CameraBlockTests {
         [TestMethod]
         public void getCameraRange() {
             String script = @"

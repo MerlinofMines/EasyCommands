@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ReactorBlockTests : ForceLocale {
+    public class ReactorBlockTests {
         [TestMethod]
         public void GetReactorOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Reactor Output: "" + ""test reactor"" output")) {

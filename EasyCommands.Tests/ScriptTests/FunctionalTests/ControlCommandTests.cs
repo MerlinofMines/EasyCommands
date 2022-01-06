@@ -10,7 +10,8 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class InterruptableCommandTests : ForceLocale {
+    public class InterruptableCommandTests {
+
         [TestMethod]
         public void exitHaltsExecutionAndRunningAgainRestarts() {
             String script = @"

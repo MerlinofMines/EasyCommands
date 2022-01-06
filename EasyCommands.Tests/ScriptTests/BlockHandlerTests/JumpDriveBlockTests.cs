@@ -6,7 +6,8 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class JumpDriveBlockTests : ForceLocale {
+    public class JumpDriveBlockTests {
+
         [TestMethod]
         public void GetJumpDriveLevel() {
             using (ScriptTest test = new ScriptTest(@"Print ""Jump Drive Level: "" + ""test jumpdrive"" level")) {

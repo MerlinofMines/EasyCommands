@@ -10,7 +10,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class TerminalBlockTests : ForceLocale {
+    public class TerminalBlockTests {
         [TestMethod]
         public void GetBlockName() {
             String script = @"

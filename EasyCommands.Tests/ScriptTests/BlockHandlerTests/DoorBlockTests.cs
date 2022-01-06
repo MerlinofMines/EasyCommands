@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class DoorBlockTests : ForceLocale {
+    public class DoorBlockTests {
         [TestMethod]
         public void OpenTheDoor() {
             using (ScriptTest test = new ScriptTest(@"open the ""test door""")) {

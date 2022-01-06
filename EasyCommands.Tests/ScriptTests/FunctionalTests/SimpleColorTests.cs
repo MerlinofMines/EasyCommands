@@ -4,7 +4,7 @@ using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleColorTests : ForceLocale {
+    public class SimpleColorTests {
         [TestMethod]
         public void PrintStandardColor() {
             using (var test = new ScriptTest(@"Print ""Color: "" + red")) {

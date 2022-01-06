@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class DecoyBlockTests : ForceLocale {
+    public class DecoyBlockTests {
         [TestMethod]
         public void TurnOnTheDecoy() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test decoy""")) {

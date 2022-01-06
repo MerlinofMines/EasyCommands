@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class BeaconBlockTests : ForceLocale {
+    public class BeaconBlockTests {
         [TestMethod]
         public void SetTheBeaconText() {
             using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" text to ""Hello World!""")) {

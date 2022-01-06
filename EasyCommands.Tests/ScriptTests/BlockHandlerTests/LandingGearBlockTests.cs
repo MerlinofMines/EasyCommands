@@ -6,7 +6,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class LandingGearBlockTests : ForceLocale {
+    public class LandingGearBlockTests {
         [TestMethod]
         public void TurnOnTheLandingGear() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test landing gear""")) {

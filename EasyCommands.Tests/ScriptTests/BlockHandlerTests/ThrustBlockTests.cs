@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ThrustBlockTests : ForceLocale {
+    public class ThrustBlockTests {
         [TestMethod]
         public void GetTheThrustLimit() {
             using (ScriptTest test = new ScriptTest(@"print ""Thruster Limit: "" + the ""test thruster"" limit")) {

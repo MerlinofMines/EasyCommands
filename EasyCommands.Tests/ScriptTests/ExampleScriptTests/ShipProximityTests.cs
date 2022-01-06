@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ShipProximityTests : ForceLocale {
+    public class ShipProximityTests {
         string script = @"
 :setup
 assign ""LASER_SCAN_DISTANCE"" to 10000

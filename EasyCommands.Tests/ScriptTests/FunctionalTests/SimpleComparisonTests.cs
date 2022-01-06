@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleComparisonTests : ForceLocale {
+    public class SimpleComparisonTests {
 
         [TestMethod]
         public void LessThan() {

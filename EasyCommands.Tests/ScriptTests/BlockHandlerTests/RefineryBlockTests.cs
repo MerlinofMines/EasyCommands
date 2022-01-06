@@ -6,7 +6,8 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class RefineryBlockTests : ForceLocale {
+    public class RefineryBlockTests {
+
         [TestMethod]
         public void TurnOnTheRefineries() {
             String script = @"turn on the refineries";

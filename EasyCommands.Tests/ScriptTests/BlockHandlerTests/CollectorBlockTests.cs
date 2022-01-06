@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class CollectorBlockTests : ForceLocale {
+    public class CollectorBlockTests {
         [TestMethod]
         public void TurnOnTheCollector() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test collector""")) {

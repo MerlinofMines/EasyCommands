@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class AssemblerBlockTests : ForceLocale {
+    public class AssemblerBlockTests {
         [TestMethod]
         public void TellAssemblerToSupply() {
             using(ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to supply")) {

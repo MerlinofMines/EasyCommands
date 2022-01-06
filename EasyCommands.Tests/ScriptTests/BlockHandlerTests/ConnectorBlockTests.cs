@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ConnectorBlockTests : ForceLocale {
+    public class ConnectorBlockTests {
         [TestMethod]
         public void TellTheConnectorToDrain() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test connector"" to drain")) {

@@ -9,7 +9,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ParachuteBlockTests : ForceLocale {
+    public class ParachuteBlockTests {
         [TestMethod]
         public void OpenTheParachute() {
             using (ScriptTest test = new ScriptTest(@"open the ""test parachute""")) {

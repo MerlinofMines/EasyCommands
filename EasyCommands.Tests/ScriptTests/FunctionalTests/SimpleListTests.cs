@@ -4,7 +4,7 @@ using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleListTests : ForceLocale {
+    public class SimpleListTests {
         [TestMethod]
         public void CheckIfListIsEmpty() {
             String script = @"

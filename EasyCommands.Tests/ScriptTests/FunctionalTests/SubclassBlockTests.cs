@@ -6,7 +6,8 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SubclassBlockTests : ForceLocale {
+    public class SubclassBlockTests {
+
         //Performs some basic tests to confirm we can retrieve classes using their blockhandler's parent class.
         [TestMethod]
         public void MissileLauncherIsAGun() {

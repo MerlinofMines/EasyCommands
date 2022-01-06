@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class LaserAntennaBlockTests : ForceLocale {
+    public class LaserAntennaBlockTests {
         [TestMethod]
         public void GetTheLaserAntennaTarget() {
             using (ScriptTest test = new ScriptTest(@"Print ""Current Target: "" + the ""test laser"" target")) {

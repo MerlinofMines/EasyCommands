@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SensorBlockTests : ForceLocale {
+    public class SensorBlockTests {
         [TestMethod]
         public void SensorTargetReturnsZeroVectorWhenNothingDetected() {
             String script = @"

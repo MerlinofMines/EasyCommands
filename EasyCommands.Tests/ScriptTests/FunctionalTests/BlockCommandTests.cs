@@ -9,7 +9,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class BlockCommandTests : ForceLocale {
+    public class BlockCommandTests {
         [TestMethod]
         public void ReverseWithProperty() {
             using (ScriptTest test = new ScriptTest(@"reverse the ""test piston"" velocity")) {

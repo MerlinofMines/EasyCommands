@@ -6,7 +6,8 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class TimerBlockTests : ForceLocale {
+    public class TimerBlockTests {
+
         [TestMethod]
         public void triggerTheTimer() {
             String script = @"

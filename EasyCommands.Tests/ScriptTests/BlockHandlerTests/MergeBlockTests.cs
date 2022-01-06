@@ -6,7 +6,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class MergeBlockTests : ForceLocale {
+    public class MergeBlockTests {
         [TestMethod]
         public void TurnOnTheMergeBlock() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test merge block""")) {

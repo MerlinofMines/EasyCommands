@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class RotorControlTests : ForceLocale {
+    public class RotorControlTests {
         string script = @"
 :setup
 assign desiredSecondsToLimit to 2.5
@@ -80,7 +80,6 @@ if a > b
 else
   assign myOutput to a
 ";
-
         [TestMethod]
         public void RotorControlTestNoMovement() {
             using (ScriptTest test = new ScriptTest(script)) {

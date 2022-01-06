@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class GasGeneratorBlockTests : ForceLocale {
+    public class GasGeneratorBlockTests {
         [TestMethod]
         public void TurnOnTheGasGenerator() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test generator""")) {

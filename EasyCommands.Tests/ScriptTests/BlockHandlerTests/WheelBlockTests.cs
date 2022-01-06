@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class WheelBlockTests : ForceLocale {
+    public class WheelBlockTests {
         [TestMethod]
         public void GetTheWheelHeight() {
             using (ScriptTest test = new ScriptTest(@"Print ""Wheel Height: "" + the ""test wheel"" height")) {

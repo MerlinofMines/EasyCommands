@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class AntennaBlockTests : ForceLocale {
+    public class AntennaBlockTests {
         [TestMethod]
         public void SetTheAntennaText() {
             using (ScriptTest test = new ScriptTest(@"set the ""test antenna"" text to ""Hello World!""")) {

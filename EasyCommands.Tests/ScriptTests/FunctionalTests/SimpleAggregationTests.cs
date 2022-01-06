@@ -8,7 +8,8 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleAggregationTests : ForceLocale {
+    public class SimpleAggregationTests {
+
         [TestMethod]
         public void ValueOfEmptyListReturnsZero() {
             using (var test = new ScriptTest(@"Print ""My Value: "" + ""test piston"" height")) {

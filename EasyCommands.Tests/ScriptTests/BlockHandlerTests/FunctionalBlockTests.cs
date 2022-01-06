@@ -7,9 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class FunctionalBlockTests : ForceLocale {
-        
-
+    public class FunctionalBlockTests {
         [TestMethod]
         public void TurnOnTheWelder() {
             String script = @"turn on the ""test welder""";

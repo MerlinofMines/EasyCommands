@@ -11,7 +11,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ItemTransferCommandTests: ForceLocale {
+    public class ItemTransferCommandTests {
         [TestMethod]
         public void SimpleTransferAll() {
             var script = @"transfer ""ore"" from ""source cargo"" to ""destination cargo""";

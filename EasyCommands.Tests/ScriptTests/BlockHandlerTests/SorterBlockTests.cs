@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 namespace EasyCommands.Tests.ScriptTests
 {
     [TestClass]
-    public class SorterBlockTests : ForceLocale {
+    public class SorterBlockTests
+    {
         [TestMethod]
-        public void SorterCanDrain() 
+        public void SorterCanDrain()
         {
             String script = @"
 :main
 drain the ""sorters""
 ";
-            using (ScriptTest test = new ScriptTest(script)) 
+            using (ScriptTest test = new ScriptTest(script))
             {
                 var mockSorter = new Mock<IMyConveyorSorter>();
                 test.MockBlocksInGroup("sorters", mockSorter);
@@ -30,7 +31,7 @@ drain the ""sorters""
         }
 
         [TestMethod]
-        public void SorterIsDraining() 
+        public void SorterIsDraining()
         {
             String script = @"
 :main

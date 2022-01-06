@@ -4,7 +4,7 @@ using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleLoggingTests : ForceLocale {
+    public class SimpleLoggingTests {
         [TestMethod]
         public void PrintCorrectLineNumberWhenUnableToParse() {
             String script = @"

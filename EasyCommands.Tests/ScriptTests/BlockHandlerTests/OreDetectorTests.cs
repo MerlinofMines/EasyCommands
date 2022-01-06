@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class OreDetectorBlockTests : ForceLocale {
+    public class OreDetectorBlockTests {
         [TestMethod]
         public void TellTheOreDetectorToBroadcast() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test ore detector"" to broadcast")) {

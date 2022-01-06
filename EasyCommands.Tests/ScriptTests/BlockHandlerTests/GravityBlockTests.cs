@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class GravityBlockTests : ForceLocale {
+    public class GravityBlockTests {
         [TestMethod]
         public void getGravityGeneratorStrength() {
             String script = @"

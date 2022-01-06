@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class BatteryBlockTests : ForceLocale {
+    public class BatteryBlockTests {
         [TestMethod]
         public void GetTheBatteryLevel() {
             using (ScriptTest test = new ScriptTest(@"Print ""Stored Power: "" + the ""test battery"" level")) {

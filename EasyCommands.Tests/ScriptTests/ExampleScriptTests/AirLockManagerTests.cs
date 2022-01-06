@@ -8,7 +8,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class AirLockManagerTests : ForceLocale {
+    public class AirLockManagerTests {
         String script = @"
 :setup
 assign exteriorDoors to 'Exterior Doors'

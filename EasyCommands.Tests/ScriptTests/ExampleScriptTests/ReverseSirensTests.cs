@@ -11,7 +11,8 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests
 {
     [TestClass]
-    public class ReverseSirensTests : ForceLocale {
+    public class ReverseSirensTests
+    {
         [TestMethod]
         public void conditionalVelocityAndSoundBlockTest()
         {

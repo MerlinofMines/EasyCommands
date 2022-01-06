@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class RotorBlockTests : ForceLocale {
+    public class RotorBlockTests {
         [TestMethod]
         public void getUpperLimit() {
             String script = @"

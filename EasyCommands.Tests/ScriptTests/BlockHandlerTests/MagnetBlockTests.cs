@@ -6,7 +6,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class MagnetBlockTests : ForceLocale {
+    public class MagnetBlockTests {
         [TestMethod]
         public void TurnOnTheMagnet() {
             using (ScriptTest test = new ScriptTest(@"turn on the ""test magnet""")) {

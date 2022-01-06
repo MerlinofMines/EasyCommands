@@ -9,7 +9,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class CargoBlockTests : ForceLocale {
+    public class CargoBlockTests {
         [TestMethod]
         public void getCargoCapacity() {
             String script = @"

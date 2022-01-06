@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class EjectorBlockTests : ForceLocale {
+    public class EjectorBlockTests {
         [TestMethod]
         public void TellTheEjectorToDrain() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test ejector"" to drain")) {

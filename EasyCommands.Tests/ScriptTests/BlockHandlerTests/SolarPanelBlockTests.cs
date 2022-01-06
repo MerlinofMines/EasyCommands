@@ -5,7 +5,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SolarPanelBlockTests : ForceLocale {
+    public class SolarPanelBlockTests {
         [TestMethod]
         public void GetSolarPanelOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Solar Panel Output: "" + ""test solar panel"" output")) {

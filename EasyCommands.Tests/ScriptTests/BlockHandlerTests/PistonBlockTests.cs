@@ -6,7 +6,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class PistonBlockTests : ForceLocale {
+    public class PistonBlockTests {
         [TestMethod]
         public void getUpperLimit() {
             String script = @"

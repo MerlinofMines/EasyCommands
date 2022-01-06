@@ -4,7 +4,7 @@ using IngameScript;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleVectorTests : ForceLocale {        
+    public class SimpleVectorTests {
         [TestMethod]
         public void PrintVector() {
             using (var test = new ScriptTest(@"Print ""Vector: "" + 0:1:2")) {

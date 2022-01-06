@@ -7,7 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class ProgramBlockTests : ForceLocale {
+    public class ProgramBlockTests {
         [TestMethod]
         public void IsTheProgramComplete() {
             using (ScriptTest test = new ScriptTest(@"Print ""Complete: "" + the ""test program"" is complete")) {

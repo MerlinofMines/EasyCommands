@@ -6,7 +6,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class EngineBlockTests : ForceLocale {
+    public class EngineBlockTests {
         [TestMethod]
         public void GetEngineOutput() {
             using (ScriptTest test = new ScriptTest(@"Print ""Engine Output: "" + ""test engine"" output")) {

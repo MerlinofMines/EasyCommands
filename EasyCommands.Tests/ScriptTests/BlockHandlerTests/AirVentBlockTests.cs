@@ -8,7 +8,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class AirVentBlockTests : ForceLocale {
+    public class AirVentBlockTests {
         [TestMethod]
         public void PressurizeTheAirVent() {
             using (ScriptTest test = new ScriptTest(@"pressurize the ""test airVent""")) {

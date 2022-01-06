@@ -7,7 +7,8 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class WarheadBlockTests : ForceLocale {
+    public class WarheadBlockTests {
+
         [TestMethod]
         public void detonateTheBomb() {
             String script = @"

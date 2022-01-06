@@ -10,7 +10,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleCommandExecutionTests : ForceLocale {
+    public class SimpleCommandExecutionTests {
 
         [TestMethod]
         public void printCommandTest() {

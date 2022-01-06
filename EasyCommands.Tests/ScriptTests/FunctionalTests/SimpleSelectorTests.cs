@@ -7,8 +7,7 @@ using VRageMath;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleSelectorTests :ForceLocale {
-
+    public class SimpleSelectorTests {
         [TestMethod]
         public void BasicSelector() {
             using (var test = new ScriptTest(@"turn on the ""mockPiston"" piston")) {

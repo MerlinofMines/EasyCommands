@@ -4,7 +4,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class MultiThreadingTests : ForceLocale {
+    public class MultiThreadingTests {
         [TestMethod]
         public void finishedCommandsGetProcessedInSameTick() {
             String script = @"

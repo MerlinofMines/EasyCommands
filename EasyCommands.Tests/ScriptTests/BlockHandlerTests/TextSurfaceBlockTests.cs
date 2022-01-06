@@ -9,7 +9,7 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class TextSurfaceBlockTests : ForceLocale {
+    public class TextSurfaceBlockTests {
         [TestMethod]
         public void EnableTextPanel() {
             String script = @"enable the ""text panel"" display";
