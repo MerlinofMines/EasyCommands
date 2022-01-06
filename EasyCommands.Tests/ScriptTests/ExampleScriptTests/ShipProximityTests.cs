@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -32,6 +33,11 @@ else
   assign ""vang"" to acos ( ( distanceVector . velocityVector ) / ( abs distanceVector * abs velocityVector ) )
   assign ""closestDistance"" to sin vang * abs distanceVector
 ";
+
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
 
         [TestMethod]
         public void GetShipProximity() {

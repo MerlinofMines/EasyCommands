@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using IngameScript;
 using Moq;
 using Sandbox.ModAPI.Ingame;
@@ -9,6 +10,10 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SimpleComparisonTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+        }
 
         [TestMethod]
         public void LessThan() {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -7,6 +8,11 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class GyroscopeBlockTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void DisableGyroscopeAuto() {
             String script = @"

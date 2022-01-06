@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Globalization;
 using Sandbox.ModAPI.Ingame;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,11 @@ namespace EasyCommands.Tests.ScriptTests
     [TestClass]
     public class SorterBlockTests
     {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void SorterCanDrain()
         {

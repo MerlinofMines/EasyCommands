@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -10,6 +11,11 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class BlockCommandTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void ReverseWithProperty() {
             using (ScriptTest test = new ScriptTest(@"reverse the ""test piston"" velocity")) {

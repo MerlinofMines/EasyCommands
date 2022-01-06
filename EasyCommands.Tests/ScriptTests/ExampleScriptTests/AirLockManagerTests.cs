@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -40,6 +41,11 @@ else if $airlockVent vent ratio < 0.99
 else
   open the $interiorDoors doors
 ";
+
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+        }
 
         [TestMethod]
         public void SensorTriggeredOpensTheOuterDoor() {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRage;
@@ -8,6 +9,11 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class BeaconBlockTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void SetTheBeaconText() {
             using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" text to ""Hello World!""")) {

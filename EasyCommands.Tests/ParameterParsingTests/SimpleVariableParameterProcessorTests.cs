@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using VRageMath;
 using Malware.MDKUtilities;
 using IngameScript;
@@ -8,6 +9,10 @@ using static IngameScript.Program;
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class SimpleVariableParameterProcessorTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
 
         [TestMethod]
         public void AssignVariable() {

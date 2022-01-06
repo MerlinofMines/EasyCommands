@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -7,6 +8,10 @@ using VRageMath;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SubclassBlockTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
 
         //Performs some basic tests to confirm we can retrieve classes using their blockhandler's parent class.
         [TestMethod]

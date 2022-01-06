@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRage;
@@ -9,6 +10,11 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class WheelBlockTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+        }
+
         [TestMethod]
         public void GetTheWheelHeight() {
             using (ScriptTest test = new ScriptTest(@"Print ""Wheel Height: "" + the ""test wheel"" height")) {

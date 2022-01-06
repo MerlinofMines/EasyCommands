@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -12,6 +13,11 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class ItemTransferCommandTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void SimpleTransferAll() {
             var script = @"transfer ""ore"" from ""source cargo"" to ""destination cargo""";

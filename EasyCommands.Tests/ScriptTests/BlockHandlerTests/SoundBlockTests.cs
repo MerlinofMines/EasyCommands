@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using Moq;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -9,6 +10,11 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SoundBlockBlockTests {
+        [TestInitialize]
+        public void InitializeTestClass() {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");            
+        }
+
         [TestMethod]
         public void IsSpeakerOn() {
             string script = @"print ""Enabled: "" + ""test speaker"" is on";
