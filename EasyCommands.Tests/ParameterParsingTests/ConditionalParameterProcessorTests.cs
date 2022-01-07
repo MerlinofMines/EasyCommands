@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class ConditionalParameterProcessorTests {
+    public class ConditionalParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleBooleanCondition() {
             var program = MDKFactory.CreateProgram<Program>();

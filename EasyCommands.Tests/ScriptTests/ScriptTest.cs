@@ -3,6 +3,7 @@ using Malware.MDKUtilities;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,8 @@ namespace EasyCommands.Tests.ScriptTests
 
         public ScriptTest(String script)
         {
+            SetCulture("en-US");
+
             Logger = new List<String>();
             RunCounter = 0;
 
@@ -68,6 +71,9 @@ namespace EasyCommands.Tests.ScriptTests
         public void setScript(String script) {
             me.Setup(b => b.CustomData).Returns(script);
         }
+
+        public void SetCulture(String culture) => SetCulture(new CultureInfo(culture));
+        public void SetCulture(CultureInfo culture) => System.Threading.Thread.CurrentThread.CurrentCulture = culture;
 
         /// <summary>
         /// Run the script until the given predicate is satisfied.

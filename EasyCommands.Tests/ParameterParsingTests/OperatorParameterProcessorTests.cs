@@ -10,8 +10,7 @@ using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class OperatorParameterProcessorTests {
-
+    public class OperatorParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AssignAbsoluteValue() {
             var program = MDKFactory.CreateProgram<Program>();

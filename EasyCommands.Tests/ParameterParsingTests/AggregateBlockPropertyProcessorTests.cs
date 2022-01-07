@@ -7,7 +7,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class AggregateBlockPropertyProcessorTests {
+    public class AggregateBlockPropertyProcessorTests : ForceLocale {
         List<object> aggregationList = new List<object> { 1, 2, 3 };
 
         [TestMethod]

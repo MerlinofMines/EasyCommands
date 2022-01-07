@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class TransferCommandProcessorTests {
+    public class TransferCommandProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleTransfer() {
             var program = MDKFactory.CreateProgram<Program>();

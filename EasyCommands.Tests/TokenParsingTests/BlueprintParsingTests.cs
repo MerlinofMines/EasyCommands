@@ -7,8 +7,8 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.TokenParsingTests {
     [TestClass]
-    public class BlueprintParsingTests {
-        Program program = MDKFactory.CreateProgram<Program>();
+    public class BlueprintParsingTests : ForceLocale {
+        Program program = MDKFactory.CreateProgram<Program>();        
 
         [TestMethod]
         public void ParseAmmunition() {

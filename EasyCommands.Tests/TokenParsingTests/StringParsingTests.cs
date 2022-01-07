@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.TokenParsingTests {
     [TestClass]
-    public class StringParsingTests {
+    public class StringParsingTests : ForceLocale {
         [TestMethod]
         public void BasicStrings() {
             var program = MDKFactory.CreateProgram<Program>();

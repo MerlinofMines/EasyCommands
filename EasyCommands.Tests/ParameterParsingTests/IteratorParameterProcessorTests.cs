@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class IteratorParameterProcessorTests {
+    public class IteratorParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleIteration() {
             var program = MDKFactory.CreateProgram<Program>();

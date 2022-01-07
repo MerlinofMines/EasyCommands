@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.TokenParsingTests {
     [TestClass]
-    public class ParenthesisParsingTests {
+    public class ParenthesisParsingTests : ForceLocale {
         [TestMethod]
         public void TestBasicParenthesis() {
             var program = MDKFactory.CreateProgram<Program>();

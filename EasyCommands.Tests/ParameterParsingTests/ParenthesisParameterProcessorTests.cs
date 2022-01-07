@@ -6,7 +6,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class ParenthesisParameterProcessorTests {
+    public class ParenthesisParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void BasicVariableParentheses() {
             var program = MDKFactory.CreateProgram<Program>();

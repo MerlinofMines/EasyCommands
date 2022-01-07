@@ -7,7 +7,7 @@ using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class BooleanLogicParameterProcessorTests {
+    public class BooleanLogicParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AndSimpleVariableCondition() {
             var program = MDKFactory.CreateProgram<Program>();

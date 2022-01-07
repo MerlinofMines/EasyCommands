@@ -9,7 +9,7 @@ using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
-    public class ListParameterProcessorTests {
+    public class ListParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AssignVariableToBasicStaticList() {
             var program = MDKFactory.CreateProgram<Program>();
