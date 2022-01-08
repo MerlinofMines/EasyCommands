@@ -177,6 +177,7 @@
     <Compile Include="ScriptTests\FunctionalTests\SimpleAggregationTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleColorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleVectorTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleCastTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ExampleScriptTests\ReverseSirensTests.cs" />
     <Compile Include="ParameterParsingTests\BlockCommandProcessorTests.cs" />
