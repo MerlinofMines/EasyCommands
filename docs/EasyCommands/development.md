@@ -41,7 +41,7 @@ Changes to documentation on the "master" branch will not affect the live site, s
 ### Be Patient, Be Polite, Expect Feedback
 Rarely do we create the perfect change request submission on the first attempt, especially when trying to collaborate.  Expect some feedback on your pull request before having it approved.  Let's work together, not argue.  
 
-Additionally, I only have so much time to review CRs.  If it takes me a bit to reply, don't fret.  I haven't forgotten you :).  Politely nudge me on Steam, if needed.
+Additionally, I only have so much time to review pull requests.  If it takes me a bit to reply, don't fret.  Politely nudge me on Steam, if needed.
 
 ## Pulling Down the Code
 
@@ -54,28 +54,29 @@ Ok, now that the ground rules are out of the way, let's do this!  To pull down t
 
 ### Getting EasyCommands Set Up Locally
 
-Once you've got these dependencies installed, here's how you can import EasyCommands into Visual Studio.  Check out [this useful guide](https://opensource.com/article/19/7/create-pull-request-github) for information on standard practice for forking a repo and creating a pull request..
+Once you've got these dependencies installed, here's how you can import EasyCommands into Visual Studio.  Check out [this useful guide](https://opensource.com/article/19/7/create-pull-request-github) for information on standard practice for forking a repo and creating a pull request.
 
 After you've forked, cloned, created your feature branch, and added remote, do the following to get set up in Visual Studio:
 
-1.  Open the existing EasyCommands/EasyCommands.sln file from Visual Studio
+*  Open the existing EasyCommands/EasyCommands.sln file from Visual Studio
 
-2.  MDK should ask you to repair the EasyCommands project.  This will bind your local SpaceEngineers installation with EasyCommands so that you can deploy your script locally. Go ahead and click "Repair"
+*  MDK should ask you to repair the EasyCommands project.  This will bind your local SpaceEngineers installation with EasyCommands so that you can deploy your script locally. Go ahead and click "Repair"
 
-![Repair](https://imgur.com/KRSSs0y.png)
+    ![Repair](https://imgur.com/KRSSs0y.png)
 
-![Upgrade Complete](https://imgur.com/L0DfSpP.png)
+    ![Upgrade Complete](https://imgur.com/L0DfSpP.png)
 
-![Valid Upgrade](https://imgur.com/INz7Xqe.png)
+    ![Valid Upgrade](https://imgur.com/INz7Xqe.png)
 
-3.  Build the Solution.  This will build EasyCommands and EasyCommands.Tests
+*  Build the Solution.  This will build EasyCommands and EasyCommands.Tests
 
-![Build Solution](https://imgur.com/ouTAozx.png)
+    ![Build Solution](https://imgur.com/ouTAozx.png)
 
-4.  Right click EasyCommands.Tests in the Solution Explorer and click "Run Tests".  This will make sure that all of the EasyCommands tests are passing.
+*  Right click EasyCommands.Tests in the Solution Explorer and click "Run Tests".  This will make sure that all of the EasyCommands tests are passing.
 
-![Run Tests](https://imgur.com/C07aPpb.png)
-![Tests Passing](https://imgur.com/p6943wz.png)
+    ![Run Tests](https://imgur.com/C07aPpb.png)
+
+    ![Tests Passing](https://imgur.com/p6943wz.png)
 
 That's it! You should be ready to contribute to EasyCommands.
 
@@ -89,16 +90,16 @@ When I release a new version of EasyCommands I will merge all changes from maste
 
 ## Before You Submit a Pull Request
 
-1. Open an [issue](https://github.com/MerlinofMines/EasyCommands/issues) and make sure we're aligned on plan to implement/fix.
+* Open an [issue](https://github.com/MerlinofMines/EasyCommands/issues) and make sure we're aligned on plan to implement/fix.
 
-2. Make sure all tests are running.  You should have new tests for any added functionality. 
+* Make sure all tests are passing.  You should have new tests for any added functionality. 
 
-3. If your changes are visible to people using the script, add documentation for your changes/additions. 
+* If your changes are visible to people using the script, add documentation for your changes/additions. 
 
-4.  If you're changing block behavior, please manually test in Space Engineers.  To do this:
-* [Install PBUnlimiter.dll from MDK](https://github.com/malware-dev/MDK-SE/tree/master/binaries)
-* Change the MDK Script Options Minifier to "Strip Comments" or "None" in the EasyCommands project menu.
-* Run MDK Deploy Script from EasyCommands project menu to deploy your modified script locally.
-* Load up Space Engineers, put EasyCommands into a PB, and make sure the functionality works as you intend.
+*  If you're changing block behavior, please manually test in Space Engineers.  To do this:
+    * [Install PBUnlimiter.dll from MDK](https://github.com/malware-dev/MDK-SE/tree/master/binaries)
+    * Change the MDK Script Options Minifier to "Strip Comments" or "None" in the EasyCommands project menu.
+    * Run MDK Deploy Script from EasyCommands project menu to deploy your modified script locally.
+    * Load up Space Engineers, put EasyCommands into a PB, and make sure the functionality works as you intend.
 
-5.  Look for ways to condense the characters needed to implement your feature.  Size matters!
+*  Look for ways to condense the characters needed to implement your feature.
