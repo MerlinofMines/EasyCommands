@@ -49,7 +49,40 @@ Print `This string isn't worried about having single quotes or having"double quo
 ### Available Static Variables
 EasyCommands provides a few variables out of the box, so that you don't need to create them yourself.  These are well known constants which might come in handy for some types of scripts involving logarithmic or circular calculations.
 
+Nothing stops you from overriding these variables, but if you do then don't expect them work as intended.  My recommendation would simply be to avoid overriding these variables with your own.
+
+The x,y,z,r,g,b variables are in places so that you can get the components of vectors & colors easily. See [Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") for more information.
+
+Supported Variables:
+* ```x``` - 1:0:0 vector, used for X component of Vectors
+* ```y``` - 0:1:0 vector, used for Y component of Vectors
+* ```z``` - 0:0:1 vector, used for Z component of Vectors
+* ```r``` - 1:0:0 vector, used for R component of Colors
+* ```g``` - 0:1:0 vector, used for G component of Colors
+* ```b``` - 0:0:1 vector, used for B component of Colors
+* ```pi``` - Pi
+* ```e``` - Euler's number, useful for e^(myValue)
+* ```empty``` - An empty list, useful for comparison (if myList is empty)
+
 ```
+#x = 1:0:0
+Print "x: " + x
+
+#y = 0:1:0
+Print "y: " + y
+
+#z = 0:0:1
+Print "z: " + z
+
+#r = 1:0:0
+Print "r: " + r
+
+#g = 0:1:0
+Print "g: " + g
+
+#b = 0:0:1
+Print "b: " + b
+
 #pi = 3.141593
 Print "Pi: " + pi
 
@@ -57,7 +90,7 @@ Print "Pi: " + pi
 Print "e: " + e
 
 #empty
-Print "Empty: " + empty
+Print "empty: " + empty
 ```
 
 ## In Memory Variables
