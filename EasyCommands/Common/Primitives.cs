@@ -67,14 +67,14 @@ namespace IngameScript {
                 CastFunction(Return.STRING, p => GetVector(CastString(p)).Value),
                 CastFunction(Return.VECTOR, p => p.value),
                 CastFunction(Return.COLOR, p => CastColor(p).ToVector3()),
-                CastFunction(Return.DEFAULT, Failure(Return.COLOR))
+                CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
             )),
             KeyValuePair(typeof(Color), NewDictionary(
                 CastFunction(Return.NUMERIC, p => new Color(CastNumber(p))),
                 CastFunction(Return.STRING, p => GetColor(CastString(p)).Value),
                 CastFunction(Return.VECTOR, p => new Color((int)CastVector(p).X, (int)CastVector(p).Y, (int)CastVector(p).Z)),
                 CastFunction(Return.COLOR, p => p.value),
-                CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
+                CastFunction(Return.DEFAULT, Failure(Return.COLOR))
             )),
             KeyValuePair(typeof(KeyedList), NewDictionary(
                 CastFunction(Return.LIST, p => p.value),
