@@ -37,7 +37,6 @@ namespace IngameScript {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
 
             float GetRequestedAmount(PropertySupplier p) => CastNumber(NewList(p.attributeValue.GetValue(), (p.propertyValue ?? GetStaticVariable(1)).GetValue()).Find(v => v.returnType == Return.NUMERIC) ?? ResolvePrimitive(1));

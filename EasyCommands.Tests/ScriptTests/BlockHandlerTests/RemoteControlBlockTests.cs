@@ -23,8 +23,56 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void DisableTheCockpit() {
+        public void DisableTheRemoteControl() {
             using (ScriptTest test = new ScriptTest(@"disable the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.IsMainCockpit = false);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOnTheRemoteControl() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.Verify(b => b.SetAutoPilotEnabled(true));
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheRemoteControl() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.Verify(b => b.SetAutoPilotEnabled(false));
+            }
+        }
+
+        [TestMethod]
+        public void TurnOnPowerToTheRemoteControl() {
+            using (ScriptTest test = new ScriptTest(@"turn on power to the ""test remote control""")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.IsMainCockpit = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffPowerToTheRemoteControl() {
+            using (ScriptTest test = new ScriptTest(@"turn off power to the ""test remote control""")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
 
@@ -82,18 +130,6 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 Assert.AreEqual("Remote Control Auto: True", test.Logger[0]);
-            }
-        }
-
-        [TestMethod]
-        public void TurnOnTheRemoteControl() {
-            using (ScriptTest test = new ScriptTest(@"turn on the ""test remote control""")) {
-                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
-                test.MockBlocksOfType("test remote control", mockRemoteControl);
-
-                test.RunUntilDone();
-
-                mockRemoteControl.Verify(b => b.SetAutoPilotEnabled(true));
             }
         }
 

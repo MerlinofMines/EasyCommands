@@ -10,6 +10,54 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class AssemblerBlockTests {
         [TestMethod]
+        public void TurnOnTheAssembler() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test assembler""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheAssembler() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test assembler""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
+        public void StartTheAssembler() {
+            using (ScriptTest test = new ScriptTest(@"start the ""test assembler""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void StopTheAssembler() {
+            using (ScriptTest test = new ScriptTest(@"stop the ""test assembler""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
         public void TellAssemblerToSupply() {
             using(ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to supply")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
@@ -119,18 +167,6 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 Assert.IsTrue(test.Logger.Contains("Steel Plate Remaining: 100"));
-            }
-        }
-
-        [TestMethod]
-        public void StopTheAssembler() {
-            using (ScriptTest test = new ScriptTest(@"stop the ""test assembler""")) {
-                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
-                test.MockBlocksOfType("test assembler", mockAssembler);
-
-                test.RunUntilDone();
-
-                mockAssembler.Verify(b => b.ClearQueue());
             }
         }
 

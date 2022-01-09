@@ -5,7 +5,6 @@ This Block Handler handles both Oxygen and Hydrogen tanks.  It enables you to ge
 * Block Type Group Keywords: ```tanks```
 
 Default Primitive Properties:
-* Bool - Auto
 * Numeric - Ratio
 
 Default Directional Properties
@@ -49,7 +48,7 @@ power off "My Tank"
 ## "Supply" Property
 * Primitive Type: Bool
 * Keywords: ```supply```
-* Inverse Keywords: ```stockpile, , collect, collecting```
+* Inverse Keywords: ```stockpile, stockpiling, collect, collecting```
 
 Gets/Sets whether the tank is set to stockpile
 

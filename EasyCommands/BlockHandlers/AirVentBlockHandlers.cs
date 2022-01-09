@@ -27,7 +27,6 @@ namespace IngameScript {
                 AddNumericHandler(Property.RATIO, b => b.GetOxygenLevel());
                 AddNumericHandler(Property.LEVEL, b => b.GetOxygenLevel());
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SUPPLY;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
             }
 

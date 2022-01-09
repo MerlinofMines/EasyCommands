@@ -34,10 +34,9 @@ namespace IngameScript {
                         return new KeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))).ToArray());
                     },
                     SetWaypoints);
-
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
                 defaultPropertiesByPrimitive[Return.LIST] = Property.WAYPOINTS;
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
             }
 
             void SetWaypoints(IMyRemoteControl b, KeyedList waypoints) {
@@ -52,7 +51,9 @@ namespace IngameScript {
         public class ShipControllerHandler<T> : TerminalBlockHandler<T> where T : class, IMyShipController {
             public ShipControllerHandler() {
                 var dampenerHandler = BooleanHandler(b => b.DampenersOverride, (b, v) => b.DampenersOverride = v);
-                AddBooleanHandler(Property.ENABLE, b => b.IsMainCockpit, (b, v) => b.IsMainCockpit = v);
+                var enableHandler = BooleanHandler(b => b.IsMainCockpit, (b, v) => b.IsMainCockpit = v);
+                AddPropertyHandler(Property.ENABLE, enableHandler);
+                AddPropertyHandler(Property.POWER, enableHandler);
                 AddPropertyHandler(Property.OVERRIDE, dampenerHandler);
                 AddPropertyHandler(Property.AUTO, dampenerHandler);
                 AddBooleanHandler(Property.LOCKED, b => b.HandBrake, (b, v) => b.HandBrake = v);
@@ -83,7 +84,7 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
                     TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
 
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.POWER;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
                 defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
             }

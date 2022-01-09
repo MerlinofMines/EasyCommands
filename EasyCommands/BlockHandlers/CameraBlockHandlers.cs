@@ -39,7 +39,6 @@ namespace IngameScript {
                     }
                     return GetVector(GetCustomProperty(b, "Target") ?? "").GetValueOrDefault();
                 });
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }

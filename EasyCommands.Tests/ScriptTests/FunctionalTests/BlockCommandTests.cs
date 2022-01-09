@@ -357,7 +357,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunUntilDone();
 
-                mockAssembler.Verify(b => b.ClearQueue());
+                mockAssembler.VerifySet(b => b.Enabled = false);
             }
         }
 
