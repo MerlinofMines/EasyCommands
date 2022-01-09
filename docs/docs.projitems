@@ -80,7 +80,7 @@
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\welder.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\collections.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\commands.md" />
-    <None Include="$(MSBuildThisFileDirectory)EasyCommands\contributing.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\development.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\examples.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\examples\ascentAssist.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\execution.md" />
