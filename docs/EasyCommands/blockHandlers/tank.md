@@ -77,6 +77,21 @@ Print "Tank Capacity: " + "My Tank" capacity
 
 Gets the percentage that the tank is filled, as a value from 0-1 (0 = empty, 1 = 100% full)
 
+```
+Print "Tank Fill Ratio: " + "My Tank" ratio
+```
+
+## "Level" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```level, levels```
+
+Gets the approximate level of the tank, in L, by multiplying the tank's capacity by it's current fill ratio.  So if it has as 10000L capacity and is 40% full, would return 4000.
+
+```
+Print "Tank Level: " + "My Tank" level
+```
+
 ## "Auto" Property
 * Primitive Type: Bool
 * Keywords: ```auto, refill```

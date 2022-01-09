@@ -128,5 +128,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 Assert.AreEqual("Ratio: 0.4", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void GetTheTankLevel() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Level: "" + the ""test tank"" level")) {
+                Mock<IMyGasTank> mockTank = new Mock<IMyGasTank>();
+                test.MockBlocksOfType("test tank", mockTank);
+                mockTank.Setup(b => b.FilledRatio).Returns(0.4);
+                mockTank.Setup(b => b.Capacity).Returns(10000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Level: 4000", test.Logger[0]);
+            }
+        }
     }
 }
