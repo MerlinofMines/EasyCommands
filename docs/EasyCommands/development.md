@@ -7,41 +7,33 @@ Thanksfully, there are plenty of folks able and hopefully willing to contribute 
 ## Ground Rules
 
 ### I Have the Final Say
-I have the final say on whether a change or new feature will be added.  I'm a reasonable guy and I don't intend confrontation, but I'm also an experienced software engineer and will push back on unreasonable changes or functionality.  This is my script, I've put a year of my life into it, and I think I'm allowed to decide how the script progresses, for better or worse.
+I have the final say on whether a change or new feature will be added.  I'm a reasonable guy and I don't intend confrontation, but I will push back on unreasonable changes or functionality.
 
 Before submitting a pull request you should open an [issue](https://github.com/MerlinofMines/EasyCommands/issues) describing the bug/feature request.  Please label it so that we can triage appropriately.  Please put enough detail into the issue so that we can have a good conversation about it before implementing.
 
-Before pursuing a large change, let's chat and make sure we're aligned on approach.  I'd hate for you to do a lot of refactoring to then find out I'm not aligned with the change during review.
+Before pursuing a large change, let's chat and make sure we're aligned on approach.
 
 ### Size Matters
 The script can only be 100,000 characters, so that folks can use it without modifying SE.  As of this writing, the character size is about 82,000, and that is after extensive work to reduce the character footprint.  As such, some features may literally not be worth the characters they cost to implement, especially if a reasonable workaround exists.
 
-Additionally, this means that there are lots of patterns in place whose purpose is to reduce character footprint.  Before declaring that I shouldn't have written it that way, consider the characters needed to implement it in the way you're thinking it should be (adding a bunch of classes, types, methods, etc).  I'm well aware of good design patterns, but also experienced enough to know when I can get away with breaking them to save characters.  We're not maintaining a production system with dozens of developers working in the code base.  If you don't understand how/why the code works the way it does, just ask.
-
-So if you get pushback on how you've written the feature and I ask you to reduce the characters (even if it reduces readability or "prettiness"), know that it's because i've spent literally days crunching down thousands of characters so that we can fit more functionality into the script.
-
-If you have ideas on how to refactor the code to reduce character footprint while maintaining (or improving) extensibility, I am all ears.  My philosophy is ```build only what you need, extend what is valuable, and delete what isn't```.
+Additionally, this means that there are lots of patterns in place whose purpose is to reduce character footprint.   If you don't understand how/why the code works the way it does, just ask.  If you have ideas on how to refactor the code to reduce character footprint while maintaining (or improving) extensibility, I am all ears.
 
 ### Testing Matters
 
-One of the coolest things about EasyCommads (IMO) is that it has an extensive test suite.  There are over 1000 tests verifying the behavior of just about everything in the script.  Before submitting a pull request, run all of the tests and make sure that they pass.  Also include tests for any modified or new functionality.  I expect tests on any modified or added behavior.  There's no way a script like this can be maintained without regression testing new features and protecting existing features.
+Before submitting a pull request, run all of the tests and make sure that they pass.  Also include tests for any modified or new functionality.  You should add tests on any modified or added behavior.  The tests aren't hard to write.  In fact, you usually just write a sample script using the behavior, and then verify the expectations using Mock (Moq) blocks.
 
-The tests aren't hard to write.  In fact, you usually just write a sample script using the behavior, and then verify the expectations using Mock (Moq) blocks.
+The entire test suite is run on any pull request submission and any code commit to a branch (master or otherwise) to ensure all tests are passing for every pull request.
 
-The entire test suite is run on any pull request submission and any code commit to a branch (master or otherwise).  If the tests are failing I will definitely ask the pull request to be re-worked.
-
-If you're changing functionality for real in-game blocks, you should test your script manually to make sure the behavior you think works actually works.  I've caught a bunch of my own bugs introduced because the real game doesn't work quite like I thought it did, even though my tests pass.
+If you're changing functionality for real in-game blocks, you should test your script manually to make sure the behavior you think works actually works.  Often times the real game doesn't work quite like we think it does, even though the tests pass.
 
 ### Documentation Matters
 
-A feature is no good if folks don't know about it.  There's an entire website dedicated to describing the behavior of EasyCommands, and it needs to be kept up to date.  If you are changing or adding behavior, please add documentation for it.  If you're unsure how/where to document, just ask.
+A feature is no good if folks don't know about it.  There's a website dedicated to describing the behavior of EasyCommands, and it needs to be kept up to date.  If you are changing or adding behavior, please add documentation for it.  If you're unsure how/where to document, just ask.
 
 Changes to documentation on the "master" branch will not affect the live site, so documentation changes should be included as part of the pull request for the feature itself.
 
 ### Be Patient, Be Polite, Expect Feedback
-Rarely do we create the perfect change request submission on the first attempt, especially when trying to collaborate.  Expect some feedback on your pull request before having it approved.  Let's work together, not argue.  
-
-Additionally, I only have so much time to review pull requests.  If it takes me a bit to reply, don't fret.  Politely nudge me on Steam, if needed.
+Expect some feedback on your pull request before having it approved.  Additionally, I only have so much time to review pull requests.  If it takes me a bit to reply, don't fret.  Politely nudge me on Steam, if needed.
 
 ## Pulling Down the Code
 
