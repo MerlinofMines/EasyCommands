@@ -135,6 +135,12 @@ namespace IngameScript {
             //ListIndexAsVariableProcessor
             NoValueRule(Type<ListIndexCommandParameter>, list => new VariableCommandParameter(list.value)),
 
+            //MinusProcessor
+            new BranchingProcessor<MinusCommandParameter>(
+                NoValueRule(Type<MinusCommandParameter>, minus => new UniOperationCommandParameter(UniOperand.REVERSE)),
+                NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandTier2Operand(BiOperand.SUBTRACT))
+            ),
+
             //AfterUniOperationProcessor
             OneValueRule(Type<LeftUniOperationCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),

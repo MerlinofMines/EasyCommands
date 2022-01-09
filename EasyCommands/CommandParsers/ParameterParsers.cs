@@ -220,10 +220,12 @@ namespace IngameScript {
             AddTier1OperationWords(Words("pow", "exp", "^", "xor"), BiOperand.EXPONENT);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
-            AddTier2OperationWords(Words("minus", "-"), BiOperand.SUBTRACT);
+            AddTier2OperationWords(Words("minus"), BiOperand.SUBTRACT);
 
             AddTier3OperationWords(Words("as", "cast"), BiOperand.CAST);
             AddTier3OperationWords(Words(".."), BiOperand.RANGE);
+
+            AddWords(Words("-"), new MinusCommandParameter());
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());

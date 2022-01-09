@@ -202,6 +202,20 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignNegativeVariable() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to -t");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.REVERSE, variable.operand);
+            Assert.IsTrue(variable.a is AmbiguousStringVariable);
+            AmbiguousStringVariable memoryVariable = (AmbiguousStringVariable)variable.a;
+            Assert.AreEqual("t", memoryVariable.value);
+        }
+
+        [TestMethod]
         public void AssignSimpleStringSubtractionMultipleCharacters() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to \"second\" - eco");

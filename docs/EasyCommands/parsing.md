@@ -14,3 +14,27 @@ Every time EasyCommands executes, it will inspect the CustomData to see if it ha
 
 EasyCommands progressively parses your script to avoid performance impact and to avoid the dreaded "Script Too Complex" issue during parsing.  As such there are no limits on function length or the number of commands any function can have.  That said, your script might still not be able to execute everything in a single tick even if it's able to parse it.  If you find yourself executing too many commands in a single tick and you get the "Script Too Complex" error during execution, consider breaking up your commands into multiple ticks.  The simplest way to do this is to add a ```wait``` command somewhere in your script.
 
+## Bottom to Top Parsing
+If multiple [Functions](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions") are present, functions are parsed from the bottom up.  So if your parsing fails at line "55" in function "b", you fix it and then get a parsing exception on line 27 in function "a", that's why.
+
+## Back to Front
+
+EasyCommands parses each command line from back to front.  Seems counter intuitive but it actually leads to many more use cases for natural sounding commands.
+
+This does have some ramifications though.  Commands like the following will not yield the result you might expect:
+
+```
+set a to 2 - 3 - 1
+#Assumed Calculation: (2 - 3) - 1 = -1 - 1 = -2
+#Actual Calculation: 2 - (3 - 1) = 2 - 2 = 0
+
+print "a: " +a
+#a: 0
+```
+
+For these cases, parantheses can help clarify the intended ordering:
+```
+set a to (2 - 3) - 1
+Print "a: " + a
+#a: -2
+```
