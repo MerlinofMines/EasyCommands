@@ -50,7 +50,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * O2/H2 Generator - ```generator```, ```generators```
 * Ore Detector - ```detector```, ```detectors```
 * Parachute - ```chute, parachute```, ```chutes, parachutes```
-* Programmable Block - ```program```, ```programs```
+* Programmable Block - ```program, programmable```, ```programs```
 * Piston - ```piston```, ```pistons```
 * Projector - ```projector```, ```projectors``` 
 * Reactor - ```reactor```, ```reactors```
@@ -113,7 +113,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * (```stockpile, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
 * Target (also Waypoint) - ```target, destination, waypoint, coords, coordinates```
 * Target Velocity - ```targetvelocity```
-* Text - ```text, texts, message, messages```
+* Text - ```text, texts, message, messages, argument, arguments```
 * Trigger - ```trigger, triggered, detect, detected, trip, tripped, deploy, deployed, shoot, shooting, shot, detonate```
 * Velocity - ```velocity, velocities, speed, speeds, rate, rates, pace, paces```
 * Volume (also Output & Intensity) - ```volume, volumes, output, outputs, intensity, intensities```
