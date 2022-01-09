@@ -267,7 +267,7 @@ namespace IngameScript {
 
             //WaitProcessor
             OneValueRule(Type<WaitCommandParameter>, optionalRight<VariableCommandParameter>(),
-                (p, time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.0167f)))),
+                (p, time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.01666f)))),
 
             //FunctionCallCommandProcessor
             OneValueRule(Type<FunctionDefinitionCommandParameter>, rightList<VariableCommandParameter>(true),

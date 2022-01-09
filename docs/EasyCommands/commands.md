@@ -109,7 +109,7 @@ wait 10 seconds
 ```
 
 ```
-#Waits 10 ticks
+#Waits 10 ticks, where 1 tick = 1/60 seconds (regardless of Update Frequency)
 wait 10 ticks
 ```
 
@@ -118,7 +118,9 @@ wait 10 ticks
 wait until myCondition is true
 ```
 
-When waiting, EasyCommands assumes you are running at 60 executions per second.  If you slow down the program execution (see [Debugging](https://spaceengineers.merlinofmines.com/EasyCommands/debugging "Debugging")) the Wait Command will take much longer to finish executing.  Keep this in mind when debugging.  This behavior may be changed in future releases.
+The Wait command waits for the requested amount of time regardless of the Update frequency.  That said, the amount of time waited will become less accurate the lower the update frequency you set, so keep this in mind.
+
+Also note that the Wait Command's wait duration is not perfectly accurate.  Don't use it for trying to keep track of accurate amounts of time over long durations.
 
 ## Interacting With Blocks
 

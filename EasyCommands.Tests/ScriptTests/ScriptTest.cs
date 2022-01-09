@@ -25,6 +25,8 @@ namespace EasyCommands.Tests.ScriptTests
         public Program program;
         public Mock<IMyProgrammableBlock> me;
         public Mock<IMyTextSurface> display;
+        Mock<IMyGridProgramRuntimeInfo> runtime;
+
         MockGridTerminalSystem mockGrid;
         int entityIdCounter = 1000;
 
@@ -45,6 +47,10 @@ namespace EasyCommands.Tests.ScriptTests
             Logger = new List<String>();
             RunCounter = 0;
 
+            // Setup Runtime
+            runtime = new Mock<IMyGridProgramRuntimeInfo>();
+            runtime.Setup(r => r.TimeSinceLastRun).Returns(TimeSinceLastRun);
+
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
             mockGrid = new MockGridTerminalSystem();
@@ -57,6 +63,8 @@ namespace EasyCommands.Tests.ScriptTests
             config.GridTerminalSystem = mockGrid;
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
+            config.Runtime = runtime.Object;
+
             program = MDKFactory.CreateProgram<Program>(config);
             program.commandParseAmount = 1000;
             program.logLevel = Program.LogLevel.SCRIPT_ONLY;
@@ -74,6 +82,35 @@ namespace EasyCommands.Tests.ScriptTests
 
         public void SetCulture(String culture) => SetCulture(new CultureInfo(culture));
         public void SetCulture(CultureInfo culture) => System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+
+        public TimeSpan TimeSinceLastRun() {
+            long updateTicks;
+            switch (program.updateFrequency) {
+                case UpdateFrequency.Update100:
+                    updateTicks = 16660000;
+                    break;
+                case UpdateFrequency.Update10:
+                    updateTicks = 1666000;
+                    break;
+                case UpdateFrequency.None:
+                    updateTicks = 166600;
+                    break;
+                case UpdateFrequency.Once:
+                    updateTicks = 166600;
+                    break;
+                case UpdateFrequency.Update1:
+                    updateTicks = 166600;
+                    break;
+                default:
+                    updateTicks = 166600;
+                    break;
+            }
+            return new TimeSpan(updateTicks);
+        }
+
+        public void SetUpdateFrequency(UpdateFrequency updateFrequency) {
+            program.updateFrequency = updateFrequency;
+        }
 
         /// <summary>
         /// Run the script until the given predicate is satisfied.
