@@ -328,5 +328,195 @@ Print ""a: "" + reverse a
             }
         }
 
+        [TestMethod]
+        public void NegateList() {
+            var script = @"
+set a to [""one""-> 1,2,3]
+Print ""a: "" + -a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: [3,2,one->1]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeVariable() {
+            var script = @"
+set a to 2
+set b to -a
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: -2", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeVariablePlusValueNegativeResolvesFirst() {
+            var script = @"
+set a to 2
+set b to -a+5
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: 3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeVariableTimesValueNegativeResolvesFirst() {
+            var script = @"
+set a to 2
+set b to -a*5
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: -10", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegatationTimesNegation() {
+            var script = @"
+set a to 2
+set b to -a*-a
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: 4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeNumberMinusVariable() {
+            var script = @"
+set a to 2
+set b to -2-a
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: -4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeVariableMinusNumber() {
+            var script = @"
+set a to 2
+set b to -a-2
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: -4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignNegativeVariableMinusVariable() {
+            var script = @"
+set a to 2
+set b to -a-a
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: -4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignDoubleNegative() {
+            var script = @"
+set a to 2
+set b to 2 - -a
+Print ""b: "" + b
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("b: 4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignParenthesesWrappedSubtractionOperation() {
+            var script = @"
+set a to 2
+set a to (2 - 3) - 1
+print ""a: "" + a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: -2", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignParenthesesWrappedNegation() {
+            var script = @"
+set a to 2
+set a to (-3) - 1
+print ""a: "" + a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: -4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignParenthesesWrappedNegationAndSubtraction() {
+            var script = @"
+set a to 2
+set a to (2 - -3) - 1
+print ""a: "" + a
+";
+
+            using (var test = new ScriptTest(script)) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("a: 4", test.Logger[0]);
+            }
+        }
     }
 }

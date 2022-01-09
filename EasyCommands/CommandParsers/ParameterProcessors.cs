@@ -49,11 +49,19 @@ namespace IngameScript {
                 for(int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
-                        finalParameters = p.GetRange(i+1, j - (i+1));
-                        var alternateBranches = PROGRAM.ProcessParameters(finalParameters);
+                        var alternateBranches = NewList(p.GetRange(i + 1, j - (i + 1)));
                         p.RemoveRange(i, j - i + 1);
 
+                        while(alternateBranches.Count > 0) {
+                            finalParameters = alternateBranches[0];
+                            alternateBranches.AddRange(PROGRAM.ProcessParameters(finalParameters));
+                            alternateBranches.RemoveAt(0);
+                            if (finalParameters.Count == 1) break;
+                        }
+
                         for (int k = 0; k < alternateBranches.Count; k++) {
+                            alternateBranches[k].Insert(0, new OpenParenthesisCommandParameter());
+                            alternateBranches[k].Add(new CloseParenthesisCommandParameter());
                             var copy = new List<CommandParameter>(p);
                             copy.InsertRange(i, alternateBranches[k]);
                             branches.Add(copy);

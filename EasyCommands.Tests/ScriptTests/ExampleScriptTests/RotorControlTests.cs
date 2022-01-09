@@ -49,10 +49,10 @@ assign newSpeed to ( timeToLimit * myVelocity ) / desiredSecondsToLimit
 
 if isNegative
   if timeToLimit < desiredSecondsToLimit
-    call ""min"" -1 * minRotorRPM newSpeed
+    call ""min"" -minRotorRPM newSpeed
     assign newSpeed to myOutput
   else
-    call ""max"" -1 * maxRotorRPM newSpeed
+    call ""max"" -maxRotorRPM newSpeed
     assign newSpeed to myOutput
 else
   if timeToLimit < desiredSecondsToLimit
