@@ -68,6 +68,29 @@ Print "Result: " + result
 #Result: 8
 ```
 
+### The Minus Sign
+```-``` can be used as either a UniOperand to negate a value (See the Not Operation)), or as a BiOperand to subtract a value from another value (see the Subtraction operation).
+
+```
+#Negation
+set a to 2
+set b to -a
+print "b: " + b
+#b: -2
+```
+
+```
+#Subtraction
+set a to 2
+set b to 5 - a
+print "b: " + b
+#b: 3
+```
+
+EasyCommands will do its best to infer whether you meant by "-", but may not be perfect.  If needed, use parantheses to clarify your intent.
+
+Negation resolves before subtraction, so ```-a-a``` resolves to ```(-a) - a```, vs ```-(a-a)```.
+
 ## Uni Operations
 
 ### Absolute Value
@@ -113,12 +136,13 @@ set mykeys to myList keys
 Inverses a given property.  Behavior varies by input type
 
 Keywords:
-```not, !, isnt, arent, stop```
+```not, !, isnt, arent, stop, -```
 
 * **(Boolean)**: inverts the boolean
 * **(Number)**: multiplies the number by -1
 * **(Vector)**: returns the inverse of the given vector
 * **(Color)**: returns the inverse of the given color
+* **(List)**: returns a list whose order is reversed
 
 Example:
 ```
