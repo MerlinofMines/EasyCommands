@@ -74,8 +74,6 @@ You can also set the Runtime Frequency of the script manually.  "Edit" the progr
 public UpdateFrequency updateFrequency = UpdateFrequency.Update10;
 ```
 
-Note that EasyCommands assumes you are running every tick, so waiting "1 second" on Update10 will actually wait 10 seconds.
-
 Supported Values:
 * ```UpdateFrequency.Update1``` - Script runs once every tick (the default)
 * ```UpdateFrequency.Update10``` - Script runs once every 10 ticks

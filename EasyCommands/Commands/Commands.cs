@@ -191,7 +191,6 @@ namespace IngameScript {
             return breakCommand;
         }
 
-
         public class ControlCommand : Command {
             public ControlFunction controlFunction;
             public override bool Execute() => controlFunction(PROGRAM.currentThread);
@@ -199,20 +198,21 @@ namespace IngameScript {
 
         public class WaitCommand : Command {
             public Variable waitInterval;
-            int ticksLeft = -1;
-
+            double remaininingWaitTime = -1;
             public WaitCommand(Variable variable) {
                 waitInterval = variable;
             }
 
             public override Command Clone() => new WaitCommand(waitInterval);
-            public override void Reset() { ticksLeft = -1; }
+            public override void Reset() { remaininingWaitTime = -1; }
             public override bool Execute() {
-                if (ticksLeft < 0) {
-                    ticksLeft = (int)(CastNumber(waitInterval.GetValue()) * 60); //Assume 60 ticks / second
+                if (remaininingWaitTime < 0) {
+                    remaininingWaitTime = CastNumber(waitInterval.GetValue()) * 1000;
+                    return false;
                 }
-                Debug("Waiting for " + ticksLeft + " ticks");
-                return ticksLeft-- <= 0;
+                Debug("Waiting for " + remaininingWaitTime + " ms");
+                remaininingWaitTime -= PROGRAM.Runtime.TimeSinceLastRun.TotalMilliseconds;
+                return remaininingWaitTime <= 5; //if <5ms left to wait, call it.
             }
         }
 

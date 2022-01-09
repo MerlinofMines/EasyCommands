@@ -125,7 +125,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
-            Assert.AreEqual(0.0167f, CastNumber(waitCommand.waitInterval.GetValue())); // 1/60 seconds or 1 tick
+            Assert.AreEqual(0.01666f, CastNumber(waitCommand.waitInterval.GetValue())); // 1/60 second
         }
 
         [TestMethod]
