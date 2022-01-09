@@ -84,7 +84,7 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
                     TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
 
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.POWER;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
                 defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
             }
