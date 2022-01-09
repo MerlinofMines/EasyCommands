@@ -38,7 +38,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetTheProgramRunArgument() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Run Argument: "" + the ""test program"" text")) {
+            using (ScriptTest test = new ScriptTest(@"Print ""Run Argument: "" + the ""test program"" argument")) {
                 Mock<IMyProgrammableBlock> mockProgram = new Mock<IMyProgrammableBlock>();
                 test.MockBlocksOfType("test program", mockProgram);
 
@@ -55,10 +55,24 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"run the""test program""")) {
                 Mock<IMyProgrammableBlock> mockProgram = new Mock<IMyProgrammableBlock>();
                 test.MockBlocksOfType("test program", mockProgram);
+                mockProgram.Setup(b => b.TerminalRunArgument).Returns("");
 
                 test.RunUntilDone();
 
                 mockProgram.Verify(b => b.TryRun(""));
+            }
+        }
+
+        [TestMethod]
+        public void RunTheProgramUsesDefaultArgument() {
+            using (ScriptTest test = new ScriptTest(@"run the""test program""")) {
+                Mock<IMyProgrammableBlock> mockProgram = new Mock<IMyProgrammableBlock>();
+                test.MockBlocksOfType("test program", mockProgram);
+                mockProgram.Setup(b => b.TerminalRunArgument).Returns("defaultArgument");
+
+                test.RunUntilDone();
+
+                mockProgram.Verify(b => b.TryRun("defaultArgument"));
             }
         }
 
