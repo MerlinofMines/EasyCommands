@@ -36,12 +36,12 @@ namespace IngameScript {
                             }), Return.VECTOR),
                             TypeHandler(BooleanHandler(b => b.GyroOverride, (b, v) => b.GyroOverride = v), Return.BOOLEAN))
                         , Direction.NONE),
-                        TypeHandler(NumericHandler(GetPitch, SetPitch, 10), Direction.UP),
-                        TypeHandler(NumericHandler(b => -GetPitch(b), (b, v) => SetPitch(b, -v)), Direction.DOWN),
-                        TypeHandler(NumericHandler(b => -GetYaw(b), (b, v) => SetYaw(b, -v)), Direction.LEFT),
-                        TypeHandler(NumericHandler(GetYaw, SetYaw), Direction.RIGHT),
-                        TypeHandler(NumericHandler(GetRoll, SetRoll), Direction.CLOCKWISE),
-                        TypeHandler(NumericHandler(b => -GetRoll(b), (b, v) => SetRoll(b, -v)), Direction.COUNTERCLOCKWISE));
+                        TypeHandler(NumericHandler(GetPitch, SetPitch, 5), Direction.UP),
+                        TypeHandler(NumericHandler(b => -GetPitch(b), (b, v) => SetPitch(b, -v), 5), Direction.DOWN),
+                        TypeHandler(NumericHandler(b => -GetYaw(b), (b, v) => SetYaw(b, -v), 5), Direction.LEFT),
+                        TypeHandler(NumericHandler(GetYaw, SetYaw, 5), Direction.RIGHT),
+                        TypeHandler(NumericHandler(GetRoll, SetRoll, 5), Direction.CLOCKWISE),
+                        TypeHandler(NumericHandler(b => -GetRoll(b), (b, v) => SetRoll(b, -v), 5), Direction.COUNTERCLOCKWISE));
 
                 AddPropertyHandler(Property.OVERRIDE, overrideHandler);
                 AddPropertyHandler(Property.ROLL_INPUT, overrideHandler);
