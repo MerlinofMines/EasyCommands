@@ -117,7 +117,7 @@ Print 0.0 as number
                 test.RunOnce();
 
                 Assert.AreEqual("1", test.Logger[0]);
-                Assert.AreEqual("0.0", test.Logger[1]);
+                Assert.AreEqual("0", test.Logger[1]);
             }
         }
 
@@ -134,7 +134,7 @@ Print ""abc"" as number
                 test.RunOnce();
 
                 Assert.AreEqual("1", test.Logger[0]);
-                Assert.AreEqual("0.0", test.Logger[1]);
+                Assert.AreEqual("0", test.Logger[1]);
                 Assert.AreEqual("1.5", test.Logger[2]);
                 Assert.AreEqual("Exception Occurred:", test.Logger[3]);
             }
@@ -331,8 +331,8 @@ Print 2 as color
                 test.RunOnce();
 
                 Assert.AreEqual("#FFFFFF", test.Logger[0]);
-                Assert.AreEqual("#000000", test.Logger[0]);
-                Assert.AreEqual("#FFFFFF", test.Logger[0]);
+                Assert.AreEqual("#000000", test.Logger[1]);
+                Assert.AreEqual("#FFFFFF", test.Logger[2]);
             }
         }
 
@@ -363,7 +363,7 @@ Print -128:128:356 as color
                 test.RunOnce();
 
                 Assert.AreEqual("#FF0000", test.Logger[0]);
-                Assert.AreEqual("#0080FF", test.Logger[0]);
+                Assert.AreEqual("#0080FF", test.Logger[1]);
             }
         }
 
