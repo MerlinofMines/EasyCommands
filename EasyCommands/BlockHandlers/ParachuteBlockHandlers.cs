@@ -33,7 +33,6 @@ namespace IngameScript {
                     Vector3D? closestPoint;
                     return (float)(b.TryGetClosestPoint(out closestPoint) ? closestPoint.Value.Length() : -1);
                 });
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.OPEN;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
             }

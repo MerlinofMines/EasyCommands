@@ -11,6 +11,30 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class ParachuteBlockTests {
         [TestMethod]
+        public void TurnOnTheParachute() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test parachute""")) {
+                Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
+                test.MockBlocksOfType("test parachute", mockParachute);
+
+                test.RunUntilDone();
+
+                mockParachute.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheParachute() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test parachute""")) {
+                Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
+                test.MockBlocksOfType("test parachute", mockParachute);
+
+                test.RunUntilDone();
+
+                mockParachute.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
         public void OpenTheParachute() {
             using (ScriptTest test = new ScriptTest(@"open the ""test parachute""")) {
                 Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();

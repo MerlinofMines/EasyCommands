@@ -5,7 +5,6 @@ This Block Handles Sensors, which you can use to automatically do things when yo
 * Block Type Group Keywords: ```sensors```
 
 Default Primitive Properties:
-* Bool - Triggered
 * Vector - Target
 
 ## "Enabled" Property

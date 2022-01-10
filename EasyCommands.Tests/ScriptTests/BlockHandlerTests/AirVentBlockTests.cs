@@ -10,6 +10,30 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class AirVentBlockTests {
         [TestMethod]
+        public void TurnOnTheAirVent() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test airVent""")) {
+                Mock<IMyAirVent> mockAirVent = new Mock<IMyAirVent>();
+                test.MockBlocksOfType("test airVent", mockAirVent);
+
+                test.RunUntilDone();
+
+                mockAirVent.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheAirVent() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test airVent""")) {
+                Mock<IMyAirVent> mockAirVent = new Mock<IMyAirVent>();
+                test.MockBlocksOfType("test airVent", mockAirVent);
+
+                test.RunUntilDone();
+
+                mockAirVent.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
         public void PressurizeTheAirVent() {
             using (ScriptTest test = new ScriptTest(@"pressurize the ""test airVent""")) {
                 Mock<IMyAirVent> mockAirVent= new Mock<IMyAirVent>();

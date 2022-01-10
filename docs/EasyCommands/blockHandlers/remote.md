@@ -7,7 +7,7 @@ Remote Control Blocks can be told where to go and how fast to go there, which ma
 * Block Type Group Keywords: ```remotes, drones, robots```
 
 Default Primitive Properties:
-* Boolean: Auto
+* Bool: Auto (overrides Enabled)
 * Numeric: Velocity
 * Vector: Waypoint
 * List: Waypoints
@@ -15,6 +15,39 @@ Default Primitive Properties:
 Default Directional Properties
 * Up: Velocity
 
+## "Enabled" Property
+* Primitive Type: Bool
+* Keywords: ```enable, enabled```
+* Inverse Keywords: ```disable, disabled```
+
+Gets/Sets whether the given remote control(s) are considered the Main Remote Control (meaning can control the ship).
+
+```
+#Enable Block
+enable "My Remote Control"
+set "My Remote Control" to enabled
+
+#Disable Block
+disable "My Remote Control"
+set "My Remote Control" to disabled
+```
+
+## "Power" Property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Effectively the same as "Enabled"
+
+```
+#Enable
+turn on power to "My Remote Control"
+power on "My Remote Control"
+
+#Disable
+turn off power to "My Remote Control"
+power off "My Remote Control"
+```
+
 ## "Auto" Property
 * Primitive Type: Bool
 * Keywords: ```auto, autopilot```
@@ -29,18 +62,20 @@ turn on "My Remote Control" autopilot
 set "My Remote Control" to auto
 ```
 
-## "Auto" Property
-* Primitive Type: Bool
-* Keywords: ```auto, autopilot```
-
-Gets/Sets whether autopilot is enabled.  When enabled, Autopilot will begin navigating to its specified waypoint(s) according to it's flight mode.
+This is the default boolean property, so you can also use the following:
 
 ```
-if "My Remote Control" is on autopilot
-  Print "Ship is driving itself"
+#Turn on Autopilot
+turn on "My Remote Control"
+start "My Remote Control"
+resume "My Remote Control"
+tell "My Remote Control" to begin
 
-turn on "My Remote Control" autopilot
-set "My Remote Control" to auto
+#Turn off Autopilot
+turn off "My Remote Control"
+stop "My Remote Control"
+tell "My Remote Control" to stop
+halt "My Remote Control"
 ```
 
 ## "Run" Property

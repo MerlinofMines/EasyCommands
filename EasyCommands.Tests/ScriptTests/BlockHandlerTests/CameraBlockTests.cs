@@ -9,6 +9,30 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class CameraBlockTests {
         [TestMethod]
+        public void TurnOnTheCamera() {
+            using (var test = new ScriptTest(@"turn on the ""test camera""")) {
+                var mockCamera = new Mock<IMyCameraBlock>();
+                test.MockBlocksOfType("test camera", mockCamera);
+
+                test.RunUntilDone();
+
+                mockCamera.VerifySet(c => c.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheCamera() {
+            using (var test = new ScriptTest(@"turn off the ""test camera""")) {
+                var mockCamera = new Mock<IMyCameraBlock>();
+                test.MockBlocksOfType("test camera", mockCamera);
+
+                test.RunUntilDone();
+
+                mockCamera.VerifySet(c => c.Enabled = false);
+            }
+        }
+
+        [TestMethod]
         public void getCameraRange() {
             String script = @"
 assign ""a"" to ""mock camera"" range

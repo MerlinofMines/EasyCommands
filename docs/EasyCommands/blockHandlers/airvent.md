@@ -6,11 +6,45 @@ This Block Handler handles Air Vents. Pretty Straightforward
 * Block Type Group Keywords: ```vents, airvents```
 
 Default Primitive Properties:
-* Boolean - Pressurized (replaces "enabled" from Terminal Block Handler)
 * Numeric - Ratio
 
 Default Directional Properties
 * Up - Ratio
+
+## "Enabled" Property
+* Primitive Type: Bool
+* Keywords: ```enable, enabled```
+* Inverse Keywords: ```disable, disabled```
+
+Enables or Disables the given block
+
+```
+#Enable Block
+enable "My Airvent"
+set "My Airvent" to enabled
+turn on "My Airvent"
+
+#Disable Block
+disable "My Airvent"
+set "My Airvent" to disabled
+turn off "My Airvent"
+```
+
+## "Power" Property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Turns on or off power to the block.  Effectively the same as the Enabled property.
+
+```
+#Turn on
+turn on power to "My Airvent"
+power on "My Airvent"
+
+#Turn off
+turn off power to "My Airvent"
+power off "My Airvent"
+```
 
 ## "Complete" property
 * Read-only

@@ -9,6 +9,28 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class BatteryBlockTests {
         [TestMethod]
+        public void TurnOnTheBattery() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test battery""")) {
+                Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();
+                test.MockBlocksOfType("test battery", mockBattery);
+                test.RunUntilDone();
+
+                mockBattery.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheBattery() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test battery""")) {
+                Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();
+                test.MockBlocksOfType("test battery", mockBattery);
+                test.RunUntilDone();
+
+                mockBattery.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
         public void GetTheBatteryLevel() {
             using (ScriptTest test = new ScriptTest(@"Print ""Stored Power: "" + the ""test battery"" level")) {
                 Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();

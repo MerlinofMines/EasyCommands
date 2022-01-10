@@ -6,7 +6,6 @@ Reference: [Parachutes](https://spaceengineers.merlinofmines.com/EasyCommands/bl
 * Block Type Group Keywords: ```chutes, parachutes```
 
 Default Primitive Properties:
-* Bool - Open
 * Numeric - Height
 
 Default Directional Properties

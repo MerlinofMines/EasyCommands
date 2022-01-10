@@ -110,7 +110,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Strength - ```strength, strengths, force, forces, torque, torques, gravity, gravities```
 * Supply - 
   * ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```
-  * (```stockpile, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
+  * (```stockpile, stockpiling, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
 * Target (also Waypoint) - ```target, destination, waypoint, coords, coordinates```
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages```

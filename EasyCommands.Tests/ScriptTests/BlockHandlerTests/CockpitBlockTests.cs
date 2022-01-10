@@ -10,6 +10,30 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class CockpitBlockTests {
         [TestMethod]
+        public void TurnOnTheCockpit() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test cockpit""")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.IsMainCockpit = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheCockpit() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test cockpit""")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+
+                test.RunUntilDone();
+
+                mockCockpit.VerifySet(b => b.IsMainCockpit = false);
+            }
+        }
+
+        [TestMethod]
         public void EnableTheCockpit() {
             using (ScriptTest test = new ScriptTest(@"enable the ""test cockpit""")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
