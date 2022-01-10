@@ -66,7 +66,7 @@ namespace IngameScript {
             KeyValuePair(typeof(Vector3D), NewDictionary(
                 CastFunction(Return.STRING, p => GetVector(CastString(p)).Value),
                 CastFunction(Return.VECTOR, p => p.value),
-                CastFunction(Return.COLOR, p => CastColor(p).ToVector3()),
+                CastFunction(Return.COLOR, p => new Vector3D(CastColor(p).ToVector3())),
                 CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
             )),
             KeyValuePair(typeof(Color), NewDictionary(
