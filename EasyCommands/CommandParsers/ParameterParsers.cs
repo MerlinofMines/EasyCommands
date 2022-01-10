@@ -101,7 +101,7 @@ namespace IngameScript {
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("font"), Property.FONT);
-            AddPropertyWords(PluralWords("text", "message"), Property.TEXT);
+            AddPropertyWords(PluralWords("text", "message", "argument"), Property.TEXT);
             AddPropertyWords(PluralWords("color", "foreground"), Property.COLOR);
             AddPropertyWords(PluralWords("background"), Property.BACKGROUND);
             AddPropertyWords(Words("power", "powered"), Property.POWER);
@@ -269,7 +269,7 @@ namespace IngameScript {
             AddBlockWords(Words("light", "spotlight"), Block.LIGHT);
             AddBlockWords(Words("rotor"), Block.ROTOR);
             AddBlockWords(Words("hinge"), Block.HINGE);
-            AddBlockWords(Words("program"), Block.PROGRAM);
+            AddBlockWords(Words("program", "programmable"), Block.PROGRAM);
             AddBlockWords(Words("timer"), Block.TIMER);
             AddBlockWords(Words("projector"), Block.PROJECTOR);
             AddBlockWords(Words("merge"), Words(), Block.MERGE);
