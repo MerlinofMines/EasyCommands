@@ -56,6 +56,22 @@ print ""Range: "" + a
         }
 
         [TestMethod]
+        public void getGravityGeneratorSize() {
+            String script = @"
+assign ""a"" to ""test gravityGenerator"" size
+print ""Field Size: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGenerator>();
+                mockGravityGenerator.Setup(b => b.FieldSize).Returns(new Vector3(1, 2, 3));
+                test.MockBlocksOfType("test gravityGenerator", mockGravityGenerator);
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Field Size: 1:2:3"));
+            }
+        }
+
+        [TestMethod]
         public void getGravityGeneratorHeight() {
             String script = @"
 assign ""a"" to ""test gravityGenerator"" upper range
@@ -132,6 +148,34 @@ set ""test gravityGenerator"" range to 2
         }
 
         [TestMethod]
+        public void setGravityGeneratorSizeVector() {
+            String script = @"
+set ""test gravityGenerator"" size to 2:4:6
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGenerator>();
+                test.MockBlocksOfType("test gravityGenerator", mockGravityGenerator);
+                test.RunUntilDone();
+
+                mockGravityGenerator.VerifySet(b => b.FieldSize = new Vector3(2, 4, 6));
+            }
+        }
+
+        [TestMethod]
+        public void setGravityGeneratorSizeNumeric() {
+            String script = @"
+set ""test gravityGenerator"" size to 2
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGenerator>();
+                test.MockBlocksOfType("test gravityGenerator", mockGravityGenerator);
+                test.RunUntilDone();
+
+                mockGravityGenerator.VerifySet(b => b.FieldSize = new Vector3(2, 2, 2));
+            }
+        }
+
+        [TestMethod]
         public void setGravityGeneratorHeight() {
             String script = @"
 set ""test gravityGenerator"" upper range to 2
@@ -178,7 +222,6 @@ set ""test gravityGenerator"" forward range to 2
                 mockGravityGenerator.VerifySet(b => b.FieldSize = new Vector3(1, 1, 2));
             }
         }
-
 
         [TestMethod]
         public void getSphericalGravityGeneratorStrength() {
@@ -230,6 +273,36 @@ print ""Radius: "" + a
         public void setSphericalGravityGeneratorRadius() {
             String script = @"
 set ""test gravitySphere"" radius to 200
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
+                test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
+                test.RunUntilDone();
+
+                mockGravityGenerator.VerifySet(b => b.Radius = 200f);
+            }
+        }
+
+        [TestMethod]
+        public void getSphericalGravityGeneratorSize() {
+            String script = @"
+assign ""a"" to ""test gravitySphere"" size
+print ""Size: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
+                mockGravityGenerator.Setup(b => b.Radius).Returns(100f);
+                test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Size: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void setSphericalGravityGeneratorSize() {
+            String script = @"
+set ""test gravitySphere"" size to 200
 ";
             using (var test = new ScriptTest(script)) {
                 var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();

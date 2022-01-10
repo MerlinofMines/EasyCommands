@@ -69,3 +69,15 @@ Print "Gravitation Field Limit: " + "Test Gravity Generator" gravitySphere limit
 
 set "Test Gravity Generator" gravitySphere limit to 3
 ```
+
+## "Size" Property
+* Primitive Type: Numeric
+* Keywords: ```size, sizes, height, heights, length, lengths```
+
+Identical to the "Range" property.  This property Gets/Sets the Field Size of the Gravity Generator, in meters.
+
+```
+Print "Gravitation Field Size: " + "Test Gravity Generator" gravitySphere size
+
+set "Test Gravity Generator" gravitySphere size to 3
+```
