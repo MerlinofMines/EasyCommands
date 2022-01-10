@@ -1,7 +1,7 @@
 ﻿# Programmable Block Handler
 This Block Handler handles Programmable Blocks.  It allows you to get the running state of a given program and also ask it to execute a script.
 
-* Block Type Keywords: ```program```
+* Block Type Keywords: ```program, programmable```
 * Block Type Group Keywords: ```programs```
 
 Default Primitive Properties:
@@ -48,7 +48,7 @@ power off "My Program"
 
 Gets/Sets whether the Program is running.  When retrieving, only Bool is supported.
 
-When setting, if a boolean is set then the program will try to run with no argument ("") when true and disable the block when false.
+When setting, if a boolean is set then the program will try to run with the default terminal argument when true and disable the block when false.
 
 If a string is set, then the program will try to run with the given argument.
 
@@ -81,7 +81,7 @@ when "My Program" is complete
 ## "Text" Property
 * Read-only
 * Primitive Type: String
-* Keywords: ```text```
+* Keywords: ```text, texts, argument, arguments```
 
 Gets the default terminal argument.
 
