@@ -27,19 +27,15 @@ turn off "My Gyro"
 ```
 
 ## "Power" Property
-* Primitive Type: Bool
+* Primitive Type: Numeric
 * Keywords: ```power, powered```
 
-Turns on or off power to the block.  Effectively the same as the Enabled property.
+Gets/Sets the Gyro Power limit.  Values are between 0 - 1, with 1 = 100% Power.
 
 ```
-#Turn on
-turn on power to "My Gyro"
-power on "My Gyro"
+Print "Gyro Power: " + "My Gyro" power
 
-#Turn off
-turn off "My Gyro"
-power off "My Gyro"
+set "My Gyro" power to 0.5
 ```
 
 ## "Auto" Property
@@ -55,34 +51,32 @@ if "My Gyro" is on auto
 set "My Gyro" to auto
 ```
 
-## "Override" Property
-* Primitive Type: Bool
-* Keywords: ```override, overrides, overridden```
-
-Effectively the opposite of Auto.  When set, will turn on Gyro Overrides.
-
-```
-if "My Gyro" is overridden
-  Print `Now I'm in control!`
-
-#Turn on overrides
-override "My Gyro"
-```
-
 ## "Limit" Property
 * Primitive Type: Numeric
 * Keywords: ```limit, limits```
 
 Gets/Sets the Gyro Power limit.  Values are between 0 - 1, with 1 = 100% Power.
 
+```
+Print "Gyro Power: " + "My Gyro" limit
+
+set "My Gyro" limit to 0.5
+```
+
 ## "Roll" Property
-* Primitive Type: Numeric
+* Primitive Type: Vector / Numeric / Bool
 * Keywords: ```roll, rollInput, rotation```
 * Supports Directions (Left, Right, Up, Down, Clockwise, CounterClockwise)
 
-Gets/Sets the Gyro override in the given direction, in RPM.  If no direction is given, Up is used.
-
 This is useful for automatically adjusting your orientation based on some other inputs.
+
+If a direction is given, expects a Numeric and Gets/Sets the Gyro override in the given direction, in RPM.  
+
+If no direction is given and a boolean is given, Gets/Sets whether Gyro Overrides are enabled.
+
+If no direction is given and a vector is given, Gets/Sets the Gyro Overrides (Yaw:Pitch:Roll).
+
+If no direction is given and no type is given, vector is assumed.
 
 Note that Gyro overrides directions are based on the Gyro's orientation, not the cockpit's orientation.
 
@@ -101,7 +95,7 @@ set "My Gyro" clockwise roll to 3
 * Keywords: ```input, inputs```
 * Supports Directions (Left, Right, Up, Down, Clockwise, CounterClockwise)
 
-Same as Roll Property. Gets/Sets the Gyro override in the given direction.  Up is the default if no direction is passed.
+Same as Roll Property.
 
 ```
 Print "Gyro Left Rotation: " + "My Gyro" left input
@@ -111,4 +105,25 @@ set "My Gyro" left input to 2
 
 #3 RPM clockwise
 set "My Gyro" clockwise input to 3
+```
+
+
+## "Override" Property
+* Primitive Type: Bool
+* Keywords: ```override, overrides, overridden```
+
+Same as Roll Property.
+
+```
+if "My Gyro" is overridden
+  Print `Now I'm in control!`
+
+#Turn on overrides
+override "My Gyro"
+
+#Yaw Override 5 RPM
+set "My Gyro" left override to 5
+
+#Print the Gyro Overrides, as a vector
+Print "Gyro Overrides: " + "My Gyro" overrides
 ```

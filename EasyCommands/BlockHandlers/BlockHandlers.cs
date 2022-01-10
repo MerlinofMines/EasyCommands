@@ -34,7 +34,7 @@ namespace IngameScript {
                 { Block.GRAVITY_SPHERE, new SphericalGravityGeneratorBlockHandler() },
                 { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
-                { Block.GYROSCOPE, new GyroscopeBlockHandler() },
+                { Block.GYROSCOPE, new GyroscopeBlockHandler<IMyGyro>() },
                 { Block.HINGE, new RotorBlockHandler(IsHinge) },
                 { Block.JUMPDRIVE, new JumpDriveBlockHandler() },
                 { Block.LASER_ANTENNA, new LaserAntennaBlockHandler() },

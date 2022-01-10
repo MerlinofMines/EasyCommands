@@ -19,23 +19,45 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class GyroscopeBlockHandler : FunctionalBlockHandler<IMyGyro> {
+        public class GyroscopeBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyGyro {
             public GyroscopeBlockHandler() {
+                var powerHandler = NumericHandler(b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
+                AddPropertyHandler(Property.RANGE, powerHandler);
+                AddPropertyHandler(Property.POWER, powerHandler);
+
                 AddBooleanHandler(Property.AUTO, b => !b.GyroOverride, (b, v) => b.GyroOverride = !v);
-                AddBooleanHandler(Property.OVERRIDE, b => b.GyroOverride, (b, v) => b.GyroOverride = v);
-                AddNumericHandler(Property.RANGE, b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
 
-                var rollHandler = DirectionalTypedHandler(Direction.UP,
-                    TypeHandler(NumericHandler(b => b.Pitch, (b,v) => b.Pitch = v), Direction.UP),
-                    TypeHandler(NumericHandler(b => -b.Pitch, (b, v) => b.Pitch = -v), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => -b.Yaw, (b, v) => b.Yaw = -v), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => b.Yaw, (b, v) => b.Yaw = v), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => b.Roll, (b, v) => b.Roll = v), Direction.CLOCKWISE),
-                    TypeHandler(NumericHandler(b => -b.Roll, (b, v) => b.Roll = -v), Direction.COUNTERCLOCKWISE));
+                var overrideHandler = DirectionalTypedHandler(Direction.NONE,
+                        TypeHandler(ReturnTypedHandler(Return.VECTOR,
+                            TypeHandler(VectorHandler(b => new Vector3D(GetPitch(b), GetYaw(b), GetRoll(b)), (b, v) => {
+                                SetPitch(b, (float)v.X);
+                                SetYaw(b, (float)v.Y);
+                                SetRoll(b, (float)v.Z);
+                            }), Return.VECTOR),
+                            TypeHandler(BooleanHandler(b => b.GyroOverride, (b, v) => b.GyroOverride = v), Return.BOOLEAN))
+                        , Direction.NONE),
+                        TypeHandler(NumericHandler(GetPitch, SetPitch, 10), Direction.UP),
+                        TypeHandler(NumericHandler(b => -GetPitch(b), (b, v) => SetPitch(b, -v)), Direction.DOWN),
+                        TypeHandler(NumericHandler(b => -GetYaw(b), (b, v) => SetYaw(b, -v)), Direction.LEFT),
+                        TypeHandler(NumericHandler(GetYaw, SetYaw), Direction.RIGHT),
+                        TypeHandler(NumericHandler(GetRoll, SetRoll), Direction.CLOCKWISE),
+                        TypeHandler(NumericHandler(b => -GetRoll(b), (b, v) => SetRoll(b, -v)), Direction.COUNTERCLOCKWISE));
 
-                AddPropertyHandler(Property.ROLL_INPUT, rollHandler);
-                AddPropertyHandler(Property.INPUT, rollHandler);
+                AddPropertyHandler(Property.OVERRIDE, overrideHandler);
+                AddPropertyHandler(Property.ROLL_INPUT, overrideHandler);
+                AddPropertyHandler(Property.INPUT, overrideHandler);
+
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.POWER;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.OVERRIDE;
             }
+
+            float GetPitch(IMyGyro block) => block.GetValueFloat("Pitch");
+            float GetYaw(T block) => block.GetValueFloat("Yaw");
+            float GetRoll(T block) => block.GetValueFloat("Roll");
+
+            void SetPitch(T block, float value) => block.SetValueFloat("Pitch", value);
+            void SetYaw(T block, float value) => block.SetValueFloat("Yaw", value);
+            void SetRoll(T block, float value) => block.SetValueFloat("Roll", value);
         }
     }
 }
