@@ -35,6 +35,22 @@ set "My Cockpit" to disabled
 turn off "My Cockpit"
 ```
 
+## "Power" Property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Effectively the same as the Enabled property.
+
+```
+#Turn on
+turn on power to "My Cockpit"
+power on "My Cockpit"
+
+#Turn off
+turn off power to "My Cockpit"
+power off "My Cockpit"
+```
+
 ## "Override" Property
 * Primitive Type: Bool
 * Keywords: ```dampener, dampeners, override, overrides, overriden```

@@ -54,9 +54,10 @@ namespace IngameScript {
 
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() : base() {
-                AddBooleanHandler(Property.ENABLE, b => b.Enabled, (b, v) => b.Enabled = v);
-                AddBooleanHandler(Property.POWER, b => b.Enabled, (b, v) => b.Enabled = v);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.POWER;
+                var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
+                AddPropertyHandler(Property.ENABLE, enableHandler);
+                AddPropertyHandler(Property.POWER, enableHandler);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
             }
         }
 

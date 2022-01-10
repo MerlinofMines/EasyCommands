@@ -6,10 +6,44 @@ This block handler is all about batteries.  Keep your ships powered and monitor 
 
 Default Primitive Properties:
 * Numeric - Ratio
-* Boolean - Suppy (Overrides Enabled from Terminal Block)
 
 Default Directional Properties
 * Up - Ratio 
+
+## "Enabled" Property
+* Primitive Type: Bool
+* Keywords: ```enable, enabled```
+* Inverse Keywords: ```disable, disabled```
+
+Enables or Disables the given block
+
+```
+#Enable Block
+enable "My Battery"
+set "My Battery" to enabled
+turn on "My Battery"
+
+#Disable Block
+disable "My Battery"
+set "My Battery" to disabled
+turn off "My Battery"
+```
+
+## "Power" Property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Turns on or off power to the block.  Effectively the same as the Enabled property.
+
+```
+#Turn on
+turn on power to "My Battery"
+power on "My Battery"
+
+#Turn off
+turn off power to "My Battery"
+power off "My Battery"
+```
 
 ## "Supply" Property
 * Primitive Type: Bool

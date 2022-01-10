@@ -107,7 +107,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                mockBattery.VerifySet(b => b.ChargeMode = ChargeMode.Auto);
+                mockBattery.VerifySet(b => b.Enabled = true);
             }
         }
 

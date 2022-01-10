@@ -9,6 +9,54 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class SensorBlockTests {
         [TestMethod]
+        public void TurnOnTheSensor() {
+            using (var test = new ScriptTest(@"turn on the ""test sensor""")) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                test.MockBlocksOfType("test sensor", mockSensor);
+
+                test.RunOnce();
+
+                mockSensor.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheSensor() {
+            using (var test = new ScriptTest(@"turn off the ""test sensor""")) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                test.MockBlocksOfType("test sensor", mockSensor);
+
+                test.RunOnce();
+
+                mockSensor.VerifySet(b => b.Enabled = false);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOnTheSensorSound() {
+            using (var test = new ScriptTest(@"turn on the ""test sensor"" sound")) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                test.MockBlocksOfType("test sensor", mockSensor);
+
+                test.RunOnce();
+
+                mockSensor.VerifySet(b => b.PlayProximitySound = true);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTheSensorSound() {
+            using (var test = new ScriptTest(@"turn off the ""test sensor"" sound")) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                test.MockBlocksOfType("test sensor", mockSensor);
+
+                test.RunOnce();
+
+                mockSensor.VerifySet(b => b.PlayProximitySound = false);
+            }
+        }
+
+        [TestMethod]
         public void SensorTargetReturnsZeroVectorWhenNothingDetected() {
             String script = @"
 print ""Target: "" + ""mock sensor"" target

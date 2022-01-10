@@ -7,8 +7,40 @@ For more information on what items you can create or destroy, see [Items & Bluep
 * Block Type Keywords: ```assembler```
 * Block Type Group Keywords: ```assemblers```
 
-Default Primitive Properties:
-* Bool: Complete (Overrides "Enabled" from Terminal Block)
+## "Enabled" Property
+* Primitive Type: Bool
+* Keywords: ```enable, enabled```
+* Inverse Keywords: ```disable, disabled```
+
+Enables or Disables the given block
+
+```
+#Enable Block
+enable "My Assembler"
+set "My Assembler" to enabled
+turn on "My Assembler"
+
+#Disable Block
+disable "My Assembler"
+set "My Assembler" to disabled
+turn off "My Assembler"
+```
+
+## "Power" Property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Turns on or off power to the block.  Effectively the same as the Enabled property.
+
+```
+#Turn on
+turn on power to "My Assembler"
+power on "My Assembler"
+
+#Turn off
+turn off power to "My Assembler"
+power off "My Assembler"
+```
 
 ## "Supply" Property
 * Primitive Type: Bool

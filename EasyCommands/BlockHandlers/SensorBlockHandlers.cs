@@ -36,7 +36,6 @@ namespace IngameScript {
                     return hitPosition;
                 });
 
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
             }
         }
