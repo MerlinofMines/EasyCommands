@@ -92,3 +92,10 @@ set "Test Gravity Generator" gravityGenerator limits to 1:2:3
 #Set Left/Right Limit to 4
 set "Test Gravity Generator" gravityGenerator left limit to 4
 ```
+
+## "Size" Property
+* Primitive Type: Vector / Numeric
+* Supports Directions (Left, Right, Up, Down, Forward, Backward)
+* Keywords: ```size, sizes, height, heights, length, lengths```
+
+Identical to the "Range" property.  This property Gets/Sets the Field Size of the Gravity Generator, in meters.
