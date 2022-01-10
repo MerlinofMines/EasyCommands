@@ -59,6 +59,31 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheThrustOutput() {
+            using (ScriptTest test = new ScriptTest(@"print ""Thruster Output: "" + the ""test thruster"" output")) {
+                Mock<IMyThrust> mockThruster = new Mock<IMyThrust>();
+                test.MockBlocksOfType("test thruster", mockThruster);
+
+                mockThruster.Setup(b => b.CurrentThrust).Returns(10000);
+                test.RunUntilDone();
+
+                Assert.AreEqual("Thruster Output: 10000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheThrustOutput() {
+            using (ScriptTest test = new ScriptTest(@"set the""test thruster"" output to 5000")) {
+                Mock<IMyThrust> mockThruster = new Mock<IMyThrust>();
+                test.MockBlocksOfType("test thruster", mockThruster);
+
+                test.RunUntilDone();
+
+                mockThruster.VerifySet(b => b.ThrustOverride = 5000);
+            }
+        }
+
+        [TestMethod]
         public void GetTheThrustPercentage() {
             using (ScriptTest test = new ScriptTest(@"print ""Thruster Percentage: "" + the ""test thruster"" percentage")) {
                 Mock<IMyThrust> mockThruster = new Mock<IMyThrust>();
