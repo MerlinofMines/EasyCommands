@@ -65,27 +65,42 @@ set "My Thruster" limit to 10000
 * Primitive Type: Numeric
 * Keywords: ```level, levels```
 
-Gets/Sets the current thrust from the thruster, in Newtons.   Returns 0 if no override is set.
+Gets/Sets the current thrust from the thruster, in Newtons.
 
 When setting, if the value is set to 0 then thrust overrides are turned off.
 
 ```
 Print "Current Thrust: " + "My Thruster" level
 
-#10000 Newtons
+#Override thrust to 10000 Newtons
 set "My Thruster" level to 10000
+```
+
+## "Output" Property
+* Primitive Type: Numeric
+* Keywords: ```output, outputs```
+
+Same as Level property.  Gets/Sets the current thrust from the thruster, in Newtons.
+
+When setting, if the value is set to 0 then thrust overrides are turned off.
+
+```
+Print "Current Output: " + "My Thruster" output
+
+#Override thrust to 10000 Newtons
+set "My Thruster" output to 10000
 ```
 
 ## "Override" Property
 * Primitive Type: Numeric
 * Keywords: ```override, overrides```
 
-Gets/Sets the ThrustOverride for the thruster, in Newtons.  If set to 0, turns off Thrust Overrides
+Gets/Sets the ThrustOverride for the thruster, in Newtons.  Returns 0 if no thrust override is set.  If set to 0, turns off Thrust Overrides.
 
 ```
 Print "Thrust Override: " + "My Thruster" override
 
-#10000 Newtons
+#Override thrust to 10000 Newtons
 set "My Thruster" override to 10000
 ```
 
