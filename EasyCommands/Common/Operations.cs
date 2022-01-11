@@ -89,11 +89,11 @@ namespace IngameScript {
             AddBiOperation<bool, bool>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<string, string>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
             AddBiOperation<float, float>(BiOperand.COMPARE, (a, b) => a.CompareTo(b));
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.COMPARE, (a, b) => a.Equals(b));
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.COMPARE, (a, b) => !a.Equals(b));
             AddBiOperation<Color, Color>(BiOperand.COMPARE, (a, b) => a.PackedValue.CompareTo(b.PackedValue));
             AddBiOperation<Vector3D, float>(BiOperand.COMPARE, (a, b) => a.Length().CompareTo(b));
             AddBiOperation<float, Vector3D>(BiOperand.COMPARE, (a, b) => a.CompareTo(b.Length()));
-            AddBiOperation<KeyedList, KeyedList>(BiOperand.COMPARE, (a, b) => Enumerable.SequenceEqual(a.keyedValues, b.keyedValues));
+            AddBiOperation<KeyedList, KeyedList>(BiOperand.COMPARE, (a, b) => !Enumerable.SequenceEqual(a.keyedValues, b.keyedValues));
 
             //Numeric
             AddUniOperation<float>(UniOperand.REVERSE, a => -a);
