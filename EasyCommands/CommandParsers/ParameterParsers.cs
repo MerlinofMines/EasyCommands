@@ -102,7 +102,8 @@ namespace IngameScript {
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("font"), Property.FONT);
             AddPropertyWords(PluralWords("text", "message", "argument"), Property.TEXT);
-            AddPropertyWords(PluralWords("color", "foreground"), Property.COLOR);
+            AddPropertyWords(AllWords(Words("colors"), PluralWords("foreground")), Property.COLOR);
+            AddAmbiguousWords(Words("color"), new PropertyCommandParameter(Property.COLOR));
             AddPropertyWords(PluralWords("background"), Property.BACKGROUND);
             AddPropertyWords(Words("power", "powered"), Property.POWER);
             AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
@@ -185,9 +186,11 @@ namespace IngameScript {
             AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
             AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b))));
             AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b))));
-            AddWords(Words("count", "number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
+            AddWords(Words("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
+            AddAmbiguousWords(Words("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
-            AddWords(Words("list", "collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
+            AddWords(Words("collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
+            AddAmbiguousWords(Words("list"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
 
             //Operations Words
             AddWords(Words("("), new OpenParenthesisCommandParameter());
@@ -318,7 +321,8 @@ namespace IngameScript {
 
             //Register Special CommandParameter Output Values
             RegisterToString<GroupCommandParameter>(p => "group");
-            RegisterToString<AmbiguiousStringCommandParameter>(p => "\"" + p.value + "\"");
+            RegisterToString<AmbiguousCommandParameter>(p => "[Ambiguous]");
+            RegisterToString<AmbiguousStringCommandParameter>(p => "\"" + p.value + "\"");
             RegisterToString<StringCommandParameter>(p => "'" + p.value + "'");
             RegisterToString<VariableAssignmentCommandParameter>(p => "Assign[name=" + p.variableName + ",global=" + p.isGlobal + ",ref=" + p.useReference + "]");
             RegisterToString<VariableCommandParameter>(p => "[Variable]");
@@ -397,8 +401,13 @@ namespace IngameScript {
             AddWords(groupWords, new BlockTypeCommandParameter(blockType), new GroupCommandParameter());
         }
 
-        void AddWords(String[] words, params CommandParameter[] commands) {
-            foreach (String word in words) propertyWords.Add(word, commands.ToList());
+        void AddAmbiguousWords(String[] words, params CommandParameter[] commandParameters) {
+            foreach (String word in words)
+                AddWords(Words(word), new AmbiguousStringCommandParameter(word, false, new AmbiguousCommandParameter(commandParameters)));
+        }
+
+        void AddWords(String[] words, params CommandParameter[] commandParameters) {
+            foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
         List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
@@ -421,11 +430,11 @@ namespace IngameScript {
             } else if (token.isString) {
                 List<Token> subTokens = ParseTokens(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
+                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);
             } else { //If no property matches, must be a string
-                commandParameters.Add(new AmbiguiousStringCommandParameter(token.original, true));
+                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
             }
 
             return commandParameters;
