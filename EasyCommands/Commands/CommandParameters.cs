@@ -67,18 +67,15 @@ namespace IngameScript {
         }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {
-            public QueueCommandParameter(bool async) : base(async) {
-            }
+            public QueueCommandParameter(bool async) : base(async) { }
         }
 
         public class UniOperationCommandParameter : ValueCommandParameter<UniOperand> {
-            public UniOperationCommandParameter(UniOperand value) : base(value) {
-            }
+            public UniOperationCommandParameter(UniOperand value) : base(value) { }
         }
 
         public class LeftUniOperationCommandParameter : ValueCommandParameter<UniOperand> {
-            public LeftUniOperationCommandParameter(UniOperand value) : base(value) {
-            }
+            public LeftUniOperationCommandParameter(UniOperand value) : base(value) { }
         }
 
         public class BiOperandTier0Operand : ValueCommandParameter<BiOperand> {
@@ -125,10 +122,18 @@ namespace IngameScript {
             public VariableCommandParameter(Variable value) : base(value) {}
         }
 
-        public class AmbiguiousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+        public class AmbiguousCommandParameter : SimpleCommandParameter {
+            public List<CommandParameter> alternatives;
+
+            public AmbiguousCommandParameter(params CommandParameter[] commands) {
+                alternatives = commands.ToList();
+            }
+        }
+
+        public class AmbiguousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
             public List<CommandParameter> subTokens;
             public bool isImplicit;
-            public AmbiguiousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
+            public AmbiguousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
                 subTokens = SubTokens.ToList();
                 isImplicit = impl;
             }
