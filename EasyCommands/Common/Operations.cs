@@ -22,7 +22,7 @@ namespace IngameScript {
         public delegate Primitive UniOperation(Primitive a);
         public delegate Primitive BiOperation(Primitive a, Primitive b);
 
-        Dictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>> BiOperations 
+        Dictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>> BiOperations
             = NewDictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>>();
 
         Dictionary<UniOperand, Dictionary<Return, UniOperation>> UniOperations
@@ -39,7 +39,7 @@ namespace IngameScript {
 
         public Primitive PerformOperation(UniOperand type, Primitive a) {
             if (!UniOperations.ContainsKey(type)
-                || !UniOperations[type].ContainsKey(a.returnType)) { 
+                || !UniOperations[type].ContainsKey(a.returnType)) {
                 throw new Exception("Cannot perform operation: " + PROGRAM.uniOperandToString[type] + " on type: " + PROGRAM.returnToString[a.returnType]);
             }
             return UniOperations[type][a.returnType](a);
@@ -92,7 +92,7 @@ namespace IngameScript {
             AddBiOperation<Vector3D, Vector3D>(BiOperand.COMPARE, (a, b) => !a.Equals(b));
             AddBiOperation<Color, Color>(BiOperand.COMPARE, (a, b) => a.PackedValue.CompareTo(b.PackedValue));
             AddBiOperation<Vector3D, float>(BiOperand.COMPARE, (a, b) => a.Length().CompareTo(b));
-            AddBiOperation<float, Vector3D>(BiOperand.COMPARE, (a, b) => a.CompareTo(b.Length()));
+            AddBiOperation<float, Vector3D>(BiOperand.COMPARE, (a, b) => a.CompareTo((float)b.Length()));
             AddBiOperation<KeyedList, KeyedList>(BiOperand.COMPARE, (a, b) => !Enumerable.SequenceEqual(a.keyedValues, b.keyedValues));
 
             //Numeric
