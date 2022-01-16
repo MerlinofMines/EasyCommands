@@ -34,7 +34,7 @@ Print -1 as bool
 
                 Assert.AreEqual("True", test.Logger[0]);
                 Assert.AreEqual("False", test.Logger[1]);
-                Assert.AreEqual("False", test.Logger[2]);
+                Assert.AreEqual("True", test.Logger[2]);
             }
         }
 
@@ -101,10 +101,10 @@ Print false as number
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.AreEqual("0", test.Logger[0]);
-                Assert.AreEqual("-1", test.Logger[1]);
+                Assert.AreEqual("1", test.Logger[0]);
+                Assert.AreEqual("0", test.Logger[1]);
             }
-        }               
+        }
 
         [TestMethod]
         public void CastNumberAsNumber() {
@@ -292,7 +292,7 @@ Print ""abc"" as vector
             using (var test = new ScriptTest(@"Print #ffffff as vector")) {
                 test.RunOnce();
 
-                Assert.AreEqual("1:1:1", test.Logger[0]);
+                Assert.AreEqual("255:255:255", test.Logger[0]);
             }
         }
 

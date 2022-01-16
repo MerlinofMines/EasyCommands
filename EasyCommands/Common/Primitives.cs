@@ -45,12 +45,12 @@ namespace IngameScript {
         static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
             KeyValuePair(typeof(bool), NewDictionary(
                 CastFunction(Return.BOOLEAN, p => p.value),
-                CastFunction(Return.NUMERIC, p => CastNumber(p) > 0),
+                CastFunction(Return.NUMERIC, p => CastNumber(p) != 0),
                 CastFunction(Return.STRING, p => bool.Parse(CastString(p))),
                 CastFunction(Return.DEFAULT, Failure(Return.BOOLEAN))
             )),
             KeyValuePair(typeof(float), NewDictionary(
-                CastFunction(Return.BOOLEAN, p => CastBoolean(p) ? 0f : -1f),
+                CastFunction(Return.BOOLEAN, p => CastBoolean(p) ? 1.0f : 0.0f),
                 CastFunction(Return.NUMERIC, p => (float)p.value),
                 CastFunction(Return.STRING, p => float.Parse(CastString(p))),
                 CastFunction(Return.VECTOR, p => (float)CastVector(p).Length()),
@@ -66,7 +66,7 @@ namespace IngameScript {
             KeyValuePair(typeof(Vector3D), NewDictionary(
                 CastFunction(Return.STRING, p => GetVector(CastString(p)).Value),
                 CastFunction(Return.VECTOR, p => p.value),
-                CastFunction(Return.COLOR, p => new Vector3D(CastColor(p).ToVector3())),
+                CastFunction(Return.COLOR, p => new Vector3D(CastColor(p).R, CastColor(p).G, CastColor(p).B)),
                 CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
             )),
             KeyValuePair(typeof(Color), NewDictionary(
