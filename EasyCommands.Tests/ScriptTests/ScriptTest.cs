@@ -16,7 +16,7 @@ namespace EasyCommands.Tests.ScriptTests
     /// <summary>
     /// Represents an instance of a ScriptTest. Constructing a new ScriptTest is akin to setting
     /// up the test, as it instantiates required objects and performs basic setup.
-    /// 
+    ///
     /// This implements <see cref="IDisposable"/>, so any post-test cleanup is performed
     /// upon destruction of the class. Please use this inside of a using statement.
     /// </summary>
@@ -139,10 +139,10 @@ namespace EasyCommands.Tests.ScriptTests
         }
 
         /// <summary>
-        /// Run the script a given number of iterations, regardless of Program State.  
+        /// Run the script a given number of iterations, regardless of Program State.
         /// </summary>
         /// <param name="iterations"></param>
-        public void RunIterations(int iterations) 
+        public void RunIterations(int iterations)
         {
             int EndCounter = RunCounter + iterations;
             RunUntil(t => t.RunCounter >= EndCounter);
@@ -151,7 +151,7 @@ namespace EasyCommands.Tests.ScriptTests
         /// <summary>
         /// Run the script one iteration
         /// </summary>
-        public void RunOnce() 
+        public void RunOnce()
         {
             RunIterations(1);
         }
@@ -167,7 +167,7 @@ namespace EasyCommands.Tests.ScriptTests
         /// Given a custom name for a block (or set of blocks), set up the custom names
         /// for the given mocked blocks and store them for later retrieval when requested by
         /// the grid terminal system.
-        /// 
+        ///
         /// Since the GridTerminalSystem's GetBlocksOfType method doesn't return values but
         /// instead modifies the given list, this uses Moq's Callback functionality to
         /// invoke a callback that will attempt to retrieve the stored blocks.
@@ -183,7 +183,7 @@ namespace EasyCommands.Tests.ScriptTests
         /// <summary>
         /// Given a group name, set up a mock group that will be retrieved by the GridTerminalSystem.
         /// Store the given mocked blocks for later retrieval.
-        /// 
+        ///
         /// Also, set up the group's GetBlocksOfType method to use a Moq Callback so that
         /// those mocked blocks can be found later.
         /// </summary>
@@ -341,5 +341,19 @@ namespace EasyCommands.Tests.ScriptTests
                     .ToList());
             }
         }
+    }
+
+    /// <summary>
+    /// Represents an instance of a ScriptTest for script of the form "Print expr" for one
+    /// or multiple expressions.
+    ///
+    /// see ScriptTest for more details
+    /// </summary>
+    class SimpleExpressionsTest : ScriptTest {
+        public SimpleExpressionsTest(String expression)
+            : base("Print " + expression) { }
+
+        public SimpleExpressionsTest(List<String> expressions)
+            : base(String.Join("\n", expressions.Select(e => "Print " + e).ToArray())) {}
     }
 }

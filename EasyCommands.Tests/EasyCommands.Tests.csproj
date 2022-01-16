@@ -174,11 +174,16 @@
     <Compile Include="ScriptTests\FunctionalTests\ControlCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\IterationCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleWaitCommandTests.cs" />
-    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsOtherTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleAggregationTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleColorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleVectorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\SimpleCastTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsBooleanTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsNumberTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsStringTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsVectorTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\SimpleComparisonsListTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ExampleScriptTests\ReverseSirensTests.cs" />
     <Compile Include="ParameterParsingTests\BlockCommandProcessorTests.cs" />
