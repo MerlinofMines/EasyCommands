@@ -8,13 +8,13 @@ It does not include [Items & Blueprints](https://spaceengineers.merlinofmines.co
 ## Ignored Keywords
 These words are (mostly) ignored when parsing your script, but feel free to use them to make your commands sound more natural.
 
-* ```the, than, turned, block, panel, to, from, then, of, either, for, in, do, does, second, seconds```
+* ```the, than, turned, block, panel, chamber, to, from, then, of, either, for, in, do, does, second, seconds, be, being```
 * ```#``` - Script Comment, when used as the first character of a line (after trimming spaces).
 
 ## Selectors
 * Named Selector - ```"``` (also used for strings)
 * Conditional Selector - ```that, which, whose```
-* Group Selector - ```blocks, group, panels```
+* Group Selector - ```blocks, group, panels, chambers```
 * Index Selector - ```@``` (note you can also use ```[]```)
 * Self Selector - ```my, self, this``` 
 * Variable Selector - ```$```
@@ -29,6 +29,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Cockpit - ```cockpit, ship, rover, seat, station```, ```cockpits, ships, rovers, seats, stations```
 * Collector - ```collector```, ```collectors```
 * Connector - ```connector```, ```connectors```
+* Cryo Chamber - ```cryo```, ```cryos```
 * Decoy - ```decoy```, ```decoys```
 * Display - ```display, displays, screen, screens, lcd, lcds``` (no group keywords)
 * Door - ```door, hangar, bay, gate```, ```doors, hangars, bays, gates```
@@ -115,6 +116,9 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages, argument, arguments```
 * Trigger - ```trigger, triggered, detect, detected, trip, tripped, deploy, deployed, shoot, shooting, shot, detonate```
+* Use - 
+  * ```use, used, occupy, occupied, control, controlled```
+  * (```unused, unoccupied, vacant, available```)
 * Velocity - ```velocity, velocities, speed, speeds, rate, rates, pace, paces```
 * Volume (also Output & Intensity) - ```volume, volumes, output, outputs, intensity, intensities```
 * Waypoints - ```waypoints, destinations```

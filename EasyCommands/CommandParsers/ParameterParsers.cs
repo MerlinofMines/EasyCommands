@@ -57,10 +57,10 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being"), new IgnoreCommandParameter());
 
             //Selector Related Words
-            AddWords(Words("blocks", "group", "panels"), new GroupCommandParameter());
+            AddWords(Words("blocks", "group", "panels", "chambers"), new GroupCommandParameter());
             AddWords(Words("my", "self", "this"), new SelfCommandParameter());
             AddWords(Words("$"), new VariableSelectorCommandParameter());
 
@@ -97,6 +97,8 @@ namespace IngameScript {
             AddPropertyWords(Words("lock", "locked", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
+            AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
+            AddPropertyWords(Words("unused", "unoccupied", "vacant", "available"), Property.USE, false);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
@@ -287,6 +289,7 @@ namespace IngameScript {
             AddBlockWords(Words("beacon"), Block.BEACON);
             AddBlockWords(Words("antenna"), Block.ANTENNA);
             AddBlockWords(Words("ship", "rover", "cockpit", "seat", "station"), Block.COCKPIT);
+            AddBlockWords(Words("cryo"), Block.CRYO_CHAMBER);
             AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
             AddBlockWords(Words("thruster"), Block.THRUSTER);
             AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);
