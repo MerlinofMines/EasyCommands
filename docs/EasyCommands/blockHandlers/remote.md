@@ -48,6 +48,20 @@ turn off power to "My Remote Control"
 power off "My Remote Control"
 ```
 
+## "Occupied" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```use, used, occupy, occupied, control, controlled```
+* Inverse Keywords: ```unused, unoccupied, available```
+
+Returns whether the Remote Control is currently being controlled manually. Note that this is not the same as being on auto-pilot, for that use the Auto property.
+
+```
+Print "Occupied: " + "My Remote Control" is occupied
+Print "In Use: " + "My Remote Control" is in use
+Print "Controlled: " + "My Remote Control" is being controlled
+```
+
 ## "Auto" Property
 * Primitive Type: Bool
 * Keywords: ```auto, autopilot```

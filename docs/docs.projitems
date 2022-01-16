@@ -62,6 +62,7 @@
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\battery.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\beacon.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\camera.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\cryo.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\cockpit.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\collector.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\connector.md" />

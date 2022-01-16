@@ -118,6 +118,58 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheCockpitIsOccupied() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Occupied: "" + the ""test cockpit"" is occupied")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                mockCockpit.Setup(b => b.IsUnderControl).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Occupied: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitIsOccupiedWhenNotOccupied() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Occupied: "" + the ""test cockpit"" is occupied")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                mockCockpit.Setup(b => b.IsUnderControl).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Occupied: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitOxygenCapacity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Oxygen Capacity: "" + the ""test cockpit"" capacity")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                mockCockpit.Setup(b => b.OxygenCapacity).Returns(20f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Oxygen Capacity: 20", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitOxygenRatio() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Oxygen Ratio: "" + the ""test cockpit"" ratio")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                mockCockpit.Setup(b => b.OxygenFilledRatio).Returns(0.5f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Oxygen Ratio: 0.5", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetTheCockpitGravity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test cockpit"" gravity")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
@@ -226,7 +278,7 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Input: "" + the ""test cockpit"" input")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.MoveIndicator).Returns(new Vector3D(2, 3, 6));
+                mockCockpit.Setup(b => b.MoveIndicator).Returns(new Vector3D(2, 3, -6));
 
                 test.RunUntilDone();
 
@@ -317,12 +369,12 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Roll: "" + the ""test cockpit"" roll")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(2, 3));
+                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(4.5f, 9f));
                 mockCockpit.Setup(b => b.RollIndicator).Returns(6);
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Roll: 2:3:6", test.Logger[0]);
+                Assert.AreEqual("Roll: -0.5:1:6", test.Logger[0]);
             }
         }
 
@@ -331,11 +383,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Upwards Roll: "" + the ""test cockpit"" upwards roll")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(-1, 0));
+                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(4.5f, 0));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Upwards Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Upwards Roll: -0.5", test.Logger[0]);
             }
         }
 
@@ -344,11 +396,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Downwards Roll: "" + the ""test cockpit"" downwards roll")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(1, 0));
+                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(4.5f, 0));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Downwards Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Downwards Roll: 0.5", test.Logger[0]);
             }
         }
 
@@ -357,11 +409,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Left Roll: "" + the ""test cockpit"" left roll")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(0, -1));
+                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(0, -4.5f));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Left Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Left Roll: 0.5", test.Logger[0]);
             }
         }
 
@@ -370,11 +422,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Right Roll: "" + the ""test cockpit"" right roll")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(0, 1));
+                mockCockpit.Setup(b => b.RotationIndicator).Returns(new Vector2(0, 4.5f));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Right Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Right Roll: 0.5", test.Logger[0]);
             }
         }
 
