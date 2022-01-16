@@ -145,6 +145,7 @@
     <Compile Include="ScriptTests\BlockHandlerTests\AirVentBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\BeaconBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\GasTankBlockTests.cs" />
+    <Compile Include="ScriptTests\BlockHandlerTests\ProjectorBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\MergeBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\MagnetBlockTests.cs" />
     <Compile Include="ScriptTests\BlockHandlerTests\LandingGearBlockTests.cs" />
