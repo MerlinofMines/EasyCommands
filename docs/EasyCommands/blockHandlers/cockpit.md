@@ -1,5 +1,5 @@
 ﻿# Cockpit Block Handler
-This BlockHandler can support any block which allows you to control ships.  This includes cockpits, control seats, and control stations.
+This BlockHandler can support any block which allows you to control ships.  This includes cockpits, control seats, control stations, and even cryo chambers.
 It can also be used to interact with Remote Control objects, though you should consider using the [Remote Control Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler") instead, as Remote Control inherits all of this BlockHandlers properties and also has some more properties you can modify.
 
 This handler enables you to listen for user input, which has all kinds of potential for things like factories, cranes, drill arms, manned turrets, tanks...
@@ -65,12 +65,26 @@ override "My Cockpit"
 "My Cockpit" dampeners off
 ```
 
+## "Occupied" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```use, used, occupy, occupied, control, controlled```
+* Inverse Keywords: ```unused, unoccupied, available```
+
+Returns whether the Cockpit is currently occupied.
+
+```
+Print "Occupied: " + "My Cockpit" is occupied
+Print "In Use: " + "My Cockpit" is in use
+Print "Controlled: " + "My Cockpit" is being controlled
+```
+
 ## "Auto" Property
 * Primitive Type: Bool
 * Keywords: ```auto, cooperate, cooperating```
 * Inverse Keywords: ``` , ```
 
-Identitcal to Override property.  Gets/Sets whether the dampeners are currently on.
+Identical to Override property.  Gets/Sets whether the dampeners are currently on.
 
 ```
 set "My Cockpit" to auto
@@ -126,6 +140,28 @@ Returns the current weight of the ship, in Kg.  This includes the weight of the 
 Print "Ship Total Mass: " + "My Cockpit" mass
 ```
 
+## "Ratio" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```ratio, ratios, percentage, percentages, percent, percents```
+
+Gets the current Oxygen Ratio of the cockpit, as a value from 0 - 1 where 1 = 100%.
+
+```
+Print "Oxygen Ratio: " + "My Cockpit" ratio
+```
+
+## "Capacity" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```limit, limits, capacity, capacities```
+
+Gets the Maximum Oxygen Capacity of the cockpit, in L.  
+
+```
+Print "Oxygen Capacity: " + "My Cockpit" capacity
+```
+
 ## "Velocity" Property
 * Read-only
 * Primitive Type: Numeric
@@ -152,7 +188,7 @@ if "My Cockpit" upwards velocity > 0
 * Takes an optional Direction attribute
 * Keywords: ```input, inputs, user, users, pilot, pilots```
 
-If a direction is not included, Returns a Vector (Right:Up:Backwards) representing the magnitude of movement input (values between 0 - 1) from the engineer sitting in the cockpit.
+If a direction is not included, Returns a Vector (Right:Up:Forwards) representing the magnitude of movement input (values between 0 - 1) from the engineer sitting in the cockpit.
 
 If a direction is included, then returns a value between 0 - 1 representing the user movement input in the specified direction.
 Specifically, this input is mapped to WASDC + Space for the 6 input directions (not including rotation).

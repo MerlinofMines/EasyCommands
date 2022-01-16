@@ -323,6 +323,32 @@ set the ""test remote control"" waypoints to myWaypoints")) {
         }
 
         [TestMethod]
+        public void GetTheRemoteControlIsOccupied() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Occupied: "" + the ""test remote control"" is occupied")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                mockRemoteControl.Setup(b => b.IsUnderControl).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Occupied: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitIsOccupiedWhenNotOccupied() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Occupied: "" + the ""test remote control"" is occupied")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                mockRemoteControl.Setup(b => b.IsUnderControl).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Occupied: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetTheRemoteControlVelocity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Velocity: "" + the ""test remote control"" velocity")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
@@ -422,7 +448,7 @@ set the ""test remote control"" waypoints to myWaypoints")) {
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Input: 2:3:6", test.Logger[0]);
+                Assert.AreEqual("Input: 2:3:-6", test.Logger[0]);
             }
         }
 
@@ -509,12 +535,12 @@ set the ""test remote control"" waypoints to myWaypoints")) {
             using (ScriptTest test = new ScriptTest(@"Print ""Roll: "" + the ""test remote control"" roll")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
-                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(2, 3));
+                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(4.5f, 9));
                 mockRemoteControl.Setup(b => b.RollIndicator).Returns(6);
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Roll: 2:3:6", test.Logger[0]);
+                Assert.AreEqual("Roll: -0.5:1:6", test.Logger[0]);
             }
         }
 
@@ -523,11 +549,11 @@ set the ""test remote control"" waypoints to myWaypoints")) {
             using (ScriptTest test = new ScriptTest(@"Print ""Upwards Roll: "" + the ""test remote control"" upwards roll")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
-                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(-1, 0));
+                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(-4.5f, 0));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Upwards Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Upwards Roll: 0.5", test.Logger[0]);
             }
         }
 
@@ -536,11 +562,11 @@ set the ""test remote control"" waypoints to myWaypoints")) {
             using (ScriptTest test = new ScriptTest(@"Print ""Downwards Roll: "" + the ""test remote control"" downwards roll")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
-                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(1, 0));
+                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(4.5f, 0));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Downwards Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Downwards Roll: 0.5", test.Logger[0]);
             }
         }
 
@@ -549,11 +575,11 @@ set the ""test remote control"" waypoints to myWaypoints")) {
             using (ScriptTest test = new ScriptTest(@"Print ""Left Roll: "" + the ""test remote control"" left roll")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
-                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(0, -1));
+                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(0, -4.5f));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Left Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Left Roll: 0.5", test.Logger[0]);
             }
         }
 
@@ -562,11 +588,11 @@ set the ""test remote control"" waypoints to myWaypoints")) {
             using (ScriptTest test = new ScriptTest(@"Print ""Right Roll: "" + the ""test remote control"" right roll")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
-                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(0, 1));
+                mockRemoteControl.Setup(b => b.RotationIndicator).Returns(new Vector2(0, 4.5f));
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Right Roll: 1", test.Logger[0]);
+                Assert.AreEqual("Right Roll: 0.5", test.Logger[0]);
             }
         }
 
