@@ -199,8 +199,6 @@ Shuffles the given list.  This does not modify the input list but rather returns
 
 Keywords: ```shuffle, shuffled```
 
-
-
 ### Sin
 Performs the sin operation on the given numeric value
 
