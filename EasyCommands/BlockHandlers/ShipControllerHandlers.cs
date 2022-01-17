@@ -38,7 +38,7 @@ namespace IngameScript {
                     b => {
                         var waypoints = NewList<MyWaypointInfo>();
                         b.GetWaypointInfo(waypoints);
-                        return new KeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))).ToArray());
+                        return NewKeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))));
                     },
                     SetWaypoints);
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;

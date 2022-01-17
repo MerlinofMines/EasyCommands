@@ -191,8 +191,8 @@ namespace IngameScript {
             AddWords(Words("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddAmbiguousWords(Words("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
-            AddWords(Words("collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
-            AddAmbiguousWords(Words("list"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(new KeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b))).ToArray()))));
+            AddWords(Words("collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
+            AddAmbiguousWords(Words("list"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
 
             //Operations Words
             AddWords(Words("("), new OpenParenthesisCommandParameter());
@@ -213,6 +213,8 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
             AddRightUniOperationWords(Words("sort", "sorted"), UniOperand.SORT);
             AddRightUniOperationWords(Words("ln"), UniOperand.LN);
+            AddRightUniOperationWords(Words("rand", "random", "randomize"), UniOperand.RANDOM);
+            AddRightUniOperationWords(Words("shuffle", "shuffled"), UniOperand.SHUFFLE);
 
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);

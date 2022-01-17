@@ -63,6 +63,9 @@ namespace IngameScript {
         }
 
         public void InitializeOperators() {
+            //Object
+            AddUniOperation<KeyedList>(UniOperand.RANDOM, a => a.GetValue(ResolvePrimitive(randomGenerator.Next(a.keyedValues.Count))).GetValue().value);
+
             //List
             AddBiOperation<KeyedList, object>(BiOperand.ADD, (a, b) => Combine(a, b));
             AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
@@ -70,13 +73,14 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => {
                 var range = Enumerable.Range((int)Math.Min(a, b), (int)(Math.Abs(b - a) + 1)).Select(i => GetStaticVariable(i));
                 if (a > b) range = range.Reverse();
-                return new KeyedList(range.ToArray());
+                return NewKeyedList(range);
             });
-            AddBiOperation<string, string>(BiOperand.SPLIT, (a, b) => new KeyedList(a.Split(NewList(CastString(ResolvePrimitive(b))).ToArray(), StringSplitOptions.None).Select(GetStaticVariable).ToArray()));
+            AddBiOperation<string, string>(BiOperand.SPLIT, (a, b) => NewKeyedList(a.Split(NewList(CastString(ResolvePrimitive(b))).ToArray(), StringSplitOptions.None).Select(GetStaticVariable)));
             AddUniOperation<KeyedList>(UniOperand.KEYS, a => a.Keys());
             AddUniOperation<KeyedList>(UniOperand.VALUES, a => a.Values());
-            AddUniOperation<KeyedList>(UniOperand.REVERSE, a => new KeyedList(a.keyedValues.Select(b => b).Reverse().ToArray()));
-            AddUniOperation<KeyedList>(UniOperand.SORT, a => new KeyedList(a.keyedValues.OrderBy(k => k).ToArray()));
+            AddUniOperation<KeyedList>(UniOperand.REVERSE, a => NewKeyedList(a.keyedValues.Select(b => b).Reverse()));
+            AddUniOperation<KeyedList>(UniOperand.SORT, a => NewKeyedList(a.keyedValues.OrderBy(k => k)));
+            AddUniOperation<KeyedList>(UniOperand.SHUFFLE, a => NewKeyedList(a.keyedValues.OrderBy(k => randomGenerator.Next())));
 
             //Booleans
             AddUniOperation<bool>(UniOperand.REVERSE, a => !a);
@@ -120,6 +124,7 @@ namespace IngameScript {
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
             AddBiOperation<Color, Vector3D>(BiOperand.DOT, (a, b) => (a.ToVector3()*255).Dot(b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
+            AddUniOperation<float>(UniOperand.RANDOM, a => randomGenerator.Next((int)a));
 
             //String
             AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));

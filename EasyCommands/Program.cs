@@ -40,6 +40,7 @@ namespace IngameScript {
         public ProgramState state = ProgramState.STOPPED;
         public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
         public Thread currentThread;
+        public Random randomGenerator = new Random();
 
         List<Thread> threadQueue = NewList<Thread>();
         List<Thread> asyncThreadQueue = NewList<Thread>();
@@ -62,7 +63,7 @@ namespace IngameScript {
             globalVariables = NewDictionary(
                 KeyValuePair("pi", GetStaticVariable(Math.PI)),
                 KeyValuePair("e", GetStaticVariable(Math.E)),
-                KeyValuePair("empty", GetStaticVariable(new KeyedList())),
+                KeyValuePair("empty", GetStaticVariable(NewKeyedList())),
                 KeyValuePair("x", VectorVariable(1 ,0, 0)),
                 KeyValuePair("y", VectorVariable(0, 1, 0)),
                 KeyValuePair("z", VectorVariable(0, 0, 1)),
