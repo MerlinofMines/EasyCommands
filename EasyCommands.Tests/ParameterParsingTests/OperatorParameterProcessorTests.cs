@@ -96,6 +96,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignNaturalLog() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to ln 1.5");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            var assignment = command as VariableAssignmentCommand;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            var variable = assignment.variable as UniOperandVariable;
+            Assert.AreEqual(UniOperand.LN, variable.operand);
+            Assert.AreEqual((float)Math.Log(1.5f), CastNumber(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignRoundDown() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to round 5.4");

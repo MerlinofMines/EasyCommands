@@ -207,6 +207,7 @@ These properties require a Variable value as part of the property
 * Divide - ```divide, /```
 * Modulus - ```mod, %```
 * Exponent - ```pow, ^, xor``` (also used for Xor and Angle Between Operations)
+* Natural Logarithm - ```ln``` 
 * Add - ```+, plus```
 * Subtract - ```-, minus```
 * Dot Product - ```dot, .```
