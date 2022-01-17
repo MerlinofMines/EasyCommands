@@ -132,6 +132,11 @@ set myList to ["one" -> 1, "two" -> 2, 3]
 set mykeys to myList keys
 ```
 
+### Natural Logarithm
+Returns the logarithm of the given numeric value to the base of the mathematical constant e
+
+Keywords: ```ln```
+
 ### Not
 Inverses a given property.  Behavior varies by input type
 
