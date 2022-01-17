@@ -21,10 +21,18 @@ namespace IngameScript {
     partial class Program {
         public class JumpDriveBlockHandler : FunctionalBlockHandler<IMyJumpDrive> {
             public JumpDriveBlockHandler() {
+                AddNumericHandler(Property.POWER, b => b.CurrentStoredPower);
                 AddNumericHandler(Property.RATIO, b => b.CurrentStoredPower / b.MaxStoredPower);
-                AddNumericHandler(Property.RANGE, b => b.MaxStoredPower);
-                AddNumericHandler(Property.LEVEL, b => b.CurrentStoredPower);
                 AddBooleanHandler(Property.COMPLETE, b => b.Status == MyJumpDriveStatus.Ready);
+                AddBooleanHandler(Property.SUPPLY, b => !b.Recharge, (b, v) => b.Recharge = !v);
+
+                var jumpDistanceHandler = DirectionalTypedHandler(Direction.NONE,
+                    TypeHandler(NumericHandler(b => b.JumpDistanceMeters, (b,v) => b.SetValueFloat("JumpDistance", 100 * (v - b.MinJumpDistanceMeters) / (b.MaxJumpDistanceMeters - b.MinJumpDistanceMeters))), Direction.NONE),
+                    TypeHandler(NumericHandler(b => b.MaxJumpDistanceMeters), Direction.UP),
+                    TypeHandler(NumericHandler(b => b.MinJumpDistanceMeters), Direction.DOWN));
+
+                AddPropertyHandler(Property.LEVEL, jumpDistanceHandler);
+                AddPropertyHandler(Property.RANGE, jumpDistanceHandler);
             }
         }
     }
