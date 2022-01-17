@@ -803,5 +803,49 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(Return.BOOLEAN, value.returnType);
             Assert.AreEqual(true, value.value);
         }
+
+        [TestMethod]
+        public void SplitStringBySubString() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"My Value\" split \" \"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.LIST, value.returnType);
+            Assert.AreEqual("[My,Value]", CastString(value));
+        }
+
+        [TestMethod]
+        public void SplitStringByNewLine() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to \"My\nValue\" split \"\\n\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.LIST, value.returnType);
+            Assert.AreEqual("[My,Value]", CastString(value));
+        }
+
+        [TestMethod]
+        public void JoinListByString() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to [1,2,3] joined \", \"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.STRING, value.returnType);
+            Assert.AreEqual("1, 2, 3", CastString(value));
+        }
+
+        [TestMethod]
+        public void JoinListByNewLine() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to [1,2,3] joined \"\\n\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Primitive value = assignment.variable.GetValue();
+            Assert.AreEqual(Return.STRING, value.returnType);
+            Assert.AreEqual("1\n2\n3", value.value);
+        }
     }
 }

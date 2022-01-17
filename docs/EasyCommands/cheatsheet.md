@@ -80,8 +80,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Color - ```color, foreground```
 * Complete - ```done, ready, complete, finished, built, finish, pressurized, depressurized```
 * Connected -
-  * ```connect, connected, join, joined, attach, attached, dock, docked, docking```
-  * (```disconnect, disconnected, separate, separated, detach, detached, undock, undocked```)
+  * ```connect, connected, attach, attached, dock, docked, docking```
+  * (```disconnect, disconnected, detach, detached, undock, undocked```)
 * Countdown - ```countdown, countdowns```
 * Direction - ```direction, directions```
 * Enable - ```enable, enabled, arm, armed```, (```disable, disabled, disarm, disarmed```)
@@ -207,8 +207,10 @@ These properties require a Variable value as part of the property
 * Divide - ```divide, /```
 * Modulus - ```mod, %```
 * Exponent - ```pow, ^, xor``` (also used for Xor and Angle Between Operations)
+* Join - ```join, joined```
 * Natural Logarithm - ```ln``` 
 * Add - ```+, plus```
+* Split - ```split, separate, separated```
 * Subtract - ```-, minus```
 * Dot Product - ```dot, .```
 * Ternary - ```?, :```

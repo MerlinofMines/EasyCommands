@@ -43,7 +43,7 @@ All UniOperand Operations are evaluated before BiOperatnd Operations.
 
 Here are the tiers for BiOperand Operations:
 * Tier 0 BiOperand Operations: ```.```
-* Tier 1 BiOperand Operations: ```*, /, %, ^```
+* Tier 1 BiOperand Operations: ```*, /, %, ^, split, join```
 * Tier 2 BiOperand Operations: ```+, -```
 * Tier 3 BiOperand Operations: ```.., cast```
 
@@ -363,6 +363,21 @@ Keywords: ```^, pow, xor```
 * **(Number, Number)**: Raises the first number to the power of the second number
 * **(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
 
+### Join
+Joins a given list by the given string separator by casting each list value to a string and then joining them together using the given separator.
+
+Keywords: ```join, joined```
+
+```
+set myOutput to [1,2,3] joined ", "
+#1, 2, 3
+```
+
+```
+#Line Separated Values
+set myOutput to [1,2,3] joined "\n"
+```
+
 ### Modulus
 Behavior varies based on input types.
 
@@ -405,6 +420,21 @@ set myList to [0..2]
 set myList to ["one", "two", "three"]
 for each i in 0..count of myList[] - 1
   Print "myList[" + i + "]: " + myList[i]
+```
+
+### Split
+Splits the given string by the given string separator.  The result is a List containing the separated values.
+
+Keywords: ```split, separate, separated```
+
+```
+set myOutput to "My Values" split " "
+#[My,Values]
+```
+
+```
+#Get Display Output Lines
+set myOutput to my display[0] text split "\n"
 ```
 
 ### Subtraction

@@ -60,8 +60,8 @@ unlock "My Landing Gear"
 
 ## "Connect" Property
 * Primitive Type: Bool
-* Keywords: ```connect, connected, attach, attached, dock, docked, join, joined```
-* Inverse Keywords: ```disconnect, disconnected, detach, detached, undock, undocked, separate, separated```
+* Keywords: ```connect, connected, attach, attached, dock, docked```
+* Inverse Keywords: ```disconnect, disconnected, detach, detached, undock, undocked```
 
 Same as Locked. Gets/Sets whether the Landing Gear / Magnet is locked. When setting, only attempts to lock once.  If set to a false value, will disconnect.
 
