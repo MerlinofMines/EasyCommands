@@ -57,10 +57,10 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being"), new IgnoreCommandParameter());
 
             //Selector Related Words
-            AddWords(Words("blocks", "group", "panels", "chambers"), new GroupCommandParameter());
+            AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());
             AddWords(Words("my", "self", "this"), new SelfCommandParameter());
             AddWords(Words("$"), new VariableSelectorCommandParameter());
 
@@ -223,7 +223,7 @@ namespace IngameScript {
             AddTier1OperationWords(Words("multiply", "*"), BiOperand.MULTIPLY);
             AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
             AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
-            AddTier1OperationWords(Words("pow", "exp", "^", "xor"), BiOperand.EXPONENT);
+            AddTier1OperationWords(Words("pow", "^", "xor"), BiOperand.EXPONENT);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
             AddTier2OperationWords(Words("minus"), BiOperand.SUBTRACT);
@@ -318,7 +318,7 @@ namespace IngameScript {
             AddBlockWords(Words("collector"), Block.COLLECTOR);
             AddBlockWords(Words("ejector"), Block.EJECTOR);
             AddBlockWords(Words("decoy"), Block.DECOY);
-            AddBlockWords(Words("jumpdrive"), Block.JUMPDRIVE);
+            AddBlockWords(Words("jump", "jumpdrive"), Block.JUMPDRIVE);
             AddBlockWords(Words("laser", "laserantenna"), Block.LASER_ANTENNA);
             AddBlockWords(Words("terminal"), Block.TERMINAL);
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);

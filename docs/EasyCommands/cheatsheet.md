@@ -8,13 +8,13 @@ It does not include [Items & Blueprints](https://spaceengineers.merlinofmines.co
 ## Ignored Keywords
 These words are (mostly) ignored when parsing your script, but feel free to use them to make your commands sound more natural.
 
-* ```the, than, turned, block, panel, chamber, to, from, then, of, either, for, in, do, does, second, seconds, be, being```
+* ```the, than, turned, block, panel, chamber, drive, to, from, then, of, either, for, in, do, does, second, seconds, be, being```
 * ```#``` - Script Comment, when used as the first character of a line (after trimming spaces).
 
 ## Selectors
 * Named Selector - ```"``` (also used for strings)
 * Conditional Selector - ```that, which, whose```
-* Group Selector - ```blocks, group, panels, chambers```
+* Group Selector - ```blocks, group, panels, chambers, drives```
 * Index Selector - ```@``` (note you can also use ```[]```)
 * Self Selector - ```my, self, this``` 
 * Variable Selector - ```$```
@@ -43,7 +43,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Hinge - ```hinge```, ```hinges```
 * Hydrogen Engine - ```engine```, ```engines```
 * Inventory - ```cargo, container, inventory, inventories```, ```cargos, containers```
-* Jump Drive - ```jumpdrive```, ```jumpdrives```
+* Jump Drive - ```jump, jumpdrive```, ```jumps, jumpdrives```
 * Laser Antenna - ```laser, laserantenna```, ```lasers, laserantennas```
 * Light - ```light, spotlight```, ```lights, spotlights```
 * Landing Gear - ```gear, magnet```, ```gears, magnets``` (also Magnets)
