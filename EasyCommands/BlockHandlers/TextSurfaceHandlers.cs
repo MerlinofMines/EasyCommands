@@ -34,7 +34,7 @@ namespace IngameScript {
                 AddListHandler(Property.MEDIA_LIST, b => {
                     var images = NewList<string>();
                     b.GetSelectedImages(images);
-                    return new KeyedList(images.Select(i => GetStaticVariable(i)).ToArray());
+                    return NewKeyedList(images.Select(i => GetStaticVariable(i)));
                 }, SetImages);
                 AddStringHandler(Property.POSITION, b => (b.Alignment + "").ToLower(), (b, v) => b.Alignment = v == "center" ? TextAlignment.CENTER : v == "right" ? TextAlignment.RIGHT : TextAlignment.LEFT);
                 AddNumericHandler(Property.INTERVAL, b => b.ChangeInterval, (b, v) => b.ChangeInterval = v, 1);

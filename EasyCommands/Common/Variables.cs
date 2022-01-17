@@ -24,7 +24,7 @@ namespace IngameScript {
         }
 
         public static Variable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
-        public static Variable EmptyList() => GetStaticVariable(new KeyedList());
+        public static Variable EmptyList() => GetStaticVariable(NewKeyedList());
         public Variable VectorVariable(double x, double y, double z) => GetStaticVariable(new Vector3D(x, y, z));
 
         public class StaticVariable : Variable {
@@ -213,7 +213,7 @@ namespace IngameScript {
                     .Select(p => list.GetValue(p))
                     .ToList();
                 if (values.Count == 0) return ResolvePrimitive(list);
-                return values.Count == 1 ? values[0].GetValue() : ResolvePrimitive(new KeyedList(values.ToArray()));
+                return values.Count == 1 ? values[0].GetValue() : ResolvePrimitive(NewKeyedList(values));
             }
 
             public void SetValue(Variable value) {

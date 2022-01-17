@@ -31,7 +31,7 @@ namespace IngameScript {
                 AddListHandler(Property.MEDIA_LIST, b => {
                     var availableSounds = NewList<string>();
                     b.GetSounds(availableSounds);
-                    return new KeyedList(availableSounds.Select(sound => GetStaticVariable(sound)).ToArray());
+                    return NewKeyedList(availableSounds.Select(sound => GetStaticVariable(sound)));
                 });
                 defaultPropertiesByPrimitive[Return.STRING] = Property.MEDIA;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;

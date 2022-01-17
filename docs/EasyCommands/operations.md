@@ -161,6 +161,25 @@ if the "Gatling Turrets" are not firing
   Print "Why arent you firing??"
 ```
 
+### Random
+Behavior varies based on input types.
+
+Keywords: ```random, rand```
+
+* **(Number)**: Returns a random whole number between 0 and the specified value (exclusive).
+* **(List)**: Returns a random item from the given list.
+
+```
+#Random number between 0 and 9
+print "Random Number: " + rand 10
+
+#Random item from list
+Print "Random Item: " + rand [one,two,three,four,five]
+
+#Random number between 5 and 10 using List
+print "Random Number: " + random (5..10)
+```
+
 ### Reverse
 Reverses the given list
 
@@ -174,6 +193,11 @@ set myReversedList to reversed myList
 Rounds the given number to the nearest integer (half-up)
 
 Keywords: ```round, rnd```
+
+### Shuffle
+Shuffles the given list.  This does not modify the input list but rather returns a shuffled copy of the input list.
+
+Keywords: ```shuffle, shuffled```
 
 ### Sin
 Performs the sin operation on the given numeric value

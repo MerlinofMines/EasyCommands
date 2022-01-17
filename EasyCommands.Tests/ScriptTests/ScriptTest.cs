@@ -25,7 +25,8 @@ namespace EasyCommands.Tests.ScriptTests
         public Program program;
         public Mock<IMyProgrammableBlock> me;
         public Mock<IMyTextSurface> display;
-        Mock<IMyGridProgramRuntimeInfo> runtime;
+        public Mock<Random> random;
+        public Mock<IMyGridProgramRuntimeInfo> runtime;
 
         MockGridTerminalSystem mockGrid;
         int entityIdCounter = 1000;
@@ -51,6 +52,9 @@ namespace EasyCommands.Tests.ScriptTests
             runtime = new Mock<IMyGridProgramRuntimeInfo>();
             runtime.Setup(r => r.TimeSinceLastRun).Returns(TimeSinceLastRun);
 
+            //Setup Mock Random
+            random = new Mock<Random>();
+
             // Setup the CUSTOM_DATA to return the given script
             // And other required config for mocking
             mockGrid = new MockGridTerminalSystem();
@@ -72,8 +76,19 @@ namespace EasyCommands.Tests.ScriptTests
             // Default behavior for broadcast messages
             // TODO: Replace this with mock objects passed to config setup in Program
             program.broadcastMessageProvider = () => new List<MyIGCMessage>();
+            program.randomGenerator = random.Object;
 
             setScript(script);
+        }
+
+        public void MockNextRandoms(params int[] nextRandom) {
+            var sequence = random.SetupSequence(b => b.Next());
+            nextRandom.ForEach(next => sequence.Returns(next));
+        }
+
+        public void MockNextBoundedRandoms(int upperBound, params int[] nextRandom) {
+            var sequence = random.SetupSequence(b => b.Next(upperBound));
+            nextRandom.ForEach(next => sequence.Returns(next));
         }
 
         public void setScript(String script) {

@@ -201,7 +201,9 @@ These properties require a Variable value as part of the property
 * Arcsin - ```arcsin, asin```
 * Arccos - ```arccos, acos```
 * Arctan - ```arctan, atan```
+* Random - ```random, rand```
 * Round - ```round, rnd```
+* Shuffle - ```shuffle, shuffled```
 * Sort - ```sort, sorted```
 * Multiply - ```multiply, *```
 * Divide - ```divide, /```
