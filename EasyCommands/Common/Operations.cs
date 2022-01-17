@@ -72,6 +72,7 @@ namespace IngameScript {
                 if (a > b) range = range.Reverse();
                 return new KeyedList(range.ToArray());
             });
+            AddBiOperation<string, string>(BiOperand.SPLIT, (a, b) => new KeyedList(a.Split(NewList(CastString(ResolvePrimitive(b))).ToArray(), StringSplitOptions.None).Select(GetStaticVariable).ToArray()));
             AddUniOperation<KeyedList>(UniOperand.KEYS, a => a.Keys());
             AddUniOperation<KeyedList>(UniOperand.VALUES, a => a.Values());
             AddUniOperation<KeyedList>(UniOperand.REVERSE, a => new KeyedList(a.keyedValues.Select(b => b).Reverse().ToArray()));
@@ -128,6 +129,7 @@ namespace IngameScript {
             AddBiOperation<string, string>(BiOperand.MOD, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, float>(BiOperand.SUBTRACT, (a, b) => b >= a.Length ? "" : a.Substring(0, (int)(a.Length - b)));
             AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
+            AddBiOperation<KeyedList, string>(BiOperand.JOIN, (a, b) => string.Join(CastString(ResolvePrimitive(b)), a.keyedValues.Select(v => CastString(v.GetValue()))));
 
             //Vector
             AddUniOperation<Vector3D>(UniOperand.REVERSE, a => -a);

@@ -44,8 +44,8 @@ power off "My Connector"
 
 ## "Connect" Property
 * Primitive Type: Bool
-* Keywords: ```connect, connected, attach, attached, join, joined, dock, docked```
-* Inverse Keywords: ```disconnect, disconnectd, separate, separated, detach, detached, undock, undocked```
+* Keywords: ```connect, connected, attach, attached, dock, docked```
+* Inverse Keywords: ```disconnect, disconnectd, detach, detached, undock, undocked```
 
 Gets/Sets whether the connector is connected.  A connector is connected if it's Connector status is "Connected".
 
