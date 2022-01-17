@@ -99,8 +99,8 @@ lock "My Laser"
 
 ## "Connected" Property
 * Primitive Type: Bool
-* Keywords: ```connect, connected, join, joined, attach, attached```
-* Inverse Keywords: ```disconnect, disconnected, separate, separated, detach, detached```
+* Keywords: ```connect, connected, attach, attached```
+* Inverse Keywords: ```disconnect, disconnected, detach, detached```
 
 Get/Sets whether the laser is currently connected.  When reading, will return whether the Laser's status is Connected.  When updating, will attempt to connect to the laser antenna's target coordinates if the passed in Bool is true.
 

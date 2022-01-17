@@ -92,8 +92,8 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale"), Words("weight", "mass")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
-            AddPropertyWords(Words("connect", "join", "attach", "connected", "joined", "attached", "dock", "docked", "docking"), Property.CONNECTED);
-            AddPropertyWords(Words("disconnect", "separate", "detach", "disconnected", "separated", "detached", "undock", "undocked"), Property.CONNECTED, false);
+            AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
+            AddPropertyWords(Words("disconnect", "detach", "disconnected", "detached", "undock", "undocked"), Property.CONNECTED, false);
             AddPropertyWords(Words("lock", "locked", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
@@ -224,6 +224,8 @@ namespace IngameScript {
             AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
             AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
             AddTier1OperationWords(Words("pow", "^", "xor"), BiOperand.EXPONENT);
+            AddTier1OperationWords(Words("split", "separate", "separated"), BiOperand.SPLIT);
+            AddTier1OperationWords(Words("join", "joined"), BiOperand.JOIN);
 
             AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
             AddTier2OperationWords(Words("minus"), BiOperand.SUBTRACT);

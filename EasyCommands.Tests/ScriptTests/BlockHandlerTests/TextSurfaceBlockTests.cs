@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Text;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
@@ -59,7 +60,10 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockTextPanel = new Mock<IMyTextPanel>();
                 test.MockBlocksOfType("text panel", mockTextPanel);
-                mockTextPanel.Setup(b => b.GetText()).Returns("Hello World!");
+                StringBuilder stringBuilder = new StringBuilder();
+                mockTextPanel.Setup(b => b.ReadText(It.IsAny<StringBuilder>(), false))
+                    .Callback<StringBuilder, bool>((builder, append) => builder.Append("Hello World!"));
+
                 test.RunUntilDone();
 
                 Assert.AreEqual("Text: Hello World!", test.Logger[0]);
@@ -135,7 +139,8 @@ increase the ""text panel"" display text by ""\nThis is my life""
 
                 mockTextPanel.Verify(b => b.WriteText("Hello World", false));
 
-                mockTextPanel.Setup(b => b.GetText()).Returns("Hello World");
+                mockTextPanel.Setup(b => b.ReadText(It.IsAny<StringBuilder>(), false))
+                    .Callback<StringBuilder, bool>((builder, append) => builder.Append("Hello World"));
 
                 test.RunOnce();
 

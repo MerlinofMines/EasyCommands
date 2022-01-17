@@ -24,8 +24,9 @@ namespace IngameScript {
                 var fontSizeHandler = NumericHandler(b => b.FontSize, (b, v) => b.FontSize = v, 0.5f);
                 var fontColorHandler = ColorHandler(b => b.ContentType == ContentType.SCRIPT ? b.ScriptForegroundColor : b.FontColor, (b, v) => { if (b.ContentType == ContentType.SCRIPT) b.ScriptForegroundColor = v; else b.FontColor = v; });
 
+                AddStringHandler(Property.NAME, b => Name(b));
                 AddBooleanHandler(Property.ENABLE, b => b.ContentType != ContentType.NONE, (b, v) => b.ContentType = v ? ContentType.TEXT_AND_IMAGE : ContentType.NONE);
-                AddStringHandler(Property.TEXT, b => b.GetText(), (b, v) => { b.ContentType = ContentType.TEXT_AND_IMAGE; b.WriteText(v); });
+                AddStringHandler(Property.TEXT, b => { var builder = new StringBuilder(); b.ReadText(builder); return builder.ToString(); }, (b, v) => { b.ContentType = ContentType.TEXT_AND_IMAGE; b.WriteText(v); });
                 AddStringHandler(Property.MEDIA, b => b.CurrentlyShownImage ?? "", (b,v) => SetImages(b,CastList(ResolvePrimitive(v))));
                 AddStringHandler(Property.RUN, b => b.Script ?? "", (b, v) => { b.ContentType = ContentType.SCRIPT; b.Script = v; });
                 AddNumericHandler(Property.OFFSET, b => b.TextPadding, (b, v) => b.TextPadding = v, 1);

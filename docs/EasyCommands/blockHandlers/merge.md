@@ -67,8 +67,8 @@ unlock "My Merge Block"
 
 ## "Connected" Property
 * Primitive Type: Bool
-* Keywords: ```connected, attached, docked, joined```
-* Inverse Keywords: ```disconnected, detached, undocked, separated```
+* Keywords: ```connected, attached, docked```
+* Inverse Keywords: ```disconnected, detached, undocked```
 
 Same as Locked.  Returns whether the merge block is currently connected to another merge block.  This property is read-only.  When set, this property enables or disables the merge block (the only way to connect/disconnect).
 

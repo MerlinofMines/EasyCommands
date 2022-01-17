@@ -30,6 +30,7 @@ Print "Display names: " + "My Programmabl Block" display names
 ```
 
 ## "Name" Property
+* Read-only
 * Primitive Type: Bool
 * Keywords: ```name, label```
 
