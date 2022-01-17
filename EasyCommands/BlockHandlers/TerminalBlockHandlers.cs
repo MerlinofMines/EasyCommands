@@ -69,12 +69,12 @@ namespace IngameScript {
                 AddListHandler(Property.PROPERTIES, b => {
                     var properties = NewList<ITerminalProperty>();
                     b.GetProperties(properties);
-                    return new KeyedList(properties.Select(p => GetStaticVariable(p.Id)).ToArray());
+                    return NewKeyedList(properties.Select(p => GetStaticVariable(p.Id)));
                 });
                 AddListHandler(Property.ACTIONS, b => {
                     var actions = NewList<ITerminalAction>();
                     b.GetActions(actions);
-                    return new KeyedList(actions.Select(p => GetStaticVariable(p.Id)).ToArray());
+                    return NewKeyedList(actions.Select(p => GetStaticVariable(p.Id)));
                 });
 
                 AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>((b, p) => p.attributeValue.GetValue(), (b, p, v) => b.ApplyAction(CastString(p.attributeValue.GetValue())), ResolvePrimitive(0)));

@@ -88,7 +88,7 @@ namespace IngameScript {
                     }
                     else if (p[j] is CloseBracketCommandParameter) {
                         if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
-                        finalParameters = NewList<CommandParameter>(new ListCommandParameter(GetStaticVariable(new KeyedList(indexValues.ToArray()))));
+                        finalParameters = NewList<CommandParameter>(new ListCommandParameter(GetStaticVariable(NewKeyedList(indexValues))));
                         p.RemoveRange(i, j - i + 1);
                         p.InsertRange(i, finalParameters);
                         return true;
@@ -108,7 +108,7 @@ namespace IngameScript {
         public class MultiListProcessor : ParameterProcessor<ListCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 while (i > 1 && p[i-1] is ListCommandParameter) i--;
-                finalParameters = NewList<CommandParameter>(new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, GetVariables(new KeyedList())[0])));
+                finalParameters = NewList<CommandParameter>(new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, GetVariables(NewKeyedList())[0])));
                 p[i] = finalParameters[0];
                 return true;
             }

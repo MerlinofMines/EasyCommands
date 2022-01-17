@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class SimpleComparisonsOtherTests {
+    public class SimpleComparisonsColorTests {
 
         [TestMethod]
         public void TernaryOperator() {
