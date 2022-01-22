@@ -6,7 +6,7 @@ This Block Handler handles turrets.  It extends from the [Gun Handler](https://s
 * Block Type Group Keywords: ```turrets```
 
 Default Primitive Properties:
-* Boolean - Trigger
+* Boolean - Enabled
 * Numeric - Range
 * Vector - Target
 
