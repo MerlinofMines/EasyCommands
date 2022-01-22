@@ -8,6 +8,17 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class WarheadBlockTests {
+        [TestMethod]
+        public void TurnOffTheWarheads() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""warheads""")) {
+                var mockWarheads = new Mock<IMyWarhead>();
+                test.MockBlocksInGroup("warheads", mockWarheads);
+
+                test.RunUntilDone();
+
+                mockWarheads.VerifySet(b => b.IsArmed = true);
+            }
+        }
 
         [TestMethod]
         public void detonateTheBomb() {

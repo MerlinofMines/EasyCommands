@@ -4,6 +4,9 @@ This block handler gives you control over warheads, including arming/disarming, 
 * Block Type Keywords: ```warhead```
 * Block Type Group Keywords: ```warheads```
 
+Default Primitive Properties:
+* Boolean - Armed
+
 ## "Armed" Property
 * Primitive Type: Bool
 * Keywords: ```enable, enabled, arm, armed```

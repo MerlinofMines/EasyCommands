@@ -7,7 +7,7 @@ There is also a separate [Turret Block Handler](https://spaceengineers.merlinofm
 * Block Type Group Keywords: ```guns, rockets, missiles, launchers```
 
 Default Primitive Properties:
-* Boolean - Trigger
+* Boolean - Enabled
 * Numeric - Range
 
 Default Directional Properties
