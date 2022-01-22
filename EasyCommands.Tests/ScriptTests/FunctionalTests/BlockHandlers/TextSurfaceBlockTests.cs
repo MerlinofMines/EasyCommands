@@ -12,6 +12,20 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class TextSurfaceBlockTests {
         [TestMethod]
+        public void TurnOnTextPanel() {
+            String script = @"turn on the ""text panel"" display";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTextPanel = new Mock<IMyTextPanel>();
+                test.MockBlocksOfType("text panel", mockTextPanel);
+
+                test.RunUntilDone();
+
+                mockTextPanel.VerifySet(b => b.ContentType = ContentType.TEXT_AND_IMAGE);
+            }
+        }
+
+        [TestMethod]
         public void EnableTextPanel() {
             String script = @"enable the ""text panel"" display";
 
@@ -22,6 +36,20 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockTextPanel.VerifySet(b => b.ContentType = ContentType.TEXT_AND_IMAGE);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffTextPanel() {
+            String script = @"turn off the ""text panel"" display";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTextPanel = new Mock<IMyTextPanel>();
+                test.MockBlocksOfType("text panel", mockTextPanel);
+
+                test.RunUntilDone();
+
+                mockTextPanel.VerifySet(b => b.ContentType = ContentType.NONE);
             }
         }
 

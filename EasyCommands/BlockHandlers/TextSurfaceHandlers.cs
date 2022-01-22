@@ -46,6 +46,7 @@ namespace IngameScript {
                     TypeHandler(fontSizeHandler, Return.NUMERIC),
                     TypeHandler(fontColorHandler, Return.COLOR));
 
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
