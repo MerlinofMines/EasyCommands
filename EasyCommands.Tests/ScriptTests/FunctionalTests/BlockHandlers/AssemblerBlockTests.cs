@@ -171,6 +171,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetAssemblerCustomItemAmount() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Custom Item Remaining: "" + ""test assembler"" ""CustomItem"" amount")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("CustomItem", 100));
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Custom Item Remaining: 100"));
+            }
+        }
+
+        [TestMethod]
         public void CreateSteelPlate() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to create ""steel plate""")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
@@ -193,6 +206,19 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 mockAssembler.VerifySet(b => b.Mode = MyAssemblerMode.Assembly);
                 mockAssembler.Verify(b => b.AddQueueItem(MockBlueprint("SteelPlate"), (MyFixedPoint)10));
+            }
+        }
+
+        [TestMethod]
+        public void CreateCustomItem() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to create ""CustomItem""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.VerifySet(b => b.Mode = MyAssemblerMode.Assembly);
+                mockAssembler.Verify(b => b.AddQueueItem(MockBlueprint("CustomItem"), (MyFixedPoint)1));
             }
         }
 

@@ -234,5 +234,22 @@ namespace EasyCommands.Tests.TokenizeTests {
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("Iron Ore, Iron Ingot")).Invoke(MockOre("Iron")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("Iron ore, Iron Ingot")).Invoke(MockIngot("Iron")));
         }
+
+        [TestMethod]
+        public void ParseDynamicTypes() {
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ClangCola")).Invoke(MockConsumable("ClangCola")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.ClangCola")).Invoke(MockConsumable("ClangCola")));
+            Assert.IsFalse(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.CosmicCoffee")).Invoke(MockConsumable("ClangCola")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters(".ClangCola")).Invoke(MockConsumable("ClangCola")));
+            Assert.IsFalse(program.AnyItem(program.GetItemFilters(".ClangCola")).Invoke(MockConsumable("CosmicCoffee")));
+
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.")).Invoke(MockConsumable("ClangCola")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.")).Invoke(MockConsumable("CosmicCoffee")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.")).Invoke(MockConsumable("RandomItem")));
+            Assert.IsFalse(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem.")).Invoke(MockOre("Iron")));
+
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem., ore")).Invoke(MockOre("Iron")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("MyObjectBuilder_ConsumableItem., ore")).Invoke(MockConsumable("RandomItem")));
+        }
     }
 }

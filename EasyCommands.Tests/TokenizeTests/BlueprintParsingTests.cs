@@ -84,5 +84,10 @@ namespace EasyCommands.Tests.TokenizeTests {
             Assert.AreEqual(MockBlueprint("OxygenBottle"), program.GetItemBluePrints("oxygen bottle")[0]);
             Assert.AreEqual(MockBlueprint("HydrogenBottle"), program.GetItemBluePrints("hydrogen bottle")[0]);
         }
+
+        [TestMethod]
+        public void ParseDynamicTypes() {
+            Assert.AreEqual(MockBlueprint("MyFakeBlueprint"), program.GetItemBluePrints("MyFakeBlueprint")[0]);
+        }
     }
 }
