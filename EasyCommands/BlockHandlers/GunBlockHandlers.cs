@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class TurretBlockHandler<T> : GunBlockHandler<IMyLargeTurretBase> {
-            public TurretBlockHandler() : base() {
+            public TurretBlockHandler() {
                 AddBooleanHandler(Property.LOCKED, b => b.IsAimed, (b, v) => { if (!v) ResetTarget(b); });
                 AddBooleanHandler(Property.AUTO, b => b.EnableIdleRotation, (b, v) => b.EnableIdleRotation = v);
                 AddVectorHandler(Property.TARGET, GetTarget, SetTarget);
@@ -54,10 +54,8 @@ namespace IngameScript {
             public GunBlockHandler() {
                 AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("Range", 100));
                 AddBooleanHandler(Property.TRIGGER, (b) => b.IsShooting, Shoot);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.TRIGGER;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
-
             }
             void Shoot(IMyUserControllableGun gun, bool b) { if(b) gun.ApplyAction("Shoot_On"); else gun.ApplyAction("Shoot_Off"); }
         }

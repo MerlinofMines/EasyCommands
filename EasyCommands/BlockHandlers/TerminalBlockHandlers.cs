@@ -57,7 +57,6 @@ namespace IngameScript {
                 var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
                 AddPropertyHandler(Property.ENABLE, enableHandler);
                 AddPropertyHandler(Property.POWER, enableHandler);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
             }
         }
 
@@ -88,6 +87,8 @@ namespace IngameScript {
                     TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Right)), Direction.RIGHT));
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
+                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
             }
 
             public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {

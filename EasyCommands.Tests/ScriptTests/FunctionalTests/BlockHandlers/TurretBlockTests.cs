@@ -9,6 +9,18 @@ namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class TurretBlockTests {
         [TestMethod]
+        public void TurnOnTheTurrets() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""turrets""")) {
+                var mockTurret = new Mock<IMyLargeTurretBase>();
+                test.MockBlocksInGroup("turrets", mockTurret);
+
+                test.RunUntilDone();
+
+                mockTurret.VerifySet(b => b.Enabled = true);
+            }
+        }
+
+        [TestMethod]
         public void FireTheTurrets() {
             String script = @"
 tell the ""turrets"" to shoot
