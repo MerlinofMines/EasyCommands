@@ -79,12 +79,12 @@ namespace IngameScript {
                 AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>((b, p) => p.attributeValue.GetValue(), (b, p, v) => b.ApplyAction(CastString(p.attributeValue.GetValue())), ResolvePrimitive(0)));
 
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Forward)), Direction.FORWARD),
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Backward)), Direction.BACKWARD),
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Up)), Direction.UP),
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Down)), Direction.DOWN),
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Left)), Direction.LEFT),
-                    TypeHandler(VectorHandler(b => Normalize(GetBlock2WorldTransform(b).Right)), Direction.RIGHT));
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Forward), Direction.FORWARD),
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Backward), Direction.BACKWARD),
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Up), Direction.UP),
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Down), Direction.DOWN),
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Left), Direction.LEFT),
+                    TypeHandler(VectorHandler(b => b.WorldMatrix.Right), Direction.RIGHT));
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;

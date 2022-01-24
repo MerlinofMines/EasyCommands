@@ -120,7 +120,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -135,7 +135,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -150,7 +150,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -165,7 +165,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -180,7 +180,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -195,7 +195,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
@@ -210,7 +210,7 @@ show the ""test terminal""
             using (ScriptTest test = new ScriptTest(script)) {
                 var mockBlock = new Mock<IMyTerminalBlock>();
                 test.MockBlocksOfType("test terminal", mockBlock);
-                MockOrientation(mockBlock, new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+                MockWorldMatrix(mockBlock, Vector3D.Zero, Vector3D.UnitX, Vector3D.UnitY);
 
                 test.RunUntilDone();
 
