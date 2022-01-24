@@ -215,6 +215,7 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("ln"), UniOperand.LN);
             AddRightUniOperationWords(Words("rand", "random", "randomize"), UniOperand.RANDOM);
             AddRightUniOperationWords(Words("shuffle", "shuffled"), UniOperand.SHUFFLE);
+            AddRightUniOperationWords(Words("sign", "quantize"), UniOperand.SIGN);
 
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);

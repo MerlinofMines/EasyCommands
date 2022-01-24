@@ -101,6 +101,14 @@ Keywords: ```abs, absolute```
 * **(Number)**: Absolute value of the number
 * **(Vector)**: Returns the length of the vector
 
+### Sign
+Behavior varies based on input type.
+
+Keywords: ```sign, quantize```
+
+* **(Number)**: Return the sign of the number or 0
+* **(Vector)**: Returns the vector with the sign of each component or 0
+
 ### Arc Cosine
 Performs the arc cosine operation on the given numeric value
 
