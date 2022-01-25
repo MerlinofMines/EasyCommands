@@ -23,7 +23,7 @@ namespace IngameScript {
         public interface ParameterProcessor : IComparable<ParameterProcessor> {
             int Rank { get; set; }
             List<Type> GetProcessedTypes();
-            bool CanProcess(CommandParameter p); 
+            bool CanProcess(CommandParameter p);
             bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
@@ -136,7 +136,11 @@ namespace IngameScript {
 
                 Variable variable = new AmbiguousStringVariable(value.value);
 
-                if (primitive != null || value.isExplicit) variable = new StaticVariable(primitive ?? ResolvePrimitive(value.value));
+                if (primitive != null || value.isExplicit) {
+                    variable = new StaticVariable(primitive ?? ResolvePrimitive(value.value));
+                    if (variable.GetValue().returnType == Return.VECTOR)
+                        variable = new VectorVariable(variable);
+                }
                 return new VariableCommandParameter(variable);
             }
         }
@@ -154,7 +158,7 @@ namespace IngameScript {
                 var copy = new List<CommandParameter>(p);
 
                 bool processed = false;
-                foreach(ParameterProcessor processor in eligibleProcessors) { 
+                foreach(ParameterProcessor processor in eligibleProcessors) {
                     if (processed) {
                         List<CommandParameter> ignored;
                         var additionalCopy = new List<CommandParameter>(copy);

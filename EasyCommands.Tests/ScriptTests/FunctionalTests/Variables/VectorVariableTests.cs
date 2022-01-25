@@ -52,5 +52,32 @@ Print false?a:0:0:1:0:0
                 Assert.AreEqual("1:0:0", test.Logger[1]);
             }
         }
+
+        [TestMethod]
+        public void AssignUniOperandVariableVector() {
+            var script = @"
+assign vec to sqrt 4:round 0.5:-2
+Print vec
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.AreEqual("2:0:-4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AssignBiOperandVariableVector() {
+            var script = @"
+assign a to 1
+assign vec to a:0:0 + a:0:0 + a + 1
+Print vec
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.AreEqual("4:0:0", test.Logger[0]);
+            }
+        }
     }
 }

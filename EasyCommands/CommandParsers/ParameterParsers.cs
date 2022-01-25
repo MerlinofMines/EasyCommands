@@ -489,11 +489,11 @@ namespace IngameScript {
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
             primitive = null;
-            //var vector = GetVector(token);
+            var vector = GetVector(token);
             Double numeric;
             var color = GetColor(token);
             if (Double.TryParse(token, out numeric)) primitive = ResolvePrimitive((float)numeric);
-            //if (vector.HasValue) primitive = ResolvePrimitive(vector.Value);
+            if (vector.HasValue) primitive = ResolvePrimitive(vector.Value);
             if (color.HasValue) primitive = ResolvePrimitive(color.Value);
             return primitive != null;
         }
