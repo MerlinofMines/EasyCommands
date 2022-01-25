@@ -278,6 +278,69 @@ namespace EasyCommands.Tests.ScriptTests {
             }
         }
 
+        [TestMethod]
+        public void TransferDynamicItemBySubTypeId() {
+            var script = @"transfer ""CustomItem"" from ""source cargo"" to ""destination cargo""";
+
+            Mock<IMyInventory> sourceInventory = new Mock<IMyInventory>();
+            Mock<IMyInventory> destinationInventory = new Mock<IMyInventory>();
+            Mock<IMyCargoContainer> sourceContainer = new Mock<IMyCargoContainer>();
+            Mock<IMyCargoContainer> destinationContainer = new Mock<IMyCargoContainer>();
+            MockInventories(sourceContainer, sourceInventory);
+            MockInventories(destinationContainer, destinationInventory);
+            var component = MockComponent("CustomItem", 50);
+
+            using (var test = new ScriptTest(script)) {
+                test.MockBlocksOfType("source cargo", sourceContainer);
+                test.MockBlocksOfType("destination cargo", destinationContainer);
+
+                MockInventoryItems(sourceInventory, component);
+                destinationInventory.Setup(i => i.IsFull).Returns(false);
+
+                MockTransfer(sourceInventory, destinationInventory, component, MyFixedPoint.MaxValue);
+
+                test.RunUntilDone();
+
+                sourceInventory.Verify(i => i.TransferItemTo(destinationInventory.Object, component, MyFixedPoint.MaxValue));
+            }
+        }
+
+        [TestMethod]
+        public void TransferDynamicItemsByTypeId() {
+            var script = @"transfer ""MyObjectBuilder_Component."" from ""source cargo"" containers to ""destination cargo""";
+
+            Mock<IMyInventory> sourceInventory1 = new Mock<IMyInventory>();
+            Mock<IMyInventory> sourceInventory2 = new Mock<IMyInventory>();
+            Mock<IMyInventory> destinationInventory = new Mock<IMyInventory>();
+            Mock<IMyCargoContainer> sourceContainer1 = new Mock<IMyCargoContainer>();
+            Mock<IMyCargoContainer> sourceContainer2 = new Mock<IMyCargoContainer>();
+            Mock<IMyCargoContainer> destinationContainer = new Mock<IMyCargoContainer>();
+            MockInventories(sourceContainer1, sourceInventory1);
+            MockInventories(sourceContainer2, sourceInventory2);
+            MockInventories(destinationContainer, destinationInventory);
+
+            using (var test = new ScriptTest(script)) {
+                test.MockBlocksInGroup("source cargo", sourceContainer1, sourceContainer2);
+                test.MockBlocksOfType("destination cargo", destinationContainer);
+
+                var component = MockComponent("CustomItem", 50);
+                var component2 = MockComponent("CustomItem2", 50);
+
+                MockInventoryItems(sourceInventory1, component);
+                MockInventoryItems(sourceInventory2, component2);
+
+                MockTransfer(sourceInventory1, destinationInventory, component, MyFixedPoint.MaxValue, 100);
+                MockTransfer(sourceInventory2, destinationInventory, component2, MyFixedPoint.MaxValue - 100, 100);
+
+                destinationInventory.Setup(i => i.IsFull).Returns(false);
+
+                test.RunUntilDone();
+
+                sourceInventory1.Verify(i => i.TransferItemTo(destinationInventory.Object, component, MyFixedPoint.MaxValue));
+                sourceInventory2.Verify(i => i.TransferItemTo(destinationInventory.Object, component2, MyFixedPoint.MaxValue - 100));
+            }
+        }
+
         private void MockTransfer(Mock<IMyInventory> sourceInventory, Mock<IMyInventory> destinationInventory, MyInventoryItem item, MyFixedPoint transferredAmount) {
             MockTransfer(sourceInventory, destinationInventory, item, transferredAmount, transferredAmount);
         }

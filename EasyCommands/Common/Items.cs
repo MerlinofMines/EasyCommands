@@ -20,8 +20,9 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<String, List<ItemFilter>> itemNamesToFilters = NewDictionary<string, List<ItemFilter>>();
-        Dictionary<String, MyDefinitionId> itemNamesToBlueprints = NewDictionary<string, MyDefinitionId>();
+        public Dictionary<String, List<ItemFilter>> itemNamesToFilters = NewDictionary<string, List<ItemFilter>>();
+        public Dictionary<String, MyDefinitionId> itemNamesToBlueprints = NewDictionary<string, MyDefinitionId>();
+        public Func<String, MyDefinitionId> blueprintProvider = GetBlueprint;
 
         public void InitializeItems() {
             //Ores
@@ -152,7 +153,7 @@ namespace IngameScript {
         }
 
         void AddBluePrint(string[] words, string blueprintId) {
-            var blueprint = GetBlueprint(blueprintId);
+            var blueprint = blueprintProvider(blueprintId);
             foreach (String word in words) itemNamesToBlueprints.Add(word, blueprint);
         }
 
@@ -160,7 +161,7 @@ namespace IngameScript {
             foreach (String word in words) itemNamesToFilters.Add(word.ToLower(), filters.ToList());
         }
 
-        MyDefinitionId GetBlueprint(string blueprintId) {
+        public static MyDefinitionId GetBlueprint(string blueprintId) {
             MyDefinitionId definition;
             MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", blueprintId, out definition);
             return definition;
@@ -169,7 +170,7 @@ namespace IngameScript {
         public delegate bool ItemFilter(MyInventoryItem item);
 
         public List<ItemFilter> GetItemFilters(String itemString) => GetItemsFromString(itemString, itemNamesToFilters, i => NewList(DynamicItemType(i.Split('.')))).SelectMany(x => x).ToList();
-        public List<MyDefinitionId> GetItemBluePrints(String itemString) => GetItemsFromString(itemString, itemNamesToBlueprints, GetBlueprint);
+        public List<MyDefinitionId> GetItemBluePrints(String itemString) => GetItemsFromString(itemString, itemNamesToBlueprints, blueprintProvider);
         List<T> GetItemsFromString<T>(string itemString, Dictionary<string, T> values, Func<string, T> dynamicValue) => itemString.Split(',').Select(i => values.GetValueOrDefault(i.Trim().ToLower(), dynamicValue(i))).ToList();
 
         public ItemFilter Consumable(String subType = null) => IsItemType("MyObjectBuilder_ConsumableItem", subType);

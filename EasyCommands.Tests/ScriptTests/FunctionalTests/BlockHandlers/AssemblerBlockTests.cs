@@ -4,6 +4,7 @@ using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRage;
 using VRageMath;
+using VRage.Utils;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
 namespace EasyCommands.Tests.ScriptTests {
@@ -121,6 +122,18 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void ClearTheAssembler() {
+            using (ScriptTest test = new ScriptTest(@"clear the ""test assembler""")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.Verify(b => b.ClearQueue());
+            }
+        }
+
+        [TestMethod]
         public void SetAssemblerToAuto() {
             using (ScriptTest test = new ScriptTest(@"set ""test assembler"" to auto")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
@@ -180,6 +193,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 Assert.IsTrue(test.Logger.Contains("Custom Item Remaining: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void GetAssemblerTypes() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Producing Types: "" + ""test assembler"" types")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                MockProductionQueue(mockAssembler, MockProductionItem("SteelPlate", 100), MockProductionItem("CustomItem", 100), MockProductionItem("SteelPlate", 50));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Producing Types: [SteelPlate,CustomItem]", test.Logger[0]);
             }
         }
 

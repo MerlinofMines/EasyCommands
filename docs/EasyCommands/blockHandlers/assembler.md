@@ -58,6 +58,7 @@ tell the "Base Assembler" to assemble
 ## "Complete" Property
 * Primitive Type: Bool
 * Keywords: ```done, ready, complete, finish, finished, built```
+* Inverse Keywords: ```clear, wipe, erase```
 
 The Complete property can get, or clear, the current item queue from the assembler.  Returns false if there are any items in the queue.  Clears the queue if updating with a false boolean value.
 Even though there are no inverse complete keywords, you can clear the queue easily using "stop", "false" since the default boolean property is Complete.
@@ -68,10 +69,9 @@ if the "Base Assembler" is finished
   Print "Finished building stuff!"
 
 #All of the below will clear the assembler queue
-stop the "Base Assembler"
+clear the "Base Assembler"
 tell the "Base Assembler" not to finish
-tell the "Base Assembler" to stop
-"Base Assembler" stop
+tell the "Base Assembler" to stop building
 
 #Does nothing
 tell the "Base Assembler" to finish
@@ -199,6 +199,22 @@ set "My Assembler" "steel plate, interior plate" amount to 10
 #Create/Destroy 10 steel plate and 10 interior plate
 set "My Assembler" "steel plate, interior plate" amount to 10
 ```
+
+## "Types" Property
+* Read-only
+* Primitive Type - List
+* Keywords: ```types, blueprints```
+
+Gets a list of BlueprintIds currently being produced by the given assembler.  This is mostly used to get custom item BlueprintIds used to create custom items, so that you can create those items yourself.
+
+The returned list will be a list of the BlueprintIds for all items in the assembler production queue, with duplicates removed.
+
+```
+set myProducingTypes to to "My Assembler" types
+
+print "Producing Types:\n" + myProducingTypes joined "\n"
+```
+
 
 ## Examples
 

@@ -104,7 +104,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public static void MockInventoryItems(Mock<IMyInventory> inventory, params MyInventoryItem[] items) {
             inventory.Setup(i => i.CurrentMass).Returns(items.Select(item => item.Amount).Aggregate((sum, val) => sum + val));
             inventory.Setup(i => i.GetItems(It.IsAny<List<MyInventoryItem>>(), It.IsAny<Func<MyInventoryItem, bool>>()))
-                .Callback<List<MyInventoryItem>, Func<MyInventoryItem, bool>>((i, filter) => i.AddRange(items.Where(filter.Invoke)));
+                .Callback<List<MyInventoryItem>, Func<MyInventoryItem, bool>>((i, filter) => i.AddRange(items.Where(item => filter == null || filter(item))));
         }
 
         public static void MockProductionQueue<T>(Mock<T> productionBlock, params MyProductionItem[] queue) where T : class, IMyProductionBlock {
@@ -157,6 +157,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public static MyDefinitionId MockBlueprint(String itemId) {
             MyDefinitionId definition;
             MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", itemId, out definition);
+            definition.GetType().GetField("SubtypeId").SetValueDirect(__makeref(definition), MyStringHash.GetOrCompute(itemId));
             return definition;
         }
     }
