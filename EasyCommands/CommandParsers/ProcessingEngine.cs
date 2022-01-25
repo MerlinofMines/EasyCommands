@@ -140,6 +140,11 @@ namespace IngameScript {
             //ListIndexAsVariableProcessor
             NoValueRule(Type<ListIndexCommandParameter>, list => new VariableCommandParameter(list.value)),
 
+            //DynamicVectorProcessor
+            FourValueRule(Type<TernaryConditionSeparatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<TernaryConditionSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
+                (sep1, x, y, sep2, z) => AllSatisfied(x, y, z) && !(x.GetValue().value is VectorVariable || y.GetValue().value is VectorVariable || z.GetValue().value is VectorVariable),
+                (sep1, x, y, sep2, z) => new VariableCommandParameter(new VectorVariable(x.value, y.value, z.value))),
+
             //MinusProcessor
             new BranchingProcessor<MinusCommandParameter>(
                 NoValueRule(Type<MinusCommandParameter>, minus => new UniOperationCommandParameter(UniOperand.REVERSE)),
