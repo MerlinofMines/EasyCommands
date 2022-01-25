@@ -464,19 +464,19 @@ namespace IngameScript {
                     : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
                 .ToArray();
 
-        String[] ParseSeparateTokens(String command) {
-            var newCommand = command;
-            foreach (var token in separateTokensFirstPass) newCommand = newCommand.Replace(token, " " + token + " ");
-            newCommand = string.Join(" ", newCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).SelectMany(token => {
+        String[] ParseSeparateTokens(String command) =>
+            AddSpaceArroundTokens(command, separateTokensFirstPass)
+            .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .SelectMany(token => {
                 Primitive ignored;
                 if (separateTokensFirstPass.Contains(token) || ParsePrimitive(token, out ignored)) return new[] { token };
-                foreach (var s in separateTokensSecondPass) token = token.Replace(s, " " + s + " ");
-                return token.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            }));
+                return AddSpaceArroundTokens(token, separateTokensSecondPass).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            }).ToArray();
 
-            List<char> commandArray = newCommand.ToCharArray().ToList();
-
-            return new string(commandArray.ToArray()).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        String AddSpaceArroundTokens(String command, String[] tokens) {
+            var newCommand = command;
+            foreach (var t in tokens) newCommand = newCommand.Replace(t, " " + t + " ");
+            return newCommand;
         }
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
