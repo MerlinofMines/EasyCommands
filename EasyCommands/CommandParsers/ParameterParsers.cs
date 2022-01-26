@@ -162,7 +162,7 @@ namespace IngameScript {
             AddWords(Words("take"), new TransferCommandParameter(false));
             AddWords(Words("->"), new KeyedVariableCommandParameter());
             AddWords(Words("?"), new TernaryConditionIndicatorParameter());
-            AddWords(Words(":"), new TernaryConditionSeparatorParameter());
+            AddWords(Words(":"), new ColonSeparatorParameter());
             AddWords(Words("each", "every"), new IteratorCommandParameter());
 
             //Conditional Words

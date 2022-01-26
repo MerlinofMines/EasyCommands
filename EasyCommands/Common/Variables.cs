@@ -72,13 +72,13 @@ namespace IngameScript {
                     if (vec.GetValue().returnType == Return.VECTOR)
                         return vec.GetValue();
                     else
-                        throw new Exception("Invalid Vector variable.");
+                        throw new Exception("Invalid Vector");
                 }
                 else {
-                    if (X.GetValue().returnType == Return.NUMERIC && Y.GetValue().returnType == Return.NUMERIC && Z.GetValue().returnType == Return.NUMERIC)
+                    if (NewList(X, Y, Z).All(v => v.GetValue().returnType == Return.NUMERIC))
                         return ResolvePrimitive(new Vector3D(CastNumber(X.GetValue()), CastNumber(Y.GetValue()), CastNumber(Z.GetValue())));
                     else
-                        throw new Exception("Invalid Vector variable.");
+                        throw new Exception("Invalid Variable in Vector");
                 }
             }
         }
