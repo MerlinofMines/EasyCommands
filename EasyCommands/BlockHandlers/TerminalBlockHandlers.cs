@@ -140,25 +140,6 @@ namespace IngameScript {
                     .ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
 
             public PropertyHandler<T> TerminalBlockPropertyHandler(String propertyId, object delta) => new TerminalBlockPropertyHandler<T>(propertyId, ResolvePrimitive(delta));
-
-            //Taken from https://forum.keenswh.com/threads/how-do-i-get-the-world-position-and-rotation-of-a-ship.7363867/
-            MatrixD GetBlock2WorldTransform(IMyCubeBlock blk) {
-                Matrix blk2grid;
-                blk.Orientation.GetMatrix(out blk2grid);
-                return blk2grid *
-                       MatrixD.CreateTranslation(new Vector3D(blk.Min + blk.Max) / 2.0) *
-                       GetGrid2WorldTransform(blk.CubeGrid);
-            }
-
-            MatrixD GetGrid2WorldTransform(IMyCubeGrid grid) {
-                Vector3D origin = grid.GridIntegerToWorld(new Vector3I(0, 0, 0));
-                Vector3D plusY = grid.GridIntegerToWorld(new Vector3I(0, 1, 0)) - origin;
-                Vector3D plusZ = grid.GridIntegerToWorld(new Vector3I(0, 0, 1)) - origin;
-                return MatrixD.CreateScale(grid.GridSize) * MatrixD.CreateWorld(origin, -plusZ, plusY);
-            }
-
-            Vector3D Normalize(Vector3D vector) => vector / vector.Length();
-
         }
 
         /// <summary>
