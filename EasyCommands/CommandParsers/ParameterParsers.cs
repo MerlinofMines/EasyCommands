@@ -22,8 +22,9 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
 
-        string[] separateTokensFirstPass = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=" };
-        string[] separateTokensSecondPass = new[] { "<", ">", "=", "&", "|", ".", "-", "+", "?", ":" };
+        string[] firstPassTokens = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=" };
+        string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
+        string[] thirdPassTokens = new[] { "." };
 
         Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>();
         Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>();
@@ -437,7 +438,7 @@ namespace IngameScript {
             if (token.isExplicitString) {
                 commandParameters.Add(new StringCommandParameter(token.original, true));
             } else if (token.isString) {
-                List<Token> subTokens = ParseTokens(t);
+                List<Token> subTokens = Tokenize(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
@@ -449,36 +450,41 @@ namespace IngameScript {
             return commandParameters;
         }
 
-        public List<Token> ParseTokens(String commandString) => (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#")) ? NewList<Token>() :
-            ParseSurrounded(commandString, "`\'\"",
+        delegate IEnumerable<String> Pass(String s);
+        public List<Token> Tokenize(String commandString) {
+            Pass thirdPass = v => SeperatorPass(v, thirdPassTokens);
+            Pass secondPass = v => SeperatorPass(v, secondPassTokens, w => PrimitivePass(w, thirdPass));
+            Pass firstPass = v => SeperatorPass(v, firstPassTokens, w => PrimitivePass(w, secondPass));
+
+            return (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#"))
+            ? NewList<Token>()
+            : TokenizeEnclosed(commandString, "`\'\"",
                 u => u.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(ParseSeparateTokens)
+                    .SelectMany(v => firstPass(v))
                     .Select(v => new Token(v, false, false))
                     .ToArray())
             .ToList();
+        }
 
-        Token[] ParseSurrounded(String token, string characters, Func<String, Token[]> parseSubTokens) =>
+        Token[] TokenizeEnclosed(String token, string characters, Func<String, Token[]> parseSubTokens) =>
             characters.Length == 0 ? parseSubTokens(token) :
                 token.Trim().Split(characters[0])
                 .SelectMany((element, index) => index % 2 == 0  // If even index
-                    ? ParseSurrounded(element, characters.Remove(0,1), parseSubTokens)  // Split the item
+                    ? TokenizeEnclosed(element, characters.Remove(0,1), parseSubTokens)  // Split the item
                     : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
                 .ToArray();
 
-        String[] ParseSeparateTokens(String command) =>
-            AddSpaceAroundTokens(command, separateTokensFirstPass)
-            .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-            .SelectMany(token => {
-                Primitive ignored;
-                return (separateTokensFirstPass.Contains(token) || ParsePrimitive(token, out ignored))
-                    ? new[] { token }
-                    : AddSpaceAroundTokens(token, separateTokensSecondPass).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            }).ToArray();
+        IEnumerable<String> PrimitivePass(String token, Pass nextPass = null) {
+            Primitive ignored;
+            return ParsePrimitive(token, out ignored) || nextPass == null ? new[] { token } : nextPass(token);
+        }
 
-        String AddSpaceAroundTokens(String command, String[] tokens) {
+        IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
             var newCommand = command;
-            foreach (var t in tokens) newCommand = newCommand.Replace(t, " " + t + " ");
-            return newCommand;
+            foreach (var s in separators) newCommand = newCommand.Replace(s, " " + s + " ");
+            return newCommand
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(token => separators.Contains(token) || nextPass == null ? new[] { token } : nextPass(token));
         }
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {

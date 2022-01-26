@@ -47,7 +47,7 @@ namespace IngameScript {
 
                 foreach (int i in functionIndices) {
                     String functionString = commandStrings[i].Remove(0, 1).Trim();
-                    List<Token> nameAndParams = ParseTokens(functionString);
+                    List<Token> nameAndParams = Tokenize(functionString);
                     String functionName = nameAndParams[0].original;
                     nameAndParams.RemoveAt(0);
                     FunctionDefinition definition = new FunctionDefinition(functionName, nameAndParams.Select(t => t.original).ToList());
@@ -57,7 +57,7 @@ namespace IngameScript {
                 foreach (int i in functionIndices) {
                     int startingLineNumber = i + 1 + implicitMainOffset;
                     String functionString = commandStrings[i].Remove(0, 1).Trim();
-                    List<Token> nameAndParams = ParseTokens(functionString);
+                    List<Token> nameAndParams = Tokenize(functionString);
                     String functionName = nameAndParams[0].original;
 
                     parsingTasks.Add(new ParseCommandLineTask(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).ToList(), startingLineNumber, commandLines => {
@@ -164,7 +164,7 @@ namespace IngameScript {
         }
 
         public Command ParseCommand(String commandLine, int lineNumber = 0) =>
-            ParseCommand(ParseCommandParameters(ParseTokens(commandLine)), lineNumber);
+            ParseCommand(ParseCommandParameters(Tokenize(commandLine)), lineNumber);
 
         Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
             CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
@@ -179,7 +179,7 @@ namespace IngameScript {
 
             public CommandLine(String command, int line) {
                 depth = command.TakeWhile(Char.IsWhiteSpace).Count();
-                commandParameters = PROGRAM.ParseCommandParameters(PROGRAM.ParseTokens(command));
+                commandParameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(command));
                 lineNumber = line;
             }
         }

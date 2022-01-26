@@ -229,11 +229,12 @@
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\DecoyBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\AntennaBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\WarheadBlockTests.cs" />
-    <Compile Include="TokenParsingTests\BracketParsingTests.cs" />
-    <Compile Include="TokenParsingTests\StringParsingTests.cs" />
-    <Compile Include="TokenParsingTests\ParenthesisParsingTests.cs" />
-    <Compile Include="TokenParsingTests\ItemParsingTests.cs" />
-    <Compile Include="TokenParsingTests\BlueprintParsingTests.cs" />
+    <Compile Include="TokenizeTests\BracketTests.cs" />
+    <Compile Include="TokenizeTests\StringTests.cs" />
+    <Compile Include="TokenizeTests\ParenthesisTests.cs" />
+    <Compile Include="TokenizeTests\ItemParsingTests.cs" />
+    <Compile Include="TokenizeTests\BlueprintParsingTests.cs" />
+    <Compile Include="TokenizeTests\FloatingPointTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Instructions.readme" />
