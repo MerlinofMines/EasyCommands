@@ -116,7 +116,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignment.variable is UniOperandVariable);
             var variable = assignment.variable as UniOperandVariable;
             Assert.AreEqual(UniOperand.SIGN, variable.operand);
-            Assert.AreEqual((float)Math.Sign(-0.5f), CastNumber(variable.GetValue()));
+            Assert.AreEqual(-1f, CastNumber(variable.GetValue()));
         }
 
         [TestMethod]
