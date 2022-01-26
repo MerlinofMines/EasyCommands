@@ -69,6 +69,10 @@ namespace EasyCommands.Tests.ScriptTests {
             mockShip.Setup(b => b.WorldMatrix).Returns(MatrixD.Identity);
         }
 
+        public static void MockWorldMatrix<T>(Mock<T> mockBlock, Vector3D position, Vector3D forward, Vector3D up) where T : class, IMyTerminalBlock {
+            mockBlock.Setup(b => b.WorldMatrix).Returns(MatrixD.CreateWorld(position, forward, up));
+        }
+
         public static void MockOrientation<T>(Mock<T> mockBlock, Vector3 forward, Vector3 up) where T : class, IMyTerminalBlock {
             Mock<IMyCubeGrid> mockGrid = new Mock<IMyCubeGrid>();
             mockGrid.Setup(g => g.GridIntegerToWorld(new Vector3I(0, 0, 0))).Returns(new Vector3D(0, 0, 0));
