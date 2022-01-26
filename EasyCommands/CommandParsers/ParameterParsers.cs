@@ -465,15 +465,16 @@ namespace IngameScript {
                 .ToArray();
 
         String[] ParseSeparateTokens(String command) =>
-            AddSpaceArroundTokens(command, separateTokensFirstPass)
+            AddSpaceAroundTokens(command, separateTokensFirstPass)
             .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
             .SelectMany(token => {
                 Primitive ignored;
-                if (separateTokensFirstPass.Contains(token) || ParsePrimitive(token, out ignored)) return new[] { token };
-                return AddSpaceArroundTokens(token, separateTokensSecondPass).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                return (separateTokensFirstPass.Contains(token) || ParsePrimitive(token, out ignored))
+                    ? new[] { token }
+                    : AddSpaceAroundTokens(token, separateTokensSecondPass).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }).ToArray();
 
-        String AddSpaceArroundTokens(String command, String[] tokens) {
+        String AddSpaceAroundTokens(String command, String[] tokens) {
             var newCommand = command;
             foreach (var t in tokens) newCommand = newCommand.Replace(t, " " + t + " ");
             return newCommand;
