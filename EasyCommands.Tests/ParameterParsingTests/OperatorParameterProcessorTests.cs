@@ -108,6 +108,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignSign() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to sign -0.5");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            var assignment = command as VariableAssignmentCommand;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            var variable = assignment.variable as UniOperandVariable;
+            Assert.AreEqual(UniOperand.SIGN, variable.operand);
+            Assert.AreEqual(-1f, CastNumber(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignRoundDown() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to round 5.4");
@@ -381,6 +393,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BiOperandVariable variable = (BiOperandVariable)assignment.variable;
             Assert.AreEqual(BiOperand.DOT, variable.operand);
             Assert.AreEqual(0f, CastNumber(variable.GetValue()));
+        }
+
+        [TestMethod]
+        public void AssignVectorSign() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to sign \"-0.5:1.5:0\"");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            var variable = assignment.variable as UniOperandVariable;
+            Assert.AreEqual(UniOperand.SIGN, variable.operand);
+            Assert.AreEqual(new Vector3D(-1,1,0), CastVector(variable.GetValue()));
         }
 
         [TestMethod]
