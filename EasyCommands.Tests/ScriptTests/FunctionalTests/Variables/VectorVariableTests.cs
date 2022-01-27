@@ -62,7 +62,7 @@ Print vec
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.AreEqual("2:0:-4", test.Logger[0]);
+                Assert.AreEqual("2:0:-2", test.Logger[0]);
             }
         }
 
