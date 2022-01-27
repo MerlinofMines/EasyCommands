@@ -52,6 +52,7 @@ namespace IngameScript {
         public class KeyedVariableCommandParameter : SimpleCommandParameter { }
         public class TernaryConditionIndicatorParameter : SimpleCommandParameter { }
         public class TernaryConditionSeparatorParameter : SimpleCommandParameter { }
+        public class ColonCommandParameter : SimpleCommandParameter { }
         public class MinusCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : CommandParameter {
