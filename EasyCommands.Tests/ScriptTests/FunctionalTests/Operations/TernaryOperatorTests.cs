@@ -19,5 +19,19 @@ namespace EasyCommands.Tests.ScriptTests {
                 Assert.AreEqual("Fail", test.Logger[1], lines[1]);
             }
         }
+
+        [TestMethod]
+        public void ExplicitTernaryOperator() {
+            var lines = new List<String> {
+                @"True ? ""Success"" :: ""Fail""",
+                @"False ? ""Success"" :: ""Fail""" };
+
+            using (var test = new SimpleExpressionsTest(lines)) {
+                test.RunOnce();
+
+                Assert.AreEqual("Success", test.Logger[0], lines[0]);
+                Assert.AreEqual("Fail", test.Logger[1], lines[1]);
+            }
+        }
     }
 }

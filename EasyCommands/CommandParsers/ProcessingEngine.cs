@@ -242,8 +242,11 @@ namespace IngameScript {
             FourValueRule(Type<TransferCommandParameter>, requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2.HasValue() ? v2.GetValue().value : null))),
 
+            //Convert Ambiguous Colon to Ternary Condition Separator
+            NoValueRule(Type<ColonSeparatorParameter>, b => new TernaryConditionSeparatorParameter()),
+
             //TernaryConditionProcessor
-            FourValueRule(Type<TernaryConditionIndicatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<ColonSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
+            FourValueRule(Type<TernaryConditionIndicatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<TernaryConditionSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
                 (i, conditionValue, positiveValue, seperator, negativeValue) => new VariableCommandParameter(new TernaryConditionVariable() {
                     condition = conditionValue.value,
                     positiveValue = positiveValue.value,
