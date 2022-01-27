@@ -5,7 +5,7 @@ using Malware.MDKUtilities;
 using IngameScript;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 
-namespace EasyCommands.Tests.TokenParsingTests {
+namespace EasyCommands.Tests.TokenizeTests {
     [TestClass]
     public class ItemParsingTests : ForceLocale {
         Program program = MDKFactory.CreateProgram<Program>();        
