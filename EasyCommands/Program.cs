@@ -141,7 +141,7 @@ namespace IngameScript {
 
             try {
                 if (messages.Count > 0) {
-                    List<Thread> messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag)).ToList();
+                    var messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag));
                     threadQueue.InsertRange(0, messageCommands);
                 }
                 if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument), "Request", argument)); }

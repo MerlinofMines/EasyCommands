@@ -100,6 +100,6 @@ namespace IngameScript {
             required = required
         };
 
-        static bool AllSatisfied(params DataProcessor[] processors) => processors.ToList().TrueForAll(p => p.Satisfied());
+        static bool AllSatisfied(params DataProcessor[] processors) => processors.All(p => p.Satisfied());
     }
 }
