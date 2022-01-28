@@ -55,7 +55,7 @@ namespace IngameScript {
                 BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
                 var indexes = CastList(index.GetValue()).GetValues()
-                    .Select(v => v.GetValue()).ToList();
+                    .Select(v => v.GetValue());
 
                 foreach (Primitive p in indexes) {
                     //Return empty list if index > Count

@@ -106,7 +106,7 @@ namespace IngameScript {
         public static Vector3D CastVector(Primitive p) => Cast<Vector3D>(p);
         public static Color CastColor(Primitive p) => Cast<Color>(p);
         public static KeyedList CastList(Primitive p) => Cast<KeyedList>(p);
-        
+
         public static Color? GetColor(String s) => (s.StartsWith("#") && s.Length == 7) ?
             new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2))) :
             (colors.ContainsKey(s.ToLower()) ? colors[s.ToLower()] : (Color?)null);

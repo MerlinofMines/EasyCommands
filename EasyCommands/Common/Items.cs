@@ -45,7 +45,7 @@ namespace IngameScript {
             AddIngot("Nickel");
             AddIngot("Gold");
             AddItems(Words("gravel"), Ingot("Stone"));
-            AddIngot("Iron");      
+            AddIngot("Iron");
             AddItems(Words("magnesium ingot", "magnesium powder"), Ingot("Magnesium"));
             AddIngot("Platinum");
             AddItems(Words("silicon ingot", "silicon wafer"), Ingot("Silicon"));
@@ -116,7 +116,7 @@ namespace IngameScript {
             AddBlueprintItems(Words("oxygen bottle"), "OxygenBottle", oxygenBottle);
             AddBlueprintItems(Words("hydrogen bottle"), "HydrogenBottle", hydrogenBottle);
 
-            //Consumables 
+            //Consumables
             AddItems(Words("consumables"), Consumable());
             AddItems(Words("clang cola"), Consumable("ClangCola"));
             AddItems(Words("cosmic coffee"), Consumable("CosmicCoffee"));
@@ -172,7 +172,7 @@ namespace IngameScript {
         public ItemFilter ToolType(params String[] matches) => (i) => i.Type.TypeId.Equals("MyObjectBuilder_PhysicalGunObject") && matches.Any(s => i.Type.SubtypeId.Contains(s));
         public ItemFilter IsItemType(String itemType, String subType = null) => (i) => i.Type.TypeId.Equals(itemType) && (subType == null || i.Type.SubtypeId.Equals(subType));
 
-        public Func<MyInventoryItem, bool> AllItem(List<ItemFilter> filters) => b => filters.TrueForAll(f => f(b));
+        public Func<MyInventoryItem, bool> AllItem(List<ItemFilter> filters) => b => filters.All(f => f(b));
         public Func<MyInventoryItem, bool> AnyItem(List<ItemFilter> filters) => b => filters.Any(f => f(b));
     }
 }

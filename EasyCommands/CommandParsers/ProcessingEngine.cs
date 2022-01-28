@@ -358,7 +358,7 @@ namespace IngameScript {
 
             int processorIndex = 0;
 
-            Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
+            Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p))));
 
             while (processorIndex < sortedParameterProcessors.Count) {
                 bool revisit = false;
@@ -375,7 +375,7 @@ namespace IngameScript {
                     }
                 }
                 if (processed) {
-                    Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p)).ToList()));
+                    Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p))));
                     processorIndex = 0;
                     continue;
                 }

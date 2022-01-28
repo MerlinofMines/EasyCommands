@@ -239,7 +239,7 @@ namespace IngameScript {
 
             public override bool Execute() {
                 PROGRAM.IGC.SendBroadcastMessage(CastString(tag.GetValue()), CastString(message.GetValue()));
-                return true; 
+                return true;
             }
         }
 
@@ -281,8 +281,7 @@ namespace IngameScript {
 
                 var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
                 var fromInventories = from.GetEntities().Select(i => (IMyInventory)i)
-                    .Where(i => toInventories.TrueForAll(to => i.Owner.EntityId != to.Owner.EntityId)) //Don't transfer to yourself
-                    .ToList();
+                    .Where(i => toInventories.All(to => i.Owner.EntityId != to.Owner.EntityId)); //Don't transfer to yourself
 
                 MyFixedPoint amountLeft = MyFixedPoint.MaxValue;
                 if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue());

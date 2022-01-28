@@ -61,7 +61,7 @@ namespace IngameScript {
 
             public KeyedList Combine(KeyedList other) {
                 var otherKeys = new HashSet<string>(other.keyedValues.Where(k => k.HasKey()).Select(k => k.GetKey()).Distinct());
-                var uniqueKeyedVariables = keyedValues.Where(k => !k.HasKey() || !otherKeys.Contains(k.GetKey())).ToList();
+                var uniqueKeyedVariables = keyedValues.Where(k => !k.HasKey() || !otherKeys.Contains(k.GetKey()));
                 return NewKeyedList(uniqueKeyedVariables.Concat(other.GetValues()));
             }
 
