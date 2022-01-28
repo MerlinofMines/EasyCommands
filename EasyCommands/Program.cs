@@ -33,10 +33,7 @@ namespace IngameScript {
         public int maxItemTransfers = 10;
         #endregion
 
-        public delegate List<MyIGCMessage> BroadcastMessageProvider();
-
         public static Program PROGRAM;
-        public BroadcastMessageProvider broadcastMessageProvider;
         public ProgramState state = ProgramState.STOPPED;
         public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
         public Thread currentThread;
@@ -58,6 +55,15 @@ namespace IngameScript {
         List<String> commandStrings = NewList<String>();
 
         public void ClearAllState() {
+            var listeners = NewList<IMyBroadcastListener>();
+            IGC.GetBroadcastListeners(listeners);
+            listeners.ForEach(IGC.DisableBroadcastListener);
+
+            //Clear active messages from queue
+            foreach (IMyBroadcastListener listener in listeners) {
+                while (listener.HasPendingMessage) listener.AcceptMessage();
+            }
+
             asyncThreadQueue.Clear();
             threadQueue.Clear();
             globalVariables = NewDictionary(
@@ -100,13 +106,6 @@ namespace IngameScript {
             }
         }
 
-        List<MyIGCMessage> provideMessages()
-        {
-            var listeners = NewList<IMyBroadcastListener>();
-            IGC.GetBroadcastListeners(listeners);
-            return listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
-        }
-
         public Program() {
             PROGRAM = this;
             InitializeParsers();
@@ -114,7 +113,6 @@ namespace IngameScript {
             InitializeOperators();
             InitializeItems();
             Runtime.UpdateFrequency = updateFrequency;
-            broadcastMessageProvider = provideMessages;
         }
 
         static void Print(String str) { PROGRAM.Echo(str); }
@@ -137,7 +135,9 @@ namespace IngameScript {
             Debug("Functions: " + functions.Count);
             Debug("Argument: " + argument);
 
-            List<MyIGCMessage> messages = broadcastMessageProvider();
+            var listeners = NewList<IMyBroadcastListener>();
+            IGC.GetBroadcastListeners(listeners);
+            var messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
 
             try {
                 if (messages.Count > 0) {
