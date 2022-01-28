@@ -154,6 +154,11 @@ namespace IngameScript {
             OneValueRule(Type<UniOperationCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),
 
+            //VectorProcessor
+            FourValueRule(Type<ColonSeparatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<ColonSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
+                (sep1, x, y, sep2, z) => AllSatisfied(x, y, z) && !(x.GetValue().value is VectorVariable || y.GetValue().value is VectorVariable || z.GetValue().value is VectorVariable),
+                (sep1, x, y, sep2, z) => new VariableCommandParameter(new VectorVariable(x.value, y.value, z.value))),
+
             //Tier0OperationProcessor
             TwoValueRule(Type<BiOperandTier0Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
@@ -236,6 +241,9 @@ namespace IngameScript {
                 (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).value, (t.value ? s2 : s1).value, v1.value, v2.HasValue() ? v2.GetValue().value : null))),
             FourValueRule(Type<TransferCommandParameter>, requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2.HasValue() ? v2.GetValue().value : null))),
+
+            //Convert Ambiguous Colon to Ternary Condition Separator
+            NoValueRule(Type<ColonSeparatorParameter>, b => new TernaryConditionSeparatorParameter()),
 
             //TernaryConditionProcessor
             FourValueRule(Type<TernaryConditionIndicatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<TernaryConditionSeparatorParameter>(), requiredRight<VariableCommandParameter>(),

@@ -258,8 +258,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"53573.9750085028:-26601.8512032533:12058.8229348438\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignCommand.variable is StaticVariable);
-            StaticVariable variable = (StaticVariable)assignCommand.variable;
+            Assert.IsTrue(assignCommand.variable is VectorVariable);
+            var variable = assignCommand.variable as VectorVariable;
             Assert.AreEqual(Return.VECTOR, variable.GetValue().returnType);
             Vector3D vector = CastVector(variable.GetValue());
             Assert.AreEqual(53573.9750085028, vector.X);
@@ -273,8 +273,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignCommand.variable is StaticVariable);
-            StaticVariable variable = (StaticVariable)assignCommand.variable;
+            Assert.IsTrue(assignCommand.variable is VectorVariable);
+            var variable = assignCommand.variable as VectorVariable;
             Assert.AreEqual(Return.VECTOR, variable.GetValue().returnType);
             Vector3D vector = CastVector(variable.GetValue());
             Assert.AreEqual(53573.9750085028, vector.X);

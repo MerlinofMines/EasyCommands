@@ -22,7 +22,7 @@ namespace IngameScript {
         //Internal (Don't touch!)
         Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
 
-        string[] firstPassTokens = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=" };
+        string[] firstPassTokens = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=", "::"};
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
         string[] thirdPassTokens = new[] { "." };
 
@@ -162,7 +162,8 @@ namespace IngameScript {
             AddWords(Words("take"), new TransferCommandParameter(false));
             AddWords(Words("->"), new KeyedVariableCommandParameter());
             AddWords(Words("?"), new TernaryConditionIndicatorParameter());
-            AddWords(Words(":"), new TernaryConditionSeparatorParameter());
+            AddWords(Words("::"), new TernaryConditionSeparatorParameter());
+            AddWords(Words(":"), new ColonSeparatorParameter());
             AddWords(Words("each", "every"), new IteratorCommandParameter());
 
             //Conditional Words
@@ -347,6 +348,7 @@ namespace IngameScript {
             RegisterToString<ThatCommandParameter>(p => "That");
             RegisterToString<AssignmentCommandParameter>(p => "[Action]");
             RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType + "]");
+            RegisterToString<TernaryConditionSeparatorParameter>(p => ":");
         }
 
         Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = NewDictionary<Type, Func<CommandParameter, object>>();
@@ -459,7 +461,8 @@ namespace IngameScript {
             return (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#"))
             ? NewList<Token>()
             : TokenizeEnclosed(commandString, "`\'\"",
-                u => u.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                u => u.Replace(" : ", " :: ")
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .SelectMany(v => firstPass(v))
                     .Select(v => new Token(v, false, false))
                     .ToArray())
