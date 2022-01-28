@@ -461,8 +461,9 @@ namespace IngameScript {
             return (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#"))
             ? NewList<Token>()
             : TokenizeEnclosed(commandString, "`\'\"",
-                u => u.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(v => firstPass(v.Replace(" : ", " :: ")))
+                u => u.Replace(" : ", " :: ")
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .SelectMany(v => firstPass(v))
                     .Select(v => new Token(v, false, false))
                     .ToArray())
             .ToList();
