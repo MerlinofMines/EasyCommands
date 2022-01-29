@@ -179,6 +179,7 @@
     <Compile Include="ScriptTests\FunctionalTests\Operations\TernaryOperatorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\SimpleWaitCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\Comparisons\SimpleComparisonsColorTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\MessageHandlingTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Variables\SimpleAggregationTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Primitives\SimpleColorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Primitives\SimpleVectorTests.cs" />

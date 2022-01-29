@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VRage.Game.ModAPI.Ingame;
 using static IngameScript.Program;
+using System.Reflection;
 
 namespace EasyCommands.Tests.ScriptTests
 {
@@ -27,6 +28,7 @@ namespace EasyCommands.Tests.ScriptTests
         public Mock<IMyTextSurface> display;
         public Mock<Random> random;
         public Mock<IMyGridProgramRuntimeInfo> runtime;
+        public MockIntergridCommunicationSystem mockIGC;
 
         MockGridTerminalSystem mockGrid;
         int entityIdCounter = 1000;
@@ -73,12 +75,20 @@ namespace EasyCommands.Tests.ScriptTests
             program.commandParseAmount = 1000;
             program.logLevel = Program.LogLevel.SCRIPT_ONLY;
 
-            // Default behavior for broadcast messages
-            // TODO: Replace this with mock objects passed to config setup in Program
-            program.broadcastMessageProvider = () => new List<MyIGCMessage>();
+            //Mock message broadcasting
+            mockIGC = new MockIntergridCommunicationSystem();
+            typeof(MyGridProgram).GetField("m_IGC_ContextGetter", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(program, GetIGCSupplier());
+
             program.randomGenerator = random.Object;
 
             setScript(script);
+        }
+
+        public Func<IMyIntergridCommunicationSystem> GetIGCSupplier() => () => mockIGC;
+
+        public void MockMessages(String tag, params String[] messages) {
+            var listener = mockIGC.GetMockBroadcastListener(tag);
+            listener.messages.AddRange(messages);
         }
 
         public void MockNextRandoms(params int[] nextRandom) {
@@ -355,6 +365,80 @@ namespace EasyCommands.Tests.ScriptTests
                     .Where(block => collect == null ? true : collect(block))
                     .ToList());
             }
+        }
+    }
+
+    public class MockIntergridCommunicationSystem : IMyIntergridCommunicationSystem {
+        public long Me => 1234;
+
+        public List<MockBroadcastListener> mockListeners = new List<MockBroadcastListener>();
+
+        public IMyUnicastListener UnicastListener => throw new NotImplementedException();
+
+        public void DisableBroadcastListener(IMyBroadcastListener broadcastListener) {
+            mockListeners.Where(listener => listener.Tag == broadcastListener.Tag).ForEach(listener => listener.IsActive = false);
+        }
+
+        public MockBroadcastListener GetMockBroadcastListener(String tag) {
+            return mockListeners.Where(listener => listener.Tag == tag).FirstOrDefault();
+        }
+
+        public void GetBroadcastListeners(List<IMyBroadcastListener> broadcastListeners, Func<IMyBroadcastListener, bool> collect = null) {
+            broadcastListeners.AddRange(mockListeners.Select(listener => listener).Where(listener => collect == null || collect(listener)));
+        }
+
+        public bool IsEndpointReachable(long address, TransmissionDistance transmissionDistance = TransmissionDistance.AntennaRelay) {
+            throw new NotImplementedException();
+        }
+
+        public IMyBroadcastListener RegisterBroadcastListener(string tag) {
+            var broadcastListener = GetMockBroadcastListener(tag);
+
+            if (broadcastListener == null) {
+                MockBroadcastListener mockListener = new MockBroadcastListener(tag);
+                mockListeners.Add(mockListener);
+                broadcastListener = mockListener;
+            }
+
+            return broadcastListener;
+        }
+
+        public void SendBroadcastMessage<TData>(string tag, TData data, TransmissionDistance transmissionDistance = TransmissionDistance.AntennaRelay) {
+            //Do nothing
+        }
+
+        public bool SendUnicastMessage<TData>(long addressee, string tag, TData data) {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MockBroadcastListener : IMyBroadcastListener {
+
+        public List<string> messages = new List<string>();
+        public string Tag { get; set; } 
+        public bool IsActive { get; set; }
+
+        public MockBroadcastListener(string tag, params string[] messages) {
+            this.Tag = tag;
+            this.messages = messages.ToList();
+        }
+
+        public bool HasPendingMessage => messages.Count > 0;
+
+        public int MaxWaitingMessages => throw new NotImplementedException();
+
+        public MyIGCMessage AcceptMessage() {
+            var nextMessage = messages[0];
+            messages.RemoveAt(0);
+            return new MyIGCMessage(nextMessage, Tag, 1234);
+        }
+
+        public void DisableMessageCallback() {
+            throw new NotImplementedException();
+        }
+
+        public void SetMessageCallback(string argument = "") {
+            throw new NotImplementedException();
         }
     }
 
