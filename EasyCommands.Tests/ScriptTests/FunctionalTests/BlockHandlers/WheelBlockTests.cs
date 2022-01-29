@@ -107,6 +107,18 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void IsTheWheelAttached() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Wheel Is Attached: "" + the ""test wheel"" is attached")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+                mockWheel.Setup(b => b.IsAttached).Returns(true);
+                test.RunUntilDone();
+
+                Assert.AreEqual("Wheel Is Attached: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetTheWheelLimit() {
             using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" limit")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();

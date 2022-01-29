@@ -23,7 +23,8 @@ namespace IngameScript {
             public WheelSuspensionBlockHandler() {
                 AddNumericHandler(Property.LEVEL, b => b.Height, (b, v) => b.Height = v, 0.1f);
                 AddNumericHandler(Property.ANGLE, b => (float)(-b.SteerAngle*180/Math.PI), (b, v) => { b.SteeringOverride = (float)(v * Math.PI / 144); b.MaxSteerAngle = 1; }, .1f);
-                AddBooleanHandler(Property.LOCKED, (b) => b.Brake, (b, v) => b.Brake = v);
+                AddBooleanHandler(Property.LOCKED, b => b.Brake, (b, v) => b.Brake = v);
+                AddBooleanHandler(Property.CONNECTED, b => b.IsAttached);
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
                     TypeHandler(TerminalBlockPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
                     TypeHandler(NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v), Direction.LEFT, Direction.RIGHT));
