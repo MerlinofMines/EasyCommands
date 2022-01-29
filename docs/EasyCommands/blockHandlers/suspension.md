@@ -157,3 +157,15 @@ Print "Wheel Friction: " + "My Wheel" ratio
 #Set Friction to 50%
 set "My Wheel" ratio to 50
 ```
+
+## "Attached" Property
+* Primitive Type: Bool
+* Keywords: ```attached, connected```
+* Inverse Keywords: ```detached, disconnected```
+
+Returns true if there is a wheel attached to the suspension.
+
+```
+if "My Wheel" attached
+  Print "Something stole the Wheel!"
+```
