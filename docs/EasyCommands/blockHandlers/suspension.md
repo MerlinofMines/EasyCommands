@@ -166,6 +166,6 @@ set "My Wheel" ratio to 50
 Returns true if there is a wheel attached to the suspension.
 
 ```
-if "My Wheel" attached
-  Print "Something stole the Wheel!"
+if "My Wheel" is detached
+  Print "Something stole my Wheel!"
 ```
