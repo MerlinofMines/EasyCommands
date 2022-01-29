@@ -694,9 +694,9 @@ repeat
 
 If you specify a "goto <function>" somewhere before calling "repeat", the script will repeat from the last "goto function".  Note that any previous parameters passed to that function are not passed when calling repeat.
 
-## Send/Listen Commands
+## Send/Listen/Forget Commands
 
-Sometimes you might want to send or listen for events from other grids.  You can do this from EasyCommands using the ```send``` and ```listen``` commands.
+Sometimes you might want to send or listen for events from other grids.  You can do this from EasyCommands using the ```send``` and ```listen``` commands.  If later you want to stop listening for those events, you can do so with the ```forget``` command.
 
 ### Send Command
 
@@ -711,9 +711,10 @@ send 'open the "Outer Doors"' to myBaseChannel
 ```
 
 ### Listen Command
+To listen for commmands from your script, you can use the listen command.  The outline of this command is
+```listen <channel>```.
 
-To listen for commmands from your script, you can use the ```listen``` command.  The outline of this command is
-```listen <channel>```
+Keywords: ```listen, channel, register, subscribe```
 
 Note that your script needs to be running in order to be triggered by an event from a channel.  So it's important to put the script in an "always listening" mode, which can be accomplished in several ways but the easiest would be as follows:
 
@@ -722,7 +723,23 @@ listen "myChannel"
 wait until false
 ```
 
-### Using these commands together
+### Forget Command
+To stop listening to a channel and ignore future messages from that channel, you can use the ignore command.  The outline of this command is
+```forget <channel>```.
+
+Keywords: ```forget, dismiss, ignore, deregister, unsubscribe```
+
+```
+#start listening
+listen myChannel
+
+#Do some stuff
+
+#stop listening
+forget myChannel
+```
+
+### Using Send/Listen commands together
 You can quickly do some fun cross-grid things with these two commands.  Here's a simple example that enables keyless entry to your garage from your rover:
 
 Base Script:

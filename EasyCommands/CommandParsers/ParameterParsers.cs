@@ -153,7 +153,8 @@ namespace IngameScript {
             AddWords(Words("wait", "hold"), new WaitCommandParameter());
             AddWords(Words("call", "gosub"), new FunctionCommandParameter(false));
             AddWords(Words("goto"), new FunctionCommandParameter(true));
-            AddWords(Words("listen", "channel"), new ListenCommandParameter());
+            AddWords(Words("listen", "channel", "register", "subscribe"), new ListenCommandParameter(true));
+            AddWords(Words("forget", "dismiss", "ignore", "deregister", "unsubscribe"), new ListenCommandParameter(false));
             AddWords(Words("send"), new SendCommandParameter());
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));

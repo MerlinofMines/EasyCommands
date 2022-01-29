@@ -218,13 +218,20 @@ namespace IngameScript {
 
         public class ListenCommand : Command {
             public Variable tag;
+            bool shouldListen;
 
-            public ListenCommand(Variable v) {
+            public ListenCommand(Variable v, bool listen) {
                 tag = v;
+                shouldListen = listen;
             }
 
             public override bool Execute() {
-                PROGRAM.IGC.RegisterBroadcastListener(CastString(tag.GetValue()));
+                var broadcastTag = CastString(tag.GetValue());
+                if (shouldListen) {
+                    PROGRAM.IGC.RegisterBroadcastListener(broadcastTag);
+                } else {
+                    PROGRAM.BroadCastListenerAction(listener => listener.Tag == broadcastTag, listener => PROGRAM.IGC.DisableBroadcastListener(listener));
+                }
                 return true;
             }
         }

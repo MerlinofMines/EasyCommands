@@ -42,7 +42,6 @@ namespace IngameScript {
         public class ReverseCommandParameter : SimpleCommandParameter { }
         public class WaitCommandParameter : SimpleCommandParameter { }
         public class SendCommandParameter : SimpleCommandParameter { }
-        public class ListenCommandParameter : SimpleCommandParameter { }
         public class ElseCommandParameter : SimpleCommandParameter { }
         public class PrintCommandParameter : SimpleCommandParameter { }
         public class SelfCommandParameter : SimpleCommandParameter { }
@@ -65,6 +64,10 @@ namespace IngameScript {
                 }
                 set { }
             }
+        }
+
+        public class ListenCommandParameter : ValueCommandParameter<bool> {
+            public ListenCommandParameter(bool v) : base(v) { }
         }
 
         public class QueueCommandParameter : ValueCommandParameter<bool> {

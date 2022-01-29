@@ -399,7 +399,7 @@ namespace EasyCommands.Tests.ScriptTests
                 mockListeners.Add(mockListener);
                 broadcastListener = mockListener;
             }
-
+            broadcastListener.IsActive = true;
             return broadcastListener;
         }
 
