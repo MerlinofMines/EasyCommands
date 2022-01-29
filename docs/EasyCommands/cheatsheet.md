@@ -137,8 +137,9 @@ These properties require a Variable value as part of the property
 * Tick - ```tick, ticks``` - wait for ticks instead of seconds
 * Call Function - ```call, gosub```
 * Goto Function - ```goto```
-* Listen - ```listen, channel```
 * Send - ```send```
+* Listen - ```listen, channel, register, subscribe```
+* Forget - ```forget, dismiss, ignore, deregister, unsubscribe```
 * Print - ```print, log, echo, write```
 * Queue - ```queue, schedule```
 * Async - ```async, parallel```

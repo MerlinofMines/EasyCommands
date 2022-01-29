@@ -55,14 +55,10 @@ namespace IngameScript {
         List<String> commandStrings = NewList<String>();
 
         public void ClearAllState() {
-            var listeners = NewList<IMyBroadcastListener>();
-            IGC.GetBroadcastListeners(listeners);
-            listeners.ForEach(IGC.DisableBroadcastListener);
-
-            //Clear active messages from queue
-            foreach (IMyBroadcastListener listener in listeners) {
+            BroadCastListenerAction(l => true, listener => {
+                IGC.DisableBroadcastListener(listener);
                 while (listener.HasPendingMessage) listener.AcceptMessage();
-            }
+            });
 
             asyncThreadQueue.Clear();
             threadQueue.Clear();
@@ -77,6 +73,12 @@ namespace IngameScript {
                 KeyValuePair("g", StaticVectorVariable(0, 1, 0)),
                 KeyValuePair("b", StaticVectorVariable(0, 0, 1))
             );
+        }
+
+        public void BroadCastListenerAction(Func<IMyBroadcastListener, bool> filter, Action<IMyBroadcastListener> action) {
+            var listeners = NewList<IMyBroadcastListener>();
+            IGC.GetBroadcastListeners(listeners);
+            foreach(IMyBroadcastListener listener in listeners.Where(filter)) action(listener);
         }
 
         public Thread GetCurrentThread() => currentThread;
@@ -135,9 +137,8 @@ namespace IngameScript {
             Debug("Functions: " + functions.Count);
             Debug("Argument: " + argument);
 
-            var listeners = NewList<IMyBroadcastListener>();
-            IGC.GetBroadcastListeners(listeners);
-            var messages = listeners.Where(l => l.HasPendingMessage).Select(l => l.AcceptMessage()).ToList();
+            var messages = NewList<MyIGCMessage>();
+            BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
 
             try {
                 if (messages.Count > 0) {
