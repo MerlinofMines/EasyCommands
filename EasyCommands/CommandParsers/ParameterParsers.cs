@@ -226,20 +226,26 @@ namespace IngameScript {
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
             AddLeftUniOperationWords(Words("values"), UniOperand.VALUES);
 
-            AddWords(Words("dot", "."), new BiOperandTier0Operand(BiOperand.DOT));
+            //Tier 0 Operations
+            AddWords(Words("dot", "."), new BiOperandCommandParameter(BiOperand.DOT, 0));
 
-            AddTier1OperationWords(Words("multiply", "*"), BiOperand.MULTIPLY);
-            AddTier1OperationWords(Words("divide", "/"), BiOperand.DIVIDE);
-            AddTier1OperationWords(Words("mod", "%"), BiOperand.MOD);
-            AddTier1OperationWords(Words("pow", "^", "xor"), BiOperand.EXPONENT);
-            AddTier1OperationWords(Words("split", "separate", "separated"), BiOperand.SPLIT);
-            AddTier1OperationWords(Words("join", "joined"), BiOperand.JOIN);
+            //Tier 1 Operations
+            AddBiOperationWords(Words("pow", "^", "xor"), BiOperand.EXPONENT, 1);
 
-            AddTier2OperationWords(Words("plus", "+"), BiOperand.ADD);
-            AddTier2OperationWords(Words("minus"), BiOperand.SUBTRACT);
+            //Tier 2 Operations
+            AddBiOperationWords(Words("multiply", "*"), BiOperand.MULTIPLY, 2);
+            AddBiOperationWords(Words("divide", "/"), BiOperand.DIVIDE, 2);
+            AddBiOperationWords(Words("mod", "%"), BiOperand.MOD, 2);
+            AddBiOperationWords(Words("split", "separate", "separated"), BiOperand.SPLIT, 2);
+            AddBiOperationWords(Words("join", "joined"), BiOperand.JOIN, 2);
 
-            AddTier3OperationWords(Words("as", "cast"), BiOperand.CAST);
-            AddTier3OperationWords(Words(".."), BiOperand.RANGE);
+            //Tier 3 Operations
+            AddBiOperationWords(Words("plus", "+"), BiOperand.ADD, 3);
+            AddBiOperationWords(Words("minus"), BiOperand.SUBTRACT, 3);
+
+            //Tier 4 Operations
+            AddBiOperationWords(Words("as", "cast"), BiOperand.CAST, 4);
+            AddBiOperationWords(Words(".."), BiOperand.RANGE, 4);
 
             AddWords(Words("-"), new MinusCommandParameter());
 
@@ -363,18 +369,8 @@ namespace IngameScript {
             uniOperandToString[operand] = words[0];
         }
 
-        void AddTier1OperationWords(String[] words, BiOperand operand) {
-            AddWords(words, new BiOperandTier1Operand(operand));
-            biOperandToString[operand] = words[0];
-        }
-
-        void AddTier2OperationWords(String[] words, BiOperand operand) {
-            AddWords(words, new BiOperandTier2Operand(operand));
-            biOperandToString[operand] = words[0];
-        }
-
-        void AddTier3OperationWords(String[] words, BiOperand operand) {
-            AddWords(words, new BiOperandTier3Operand(operand));
+        void AddBiOperationWords(String[] words, BiOperand operand, int tier) {
+            AddWords(words, new BiOperandCommandParameter(operand, tier));
             biOperandToString[operand] = words[0];
         }
 
