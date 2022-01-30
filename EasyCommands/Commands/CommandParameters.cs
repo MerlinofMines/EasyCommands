@@ -75,20 +75,11 @@ namespace IngameScript {
             public LeftUniOperationCommandParameter(UniOperand value) : base(value) { }
         }
 
-        public class BiOperandTier0Operand : ValueCommandParameter<BiOperand> {
-            public BiOperandTier0Operand(BiOperand value) : base(value) { }
-        }
-
-        public class BiOperandTier1Operand : ValueCommandParameter<BiOperand> {
-            public BiOperandTier1Operand(BiOperand value) : base(value) {}
-        }
-
-        public class BiOperandTier2Operand : ValueCommandParameter<BiOperand> {
-            public BiOperandTier2Operand(BiOperand value) : base(value) {}
-        }
-
-        public class BiOperandTier3Operand : ValueCommandParameter<BiOperand> {
-            public BiOperandTier3Operand(BiOperand value) : base(value) { }
+        public class BiOperandCommandParameter : ValueCommandParameter<BiOperand> {
+            public int tier;
+            public BiOperandCommandParameter(BiOperand value, int t) : base(value) {
+                tier = t;
+            }
         }
 
         public class TransferCommandParameter : ValueCommandParameter<bool> {

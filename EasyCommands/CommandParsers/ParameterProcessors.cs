@@ -46,13 +46,13 @@ namespace IngameScript {
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
-                for(int j = i + 1; j < p.Count; j++) {
+                for (int j = i + 1; j < p.Count; j++) {
                     if (p[j] is OpenParenthesisCommandParameter) return false;
                     else if (p[j] is CloseParenthesisCommandParameter) {
                         var alternateBranches = NewList(p.GetRange(i + 1, j - (i + 1)));
                         p.RemoveRange(i, j - i + 1);
 
-                        while(alternateBranches.Count > 0) {
+                        while (alternateBranches.Count > 0) {
                             finalParameters = alternateBranches[0];
                             alternateBranches.AddRange(PROGRAM.ProcessParameters(finalParameters));
                             alternateBranches.RemoveAt(0);
@@ -85,8 +85,7 @@ namespace IngameScript {
                     else if (p[j] is ListSeparatorCommandParameter) {
                         indexValues.Add(ParseVariable(p, startIndex, j));
                         startIndex = j; //set startIndex to next separator
-                    }
-                    else if (p[j] is CloseBracketCommandParameter) {
+                    } else if (p[j] is CloseBracketCommandParameter) {
                         if (j > i + 1) indexValues.Add(ParseVariable(p, startIndex, j)); //dont try to parse []
                         finalParameters = NewList<CommandParameter>(new ListCommandParameter(GetStaticVariable(NewKeyedList(indexValues))));
                         p.RemoveRange(i, j - i + 1);
@@ -107,7 +106,7 @@ namespace IngameScript {
 
         public class MultiListProcessor : ParameterProcessor<ListCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
-                while (i > 1 && p[i-1] is ListCommandParameter) i--;
+                while (i > 1 && p[i - 1] is ListCommandParameter) i--;
                 finalParameters = NewList<CommandParameter>(new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, GetVariables(NewKeyedList())[0])));
                 p[i] = finalParameters[0];
                 return true;
@@ -158,7 +157,7 @@ namespace IngameScript {
                 var copy = new List<CommandParameter>(p);
 
                 bool processed = false;
-                foreach(ParameterProcessor processor in eligibleProcessors) {
+                foreach (ParameterProcessor processor in eligibleProcessors) {
                     if (processed) {
                         List<CommandParameter> ignored;
                         var additionalCopy = new List<CommandParameter>(copy);
@@ -172,6 +171,11 @@ namespace IngameScript {
                 return processed;
             }
         }
+
+        static RuleProcessor<BiOperandCommandParameter> BiOperandProcessor(int tier) =>
+            TwoValueRule(Type<BiOperandCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (operand, left, right) => operand.tier == tier && AllSatisfied(left, right),
+                (operand, left, right) => new VariableCommandParameter(new BiOperandVariable(operand.value, left.value, right.value)));
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);

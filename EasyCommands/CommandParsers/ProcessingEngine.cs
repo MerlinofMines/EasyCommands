@@ -145,7 +145,7 @@ namespace IngameScript {
             //MinusProcessor
             new BranchingProcessor<MinusCommandParameter>(
                 NoValueRule(Type<MinusCommandParameter>, minus => new UniOperationCommandParameter(UniOperand.REVERSE)),
-                NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandTier2Operand(BiOperand.SUBTRACT))
+                NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandCommandParameter(BiOperand.SUBTRACT, 2))
             ),
 
             //AfterUniOperationProcessor
@@ -162,16 +162,13 @@ namespace IngameScript {
                 (sep1, x, y, sep2, z) => new VariableCommandParameter(new VectorVariable(x.value, y.value, z.value))),
 
             //Tier0OperationProcessor
-            TwoValueRule(Type<BiOperandTier0Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
+            BiOperandProcessor(0),
 
             //Tier1OperationProcessor
-            TwoValueRule(Type<BiOperandTier1Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
+            BiOperandProcessor(1),
 
             //Tier2OperationProcessor
-            TwoValueRule(Type<BiOperandTier2Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
+            BiOperandProcessor(2),
 
             //VariableComparisonProcessor
             TwoValueRule(Type<ComparisonCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -194,8 +191,7 @@ namespace IngameScript {
                 (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.value, right.value))),
 
             //Tier3OperationProcessor
-            TwoValueRule(Type<BiOperandTier3Operand>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, a, b) => new VariableCommandParameter(new BiOperandVariable(p.value, a.value, b.value))),
+            BiOperandProcessor(3),
 
             //KeyedVariableProcessor
             TwoValueRule(Type<KeyedVariableCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
