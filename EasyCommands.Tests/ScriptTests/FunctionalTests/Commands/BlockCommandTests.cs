@@ -6,6 +6,7 @@ using SpaceEngineers.Game.ModAPI.Ingame;
 using VRage;
 using VRageMath;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
+using VRage.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -386,6 +387,49 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void SetUnsupportedProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" angle to 200")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                MockBlockDefinition(mockBeacon, "IMyBeacon");
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void SetUnsupportedPropertyOnNonTerminalBlock() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test inventory"" angle to 200")) {
+                Mock<IMyCargoContainer> mockCargo = new Mock<IMyCargoContainer>();
+                Mock<IMyInventory> mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockCargo, mockInventory);
+                test.MockBlocksOfType("test inventory", mockCargo);
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void SetUnsupportedPropertyPrintOutSuppliedWord() {
+            using (ScriptTest test = new ScriptTest(@"attach the ""test beacon""")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                MockBlockDefinition(mockBeacon, "IMyBeacon");
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("IMyBeacon does not have property: attach", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
         public void SetDynamicProperty() {
             using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" ""range"" property to 200")) {
                 Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
@@ -394,6 +438,35 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockBeacon.VerifySet(b => b.Radius = 200);
+            }
+        }
+
+        [TestMethod]
+        public void SetUnsupportedDynamicProperty() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" ""angle"" property to 200")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                MockBlockDefinition(mockBeacon, "IMyBeacon");
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void SetUnsupportedDynamicPropertyOnNonTerminalBlock() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test inventory"" ""angle"" property to 200")) {
+                Mock<IMyCargoContainer> mockCargo = new Mock<IMyCargoContainer>();
+                Mock<IMyInventory> mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockCargo, mockInventory);
+                test.MockBlocksOfType("test inventory", mockCargo);
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
             }
         }
 

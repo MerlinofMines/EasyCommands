@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class PropertySupplier {
-            public String propertyType;
+            public String propertyType, propertyWord;
             public Variable attributeValue, propertyValue;
             public Direction? direction;
             public bool? increment;
@@ -28,8 +28,9 @@ namespace IngameScript {
 
             public PropertySupplier() { }
 
-            public PropertySupplier(Property property) {
-                propertyType = property + "";
+            public PropertySupplier(string property, String word = null) {
+                propertyType = property;
+                propertyWord = word;
             }
 
             public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) =>
@@ -43,11 +44,12 @@ namespace IngameScript {
                     var commandParameters = PROGRAM.propertyWords[propertyString];
                     PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                     BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
-                    if (property != null) supplier = WithPropertyType(property.value.propertyType);
+                    if (property != null) supplier = WithPropertyType(property.value+"");
                     if (booleanParameter != null && !booleanParameter.value) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 } else {
                     supplier = WithPropertyType(propertyString);
                 }
+                supplier.propertyWord = propertyString;
                 return supplier;
             }
 
@@ -96,7 +98,8 @@ namespace IngameScript {
             }
 
             PropertySupplier Copy() => new PropertySupplier {
-                    propertyType = propertyType, 
+                    propertyType = propertyType,
+                    propertyWord = propertyWord,
                     attributeValue = attributeValue,
                     propertyValue = propertyValue,
                     direction = direction,

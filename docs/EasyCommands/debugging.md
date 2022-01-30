@@ -15,17 +15,6 @@ Lines start at 1, so just count down from the top the number of lines until you 
 ### Isolating the broken lines
 If your script is having trouble parsing a particular line or lines, try commenting out everything else (or save a copy and then delete it).  This will help you get to the root cause more quickly.
 
-### Setting Debug Log Level
-If isolating alone doesn't help, try setting the Log Level of EasyCommands to DEBUG.  You can do this by editing the script and changing the line
-
-```public LogLevel logLevel = LogLevel.INFO;```
-
-to
-
-```public LogLevel logLevel = LogLevel.DEBUG;```
-
-EasyCommands will debug how each line was parsed into a command, which should give you a clue about whether EasyCommands parsed your script as you intended.
-
 ### Wrapping with Parentheses
 Most things in EasyCommands can be wrapped with parentheses.  If the way your commands are parsed might be ambiguous, try wrapping specific pieces with parentheses to help EasyCommands parse correctly.
 

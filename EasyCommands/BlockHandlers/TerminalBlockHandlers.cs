@@ -33,9 +33,10 @@ namespace IngameScript {
         };
 
         public class TerminalBlockPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
-            public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : base(
-                (b, p) => ResolvePrimitive(GetPropertyConverter(b, propertyId).GetValue(b, propertyId)),
-                (b, p, v) => GetPropertyConverter(b, propertyId).SetValue(b, propertyId, v), delta) { }
+            public TerminalBlockPropertyHandler(String propertyId, Primitive delta) : this(new PropertySupplier(propertyId), delta) { }
+            public TerminalBlockPropertyHandler(PropertySupplier propertySupplier, Primitive delta) : base(
+                (b, p) => ResolvePrimitive(GetPropertyConverter(b, propertySupplier).GetValue(b, propertySupplier.propertyType)),
+                (b, p, v) => GetPropertyConverter(b, propertySupplier).SetValue(b, propertySupplier.propertyType, v), delta) { }
 
             static Dictionary<String, TerminalPropertyConverter> TerminalPropertyValueConversion = NewDictionary(
                 KeyValuePair("StringBuilder", PropertyConverter((b, p) => b.GetValue<StringBuilder>(p).ToString(), (b, p, v) => b.SetValue(p, new StringBuilder(CastString(v))))),
@@ -45,9 +46,9 @@ namespace IngameScript {
                 KeyValuePair("Color", PropertyConverter((b, p) => b.GetValueColor(p), (b, p, v) => b.SetValueColor(p, CastColor(v))))
             );
 
-            static TerminalPropertyConverter GetPropertyConverter(T block, String propertyId) {
-                var property = block.GetProperty(propertyId);
-                if (property == null) throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + propertyId);
+            static TerminalPropertyConverter GetPropertyConverter(T block, PropertySupplier propertySupplier) {
+                var property = block.GetProperty(propertySupplier.propertyType);
+                if (property == null) throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? propertySupplier.propertyType));
                 return TerminalPropertyValueConversion[property.TypeName];
             }
         }
@@ -111,7 +112,7 @@ namespace IngameScript {
                 try {
                     return base.GetPropertyHandler(property);
                 } catch (Exception) {
-                    return TerminalBlockPropertyHandler(property.propertyType, 1);
+                    return new TerminalBlockPropertyHandler<T>(property, ResolvePrimitive(1));
                 }
             }
 

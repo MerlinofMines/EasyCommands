@@ -119,7 +119,6 @@ namespace IngameScript {
 
         static void Print(String str) { PROGRAM.Echo(str); }
         static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
-        static void Debug(String str) { if (PROGRAM.logLevel == LogLevel.DEBUG) Print(str); }
 
         public void Main(string argument) {
             try {
@@ -133,9 +132,6 @@ namespace IngameScript {
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
-
-            Debug("Functions: " + functions.Count);
-            Debug("Argument: " + argument);
 
             var messages = NewList<MyIGCMessage>();
             BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
@@ -201,7 +197,6 @@ namespace IngameScript {
             //InterruptException is thrown by control commands to interrupt execution (stop, pause, restart).
             //The command itself has set the correct state of the command queues, we just need to set the program state.
             } catch(InterruptException interrupt) {
-                Debug("Script interrupted!");
                 state = interrupt.ProgramState;
             }
         }

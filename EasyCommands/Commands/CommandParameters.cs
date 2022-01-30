@@ -54,16 +54,9 @@ namespace IngameScript {
         public class TernaryConditionSeparatorParameter : SimpleCommandParameter { }
         public class MinusCommandParameter : SimpleCommandParameter { }
 
-        public abstract class ValueCommandParameter<T> : CommandParameter {
+        public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;
             public ValueCommandParameter(T v) { value = v; }
-
-            string CommandParameter.Token {
-                get {
-                    return value.ToString();
-                }
-                set { }
-            }
         }
 
         public class ListenCommandParameter : ValueCommandParameter<bool> {
@@ -163,9 +156,12 @@ namespace IngameScript {
             public ValuePropertyCommandParameter(ValueProperty value) : base(value) {}
         }
 
-        public class PropertyCommandParameter : ValueCommandParameter<PropertySupplier> {
-            public PropertyCommandParameter(PropertySupplier value) : base(value) {}
-            public PropertyCommandParameter(Property value) : base(new PropertySupplier(value)) { }
+        public class PropertyCommandParameter : ValueCommandParameter<Property> {
+            public PropertyCommandParameter(Property value) : base(value) { }
+        }
+
+        public class PropertySupplierCommandParameter : ValueCommandParameter<PropertySupplier> {
+            public PropertySupplierCommandParameter(PropertySupplier value) : base(value) {}
         }
 
         public class ListCommandParameter : ValueCommandParameter<Variable> {

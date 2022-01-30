@@ -109,15 +109,17 @@ namespace IngameScript {
             OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
                 (name, function) => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value], function.value)),
 
+            //PropertyProcessor
+            NoValueRule(Type<PropertyCommandParameter>, p => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<StringCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(new AmbiguousStringVariable(v.value)))),
+                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(new AmbiguousStringVariable(v.value)))),
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
+                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, v) => new PropertyCommandParameter(new PropertySupplier().WithPropertyType(p.value + "").WithAttributeValue(v.value))),
+                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
@@ -206,7 +208,7 @@ namespace IngameScript {
                 (p, left, with, right) => new BlockConditionCommandParameter(PROGRAM.OrCondition(left.value, right.value))),
 
             //ThatBlockConditionProcessor
-            FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), optionalRight<PropertyCommandParameter>(), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
+            FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), optionalRight<PropertySupplierCommandParameter>(), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (with, p, prop, dir, var) => p.Satisfied() && (var.GetValue().HasValue() || prop.GetValue().HasValue()),
                 (with, p, prop, dir, var) => NewList<CommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true))))),
 
@@ -215,11 +217,11 @@ namespace IngameScript {
                 (p, selector, condition) => new SelectorCommandParameter(new ConditionalSelector(selector.value, condition.value))),
 
             //PropertyAggregationProcessor
-            ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+            ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                 (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, (prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null)))),
 
             //BlockComparisonProcessor
-            ThreeValueRule(Type<ComparisonCommandParameter>, optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
+            ThreeValueRule(Type<ComparisonCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (p, prop, dir, var) => var.GetValue().HasValue() || prop.GetValue().HasValue(),
                 (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true)))),
 
@@ -260,9 +262,9 @@ namespace IngameScript {
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(
                 BlockCommandProcessor(),
-                TwoValueRule(Type<SelectorCommandParameter>, requiredEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                TwoValueRule(Type<SelectorCommandParameter>, requiredEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s, p, d) => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.value, p.value.WithDirection(d.HasValue() ? d.GetValue().value : (Direction?)null)))),
-                TwoValueRule(Type<SelectorCommandParameter>, optionalEither<PropertyCommandParameter>(), optionalEither<DirectionCommandParameter>(),
+                TwoValueRule(Type<SelectorCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
                     (s, p, d) => p.GetValue().HasValue() || d.GetValue().HasValue(),//Must have at least one!
                     (s, p, d) => {
                         PropertySupplier property = p.HasValue() ? p.GetValue().value : new PropertySupplier();
@@ -358,8 +360,6 @@ namespace IngameScript {
 
             int processorIndex = 0;
 
-            Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p))));
-
             while (processorIndex < sortedParameterProcessors.Count) {
                 bool revisit = false;
                 bool processed = false;
@@ -375,7 +375,6 @@ namespace IngameScript {
                     }
                 }
                 if (processed) {
-                    Debug(String.Join(" ", commandParameters.Select(p => CommandParameterToString(p))));
                     processorIndex = 0;
                     continue;
                 }

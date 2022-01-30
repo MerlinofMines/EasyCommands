@@ -153,26 +153,5 @@ if (true)
                 Assert.IsTrue(test.Logger.Contains("Unable to parse command from command parameters at line number: 7"));
             }
         }
-
-        [TestMethod]
-        public void PrintParseTreeWhenDebugging() {
-            String script = @"
-print 'Total: ' + ( 2 + 5 )
-";
-            using (var test = new ScriptTest(script)) {
-                test.program.logLevel = Program.LogLevel.DEBUG;
-
-                test.RunOnce();
-
-                Assert.IsTrue(test.Logger.Contains("print 'Total: ' ADD ( \"2\" ADD \"5\" )"));
-                Assert.IsTrue(test.Logger.Contains("\"2\" ADD \"5\""));
-                Assert.IsTrue(test.Logger.Contains("[Variable] ADD [Variable]"));
-                Assert.IsTrue(test.Logger.Contains("[Variable]"));
-                Assert.IsTrue(test.Logger.Contains("print 'Total: ' ADD [Variable]"));
-                Assert.IsTrue(test.Logger.Contains("print [Variable] ADD [Variable]"));
-                Assert.IsTrue(test.Logger.Contains("print [Variable]"));
-                Assert.IsTrue(test.Logger.Contains("[Command]"));
-            }
-        }
     }
 }
