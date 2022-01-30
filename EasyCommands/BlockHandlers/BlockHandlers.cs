@@ -199,7 +199,7 @@ namespace IngameScript {
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 if(propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
-                throw new Exception("Unsupported Property: " + property.propertyType);
+                throw new Exception(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
             }
 
             public abstract List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector);
@@ -209,10 +209,10 @@ namespace IngameScript {
             public Direction GetDefaultDirection() => defaultDirection;
 
             public PropertySupplier GetDefaultProperty(Direction direction) =>
-                new PropertySupplier(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]));
+                new PropertySupplier(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "");
 
             public PropertySupplier GetDefaultProperty(Return type) =>
-                new PropertySupplier(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]));
+                new PropertySupplier(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]) + "");
 
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
                 Primitive value = (property.direction.HasValue ? GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :

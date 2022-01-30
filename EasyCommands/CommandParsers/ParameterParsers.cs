@@ -66,14 +66,14 @@ namespace IngameScript {
             AddWords(Words("$"), new VariableSelectorCommandParameter());
 
             //Direction Words
-            AddWords(Words("up", "upward", "upwards", "upper"), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("down", "downward", "downwards", "lower"), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("left", "lefthand"), new DirectionCommandParameter(Direction.LEFT));
-            AddWords(Words("right", "righthand"), new DirectionCommandParameter(Direction.RIGHT));
-            AddWords(Words("forward", "forwards", "front"), new DirectionCommandParameter(Direction.FORWARD));
-            AddWords(Words("backward", "backwards", "back"), new DirectionCommandParameter(Direction.BACKWARD));
-            AddWords(Words("clockwise", "clock"), new DirectionCommandParameter(Direction.CLOCKWISE));
-            AddWords(Words("counter", "counterclock", "counterclockwise"), new DirectionCommandParameter(Direction.COUNTERCLOCKWISE));
+            AddDirectionWords(Words("up", "upward", "upwards", "upper"), Direction.UP);
+            AddDirectionWords(Words("down", "downward", "downwards", "lower"), Direction.DOWN);
+            AddDirectionWords(Words("left", "lefthand"), Direction.LEFT);
+            AddDirectionWords(Words("right", "righthand"), Direction.RIGHT);
+            AddDirectionWords(Words("forward", "forwards", "front"), Direction.FORWARD);
+            AddDirectionWords(Words("backward", "backwards", "back"), Direction.BACKWARD);
+            AddDirectionWords(Words("clockwise", "clock"), Direction.CLOCKWISE);
+            AddDirectionWords(Words("counterclockwise", "counter", "counterclock"), Direction.COUNTERCLOCKWISE);
 
             //Action Words
             AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
@@ -332,40 +332,6 @@ namespace IngameScript {
             AddBlockWords(Words("laser", "laserantenna"), Block.LASER_ANTENNA);
             AddBlockWords(Words("terminal"), Block.TERMINAL);
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
-
-            //Register Special CommandParameter Output Values
-            RegisterToString<GroupCommandParameter>(p => "group");
-            RegisterToString<AmbiguousCommandParameter>(p => "[Ambiguous]");
-            RegisterToString<AmbiguousStringCommandParameter>(p => "\"" + p.value + "\"");
-            RegisterToString<StringCommandParameter>(p => "'" + p.value + "'");
-            RegisterToString<VariableAssignmentCommandParameter>(p => "Assign[name=" + p.variableName + ",global=" + p.isGlobal + ",ref=" + p.useReference + "]");
-            RegisterToString<VariableCommandParameter>(p => "[Variable]");
-            RegisterToString<VariableSelectorCommandParameter>(p => "[VariableSelector]");
-            RegisterToString<IndexSelectorCommandParameter>(p => "[IndexSelector]");
-            RegisterToString<FunctionDefinitionCommandParameter>(p => "Function[switch=" + p.switchExecution + ",name=" + p.functionDefinition.functionName + "]");
-            RegisterToString<ConditionCommandParameter>(p => "[Condition]");
-            RegisterToString<BlockConditionCommandParameter>(p => "[BlockCondition]");
-            RegisterToString<CommandReferenceParameter>(p => "[Command]");
-            RegisterToString<RepetitionCommandParameter>(p => "[Repeat]");
-            RegisterToString<SelectorCommandParameter>(p => "[Selector]");
-            RegisterToString<ThatCommandParameter>(p => "That");
-            RegisterToString<AssignmentCommandParameter>(p => "[Action]");
-            RegisterToString<PropertyCommandParameter>(p => "Property[id=" + p.value.propertyType + "]");
-            RegisterToString<TernaryConditionSeparatorParameter>(p => ":");
-        }
-
-        Dictionary<Type, Func<CommandParameter, object>> commandParameterStrings = NewDictionary<Type, Func<CommandParameter, object>>();
-
-        void RegisterToString<T>(Func<T, object> toString) where T : CommandParameter {
-            commandParameterStrings[typeof(T)] = (p) => toString((T)p);
-        }
-
-        string CommandParameterToString(CommandParameter parameter) {
-            Func<CommandParameter, object> func;
-            if (!commandParameterStrings.TryGetValue(parameter.GetType(), out func)) {
-                func = (p) => p.Token;
-            }
-            return func(parameter).ToString();
         }
 
         String[] Words(params String[] words) => words;
@@ -381,6 +347,10 @@ namespace IngameScript {
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
             if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
             else AddWords(words, new PropertyCommandParameter(property));
+        }
+
+        void AddDirectionWords(String[] words, Direction direction) {
+            AddWords(words, new DirectionCommandParameter(direction));
         }
 
         void AddRightUniOperationWords(String[] words, UniOperand operand) {
@@ -425,17 +395,7 @@ namespace IngameScript {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
-        List<CommandParameter> ParseCommandParameters(List<Token> tokens) {
-            var parameters = NewList<CommandParameter>();
-
-            foreach (var token in tokens) {
-                var newParameters = ParseCommandParameters(token);
-                newParameters.ForEach(p => p.Token = token.original);
-                parameters.AddRange(newParameters);
-            }
-
-            return parameters;
-        }
+        List<CommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
 
         List<CommandParameter> ParseCommandParameters(Token token) {
             var commandParameters = NewList<CommandParameter>();
@@ -452,6 +412,7 @@ namespace IngameScript {
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
             }
 
+            commandParameters[0].Token = token.original;
             return commandParameters;
         }
 

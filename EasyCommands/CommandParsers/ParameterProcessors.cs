@@ -177,7 +177,7 @@ namespace IngameScript {
             var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);
             var incrementProcessor = eitherList<IncrementCommandParameter>(true);
             var variableProcessor = requiredEither<VariableCommandParameter>();
-            var propertyProcessor = requiredEither<PropertyCommandParameter>();
+            var propertyProcessor = requiredEither<PropertySupplierCommandParameter>();
             var directionProcessor = requiredEither<DirectionCommandParameter>();
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();

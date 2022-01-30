@@ -198,21 +198,20 @@ namespace IngameScript {
 
         public class WaitCommand : Command {
             public Variable waitInterval;
-            double remaininingWaitTime = -1;
+            double remainingWaitTime = -1;
             public WaitCommand(Variable variable) {
                 waitInterval = variable;
             }
 
             public override Command Clone() => new WaitCommand(waitInterval);
-            public override void Reset() { remaininingWaitTime = -1; }
+            public override void Reset() { remainingWaitTime = -1; }
             public override bool Execute() {
-                if (remaininingWaitTime < 0) {
-                    remaininingWaitTime = CastNumber(waitInterval.GetValue()) * 1000;
+                if (remainingWaitTime < 0) {
+                    remainingWaitTime = CastNumber(waitInterval.GetValue()) * 1000;
                     return false;
                 }
-                Debug("Waiting for " + remaininingWaitTime + " ms");
-                remaininingWaitTime -= PROGRAM.Runtime.TimeSinceLastRun.TotalMilliseconds;
-                return remaininingWaitTime <= 5; //if <5ms left to wait, call it.
+                remainingWaitTime -= PROGRAM.Runtime.TimeSinceLastRun.TotalMilliseconds;
+                return remainingWaitTime <= 5; //if <5ms left to wait, call it.
             }
         }
 
@@ -336,8 +335,6 @@ namespace IngameScript {
                 bool conditionMet = EvaluateCondition();
                 bool commandResult = conditionMet ? conditionMetCommand.Execute() : conditionNotMetCommand.Execute();
 
-                Debug("Condition Met: " + conditionMet);
-
                 isExecuting = !commandResult;
 
                 if (isExecuting) return false; //Keep executing subcommand
@@ -399,16 +396,12 @@ namespace IngameScript {
                     loopsLeft -= 1;
                 }
 
-                Debug("Commands left: " + currentCommands.Count);
-                Debug("Loops Left: " + loopsLeft);
-
                 while (currentCommands.Count > 0) {
                     if (currentCommands[0].Execute()) {
                         currentCommands.RemoveAt(0);
                     } else {
                         break;
                     }
-                    Debug("Command is handled, continuing to next command");
                 }
 
                 if (currentCommands != null && currentCommands.Count > 0) return false;

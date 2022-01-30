@@ -87,8 +87,6 @@ Print statements are organized by [Thread](https://spaceengineers.merlinofmines.
 public LogLevel logLevel = LogLevel.SCRIPT_ONLY;
 ```
 
-See [Debugging](https://spaceengineers.merlinofmines.com/EasyCommands/debugging "Debugging") for more information on other available logging levels.
-
 ## Wait Command
 
 Sometimes you just have to wait.  The Wait command takes an optional variable (in seconds) for how long to take.  You can also specify "ticks" instead of seconds if you want to wait an amount of ticks instead.
