@@ -783,3 +783,20 @@ bind amountToTransfer to $sourceInventories "ore" amount
 until amountToTransfer <= 0
   transfer 100 "ore" from $sourceInventories to $destinationInventories
 ```
+
+#### Transferring Custom Items
+
+Custom Items can be transferred across items similarly to other supported item types.  Just make sure to use the correct TypeId and/or SubTypeIds when transferring items.
+
+```
+#HackingChip is the SubTypeId.  TypeId is not considered
+transfer 100 "HackingChip" from $mySource cargo to $myDestination cargo
+
+#MyObjectBuilder_Component is the TypeId (effectively the group of items).
+transfer 100 "MyObjectBuilder_Component." from $mySource cargo to $myDestination cargo
+
+#MyObjectBuilder_Component is the TypeId and HackingChip is the SubTypeId.
+transfer 100 "MyObjectBuilder_Component.HackingChip" from $mySource cargo to $myDestination cargo
+```
+
+See [Items](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items") for more information on dealing with custom item types.

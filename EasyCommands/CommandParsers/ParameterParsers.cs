@@ -101,6 +101,7 @@ namespace IngameScript {
             AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
             AddPropertyWords(Words("unused", "unoccupied", "vacant", "available"), Property.USE, false);
             AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
+            AddPropertyWords(Words("clear", "wipe", "erase"), Property.COMPLETE, false);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("font"), Property.FONT);
@@ -140,6 +141,7 @@ namespace IngameScript {
             AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
             AddPropertyWords(Words("actions"), Property.ACTIONS);
+            AddPropertyWords(Words("types", "blueprints"), Property.TYPES);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));

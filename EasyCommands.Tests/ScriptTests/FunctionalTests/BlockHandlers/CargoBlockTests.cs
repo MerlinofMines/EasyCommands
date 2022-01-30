@@ -117,6 +117,70 @@ print ""Ore Amount: "" + a
         }
 
         [TestMethod]
+        public void getCargoTypes() {
+            String script = @"
+print ""Types: "" + ""mock cargo"" types
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+
+                MockInventoryItems(mockInventory, MockOre("Iron", 200), MockOre("Stone", 100), MockOre("Iron", 100));
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Types: [MyObjectBuilder_Ore.Iron,MyObjectBuilder_Ore.Stone]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetCargoCustomItemAmount() {
+            String script = @"
+assign ""a"" to ""mock cargo"" ""CustomItem"" amount
+print ""Custom Item Amount: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+
+                MockInventoryItems(mockInventory, MockOre("Iron", 200), MockOre("Stone", 100), MockConsumable("CustomItem", 400));
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Custom Item Amount: 400", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetCargoCustomItemTypeAmount() {
+            String script = @"
+assign ""a"" to ""mock cargo"" ""MyObjectBuilder_Ore."" amount
+print ""Custom Type Amount: "" + a
+";
+            using (var test = new ScriptTest(script)) {
+                var ore = MockOre("Iron", 200);
+
+                var mockContainer = new Mock<IMyCargoContainer>();
+                var mockInventory = new Mock<IMyInventory>();
+                MockInventories(mockContainer, mockInventory);
+
+                MockInventoryItems(mockInventory, MockOre("Iron", 200), MockOre("Stone", 100), MockConsumable("CustomItem", 400));
+
+                test.MockBlocksOfType("mock cargo", mockContainer);
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Custom Type Amount: 300", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void getCargoAmountFromMultipleInventoriesOnSameBlock() {
             String script = @"
 assign ""a"" to ""mock cargo"" inventories ""ore"" amount

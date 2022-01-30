@@ -104,7 +104,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public static void MockInventoryItems(Mock<IMyInventory> inventory, params MyInventoryItem[] items) {
             inventory.Setup(i => i.CurrentMass).Returns(items.Select(item => item.Amount).Aggregate((sum, val) => sum + val));
             inventory.Setup(i => i.GetItems(It.IsAny<List<MyInventoryItem>>(), It.IsAny<Func<MyInventoryItem, bool>>()))
-                .Callback(MockItems(items.ToList()));
+                .Callback<List<MyInventoryItem>, Func<MyInventoryItem, bool>>((i, filter) => i.AddRange(items.Where(item => filter == null || filter(item))));
         }
 
         public static void MockProductionQueue<T>(Mock<T> productionBlock, params MyProductionItem[] queue) where T : class, IMyProductionBlock {
@@ -115,13 +115,6 @@ namespace EasyCommands.Tests.ScriptTests {
         public static MyProductionItem MockProductionItem(String itemId, int amount = 1) {
             var item = new MyProductionItem(0, MockBlueprint(itemId), amount);
             return item;
-        }
-
-        public static Action<List<MyInventoryItem>, Func<MyInventoryItem, bool>> MockItems(List<MyInventoryItem> items) {
-            return (i, filter) => {
-                Assert.IsTrue(items.TrueForAll(item => filter.Invoke(item)));
-                i.AddRange(items);
-            };
         }
 
         public static void MockBlockDefinition<T>(Mock<T> mockBlock, String subtypeId) where T : class, IMyCubeBlock {
@@ -164,6 +157,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public static MyDefinitionId MockBlueprint(String itemId) {
             MyDefinitionId definition;
             MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", itemId, out definition);
+            definition.GetType().GetField("SubtypeId").SetValueDirect(__makeref(definition), MyStringHash.GetOrCompute(itemId));
             return definition;
         }
     }

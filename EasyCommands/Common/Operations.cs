@@ -135,7 +135,7 @@ namespace IngameScript {
             AddBiOperation<string, string>(BiOperand.MOD, (a, b) => a.Replace(b, ""));
             AddBiOperation<string, float>(BiOperand.SUBTRACT, (a, b) => b >= a.Length ? "" : a.Substring(0, (int)(a.Length - b)));
             AddBiOperation<object, string>(BiOperand.CAST, (a, b) => castMap[b](ResolvePrimitive(a)));
-            AddBiOperation<KeyedList, string>(BiOperand.JOIN, (a, b) => string.Join(CastString(ResolvePrimitive(b)), a.keyedValues.Select(v => CastString(v.GetValue()))));
+            AddBiOperation<KeyedList, string>(BiOperand.JOIN, (a, b) => string.Join(CastString(ResolvePrimitive(b)), a.keyedValues.Select(v => v.Print())));
 
             //Vector
             AddUniOperation<Vector3D>(UniOperand.SIGN, a => Vector3D.Sign(a));

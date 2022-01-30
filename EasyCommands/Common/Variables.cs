@@ -255,8 +255,7 @@ namespace IngameScript {
         }
 
         public class KeyedVariable : Variable, IComparable<KeyedVariable> {
-            public Variable Key;
-            public Variable Value;
+            public Variable Key, Value;
 
             public KeyedVariable(Variable key, Variable value) {
                 Key = key;

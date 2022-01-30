@@ -81,6 +81,12 @@ namespace EasyCommands.Tests.ScriptTests
 
             program.randomGenerator = random.Object;
 
+            //Re-initialize items using mock blueprint provider
+            program.blueprintProvider = MockEntityUtility.MockBlueprint;
+            program.itemNamesToBlueprints.Clear();
+            program.itemNamesToFilters.Clear();
+            program.InitializeItems();
+
             setScript(script);
         }
 

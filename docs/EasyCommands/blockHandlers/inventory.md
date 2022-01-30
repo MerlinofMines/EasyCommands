@@ -98,3 +98,24 @@ set oreAmount to the "Treasure Container" "ore" amount
 ```
 
 Check out [Items](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") for more information on how to specify Item Filters.
+
+## "Types" Property
+* Read-only
+* Primitive Type - List
+* Keywords: ```types```
+
+Gets a list of TypeIds & SubTypeIds for all items in the selected inventories.  This is mostly used to get custom item TypeIds and SubTypeIds so that you can get custom item inventory amounts and transfer custom items across inventories.
+
+The returned list will be a list of the TypeId and SubTypeId for all items in the given inventories, in the form ```TypeId.SubTypeId```.
+
+```
+set myItemTypes to to "My Cargo" types
+
+set customItemAmounts to []
+
+for each itemType in myItemTypes
+  customItemAmounts+=[itemType -> "My Cargo" itemType amount]
+
+print "Item Types:\n" + myItemTypes joined "\n"
+print "Item Amounts:\n" + customItemAmounts joined "\n"
+```

@@ -28,6 +28,11 @@ namespace IngameScript {
                 AddNumericHandler(Property.LEVEL, i => (float)i.CurrentMass);//Mass, in Kg
                 AddStringHandler(Property.NAME, b => GetOwner(b).CustomName, (b, v) => GetOwner(b).CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => GetOwner(b).ShowInInventory, (b, v) => GetOwner(b).ShowInInventory = v);
+                AddListHandler(Property.TYPES, b => {
+                    var inventoryItems = NewList<MyInventoryItem>();
+                    b.GetItems(inventoryItems);
+                    return NewKeyedList(inventoryItems.Select(type => type.Type.TypeId + "." + type.Type.SubtypeId).Distinct().Select(GetStaticVariable));
+                });
 
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;

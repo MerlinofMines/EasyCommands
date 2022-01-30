@@ -8,7 +8,15 @@ using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
 namespace EasyCommands.Tests.TokenizeTests {
     [TestClass]
     public class BlueprintParsingTests : ForceLocale {
-        Program program = MDKFactory.CreateProgram<Program>();        
+        Program program = MDKFactory.CreateProgram<Program>();
+
+        [TestInitialize]
+        public void testInit() {
+            program.blueprintProvider = MockBlueprint;
+            program.itemNamesToBlueprints.Clear();
+            program.itemNamesToFilters.Clear();
+            program.InitializeItems();
+        }
 
         [TestMethod]
         public void ParseAmmunition() {
@@ -83,6 +91,11 @@ namespace EasyCommands.Tests.TokenizeTests {
         public void ParseBottles() {
             Assert.AreEqual(MockBlueprint("OxygenBottle"), program.GetItemBluePrints("oxygen bottle")[0]);
             Assert.AreEqual(MockBlueprint("HydrogenBottle"), program.GetItemBluePrints("hydrogen bottle")[0]);
+        }
+
+        [TestMethod]
+        public void ParseDynamicTypes() {
+            Assert.AreEqual(MockBlueprint("MyFakeBlueprint"), program.GetItemBluePrints("MyFakeBlueprint")[0]);
         }
     }
 }

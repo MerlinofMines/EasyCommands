@@ -31,11 +31,17 @@ namespace IngameScript {
                 AddPropertyHandler(ValueProperty.DESTROY, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
-                 });
+                });
 
                 AddPropertyHandler(ValueProperty.AMOUNT, new PropertyHandler<IMyAssembler>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
+                });
+
+                AddListHandler(Property.TYPES, b => {
+                    var currentItems = NewList<MyProductionItem>();
+                    b.GetQueue(currentItems);
+                    return NewKeyedList(currentItems.Select(item => item.BlueprintId.SubtypeId + "").Distinct().Select(GetStaticVariable));
                 });
             }
 
@@ -57,7 +63,9 @@ namespace IngameScript {
             void AddQueueItem(IMyAssembler b, PropertySupplier p) {
                 float amount = GetRequestedAmount(p);
                 foreach(MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p))) {
-                    b.AddQueueItem(bp, (MyFixedPoint)amount);
+                    try { b.AddQueueItem(bp, (MyFixedPoint)amount); } catch (Exception) {
+                        throw new Exception("Unknown BlueprintId: " + bp.SubtypeId);
+                    }
                 }
             }
         }

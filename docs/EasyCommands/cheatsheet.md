@@ -78,7 +78,9 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```
 * Color - ```color, foreground```
-* Complete - ```done, ready, complete, finished, built, finish, pressurized, depressurized```
+* Complete - 
+  * ```done, ready, complete, finished, built, finish, pressurized, depressurized```
+  * (```clear, wipe, erase```)
 * Connected -
   * ```connect, connected, attach, attached, dock, docked, docking```
   * (```disconnect, disconnected, detach, detached, undock, undocked```)
@@ -115,6 +117,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Target (also Waypoint) - ```target, destination, waypoint, coords, coordinates```
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages, argument, arguments```
+* Types - ```types, blueprints```
 * Trigger - ```trigger, triggered, detect, detected, trip, tripped, deploy, deployed, shoot, shooting, shot, detonate```
 * Use - 
   * ```use, used, occupy, occupied, control, controlled```

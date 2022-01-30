@@ -20,8 +20,9 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<String, List<ItemFilter>> itemNamesToFilters = NewDictionary<string, List<ItemFilter>>();
-        Dictionary<String, MyDefinitionId> itemNamesToBlueprints = NewDictionary<string, MyDefinitionId>();
+        public Dictionary<String, List<ItemFilter>> itemNamesToFilters = NewDictionary<string, List<ItemFilter>>();
+        public Dictionary<String, MyDefinitionId> itemNamesToBlueprints = NewDictionary<string, MyDefinitionId>();
+        public Func<String, MyDefinitionId> blueprintProvider = GetBlueprint;
 
         public void InitializeItems() {
             //Ores
@@ -148,20 +149,29 @@ namespace IngameScript {
 
         void AddBlueprintItems(String[] words, String blueprintId, params ItemFilter[] filters) {
             AddItems(words, filters);
-            MyDefinitionId definition;
-            MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", blueprintId, out definition);
-            foreach (String word in words) itemNamesToBlueprints.Add(word, definition);
+            AddBluePrint(words, blueprintId);
+        }
+
+        void AddBluePrint(string[] words, string blueprintId) {
+            var blueprint = blueprintProvider(blueprintId);
+            foreach (String word in words) itemNamesToBlueprints.Add(word, blueprint);
         }
 
         void AddItems(String[] words, params ItemFilter[] filters) {
             foreach (String word in words) itemNamesToFilters.Add(word.ToLower(), filters.ToList());
         }
 
+        public static MyDefinitionId GetBlueprint(string blueprintId) {
+            MyDefinitionId definition;
+            MyDefinitionId.TryParse("MyObjectBuilder_BlueprintDefinition", blueprintId, out definition);
+            return definition;
+        }
+
         public delegate bool ItemFilter(MyInventoryItem item);
 
-        public List<ItemFilter> GetItemFilters(String itemString) => itemString.Split(',').SelectMany(i => itemNamesToFilters.GetValueOrDefault(i.Trim().ToLower(), NewList<ItemFilter>())).ToList();
-        public List<MyDefinitionId> GetItemBluePrints(String itemString) => itemString.Split(',').Where(i => itemNamesToBlueprints.ContainsKey(i)).Select(i => itemNamesToBlueprints[i]).ToList();
-
+        public List<ItemFilter> GetItemFilters(String itemString) => GetItemsFromString(itemString, itemNamesToFilters, i => NewList(DynamicItemType(i.Split('.')))).SelectMany(x => x).ToList();
+        public List<MyDefinitionId> GetItemBluePrints(String itemString) => GetItemsFromString(itemString, itemNamesToBlueprints, blueprintProvider);
+        List<T> GetItemsFromString<T>(string itemString, Dictionary<string, T> values, Func<string, T> dynamicValue) => itemString.Split(',').Select(i => values.GetValueOrDefault(i.Trim().ToLower(), dynamicValue(i))).ToList();
 
         public ItemFilter Consumable(String subType = null) => IsItemType("MyObjectBuilder_ConsumableItem", subType);
         public ItemFilter Component(String subType = null) => IsItemType("MyObjectBuilder_Component", subType);
@@ -170,7 +180,9 @@ namespace IngameScript {
         public ItemFilter Ore(String subType = null) => IsItemType("MyObjectBuilder_Ore", subType);
         public ItemFilter Tool(String subType = null) => IsItemType("MyObjectBuilder_PhysicalGunObject", subType);
         public ItemFilter ToolType(params String[] matches) => (i) => i.Type.TypeId.Equals("MyObjectBuilder_PhysicalGunObject") && matches.Any(s => i.Type.SubtypeId.Contains(s));
-        public ItemFilter IsItemType(String itemType, String subType = null) => (i) => i.Type.TypeId.Equals(itemType) && (subType == null || i.Type.SubtypeId.Equals(subType));
+        public ItemFilter IsItemType(String itemType, String subType = null) => (i) => (string.IsNullOrEmpty(itemType) || i.Type.TypeId.Equals(itemType)) && (string.IsNullOrEmpty(subType) || i.Type.SubtypeId.Equals(subType));
+
+        public ItemFilter DynamicItemType(string[] itemTypeSplit) => itemTypeSplit.Count() == 2 ? IsItemType(itemTypeSplit[0], itemTypeSplit[1]) : IsItemType("", itemTypeSplit[0]);
 
         public Func<MyInventoryItem, bool> AllItem(List<ItemFilter> filters) => b => filters.All(f => f(b));
         public Func<MyInventoryItem, bool> AnyItem(List<ItemFilter> filters) => b => filters.Any(f => f(b));
