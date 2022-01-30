@@ -62,7 +62,7 @@ namespace IngameScript {
             public KeyedList Combine(KeyedList other) {
                 var otherKeys = new HashSet<string>(other.keyedValues.Where(k => k.HasKey()).Select(k => k.GetKey()).Distinct());
                 var uniqueKeyedVariables = keyedValues.Where(k => !k.HasKey() || !otherKeys.Contains(k.GetKey()));
-                return NewKeyedList(uniqueKeyedVariables.Concat(other.GetValues()));
+                return NewKeyedList(uniqueKeyedVariables.Concat(other.keyedValues.Select(k => k.DeepCopy())));
             }
 
             public KeyedList Remove(KeyedList other) {
@@ -74,7 +74,7 @@ namespace IngameScript {
             public KeyedList Keys() => NewKeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.GetKey())));
             public KeyedList Values() => NewKeyedList(keyedValues.Select(v => v.Value));
 
-            public KeyedList DeepCopy() => NewKeyedList(keyedValues.Select(k => new KeyedVariable(k.Key, new StaticVariable(k.Value.GetValue().DeepCopy()))));
+            public KeyedList DeepCopy() => NewKeyedList(keyedValues.Select(k => k.DeepCopy()));
 
             public String Print() => "[" + string.Join(",", keyedValues.Select(k => k.Print())) + "]";
         }

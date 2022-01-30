@@ -270,6 +270,8 @@ namespace IngameScript {
 
             public String Print() => (HasKey() ? Wrap(GetKey()) + "->" : "") + Wrap(CastString(GetValue()));
 
+            public KeyedVariable DeepCopy() => new KeyedVariable(Key == null ? null : GetStaticVariable(Key.GetValue().DeepCopy().value), GetStaticVariable(Value.GetValue().DeepCopy().value));
+
             String Wrap(String value) => value.Contains(" ") ? "\"" + value + "\"" : value;
 
             public override bool Equals(Object variable) => GetKey() == ((KeyedVariable)variable).GetKey() && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);

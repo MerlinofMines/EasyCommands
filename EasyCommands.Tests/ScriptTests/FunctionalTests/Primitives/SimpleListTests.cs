@@ -593,6 +593,42 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void appendVariableToListAddsValueNotReference() {
+            String script = @"
+set myString to ""someString""
+set myMap to[]
+
+myMap+=[myString]
+set myString to ""someOtherString""
+
+print myMap
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual("[someString]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void appendKeyedVariableToListAddsValueNotReference() {
+            String script = @"
+set myString to ""someString""
+set myMap to[]
+
+myMap+=[myString -> 0]
+set myString to ""someOtherString""
+
+print myMap
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual("[someString->0]", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void AddTwoLists() {
             String script = @"
 :main
