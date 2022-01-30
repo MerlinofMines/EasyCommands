@@ -145,7 +145,7 @@ namespace IngameScript {
             //MinusProcessor
             new BranchingProcessor<MinusCommandParameter>(
                 NoValueRule(Type<MinusCommandParameter>, minus => new UniOperationCommandParameter(UniOperand.REVERSE)),
-                NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandCommandParameter(BiOperand.SUBTRACT, 2))
+                NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandCommandParameter(BiOperand.SUBTRACT, 3))
             ),
 
             //AfterUniOperationProcessor
@@ -170,6 +170,9 @@ namespace IngameScript {
             //Tier2OperationProcessor
             BiOperandProcessor(2),
 
+            //Tier3OperationProcessor
+            BiOperandProcessor(3),
+
             //VariableComparisonProcessor
             TwoValueRule(Type<ComparisonCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, left, right) => new VariableCommandParameter(new ComparisonVariable(left.value, right.value, p.value))),
@@ -190,8 +193,8 @@ namespace IngameScript {
             TwoValueRule(Type<OrCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.value, right.value))),
 
-            //Tier3OperationProcessor
-            BiOperandProcessor(3),
+            //Tier4OperationProcessor
+            BiOperandProcessor(4),
 
             //KeyedVariableProcessor
             TwoValueRule(Type<KeyedVariableCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),

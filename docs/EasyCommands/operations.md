@@ -43,9 +43,10 @@ All UniOperand Operations are evaluated before BiOperatnd Operations.
 
 Here are the tiers for BiOperand Operations:
 * Tier 0 BiOperand Operations: ```.```
-* Tier 1 BiOperand Operations: ```*, /, %, ^, split, join```
-* Tier 2 BiOperand Operations: ```+, -```
-* Tier 3 BiOperand Operations: ```.., cast```
+* Tier 1 BiOperand Operations: ```^```
+* Tier 2 BiOperand Operations: ```*, /, %, split, join```
+* Tier 3 BiOperand Operations: ```+, -```
+* Tier 4 BiOperand Operations: ```.., cast```
 
 ### Changing Order of Operations
 To change the order of operations, use parentheses ```()```.  Anything in parentheses is evaluated first.  Order of operations within the parantheses follows the same rules as outside.  You can nest parentheses to further change order of operations.
