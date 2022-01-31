@@ -43,6 +43,47 @@ set myCommand to 'turn on the "Outer Lights"'
 send myCommand to myChannel
 ```
 
+### Reading and Writing to Separate Lines
+Sometimes you may want to read, or write, the newline character in order to parse output by line, or to concatenate strings separated by lines.
+
+You can do this by specifying "\n" anywhere inside a string value, or separately.  EasyCommands will convert this to the newline character internally.
+
+```
+#All of these are equivalent
+
+print "Output Line 1\nOutput Line 2"
+
+#Blank Line
+print "\n"
+
+set myOutput to "Output Line 1"
+myOutput+= "\n" + "Output Line 2"
+print myOutput
+
+#Blank Line
+print "\n"
+
+set myOutputs to ["Output Line 1","Output Line 2"]
+print myOutputs joined "\n"
+```
+
+Similarly, you can split input text by line number using the Split operation and "\n"
+
+```
+set myInputText to "My Display" text
+
+set myOutputLines to myInputText split "\n"
+
+for each outputLine in myOutputLines
+  doSomething outputLine
+
+:doSomething outputLine
+print "Output Line: " + outputLine
+#Your code here
+```
+
+See [Operations](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") for more information about the Split and Join operations.
+
 ## Numbers
 Numbers are used for many properties that are numeric values.  Numbers are used for both integers and decimals, there is only 1 type for both.
 
@@ -74,6 +115,34 @@ set myVector to 0:1:2
 Print "X: " + myVector.x
 Print "Y: " + myVector.y
 Print "Z: " + myVector.z
+```
+
+### Creating Vectors Using Variables
+
+You can create vectors using [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") using the syntax "a:b:c" where a,b,c are the names of variables.  Note that you must use "a:b:c" format.  "a : b : c" will not work.
+
+Similar rules for setting or binding variables applies to Variable Vectors.  Setting a variable to a variable vector will set a static vector based on the values of the variables at the time it was created.  Binding a variable to a variable vector will effectively create a vector with dynamic values.
+
+Any variable you use to create a vector needs to resolve to a number.  If you specify a variable with any other Primitive type, you will get a script halting exception.
+
+```
+set xComponent to 1
+set yComponent to 2
+set zComponent to 3
+
+#Static Vector
+set myVector to xComponent:yComponent:zComponent
+
+#Dynamic Vector
+bind myDynamicVector to xComponent:yComponent:zComponent
+
+set xComponent to 4
+
+print "My Vector: " + myVector
+#1:2:3
+
+print "My Dynamic Vector: " + myDynamicVector
+#4:2:3
 ```
 
 ## Colors
