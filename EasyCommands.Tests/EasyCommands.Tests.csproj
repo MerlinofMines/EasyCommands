@@ -172,6 +172,7 @@
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\CargoBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\ConnectorBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\JumpDriveBlockTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Commands\FunctionCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\ControlCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\IterationCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\ListenCommandTests.cs" />

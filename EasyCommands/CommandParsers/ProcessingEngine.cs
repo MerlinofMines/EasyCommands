@@ -49,7 +49,7 @@ namespace IngameScript {
                         (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
-                    name => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value])),
+                    name => new FunctionDefinitionCommandParameter(() => name.value)),
                 NoValueRule(Type<AmbiguousStringCommandParameter>, b => new StringCommandParameter(b.value, false))),
 
             NoValueRule(Type<AmbiguousCommandParameter>, p => p.alternatives.Count > 0, p => p.alternatives),
@@ -107,7 +107,7 @@ namespace IngameScript {
 
             //FunctionProcessor
             OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
-                (name, function) => new FunctionDefinitionCommandParameter(PROGRAM.functions[name.value], function.value)),
+                (name, function) => new FunctionDefinitionCommandParameter(() => CastString(new AmbiguousStringVariable(name.value).GetValue()), function.value)),
 
             //PropertyProcessor
             NoValueRule(Type<PropertyCommandParameter>, p => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
@@ -290,19 +290,8 @@ namespace IngameScript {
                 (p, time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.01666f)))),
 
             //FunctionCallCommandProcessor
-            OneValueRule(Type<FunctionDefinitionCommandParameter>, rightList<VariableCommandParameter>(true),
-                (p, variables) => variables.GetValue().Count >= p.functionDefinition.parameterNames.Count,
-                (p, variables) => {
-                    List<VariableCommandParameter> parameters = variables;
-                    var inputParameters = NewDictionary<string, Variable>();
-                    var parameterCount = p.functionDefinition.parameterNames.Count;
-                    for (int i = 0; i < parameterCount; i++) {
-                        inputParameters[p.functionDefinition.parameterNames[i]] = parameters[i].value;
-                    }
-                    var results = NewList<CommandParameter>(new CommandReferenceParameter(new FunctionCommand(p.switchExecution, p.functionDefinition, inputParameters)));
-                    if (parameters.Count > parameterCount) results.AddRange(parameters.GetRange(parameterCount, parameters.Count - parameterCount));
-                    return results;
-                }),
+            OneValueRule(Type<FunctionDefinitionCommandParameter>, rightList<VariableCommandParameter>(false),
+                (p, variables) => new CommandReferenceParameter(new FunctionCommand(p.switchExecution, p.functionDefinition, variables.Select(v => v.value).ToList()))),
 
             //VariableAssignmentProcessor
             OneValueRule(Type<VariableAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),

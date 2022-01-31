@@ -59,6 +59,37 @@ goto "myFunction2"
 
 This is effectively changing what function is currently considered "active" by the program.  The current function, no matter its state of execution, is abandoned in favor of the new active program.  Furthermore, any commands to "restart", "loop", "start" will now restart the new function.  This behavior effectively enables "modes" for your program to run in where the modes are intended to be exclusive. 
 
+### Calling Functions Dynamically
+It is possible to invoke a named function using a variable specifying the name of the function to invoke by explicitly using ```call``` or ```goto```.  This provides an easy way to create modes for your program.  Make sure to pass the same number of parameters to the function you intend to invoke.
+
+```
+set global runningFunction to "attack"
+
+#Spin off a separate thread that's actually running the program
+async runProgram
+
+#Tie this to a button
+:switchMode mode
+set global runningFunction to mode
+
+#Dynamically resolve the function to call using the runningFunction variable
+:runProgram
+call runningFunction
+replay
+
+#Mode 1
+:attack
+Print "Attacking the enemy!"
+
+#Mode 2
+:flee
+Print "Fleeing!"
+```
+
+Note that since the function to call isn't known until your script is executing, you won't be told about potentially invalid function calls during parsing.  
+
+If you try to invoke a function that is not defined, or try to invoke a defined function with the wrong number of parameters, you will get a script halting exception.
+
 ## Returning from a function
 Sometimes you might want to return from a function early (meaning if some condition is met, short circuit).  You can return from a function using the ```return``` keywords.
 

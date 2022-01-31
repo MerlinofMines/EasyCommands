@@ -61,7 +61,7 @@ namespace IngameScript {
                     PROGRAM.QueueThread(thread);
                 }
                 if (command is FunctionCommand) {
-                    thread.SetName(((FunctionCommand)command).functionDefinition.functionName);
+                    thread.SetName(((FunctionCommand)command).functionName());
                 }
                 thread.threadVariables = new Dictionary<string, Variable>(PROGRAM.GetCurrentThread().threadVariables);
                 return true;
@@ -83,14 +83,14 @@ namespace IngameScript {
 
         public class FunctionCommand : Command {
             public bool switchExecution;
-            public FunctionDefinition functionDefinition;
-            public Dictionary<String, Variable> inputParameters;
+            public Supplier<string> functionName;
+            public List<Variable> inputParameters;
 
             public Command function;
 
-            public FunctionCommand(bool shouldSwitch, FunctionDefinition definition, Dictionary<string, Variable> parameters) {
+            public FunctionCommand(bool shouldSwitch, Supplier<string> name, List<Variable> parameters) {
                 switchExecution = shouldSwitch;
-                functionDefinition = definition;
+                functionName = name;
                 inputParameters = parameters;
                 function = null;
             }
@@ -98,19 +98,27 @@ namespace IngameScript {
             public override bool Execute() {
                 Thread currentThread = PROGRAM.GetCurrentThread();
                 if (function == null) {
-                    function = PROGRAM.functions[functionDefinition.functionName].function.Clone();
-                    foreach(string key in inputParameters.Keys) {
-                        currentThread.threadVariables[key] = new StaticVariable(inputParameters[key].GetValue().DeepCopy());
+                    var name = functionName();
+                    FunctionDefinition definition;
+                    if (!PROGRAM.functions.TryGetValue(name, out definition)) throw new Exception("Invalid Function Name: " + name);
+                    var parameterCount = definition.parameterNames.Count;
+                    if (inputParameters.Count != parameterCount) throw new Exception("Function " + name + " expects " + parameterCount + " parameters");
+
+                    function = definition.function.Clone();
+
+                    for (int i = 0; i < parameterCount; i++) {
+                        currentThread.threadVariables[definition.parameterNames[i]] = new StaticVariable(inputParameters[i].GetValue().DeepCopy());
+                    }
+
+                    if (switchExecution) {
+                        currentThread.Command = function;
+                        currentThread.SetName(name);
                     }
                 }
 
-                if (!switchExecution) return function.Execute();
-
-                currentThread.Command = function;
-                currentThread.SetName(functionDefinition.functionName);
-                return false;
+                return switchExecution ? false : function.Execute();
             }
-            public override Command Clone() => new FunctionCommand(switchExecution, functionDefinition, inputParameters);
+            public override Command Clone() => new FunctionCommand(switchExecution, functionName, inputParameters);
             public override void Reset() => function = null;
 
             public override Command SearchCurrentCommand(Func<Command, bool> filter) => function.SearchCurrentCommand(filter) ?? base.SearchCurrentCommand(filter);
