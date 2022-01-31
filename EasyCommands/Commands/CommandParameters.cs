@@ -173,9 +173,9 @@ namespace IngameScript {
 
         public class FunctionDefinitionCommandParameter : SimpleCommandParameter {
             public bool switchExecution;
-            public FunctionDefinition functionDefinition;
+            public Supplier<string> functionDefinition;
 
-            public FunctionDefinitionCommandParameter(FunctionDefinition definition, bool shouldSwitch = false) {
+            public FunctionDefinitionCommandParameter(Supplier<string> definition, bool shouldSwitch = false) {
                 switchExecution = shouldSwitch;
                 functionDefinition = definition;
             }

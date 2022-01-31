@@ -56,7 +56,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("goto \"listen\"");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual("listen", functionCommand.functionName());
             Assert.AreEqual(true, functionCommand.switchExecution);
         }
 
@@ -67,7 +67,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("\"listen\"");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual("listen", functionCommand.functionName());
             Assert.AreEqual(false, functionCommand.switchExecution);
         }
 
@@ -78,7 +78,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("goto 'listen'");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual("listen", functionCommand.functionName());
             Assert.AreEqual(true, functionCommand.switchExecution);
         }
 
@@ -89,10 +89,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("goto \"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual("listen", functionCommand.functionName());
             Assert.AreEqual(true, functionCommand.switchExecution);
-            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()));
-            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()));
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters[0].GetValue()));
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters[1].GetValue()));
         }
 
         [TestMethod]
@@ -102,10 +102,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("\"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
             FunctionCommand functionCommand = (FunctionCommand)command;
-            Assert.AreEqual("listen", functionCommand.functionDefinition.functionName);
+            Assert.AreEqual("listen", functionCommand.functionName());
             Assert.AreEqual(false, functionCommand.switchExecution);
-            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters["a"].GetValue()));
-            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters["b"].GetValue()));
+            Assert.AreEqual(2, CastNumber(functionCommand.inputParameters[0].GetValue()));
+            Assert.AreEqual(3, CastNumber(functionCommand.inputParameters[1].GetValue()));
         }
 
         [TestMethod]

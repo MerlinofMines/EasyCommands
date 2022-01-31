@@ -177,6 +177,7 @@
     <Compile Include="Common\Conditions.cs" />
     <Compile Include="Common\Primitives.cs" />
     <Compile Include="Common\Properties.cs" />
+    <Compile Include="Common\Utilities.cs" />
     <Compile Include="Common\Types.cs" />
     <Compile Include="Common\Variables.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
