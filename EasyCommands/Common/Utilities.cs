@@ -19,6 +19,9 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public const float RPMToRadiansPerSec = (float)Math.PI / 30f;
+        public const float RadiansPerSecToRPM = 30f / (float)Math.PI;
+
         static T Type<T>() => default(T);
 
         public delegate T Supplier<T>();

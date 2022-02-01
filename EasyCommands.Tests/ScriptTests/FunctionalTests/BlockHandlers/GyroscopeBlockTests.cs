@@ -4,6 +4,7 @@ using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
+using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -85,9 +86,9 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeRotationVector() {
             using (var test = new ScriptTest(@"Print ""Rotation: "" + the ""test gyro"" rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Pitch", 1f);
-                MockGetProperty(mockGyro, "Yaw", 2f);
-                MockGetProperty(mockGyro, "Roll", 3f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 1f);
+                mockGyro.Setup(b => b.Yaw).Returns(RPMToRadiansPerSec * 2f);
+                mockGyro.Setup(b => b.Roll).Returns(RPMToRadiansPerSec * 3f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -100,16 +101,13 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeRotationVector() {
             using (var test = new ScriptTest(@"set the ""test gyro"" rotation to 1:2:3")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockPitch = MockProperty<IMyGyro, float>(mockGyro, "Pitch");
-                var mockYaw = MockProperty<IMyGyro, float>(mockGyro, "Yaw");
-                var mockRoll = MockProperty<IMyGyro, float>(mockGyro, "Roll");
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
 
-                mockPitch.Verify(p => p.SetValue(mockGyro.Object, 1f));
-                mockYaw.Verify(p => p.SetValue(mockGyro.Object, 2f));
-                mockRoll.Verify(p => p.SetValue(mockGyro.Object, 3f));
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * 1f);
+                mockGyro.VerifySet(b => b.Yaw = RPMToRadiansPerSec * 2f);
+                mockGyro.VerifySet(b => b.Roll = RPMToRadiansPerSec * 3f);
             }
         }
 
@@ -117,7 +115,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopePitch() {
             using (var test = new ScriptTest(@"Print ""Pitch: "" + the ""test gyro"" upwards rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Pitch", 5f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -130,11 +128,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopePitch() {
             using (var test = new ScriptTest(@"set the ""test gyro"" upwards rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockPitch = MockProperty<IMyGyro, float>(mockGyro, "Pitch");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockPitch.Verify(p => p.SetValue(mockGyro.Object, 10f));
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * 10f);
             }
         }
 
@@ -142,7 +139,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeInversePitch() {
             using (var test = new ScriptTest(@"Print ""Pitch: "" + the ""test gyro"" downwards rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Pitch", 5f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -155,11 +152,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeInversePitch() {
             using (var test = new ScriptTest(@"set the ""test gyro"" downwards rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockPitch = MockProperty<IMyGyro, float>(mockGyro, "Pitch");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockPitch.Verify(p => p.SetValue(mockGyro.Object, -10f));
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * -10f);
             }
         }
 
@@ -167,7 +163,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeYaw() {
             using (var test = new ScriptTest(@"Print ""Yaw: "" + the ""test gyro"" right rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Yaw", 5f);
+                mockGyro.Setup(b => b.Yaw).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -180,11 +176,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeYaw() {
             using (var test = new ScriptTest(@"set the ""test gyro"" right rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockYaw = MockProperty<IMyGyro, float>(mockGyro, "Yaw");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockYaw.Verify(p => p.SetValue(mockGyro.Object, 10f));
+                mockGyro.VerifySet(b => b.Yaw = RPMToRadiansPerSec * 10f);
             }
         }
 
@@ -192,7 +187,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeInverseYaw() {
             using (var test = new ScriptTest(@"Print ""Yaw: "" + the ""test gyro"" left rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Yaw", 5f);
+                mockGyro.Setup(b => b.Yaw).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -205,11 +200,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeInverseYaw() {
             using (var test = new ScriptTest(@"set the ""test gyro"" left rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockYaw = MockProperty<IMyGyro, float>(mockGyro, "Yaw");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockYaw.Verify(p => p.SetValue(mockGyro.Object, -10f));
+                mockGyro.VerifySet(b => b.Yaw = RPMToRadiansPerSec * -10f);
             }
         }
 
@@ -217,7 +211,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeRoll() {
             using (var test = new ScriptTest(@"Print ""Roll: "" + the ""test gyro"" clockwise rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Roll", 5f);
+                mockGyro.Setup(b => b.Roll).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -230,11 +224,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeRoll() {
             using (var test = new ScriptTest(@"set the ""test gyro"" clockwise rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockRoll = MockProperty<IMyGyro, float>(mockGyro, "Roll");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockRoll.Verify(p => p.SetValue(mockGyro.Object, 10f));
+                mockGyro.VerifySet(b => b.Roll = RPMToRadiansPerSec * 10f);
             }
         }
 
@@ -242,7 +235,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeInverseRoll() {
             using (var test = new ScriptTest(@"Print ""Roll: "" + the ""test gyro"" counter rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                MockGetProperty(mockGyro, "Roll", 5f);
+                mockGyro.Setup(b => b.Roll).Returns(RPMToRadiansPerSec * 5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -255,11 +248,10 @@ namespace EasyCommands.Tests.ScriptTests {
         public void SetGyroscopeInverseRoll() {
             using (var test = new ScriptTest(@"set the ""test gyro"" counter rotation to 10")) {
                 var mockGyro = new Mock<IMyGyro>();
-                var mockRoll = MockProperty<IMyGyro, float>(mockGyro, "Roll");
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockRoll.Verify(p => p.SetValue(mockGyro.Object, -10f));
+                mockGyro.VerifySet(b => b.Roll = RPMToRadiansPerSec * -10f);
             }
         }
     }
