@@ -139,6 +139,7 @@ namespace IngameScript {
 
             //Vector
             AddUniOperation<Vector3D>(UniOperand.SIGN, a => Vector3D.Sign(a));
+            AddUniOperation<Vector3D>(UniOperand.ROUND, a => Vector3D.Round(a, 0));
             AddUniOperation<Vector3D>(UniOperand.REVERSE, a => -a);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.ADD, (a,b) => a + b);
             AddBiOperation<Vector3D, Vector3D>(BiOperand.SUBTRACT, (a, b) => a - b);

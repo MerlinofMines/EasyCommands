@@ -29,19 +29,19 @@ namespace IngameScript {
 
                 var overrideHandler = DirectionalTypedHandler(Direction.NONE,
                         TypeHandler(ReturnTypedHandler(Return.VECTOR,
-                            TypeHandler(VectorHandler(b => new Vector3D(GetPitch(b), GetYaw(b), GetRoll(b)), (b, v) => {
-                                SetPitch(b, (float)v.X);
-                                SetYaw(b, (float)v.Y);
-                                SetRoll(b, (float)v.Z);
+                            TypeHandler(VectorHandler(b => new Vector3D(-b.Pitch * RadiansPerSecToRPM, b.Yaw * RadiansPerSecToRPM, b.Roll * RadiansPerSecToRPM), (b, v) => {
+                                b.Pitch = RPMToRadiansPerSec * (float)-v.X;
+                                b.Yaw = RPMToRadiansPerSec * (float)v.Y;
+                                b.Roll = RPMToRadiansPerSec * (float)v.Z;
                             }), Return.VECTOR),
                             TypeHandler(BooleanHandler(b => b.GyroOverride, (b, v) => b.GyroOverride = v), Return.BOOLEAN))
                         , Direction.NONE),
-                        TypeHandler(NumericHandler(GetPitch, SetPitch, 5), Direction.UP),
-                        TypeHandler(NumericHandler(b => -GetPitch(b), (b, v) => SetPitch(b, -v), 5), Direction.DOWN),
-                        TypeHandler(NumericHandler(b => -GetYaw(b), (b, v) => SetYaw(b, -v), 5), Direction.LEFT),
-                        TypeHandler(NumericHandler(GetYaw, SetYaw, 5), Direction.RIGHT),
-                        TypeHandler(NumericHandler(GetRoll, SetRoll, 5), Direction.CLOCKWISE),
-                        TypeHandler(NumericHandler(b => -GetRoll(b), (b, v) => SetRoll(b, -v), 5), Direction.COUNTERCLOCKWISE));
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * -v, 5), Direction.UP),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * v, 5), Direction.DOWN),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * -v, 5), Direction.LEFT),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * v, 5), Direction.RIGHT),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * v, 5), Direction.CLOCKWISE),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * -v, 5), Direction.COUNTERCLOCKWISE));
 
                 AddPropertyHandler(Property.OVERRIDE, overrideHandler);
                 AddPropertyHandler(Property.ROLL_INPUT, overrideHandler);
@@ -50,14 +50,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.POWER;
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.OVERRIDE;
             }
-
-            float GetPitch(IMyGyro block) => block.GetValueFloat("Pitch");
-            float GetYaw(T block) => block.GetValueFloat("Yaw");
-            float GetRoll(T block) => block.GetValueFloat("Roll");
-
-            void SetPitch(T block, float value) => block.SetValueFloat("Pitch", value);
-            void SetYaw(T block, float value) => block.SetValueFloat("Yaw", value);
-            void SetRoll(T block, float value) => block.SetValueFloat("Roll", value);
         }
     }
 }

@@ -199,9 +199,12 @@ set myReversedList to reversed myList
 ```
 
 ### Round
-Rounds the given number to the nearest integer (half-up)
+Behavior varies based on input types.
 
 Keywords: ```round, rnd```
+
+* **(Number)**: Rounds the given number to the nearest integer (half-up)
+* **(Vector)**: Rounds each vector component to the nearest integer (half-up)
 
 ### Shuffle
 Shuffles the given list.  This does not modify the input list but rather returns a shuffled copy of the input list.

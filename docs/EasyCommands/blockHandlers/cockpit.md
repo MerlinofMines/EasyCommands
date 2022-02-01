@@ -212,7 +212,7 @@ if "My Cockpit" left input > 0
 * Takes an optional Direction attribute
 * Keywords: ```roll, rolls, rollInput, rollInputs, rotation, rotations```
 
-If a direction is not included, Returns a Vector (Down:Right:Clockwise) representing the magnitude of rotation input (values between 0 - 1) from the engineer sitting in the cockpit.
+If a direction is not included, Returns a Vector (Up:Right:Clockwise) representing the magnitude of rotation input (values between 0 - 1) from the engineer sitting in the cockpit.
 
 If a direction is included, then returns a value between 0 - 1 representing the user roll input in the specified direction.
 Specifically, this input is mapped to WASDC + Space for the 6 input directions (not including rotation).

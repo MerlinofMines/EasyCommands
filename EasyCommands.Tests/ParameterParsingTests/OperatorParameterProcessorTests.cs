@@ -144,6 +144,18 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         [TestMethod]
+        public void AssignRoundVector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand("assign a to round (5.6:0:5.4)");
+            Assert.IsTrue(command is VariableAssignmentCommand);
+            VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
+            Assert.IsTrue(assignment.variable is UniOperandVariable);
+            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ROUND, variable.operand);
+            Assert.AreEqual(new Vector3D(6f, 0f, 5f), CastVector(variable.GetValue()));
+        }
+
+        [TestMethod]
         public void AssignAbsoluteValueVector() {
             var program = MDKFactory.CreateProgram<Program>();
             var command = program.ParseCommand("assign a to abs \"1:0:0\" + 2");

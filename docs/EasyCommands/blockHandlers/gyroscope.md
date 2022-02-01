@@ -66,7 +66,7 @@ set "My Gyro" limit to 0.5
 ## "Roll" Property
 * Primitive Type: Vector / Numeric / Bool
 * Keywords: ```roll, rollInput, rotation```
-* Supports Directions (Left, Right, Up, Down, Clockwise, CounterClockwise)
+* Supports Directions (Up, Down, Left, Right, Clockwise, CounterClockwise)
 
 This is useful for automatically adjusting your orientation based on some other inputs.
 
@@ -74,7 +74,7 @@ If a direction is given, expects a Numeric and Gets/Sets the Gyro override in th
 
 If no direction is given and a boolean is given, Gets/Sets whether Gyro Overrides are enabled.
 
-If no direction is given and a vector is given, Gets/Sets the Gyro Overrides (Yaw:Pitch:Roll).
+If no direction is given and a vector is given, Gets/Sets the Gyro Overrides (Pitch:Yaw:Roll).
 
 If no direction is given and no type is given, vector is assumed.
 
