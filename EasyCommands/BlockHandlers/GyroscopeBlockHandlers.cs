@@ -29,15 +29,15 @@ namespace IngameScript {
 
                 var overrideHandler = DirectionalTypedHandler(Direction.NONE,
                         TypeHandler(ReturnTypedHandler(Return.VECTOR,
-                            TypeHandler(VectorHandler(b => new Vector3D(b.Pitch * RadiansPerSecToRPM, b.Yaw * RadiansPerSecToRPM, b.Roll * RadiansPerSecToRPM), (b, v) => {
-                                b.Pitch = RPMToRadiansPerSec * (float)v.X;
+                            TypeHandler(VectorHandler(b => new Vector3D(-b.Pitch * RadiansPerSecToRPM, b.Yaw * RadiansPerSecToRPM, b.Roll * RadiansPerSecToRPM), (b, v) => {
+                                b.Pitch = RPMToRadiansPerSec * (float)-v.X;
                                 b.Yaw = RPMToRadiansPerSec * (float)v.Y;
                                 b.Roll = RPMToRadiansPerSec * (float)v.Z;
                             }), Return.VECTOR),
                             TypeHandler(BooleanHandler(b => b.GyroOverride, (b, v) => b.GyroOverride = v), Return.BOOLEAN))
                         , Direction.NONE),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * v, 5), Direction.UP),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * -v, 5), Direction.DOWN),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * -v, 5), Direction.UP),
+                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * v, 5), Direction.DOWN),
                         TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * -v, 5), Direction.LEFT),
                         TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * v, 5), Direction.RIGHT),
                         TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * v, 5), Direction.CLOCKWISE),
