@@ -86,7 +86,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeRotationVector() {
             using (var test = new ScriptTest(@"Print ""Rotation: "" + the ""test gyro"" rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 1f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * -1f);
                 mockGyro.Setup(b => b.Yaw).Returns(RPMToRadiansPerSec * 2f);
                 mockGyro.Setup(b => b.Roll).Returns(RPMToRadiansPerSec * 3f);
                 test.MockBlocksOfType("test gyro", mockGyro);
@@ -105,7 +105,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunUntilDone();
 
-                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * 1f);
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * -1f);
                 mockGyro.VerifySet(b => b.Yaw = RPMToRadiansPerSec * 2f);
                 mockGyro.VerifySet(b => b.Roll = RPMToRadiansPerSec * 3f);
             }
@@ -115,7 +115,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopePitch() {
             using (var test = new ScriptTest(@"Print ""Pitch: "" + the ""test gyro"" upwards rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 5f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * -5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -131,7 +131,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * 10f);
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * -10f);
             }
         }
 
@@ -139,7 +139,7 @@ namespace EasyCommands.Tests.ScriptTests {
         public void GetGyroscopeInversePitch() {
             using (var test = new ScriptTest(@"Print ""Pitch: "" + the ""test gyro"" downwards rotation")) {
                 var mockGyro = new Mock<IMyGyro>();
-                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * 5f);
+                mockGyro.Setup(b => b.Pitch).Returns(RPMToRadiansPerSec * -5f);
                 test.MockBlocksOfType("test gyro", mockGyro);
 
                 test.RunUntilDone();
@@ -155,7 +155,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.MockBlocksOfType("test gyro", mockGyro);
                 test.RunUntilDone();
 
-                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * -10f);
+                mockGyro.VerifySet(b => b.Pitch = RPMToRadiansPerSec * 10f);
             }
         }
 
