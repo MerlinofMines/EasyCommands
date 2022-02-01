@@ -117,3 +117,19 @@ set "My Piston" upper limit to 6
 #Set the lower limit
 set "My Piston" lower limit to 4
 ```
+
+## "Attached" Property
+* Primitive Type: Bool
+* Keywords: ```attached, connected```
+* Inverse Keywords: ```detached, disconnected```
+
+Get/Set true wether there is a piston head attached to the piston
+Attaching a piston head that is not oriented correctly might invoke the almighty Clang.
+
+```
+if "My Piston" is detached
+  Print "Where is my head?"
+
+detach "My Piston"
+attach "My Piston"
+```

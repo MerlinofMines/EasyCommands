@@ -119,6 +119,30 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void AttachTheWheel() {
+            using (ScriptTest test = new ScriptTest(@"attach the ""test wheel""")) {
+                var mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.Verify(b => b.Attach());
+            }
+        }
+
+        [TestMethod]
+        public void DetachTheWheel() {
+            using (ScriptTest test = new ScriptTest(@"detach the ""test wheel""")) {
+                var mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.Verify(b => b.Detach());
+            }
+        }
+
+        [TestMethod]
         public void GetTheWheelLimit() {
             using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" limit")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
