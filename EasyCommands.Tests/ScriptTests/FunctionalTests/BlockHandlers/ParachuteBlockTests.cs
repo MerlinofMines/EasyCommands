@@ -140,11 +140,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Parachute Gravity: "" + the ""test parachute"" gravity")) {
                 Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
                 test.MockBlocksOfType("test parachute", mockParachute);
-                mockParachute.Setup(b => b.GetTotalGravity()).Returns(new Vector3D(3, 0, 0));
+                mockParachute.Setup(b => b.GetTotalGravity()).Returns(new Vector3D(1, 2, 3));
 
                 test.RunUntilDone();
 
-                Assert.IsTrue(test.Logger.Contains("Parachute Gravity: 3"));
+                Assert.IsTrue(test.Logger.Contains("Parachute Gravity: 1:2:3"));
             }
         }
 

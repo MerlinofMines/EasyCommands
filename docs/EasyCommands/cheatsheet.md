@@ -75,6 +75,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 ## Properties (Inverse in Parentheses, if present)
 * Actions - ```actions```
 * Angle - ```angle, angles```
+* Artificial Gravity - ```artificialGravity, artificialGravities```
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```
 * Color - ```color, foreground```
@@ -99,6 +100,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Media List - ```sounds, songs, images, tracks```
 * Name - ```name, label```
 * Names - ```names, labels```
+* Natural Gravity - ```naturalGravity, naturalGravities, planetGravity, planetGravities
 * Offset (also Padding)- ```offset, padding```
 * Open - ```open, opened``` ```(close, closed, shut)```
 * Override - ```override, overrides, overridden, dampener, dampeners```

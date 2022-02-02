@@ -134,6 +134,8 @@ namespace IngameScript {
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
+            AddPropertyWords(Words("naturalgravity", "naturalgravities", "planetgravity", "planetgravities"), Property.NATURAL_GRAVITY);
+            AddPropertyWords(Words("artificialgravity", "artificialgravities"), Property.ARTIFICIAL_GRAVITY);
             AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
             AddPropertyWords(Words("name", "label"), Property.NAME);
             AddPropertyWords(Words("names", "labels"), Property.NAMES);

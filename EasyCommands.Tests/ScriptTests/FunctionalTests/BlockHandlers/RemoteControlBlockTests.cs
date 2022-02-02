@@ -183,7 +183,7 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void GetTheCockpitGravity() {
+        public void GetTheRemoteControlGravity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test remote control"" gravity")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
@@ -192,6 +192,32 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 Assert.AreEqual("Gravity: 1:2:3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheRemoteControlNaturalGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Natural Gravity: "" + the ""test remote control"" naturalGravity")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                mockRemoteControl.Setup(b => b.GetNaturalGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Natural Gravity: 1:2:3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheRemoteControlArtificialGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Artificial Gravity: "" + the ""test remote control"" artificialGravity")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                mockRemoteControl.Setup(b => b.GetArtificialGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Artificial Gravity: 1:2:3", test.Logger[0]);
             }
         }
 

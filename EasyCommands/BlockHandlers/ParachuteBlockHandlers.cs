@@ -28,7 +28,9 @@ namespace IngameScript {
                 AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
                 AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
                 AddNumericHandler(Property.VELOCITY, b => (float)b.GetVelocity().Length());
-                AddNumericHandler(Property.STRENGTH, b => (float)b.GetTotalGravity().Length());
+                AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
+                AddVectorHandler(Property.NATURAL_GRAVITY, b => b.GetNaturalGravity());
+                AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());
                 AddNumericHandler(Property.LEVEL, b => {
                     Vector3D? closestPoint;
                     return (float)(b.TryGetClosestPoint(out closestPoint) ? closestPoint.Value.Length() : -1);

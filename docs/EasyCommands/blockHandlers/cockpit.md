@@ -118,7 +118,7 @@ unlock "My Cockpit"
 ## "Gravity" Property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```gravity, strength, force```
+* Keywords: ```gravity, gravities, strength, force```
 
 Gets the current Total Gravity force on the ship as a Vector, in World Coordinates.  Note that this includes planet AND artificial gravity combined.
 
@@ -127,6 +127,38 @@ Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/
 ```
 Print "Gravity: " + "My Cockpit" gravity
 Print "Gravity Strength: " + abs "My Cockpit" gravity
+```
+
+## "NaturalGravity" Property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```naturalGravity, naturalGravities, planetGravity, planetGravities```
+
+Gets the current Natural (i.e., Planet's) Gravity force on the ship as a Vector, in World Coordinates. 
+
+Returns 0:0:0 if not within a planet's gravity well.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Natural Gravity Strength.
+
+```
+Print "Natural Gravity: " + "My Cockpit" naturalGravity
+Print "Natural Gravity Strength: " + abs "My Cockpit" naturalGravity
+```
+
+## "ArtificialGravity" Property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```artificialGravity, artificialGravities```
+
+Gets the current Artificial Gravity force on the ship as a Vector, in World Coordinates.
+
+Returns 0:0:0 if no artifical gravity is currently active.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Artificial Gravity Strength.
+
+```
+Print "Artificial Gravity: " + "My Cockpit" artificialGravity
+Print "Artificial Gravity Strength: " + abs "My Cockpit" artificialGravity
 ```
 
 ## "Weight" Property
