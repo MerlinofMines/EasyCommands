@@ -421,7 +421,7 @@ decrease the ""piston"" lower limit by 2
                 mockPiston.VerifySet(b => b.Velocity = 3);
             }
         }
- 
+
         [TestMethod]
         public void decreaseThePistonVelocityByAmount() {
             using (ScriptTest test = new ScriptTest(@"decrease the ""test piston"" velocity by 2")) {
@@ -469,6 +469,42 @@ decrease the ""piston"" lower limit by 2
                 test.RunUntilDone();
 
                 mockPiston.VerifySet(b => b.Velocity = -1);
+            }
+        }
+
+        [TestMethod]
+        public void IsThePistonAttached() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Piston Is Attached: "" + the ""test piston"" is attached")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston);
+                mockPiston.Setup(b => b.IsAttached).Returns(true);
+                test.RunUntilDone();
+
+                Assert.AreEqual("Piston Is Attached: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void AttachThePiston() {
+            using (ScriptTest test = new ScriptTest(@"attach the ""test piston""")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston);
+
+                test.RunUntilDone();
+
+                mockPiston.Verify(b => b.Attach());
+            }
+        }
+
+        [TestMethod]
+        public void DetachThePiston() {
+            using (ScriptTest test = new ScriptTest(@"detach the ""test piston""")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston);
+
+                test.RunUntilDone();
+
+                mockPiston.Verify(b => b.Detach());
             }
         }
     }

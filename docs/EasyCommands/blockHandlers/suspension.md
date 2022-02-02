@@ -163,9 +163,13 @@ set "My Wheel" ratio to 50
 * Keywords: ```attached, connected```
 * Inverse Keywords: ```detached, disconnected```
 
-Returns true if there is a wheel attached to the suspension.
+Get/Set true wether there is a wheel attached to the suspension.
+Attaching a wheel that is not placed right might invoke the almighty Clang.
 
 ```
 if "My Wheel" is detached
   Print "Something stole my Wheel!"
+
+detach "My Wheel"
+attach "My Wheel"
 ```
