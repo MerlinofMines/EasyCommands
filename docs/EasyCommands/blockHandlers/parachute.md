@@ -136,11 +136,46 @@ Print "Descent Speed: " + "My Parachute" speed
 
 ## "Gravity" Property
 * Read-only
-* Primitive Type: Numeric
-* Keywords: ```gravity, gravities, strength, strengths, force, forces```
+* Primitive Type: Vector
+* Keywords: ```gravity, gravities, strength, force```
 
-Returns the current gravity strength, in m/s.  Useful for calculating when you need to open your parachute based on your heigh, velocity, and force of gravity.
+Gets the current Total Gravity force on the parachute as a Vector, in World Coordinates.  Note that this includes planet AND artificial gravity combined.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Gravity Strength.
 
 ```
-Print "Gravity Strength: " + "My Parachute" gravity
+Print "Gravity: " + "My Parachute" gravity
+Print "Gravity Strength: " + abs "My Parachute" gravity
+```
+
+## "NaturalGravity" Property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```naturalGravity, naturalGravities, planetGravity, planetGravities```
+
+Gets the current Natural (i.e., Planet's) Gravity force on the parachute as a Vector, in World Coordinates. 
+
+Returns 0:0:0 if not within a planet's gravity well.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Natural Gravity Strength.
+
+```
+Print "Natural Gravity: " + "My Parachute" naturalGravity
+Print "Natural Gravity Strength: " + abs "My Parachute" naturalGravity
+```
+
+## "ArtificialGravity" Property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```artificialGravity, artificialGravities```
+
+Gets the current Artificial Gravity force on the parachute as a Vector, in World Coordinates.
+
+Returns 0:0:0 if no artifical gravity is currently active.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Artificial Gravity Strength.
+
+```
+Print "Artificial Gravity: " + "My Parachute" artificialGravity
+Print "Artificial Gravity Strength: " + abs "My Parachute" artificialGravity
 ```
