@@ -106,14 +106,14 @@ run "My Remote Control"
 ```
 
 ## "Velocity" Property
-* Primitive Type: Numeric
+* Primitive Type: Numeric/Vector
 * Takes an optional direction attribute (Read-only)
 * Keywords: ```velocity, velocities, speed, speeds, rate, rates, pace, paces```
 
 This property is the same as "Velocity" for the [Cockpit Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/cockpit "Cockpit Handler"), but also allows you to set it
 to a numeric value, which effectively sets the speed limit for the Auto Pilot.
 
-Directions are not supported when specifying the velocity.
+Directions are not supported when setting the velocity.
 
 ```
 Print "Speed: " + "My Remote Control" speed

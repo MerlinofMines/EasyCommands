@@ -269,11 +269,24 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Velocity: "" + the ""test cockpit"" velocity")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
-                mockCockpit.Setup(b => b.GetShipSpeed()).Returns(100);
+                MockShipVelocities(mockCockpit, new Vector3D(2, 3, 6), Vector3D.Zero);
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Velocity: 100", test.Logger[0]);
+                Assert.AreEqual("Velocity: 2:3:6", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitVelocityNumeric() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Velocity is 7: "" + the ""test cockpit"" velocity is 7")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                MockShipVelocities(mockCockpit, new Vector3D(2, 3, 6), Vector3D.Zero);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Velocity is 7: True", test.Logger[0]);
             }
         }
 

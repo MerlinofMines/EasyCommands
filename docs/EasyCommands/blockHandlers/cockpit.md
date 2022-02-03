@@ -218,13 +218,13 @@ Print "Oxygen Capacity: " + "My Cockpit" capacity
 
 ## "Velocity" Property
 * Read-only
-* Primitive Type: Numeric
+* Primitive Type: Numeric/Vector
 * Takes an optional direction attribute
 * Keywords: ```velocity, velocities, speed, speeds, rate, rates, pace, paces```
 
-Returns the current velocity of the ship, in m/s.  If no direction is specified, returns the magnitude of the ship's velocity.
+Returns the current velocity of the ship, in m/s.  If no direction is specified, returns the ship's velocity vector directly, in world coordinates.
 
-If a direction is included, then returns the velocity of the ship with respect to the given direction, with respect to the cockpit's orientation.
+If a direction is included, then returns the magnitude of the ship's velocity in the given direction, with respect to the cockpit's orientation.
 
 Supported Directions:
 * Up, Down, Left, Right, Forward, Backward

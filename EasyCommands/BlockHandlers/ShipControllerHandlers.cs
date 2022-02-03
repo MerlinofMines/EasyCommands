@@ -73,7 +73,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.WEIGHT, b => b.CalculateShipMass().TotalMass);
                 AddBooleanHandler(Property.USE, b => b.IsUnderControl);
                 AddDirectionHandlers(Property.VELOCITY, Direction.NONE,
-                    TypeHandler(NumericHandler(b => (float)b.GetShipSpeed(), (b,v) => (b as IMyRemoteControl).SpeedLimit = v), Direction.NONE),
+                    TypeHandler(ReturnTypedHandler(Return.VECTOR, 
+                        TypeHandler(VectorHandler(b => VelocityVector(b)), Return.VECTOR),
+                        TypeHandler(NumericHandler(b => (float)VelocityVector(b).Length(), (b, v) => (b as IMyRemoteControl).SpeedLimit = v), Return.NUMERIC)), Direction.NONE),
                     TypeHandler(NumericHandler(b => (float)VelocityVector(b).Y), Direction.UP),
                     TypeHandler(NumericHandler(b => (float)-VelocityVector(b).Y), Direction.DOWN),
                     TypeHandler(NumericHandler(b => (float)-VelocityVector(b).X), Direction.LEFT),
