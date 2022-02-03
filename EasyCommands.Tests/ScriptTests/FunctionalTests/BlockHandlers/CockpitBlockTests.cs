@@ -170,6 +170,62 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheCockpitHeight() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Cockpit Height: "" + the ""test cockpit"" height")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                double height = 100;
+                mockCockpit.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Surface, out height)).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Cockpit Height: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitHeightWhenNotInGravityWell() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Cockpit Height: "" + the ""test cockpit"" height")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                double height = 100;
+                mockCockpit.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Surface, out height)).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Cockpit Height: -1"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitElevation() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Cockpit Elevation: "" + the ""test cockpit"" elevation")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                double height = 100;
+                mockCockpit.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Sealevel, out height)).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Cockpit Elevation: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheCockpitElevationWhenNotInGravityWell() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Cockpit Elevation: "" + the ""test cockpit"" elevation")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                double height = 100;
+                mockCockpit.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Sealevel, out height)).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Cockpit Elevation: -1"));
+            }
+        }
+
+        [TestMethod]
         public void GetTheCockpitGravity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test cockpit"" gravity")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();

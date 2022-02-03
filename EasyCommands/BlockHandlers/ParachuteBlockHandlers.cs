@@ -33,7 +33,7 @@ namespace IngameScript {
                 AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());
                 AddNumericHandler(Property.LEVEL, b => {
                     Vector3D? closestPoint;
-                    return (float)(b.TryGetClosestPoint(out closestPoint) ? closestPoint.Value.Length() : -1);
+                    return (float)(b.TryGetClosestPoint(out closestPoint) ? (closestPoint.Value - b.GetPosition()).Length() : -1);
                 });
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);

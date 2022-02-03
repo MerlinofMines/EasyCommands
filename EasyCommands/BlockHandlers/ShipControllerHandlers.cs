@@ -67,7 +67,10 @@ namespace IngameScript {
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
                 AddVectorHandler(Property.NATURAL_GRAVITY, b => b.GetNaturalGravity());
                 AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());
-                AddNumericHandler(Property.LEVEL, b => b.CalculateShipMass().TotalMass);
+                AddNumericHandler(Property.WEIGHT, b => b.CalculateShipMass().TotalMass);
+                AddNumericHandler(Property.LEVEL, b => GetPlanetElevation(b, MyPlanetElevation.Surface));
+                AddNumericHandler(Property.ALTITUDE, b => GetPlanetElevation(b, MyPlanetElevation.Sealevel));
+                AddNumericHandler(Property.WEIGHT, b => b.CalculateShipMass().TotalMass);
                 AddBooleanHandler(Property.USE, b => b.IsUnderControl);
                 AddDirectionHandlers(Property.VELOCITY, Direction.NONE,
                     TypeHandler(NumericHandler(b => (float)b.GetShipSpeed(), (b,v) => (b as IMyRemoteControl).SpeedLimit = v), Direction.NONE),
@@ -99,6 +102,11 @@ namespace IngameScript {
             }
 
             Vector3D VelocityVector(T block) => Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));
+
+            float GetPlanetElevation(T block, MyPlanetElevation type) {
+                double height;
+                return (float)(block.TryGetPlanetElevation(type, out height) ? height : -1);
+            }
         }
     }
 }
