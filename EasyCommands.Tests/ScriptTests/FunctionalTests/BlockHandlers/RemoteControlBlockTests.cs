@@ -436,10 +436,23 @@ set the ""test remote control"" waypoints to myWaypoints")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
                 mockRemoteControl.Setup(b => b.GetShipSpeed()).Returns(100);
+                MockShipVelocities(mockRemoteControl, new Vector3D(2, 3, 6), Vector3D.Zero);
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Velocity: 100", test.Logger[0]);
+                Assert.AreEqual("Velocity: 2:3:6", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheRemoteControlVelocity() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test remote control"" speed to 50")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+
+                test.RunUntilDone();
+
+                mockRemoteControl.VerifySet(b => b.SpeedLimit = 50f);
             }
         }
 

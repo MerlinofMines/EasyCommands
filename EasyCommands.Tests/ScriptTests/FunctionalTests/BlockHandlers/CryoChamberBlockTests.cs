@@ -187,11 +187,11 @@ namespace EasyCommands.Tests.ScriptTests {
             using (ScriptTest test = new ScriptTest(@"Print ""Velocity: "" + the ""test cryo chamber"" velocity")) {
                 Mock<IMyCryoChamber> mockCryoChamber = new Mock<IMyCryoChamber>();
                 test.MockBlocksOfType("test cryo chamber", mockCryoChamber);
-                mockCryoChamber.Setup(b => b.GetShipSpeed()).Returns(100);
+                MockShipVelocities(mockCryoChamber, new Vector3D(2, 3, 6), Vector3D.Zero);
 
                 test.RunUntilDone();
 
-                Assert.AreEqual("Velocity: 100", test.Logger[0]);
+                Assert.AreEqual("Velocity: 2:3:6", test.Logger[0]);
             }
         }
 

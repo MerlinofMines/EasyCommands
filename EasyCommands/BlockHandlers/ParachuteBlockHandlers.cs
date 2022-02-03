@@ -27,7 +27,7 @@ namespace IngameScript {
                 AddPropertyHandler(Property.AUTO, TerminalBlockPropertyHandler("AutoDeploy", true));
                 AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
                 AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
-                AddNumericHandler(Property.VELOCITY, b => (float)b.GetVelocity().Length());
+                AddVectorHandler(Property.VELOCITY, b => b.GetVelocity());
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
                 AddVectorHandler(Property.NATURAL_GRAVITY, b => b.GetNaturalGravity());
                 AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());

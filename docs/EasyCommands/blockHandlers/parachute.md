@@ -125,13 +125,16 @@ Print "Open Ratio: " + "My Parachute" ratio
 
 ## "Velocity" Property
 * Read-only
-* Primitive Type: Numeric
+* Primitive Type: Vector
 * Keywords: ```velocity, velocities, speed, speeds, rate, rates```
 
-Returns the speed at which the parachute is travelling, in m/s.  Useful if you're approaching the ground in a hurry and want to set the auto deployment height appropriately.
+Returns the velocity vector, in world coordinates, at which the parachute is travelling, in m/s.  Useful if you're approaching the ground in a hurry and want to set the auto deployment height appropriately.
+
+Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the parachute's current speed.
 
 ```
-Print "Descent Speed: " + "My Parachute" speed
+Print "Descent Velocity: " + "My Parachute" velocity
+Print "Descent Speed: " + abs "My Parachute" velocity
 ```
 
 ## "Gravity" Property
