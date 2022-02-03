@@ -115,6 +115,28 @@ turn off the "Rover Cockpit" handbrake
 unlock "My Cockpit"
 ```
 
+## "Height" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```height, heights, level, levels```
+
+Returns the parachute's current height above the ground, in meters.  If not in a gravity well, will return -1.
+
+```
+Print "Cockpit Height: " + "My Cockpit" height
+```
+
+## "Altitude" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```altitude, altitudes, elevation, elevations```
+
+Returns the parachute's current elevation above sea level, in meters.  If not in a gravity well, will return -1.
+
+```
+Print "Cockpit Altitude: " + "My Cockpit" altitude
+```
+
 ## "Gravity" Property
 * Read-only
 * Primitive Type: Vector

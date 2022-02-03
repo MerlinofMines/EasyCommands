@@ -154,11 +154,12 @@ namespace EasyCommands.Tests.ScriptTests {
                 Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
                 test.MockBlocksOfType("test parachute", mockParachute);
                 Vector3D? expectedVector = new Vector3D(1000, 0, 0);
+                mockParachute.Setup(b => b.GetPosition()).Returns(new Vector3D(900, 0, 0));
                 mockParachute.Setup(b => b.TryGetClosestPoint(out expectedVector)).Returns(true);
 
                 test.RunUntilDone();
 
-                Assert.IsTrue(test.Logger.Contains("Parachute Height: 1000"));
+                Assert.IsTrue(test.Logger.Contains("Parachute Height: 100"));
             }
         }
     }

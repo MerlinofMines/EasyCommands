@@ -183,6 +183,62 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheRemoteControlHeight() {
+            using (ScriptTest test = new ScriptTest(@"Print ""RemoteControl Height: "" + the ""test remote control"" height")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                double height = 100;
+                mockRemoteControl.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Surface, out height)).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("RemoteControl Height: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheRemoteControlHeightWhenNotInGravityWell() {
+            using (ScriptTest test = new ScriptTest(@"Print ""RemoteControl Height: "" + the ""test remote control"" height")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                double height = 100;
+                mockRemoteControl.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Surface, out height)).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("RemoteControl Height: -1"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheRemoteControlElevation() {
+            using (ScriptTest test = new ScriptTest(@"Print ""RemoteControl Elevation: "" + the ""test remote control"" elevation")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                double height = 100;
+                mockRemoteControl.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Sealevel, out height)).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("RemoteControl Elevation: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheRemoteControlElevationWhenNotInGravityWell() {
+            using (ScriptTest test = new ScriptTest(@"Print ""RemoteControl Elevation: "" + the ""test remote control"" elevation")) {
+                Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
+                test.MockBlocksOfType("test remote control", mockRemoteControl);
+                double height = 100;
+                mockRemoteControl.Setup(b => b.TryGetPlanetElevation(MyPlanetElevation.Sealevel, out height)).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("RemoteControl Elevation: -1"));
+            }
+        }
+
+        [TestMethod]
         public void GetTheRemoteControlGravity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Gravity: "" + the ""test remote control"" gravity")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();

@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddNumericHandler(Property.RATIO, i => (float)(i.CurrentVolume.RawValue / (double)i.MaxVolume.RawValue));
                 AddNumericHandler(Property.RANGE, i => (float)i.MaxVolume * 1000); //Volumes are returned in kL, convert to L
                 AddNumericHandler(Property.VOLUME, i => (float)i.CurrentVolume * 1000); //Volumes are returned in kL, convert to L
-                AddNumericHandler(Property.LEVEL, i => (float)i.CurrentMass);//Mass, in Kg
+                AddNumericHandler(Property.WEIGHT, i => (float)i.CurrentMass);//Mass, in Kg
                 AddStringHandler(Property.NAME, b => GetOwner(b).CustomName, (b, v) => GetOwner(b).CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => GetOwner(b).ShowInInventory, (b, v) => GetOwner(b).ShowInInventory = v);
                 AddListHandler(Property.TYPES, b => {

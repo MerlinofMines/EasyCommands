@@ -74,6 +74,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 
 ## Properties (Inverse in Parentheses, if present)
 * Actions - ```actions```
+* Altitude - ```altitude, altitudes, elevation, elevations```
 * Angle - ```angle, angles```
 * Artificial Gravity - ```artificialGravity, artificialGravities```
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```

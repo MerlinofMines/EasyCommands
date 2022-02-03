@@ -90,7 +90,7 @@ namespace IngameScript {
             AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
 
             //Property Words
-            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale"), Words("weight", "mass")), Property.LEVEL);
+            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
@@ -144,6 +144,8 @@ namespace IngameScript {
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
             AddPropertyWords(Words("actions"), Property.ACTIONS);
             AddPropertyWords(Words("types", "blueprints"), Property.TYPES);
+            AddPropertyWords(PluralWords("altitude", "elevation"), Property.ALTITUDE);
+            AddPropertyWords(Words("weight", "mass"), Property.WEIGHT);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));

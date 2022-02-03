@@ -109,7 +109,7 @@ set "My Parachute" distance to 500
 Returns the parachute's current height above the ground, in meters.  If not in a gravity well, will return -1.
 
 ```
-Print "Parachute height: " + "My Parachute" height
+Print "Parachute Height: " + "My Parachute" height
 ```
 
 ## "Ratio" Property
