@@ -65,6 +65,11 @@ namespace IngameScript {
             AddAmmo(Words("pistol ammo"), "SemiAutoPistolMagazine");
             AddAmmo(Words("rapid pistol ammo"), "FullAutoPistolMagazine");
             AddAmmo(Words("elite pistol ammo"), "ElitePistolMagazine");
+            AddAmmo(Words("autocannon ammo"), "AutocannonClip");
+            AddAmmo(Words("artillery ammo"), "LargeCalibreAmmo");
+            AddAmmo(Words("cannon ammo"), "MediumCalibreAmmo");
+            AddAmmo(Words("large railgun ammo"), "LargeRailgunAmmo");
+            AddAmmo(Words("small railgun ammo"), "SmallRailgunAmmo");
 
             //Components
             AddItems(Words("components"), Component());

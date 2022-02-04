@@ -80,6 +80,11 @@ namespace EasyCommands.Tests.TokenizeTests {
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("pistol ammo")).Invoke(MockAmmo("SemiAutoPistolMagazine")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("rapid pistol ammo")).Invoke(MockAmmo("FullAutoPistolMagazine")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("elite pistol ammo")).Invoke(MockAmmo("ElitePistolMagazine")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("autocannon ammo")).Invoke(MockAmmo("AutocannonClip")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("artillery ammo")).Invoke(MockAmmo("LargeCalibreAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("cannon ammo")).Invoke(MockAmmo("MediumCalibreAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("large railgun ammo")).Invoke(MockAmmo("LargeRailgunAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("small railgun ammo")).Invoke(MockAmmo("SmallRailgunAmmo")));
 
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("Missile200mm")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("NATO_25x184mm")));
@@ -91,6 +96,11 @@ namespace EasyCommands.Tests.TokenizeTests {
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("SemiAutoPistolMagazine")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("FullAutoPistolMagazine")));
             Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("ElitePistolMagazine")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("AutocannonClip")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("LargeCalibreAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("MediumCalibreAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("LargeRailgunAmmo")));
+            Assert.IsTrue(program.AnyItem(program.GetItemFilters("ammo")).Invoke(MockAmmo("SmallRailgunAmmo")));
         }
 
         [TestMethod]
