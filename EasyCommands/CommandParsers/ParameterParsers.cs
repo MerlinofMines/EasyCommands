@@ -314,7 +314,7 @@ namespace IngameScript {
             AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
             AddBlockWords(Words("thruster"), Block.THRUSTER);
             AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);
-            AddBlockWords(Words("gun", "railgun", "rocket", "missile", "launcher"), Block.GUN);
+            AddBlockWords(Words("gun", "railgun", "cannon", "autocannon", "rocket", "missile", "launcher"), Block.GUN);
             AddBlockWords(Words("turret"), Block.TURRET);
             AddBlockWords(Words("generator"), Block.GENERATOR);
             AddBlockWords(Words("tank"), Block.TANK);

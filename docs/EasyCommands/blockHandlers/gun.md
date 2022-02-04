@@ -3,8 +3,8 @@ This Block Handler can be used to control all block weapons, including gatling g
 
 There is also a separate [Turret Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Block Handler") which has additional properties for turrets in addition to the below properties.
 
-* Block Type Keywords: ```gun, railgun, rocket, missile, launcher```
-* Block Type Group Keywords: ```guns, railguns, rockets, missiles, launchers```
+* Block Type Keywords: ```gun, railgun, cannon, autocannon, rocket, missile, launcher```
+* Block Type Group Keywords: ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
 
 Default Primitive Properties:
 * Boolean - Enabled

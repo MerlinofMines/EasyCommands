@@ -47,11 +47,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void FireTheGuns() {
-            String script = @"
-tell the ""guns"" to fire
-";
-
-            using (ScriptTest test = new ScriptTest(script)) {
+            using (ScriptTest test = new ScriptTest(@"tell the ""guns"" to fire")) {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("guns", mockGun);
 
@@ -65,13 +61,37 @@ tell the ""guns"" to fire
 
         [TestMethod]
         public void FireTheRailGuns() {
-            String script = @"
-tell the ""railguns"" to fire
-";
-
-            using (ScriptTest test = new ScriptTest(script)) {
+            using (ScriptTest test = new ScriptTest(@"tell the ""railguns"" to fire")) {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("railguns", mockGun);
+
+                var turretFire = MockAction(mockGun, "Shoot_On");
+
+                test.RunUntilDone();
+
+                turretFire.Verify(b => b.Apply(mockGun.Object));
+            }
+        }
+
+        [TestMethod]
+        public void FireTheCannons() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""cannons"" to fire")) {
+                var mockGun = new Mock<IMyUserControllableGun>();
+                test.MockBlocksInGroup("cannons", mockGun);
+
+                var turretFire = MockAction(mockGun, "Shoot_On");
+
+                test.RunUntilDone();
+
+                turretFire.Verify(b => b.Apply(mockGun.Object));
+            }
+        }
+
+        [TestMethod]
+        public void FireTheAutoCannons() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""autocannons"" to fire")) {
+                var mockGun = new Mock<IMyUserControllableGun>();
+                test.MockBlocksInGroup("autocannons", mockGun);
 
                 var turretFire = MockAction(mockGun, "Shoot_On");
 

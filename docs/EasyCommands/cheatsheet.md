@@ -38,7 +38,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Gravity Generator - ```gravitygenerator```, ```gravitygenerators```
 * Gravity Sphere Generator - ```gravitysphere```, ```gravityspheres```
 * Grinder - ```grinder```, ```grinders```
-* Gun - ```gun, railgun, rocket, missile, launcher```, ```guns, railguns, rockets, missiles, launchers```
+* Gun - ```gun, railgun, cannon, autocannon, rocket, missile, launcher```, ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
 * Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
 * Hinge - ```hinge```, ```hinges```
 * Hydrogen Engine - ```engine```, ```engines```
