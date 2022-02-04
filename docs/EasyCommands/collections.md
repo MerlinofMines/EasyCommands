@@ -340,7 +340,7 @@ Note that when you request a sub list of items which have keys, the keys are kep
 
 ## Removing Items from a List
 
-Just like you can add items, you can remove items.  Use the "-" operation.  If the supplied value to subtract is a string, the item will be removed by key.  If the supplied value is an index, the item will be removed by index.  If the supplied value is a list, all items in the list will try to be removed.
+Just like you can add items, you can remove items.  Use the "-" operation.  If the supplied value to subtract is a string, the item will be removed by key.  If the supplied value is a number, the item will be removed by index (0 based).  If the supplied value is a list, all items in the list will try to be removed either by key if strings or index if numeric.
 
 ```
 set myList to ["one" -> 1, "two" -> 2, "three" -> 3]
