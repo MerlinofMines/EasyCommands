@@ -148,6 +148,13 @@ namespace IngameScript {
                 NoValueRule(Type<MinusCommandParameter>, minus => new BiOperandCommandParameter(BiOperand.SUBTRACT, 3))
             ),
 
+            //RoundProcessor
+            new BranchingProcessor<RoundCommandParameter>(
+                NoValueRule(Type<RoundCommandParameter>, round => new BiOperandCommandParameter(BiOperand.ROUND, 1)),
+                NoValueRule(Type<RoundCommandParameter>, round => new LeftUniOperationCommandParameter(UniOperand.ROUND)),
+                NoValueRule(Type<RoundCommandParameter>, round => new UniOperationCommandParameter(UniOperand.ROUND))
+            ),
+
             //AfterUniOperationProcessor
             OneValueRule(Type<LeftUniOperationCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),

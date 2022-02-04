@@ -39,11 +39,11 @@ Print "Result: " + result
 #Result: 3
 ```
 
-All UniOperand Operations are evaluated before BiOperatnd Operations.
+All UniOperand Operations are evaluated before BiOperand Operations.
 
 Here are the tiers for BiOperand Operations:
 * Tier 0 BiOperand Operations: ```.```
-* Tier 1 BiOperand Operations: ```^```
+* Tier 1 BiOperand Operations: ```^, round```
 * Tier 2 BiOperand Operations: ```*, /, %, split, join```
 * Tier 3 BiOperand Operations: ```+, -```
 * Tier 4 BiOperand Operations: ```.., cast```
@@ -91,6 +91,42 @@ print "b: " + b
 EasyCommands will do its best to infer whether you meant by "-", but may not be perfect.  If needed, use parantheses to clarify your intent.
 
 Negation resolves before subtraction, so ```-a-a``` resolves to ```(-a) - a```, vs ```-(a-a)```.
+
+## Rounding
+Rounding can be used to either quickly round number and vector values to an integer, or to round numbers and vector values to a specific number of digits.
+
+Keywords:  ```round, rnd, rounded```
+
+Note that "digit and "digits" are ignored keywords.
+
+If the digits to round to are not specified, rounding takes precedence over other BiOperands like ```*,+``` etc.  When the number of digits are specified, then Rounding acts as a tier 1 BiOperand.
+
+Here's some examples for rounding numbers:
+```
+print pi rounded to 2 digits
+#3.14
+
+print "Decimal: " + pi rounded 1
+#Decimal: 3.1
+
+print "Integer: " + 9.81 rounded
+#Integer: 10
+
+set myValue to 5.617
+print "My Value: " + round myValue
+#My Value: 6
+```
+
+And here's some examples for rounding vectors:
+```
+print "1.11:2.22:3.33" rounded to 1 digit
+#1.1:2.2:3.3
+
+print "1.11:2.22:3.33" rounded
+#1:2:3
+
+print "My Cockpit" velocity rounded to 2 digits
+```
 
 ## Uni Operations
 
@@ -198,10 +234,10 @@ set myList to ["one", "two", "three"]
 set myReversedList to reversed myList
 ```
 
-### Round
+### Round (before or after)
 Behavior varies based on input types.
 
-Keywords: ```round, rnd```
+Keywords: ```round, rnd, rounded```
 
 * **(Number)**: Rounds the given number to the nearest integer (half-up)
 * **(Vector)**: Rounds each vector component to the nearest integer (half-up)
@@ -457,6 +493,14 @@ set myList to ["one", "two", "three"]
 for each i in 0..count of myList[] - 1
   Print "myList[" + i + "]: " + myList[i]
 ```
+
+### Round
+Behavior varies based on input types.
+
+Keywords: ```round, rnd, rounded```
+
+* **(Number, Number)**: Rounds the given number a to the given number of digits, b. (half-up)
+* **(Vector, Number)**: Rounds each vector component of the given vector a to the given number of digits, b. (half-up)
 
 ### Split
 Splits the given string by the given string separator.  The result is a List containing the separated values.
