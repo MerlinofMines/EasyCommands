@@ -78,7 +78,7 @@ set "My Light" to #FF00FF
 
 ## "Intensity" Property
 * Primitive Type: Numeric
-* Keywords: ```intesity, intensities, output, outputs```
+* Keywords: ```intensity, intensities, output, outputs```
 
 Gets/Sets the intensity of the Light.
 

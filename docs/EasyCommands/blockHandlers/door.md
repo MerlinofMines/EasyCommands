@@ -1,8 +1,8 @@
 ﻿# Door Block Handler
 This block handler can be used to open and close doors, including regular doors and Airtight Hangar Doors.  The properties are the same for both.
 
-* Block Type Keywords: ``` , ```
-* Block Type Group Keywords: ``` , ```
+* Block Type Keywords: ```door, bay, hangar, gate```
+* Block Type Group Keywords: ```doors, bays, hangars, gates```
 
 Default Primitive Properties:
 * Numeric - Ratio
