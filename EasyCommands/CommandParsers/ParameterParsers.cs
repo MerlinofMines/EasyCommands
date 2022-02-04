@@ -58,7 +58,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());
@@ -219,7 +219,6 @@ namespace IngameScript {
             AddRightUniOperationWords(Words("arcsin", "asin"), UniOperand.ASIN);
             AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
             AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
-            AddRightUniOperationWords(Words("round", "rnd"), UniOperand.ROUND);
             AddRightUniOperationWords(Words("sort", "sorted"), UniOperand.SORT);
             AddRightUniOperationWords(Words("ln"), UniOperand.LN);
             AddRightUniOperationWords(Words("rand", "random", "randomize"), UniOperand.RANDOM);
@@ -252,6 +251,7 @@ namespace IngameScript {
             AddBiOperationWords(Words(".."), BiOperand.RANGE, 4);
 
             AddWords(Words("-"), new MinusCommandParameter());
+            AddWords(Words("round", "rnd", "rounded"), new RoundCommandParameter());
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());

@@ -8,7 +8,7 @@ It does not include [Items & Blueprints](https://spaceengineers.merlinofmines.co
 ## Ignored Keywords
 These words are (mostly) ignored when parsing your script, but feel free to use them to make your commands sound more natural.
 
-* ```the, than, turned, block, panel, chamber, drive, to, from, then, of, either, for, in, do, does, second, seconds, be, being```
+* ```the, than, turned, block, panel, chamber, drive, to, from, then, of, either, for, in, do, does, second, seconds, be, being, digit, digts```
 * ```#``` - Script Comment, when used as the first character of a line (after trimming spaces).
 
 ## Selectors
@@ -210,7 +210,7 @@ These properties require a Variable value as part of the property
 * Arctan - ```arctan, atan```
 * Sign - ```sign, quantize```
 * Random - ```random, rand```
-* Round - ```round, rnd```
+* Round - ```round, rnd, rounded```
 * Shuffle - ```shuffle, shuffled```
 * Sort - ```sort, sorted```
 * Multiply - ```multiply, *```

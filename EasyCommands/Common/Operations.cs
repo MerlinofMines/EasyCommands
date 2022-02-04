@@ -115,17 +115,18 @@ namespace IngameScript {
             AddUniOperation<Vector3D>(UniOperand.ABS, a => a.Length());
             AddUniOperation<Vector3D>(UniOperand.SQRT, a => Math.Sqrt(a.Length()));
             AddUniOperation<float>(UniOperand.TICKS, a => a / 60);
+            AddUniOperation<float>(UniOperand.RANDOM, a => randomGenerator.Next((int)a));
+            AddUniOperation<float>(UniOperand.SIGN, a => Math.Sign(a));
             AddBiOperation<float, float>(BiOperand.ADD, (a, b) => a + b);
             AddBiOperation<float, float>(BiOperand.SUBTRACT, (a, b) => a - b);
             AddBiOperation<float, float>(BiOperand.MULTIPLY, (a, b) => a * b);
             AddBiOperation<float, float>(BiOperand.DIVIDE, (a, b) => a / b);
             AddBiOperation<float, float>(BiOperand.MOD, (a, b) => a % b);
             AddBiOperation<float, float>(BiOperand.EXPONENT, (a, b) => Math.Pow(a, b));
+            AddBiOperation<float, float>(BiOperand.ROUND, (a, b) => Math.Round(a, (int)b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
             AddBiOperation<Color, Vector3D>(BiOperand.DOT, (a, b) => (a.ToVector3()*255).Dot(b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
-            AddUniOperation<float>(UniOperand.RANDOM, a => randomGenerator.Next((int)a));
-            AddUniOperation<float>(UniOperand.SIGN, a => Math.Sign(a));
 
             //String
             AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));
@@ -150,6 +151,7 @@ namespace IngameScript {
             AddBiOperation<Vector3D, float>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(a, b));
             AddBiOperation<Vector3D, float>(BiOperand.DIVIDE, (a, b) => Vector3D.Divide(a, b));
             AddBiOperation<float, Vector3D>(BiOperand.MULTIPLY, (a, b) => Vector3D.Multiply(b, a));
+            AddBiOperation<Vector3D, float>(BiOperand.ROUND, (a, b) => Vector3D.Round(a, (int)b));
 
             //Modding a vector by another vector is asking to perform vector rejection.
             //See https://en.wikipedia.org/wiki/Vector_projection
