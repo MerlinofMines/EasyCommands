@@ -120,7 +120,7 @@ namespace IngameScript {
             AddPropertyWords(PluralWords("interval"), Property.INTERVAL);
             AddPropertyWords(PluralWords("offset", "padding"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
-            AddPropertyWords(Words("trigger", "triggered", "detect", "detected", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate"), Property.TRIGGER);
+            AddPropertyWords(Words("trigger", "triggered", "detect", "detected", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate", "fire", "firing"), Property.TRIGGER);
             AddPropertyWords(Words("pressure", "pressurize", "pressurizing", "supply", "supplying", "generate", "generating", "discharge", "discharging", "broadcast", "broadcasting", "assemble", "assembling"), Property.SUPPLY);
             AddPropertyWords(Words("stockpile", "stockpiling", "depressurize", "depressurizing", "gather", "gathering", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting", "disassemble", "disassembling"), Property.SUPPLY, false);
             AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
@@ -314,7 +314,7 @@ namespace IngameScript {
             AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
             AddBlockWords(Words("thruster"), Block.THRUSTER);
             AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);
-            AddBlockWords(Words("gun", "rocket", "missile", "launcher"), Block.GUN);
+            AddBlockWords(Words("gun", "railgun", "rocket", "missile", "launcher"), Block.GUN);
             AddBlockWords(Words("turret"), Block.TURRET);
             AddBlockWords(Words("generator"), Block.GENERATOR);
             AddBlockWords(Words("tank"), Block.TANK);

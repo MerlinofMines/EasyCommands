@@ -146,6 +146,7 @@
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\BeaconBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\CryoChamberBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\GasTankBlockTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\GunBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\ProjectorBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\MergeBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\MagnetBlockTests.cs" />

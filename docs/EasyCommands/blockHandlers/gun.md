@@ -3,8 +3,8 @@ This Block Handler can be used to control all block weapons, including gatling g
 
 There is also a separate [Turret Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Block Handler") which has additional properties for turrets in addition to the below properties.
 
-* Block Type Keywords: ```gun, rocket, missile, launcher```
-* Block Type Group Keywords: ```guns, rockets, missiles, launchers```
+* Block Type Keywords: ```gun, railgun, rocket, missile, launcher```
+* Block Type Group Keywords: ```guns, railguns, rockets, missiles, launchers```
 
 Default Primitive Properties:
 * Boolean - Enabled
@@ -50,7 +50,7 @@ power off "My Gun"
 
 ## "Shoot" Property
 * Primitive Type: Bool
-* Keywords: ```shoot, shooting, trigger, triggered```
+* Keywords: ```shoot, shooting, fire, firing, trigger, triggered```
 
 Gets/Sets whether the gun is shooting.  This property tell the block to continuously fire (vs shooting once).
 

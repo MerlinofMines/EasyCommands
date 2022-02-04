@@ -38,7 +38,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Gravity Generator - ```gravitygenerator```, ```gravitygenerators```
 * Gravity Sphere Generator - ```gravitysphere```, ```gravityspheres```
 * Grinder - ```grinder```, ```grinders```
-* Gun - ```gun, rocket, missile, launcher```, ```guns, rockets, missiles, launchers```
+* Gun - ```gun, railgun, rocket, missile, launcher```, ```guns, railguns, rockets, missiles, launchers```
 * Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
 * Hinge - ```hinge```, ```hinges```
 * Hydrogen Engine - ```engine```, ```engines```
@@ -121,7 +121,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages, argument, arguments```
 * Types - ```types, blueprints```
-* Trigger - ```trigger, triggered, detect, detected, trip, tripped, deploy, deployed, shoot, shooting, shot, detonate```
+* Trigger - ```trigger, triggered, detect, detected, trip, tripped, deploy, deployed, shoot, shooting, shot, fire, firing, detonate```
 * Use - 
   * ```use, used, occupy, occupied, control, controlled```
   * (```unused, unoccupied, vacant, available```)
