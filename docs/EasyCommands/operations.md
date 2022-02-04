@@ -378,7 +378,7 @@ contains
 ```
 
 * **(String,Any)**: Converts the second operand to a String and then checks if the first operand contains the second operand
-* **(Collection, Any)**: Checks whether a contains b (or all the elements of b if b is a collection)
+* **(List, Any)**: Checks whether a contains b (or all the elements of b if b is a collection)
 
 Examples:
 
@@ -528,6 +528,9 @@ Keywords: ```-, minus```
 * **(Vector, Number)**: Returns a copy of the vector with it's magnitude reduced by b amount.
 * **(Vector, Vector)**: Returns the vector produced by a - b
 * **(Color, Color)**: Returns the resulting color from subtract b from a
+* **(List, String)**: Removes the item for the given key, if an entry for the given key exists.  Otherwise returns a copy of the original list.
+* **(List, Number)**: Removes the item at the given numeric index (0 based) from the provided list.  If the index is outside of the size of the list, throws a script halting exception.
+* **(List, List)**: Removes all items either the keys and/or indexes provided in the second list.
 
 ## Ternary Operations
 
