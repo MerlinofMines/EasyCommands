@@ -176,6 +176,15 @@ Pistols:
 * Rapid-Fire Pistol Ammo: ```rapid pistol ammo```
 * Elite Pistol Ammo: ```elite pistol ammo```
 
+Cannons:
+* Cannon Ammo (Assault Cannon Shell): ```cannon ammo```
+* Autocannon Ammo: ```autocannon ammo```
+* Artillery Ammo (Artillery Shell): ```artillery ammo```
+
+Railguns:
+* Large Railgun Ammo: ```large railgun ammo```
+* Small Railgun Ammo: ```small railgun ammmo```
+
 #### Consumables
 All Consumables: ```consumables```
 * Clang Cola - ```clang cola```
@@ -322,3 +331,12 @@ Pistols:
 * Basic Pistol Ammo: ```pistol ammo```
 * Rapid-Fire Pistol Ammo: ```rapid pistol ammo```
 * Elite Pistol Ammo: ```elite pistol ammo```
+
+Cannons:
+* Cannon Ammo (Assault Cannon Shell): ```cannon ammo```
+* Autocannon Ammo: ```autocannon ammo```
+* Artillery Ammo (Artillery Shell): ```artillery ammo```
+
+Railguns:
+* Large Railgun Ammo: ```large railgun ammo```
+* Small Railgun Ammo: ```small railgun ammmo```

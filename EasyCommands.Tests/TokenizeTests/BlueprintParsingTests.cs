@@ -29,6 +29,12 @@ namespace EasyCommands.Tests.TokenizeTests {
             Assert.AreEqual(MockBlueprint("SemiAutoPistolMagazine"), program.GetItemBluePrints("pistol ammo")[0]);
             Assert.AreEqual(MockBlueprint("FullAutoPistolMagazine"), program.GetItemBluePrints("rapid pistol ammo")[0]);
             Assert.AreEqual(MockBlueprint("ElitePistolMagazine"), program.GetItemBluePrints("elite pistol ammo")[0]);
+
+            Assert.AreEqual(MockBlueprint("AutocannonClip"), program.GetItemBluePrints("autocannon ammo")[0]);
+            Assert.AreEqual(MockBlueprint("LargeCalibreAmmo"), program.GetItemBluePrints("artillery ammo")[0]);
+            Assert.AreEqual(MockBlueprint("MediumCalibreAmmo"), program.GetItemBluePrints("cannon ammo")[0]);
+            Assert.AreEqual(MockBlueprint("SmallRailgunAmmo"), program.GetItemBluePrints("small railgun ammo")[0]);
+            Assert.AreEqual(MockBlueprint("LargeRailgunAmmo"), program.GetItemBluePrints("large railgun ammo")[0]);
         }
 
         [TestMethod]
