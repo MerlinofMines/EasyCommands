@@ -150,8 +150,11 @@ print "My Dynamic Vector: " + myDynamicVector
 There are some blocks types that support colors, such as text colors on screen.  You can create colors using special reserved keywords, or by explicitly declaring hex values.
 
 ```
+#All of these are the equivalent color
 set myColor to orange
 set myColor to #FFA500
+set myColor to 255:165:0 as color
+
 set my display color to myColor
 ```
 
@@ -164,6 +167,47 @@ set myColor to #00FF00
 Print "R: " + myColor.r
 Print "G: " + myColor.g
 Print "B: " + myColor.b
+```
+
+### Constructing Colors from RGB values
+The easiest way to construct colors from RGB values is to create a vector representing R:G:B and then convert it to a color using the Cast operation.
+
+```
+#Using Static Vectors
+set myColor to 255:128:45 as color
+print myColor
+
+#Using Dynamic Vectors
+set myRed to 255
+set myGreen to 128
+set myBlue to 45
+set myColor to myRed:myGreen:myBlue as color
+print myColor
+```
+
+Using this, you can do some pretty cool things for changing light colors.  Here's a script for making a rainbow effect:
+```
+#Change these to adjust the color spectrum and speed
+set rgbValues to [255,128,0]
+set rgbIncrements to [-5,2,3]
+
+for each i in 0..2
+  async updateColor i
+
+goto updateLights
+
+:updateColor rgbIndex
+if rgbValues[i] >= 255
+  set rgbIncrements[i] to -abs(rgbIncrements[i])
+else if rgbValues[i] <= 0
+  set rgbIncrements[i] to abs(rgbIncrements[i])
+set rgbValues[i] to (rgbValues[i] + rgbIncrements[i])
+replay
+
+#Vectors are auto-converted to colors if you set a color property to a vector
+:updateLights
+set the lights color to rgbValues[0]:rgbValues[1]:rgbValues[2]
+replay
 ```
 
 ## Collections
