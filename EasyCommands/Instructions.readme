@@ -1,7 +1,6 @@
-﻿Welcome to Easy Commands! Update the Custom Data of this Programmable Block to get started!
+﻿Welcome to Easy Commands! Update the Custom Data of this Programmable Block to get started.
 
 Having trouble?  You can change the updateFrequency below to slow down execution (Update100), or manually step through execution (None).
-You can also enable (way) more verbose logging by setting logLevel to LogLevel.DEBUG.
 
 A full list of supported capabilities can be found at
 https://spaceengineers.merlinofmines.com/EasyCommands/
