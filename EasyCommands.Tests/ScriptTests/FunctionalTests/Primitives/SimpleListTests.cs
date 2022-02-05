@@ -279,6 +279,40 @@ Print ""After: "" + myList
         }
 
         [TestMethod]
+        public void AssignListIndexNewValueFromExpression() {
+            String script = @"
+:main
+assign myList to [1,2,3,4]
+Print ""Before: "" + myList
+assign myList[0] to myList[1] + myList[2]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [5,2,3,4]"));
+            }
+        }
+
+        [TestMethod]
+        public void AssignListIndexNewValueFromTernaryExpression() {
+            String script = @"
+:main
+assign myList to [1,2,3,4]
+Print ""Before: "" + myList
+assign myList[0] to myList[1] > 2 ? myList[2] : myList[3]
+Print ""After: "" + myList
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("Before: [1,2,3,4]"));
+                Assert.IsTrue(test.Logger.Contains("After: [4,2,3,4]"));
+            }
+        }
+
+        [TestMethod]
         public void AssignListIndexNewValueUsingSet() {
             String script = @"
 :main

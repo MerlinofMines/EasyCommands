@@ -103,7 +103,8 @@ namespace IngameScript {
 
             new MultiListProcessor(),
 
-            new IgnoreProcessor(),
+            //IgnoreProcessor
+            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<CommandParameter>()),
 
             //FunctionProcessor
             OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
@@ -121,12 +122,9 @@ namespace IngameScript {
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
-            //AssignmentProcessor
+            //StringAssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
                 (p, g, name) => new VariableAssignmentCommandParameter(name.value, p.value, g.HasValue())),
-            TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, list, value) => AllSatisfied(list, value) && list.GetValue().value is ListIndexVariable,
-                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.value, value.value, p.value))),
 
             //Primitive Processor
             new PrimitiveProcessor<PrimitiveCommandParameter>(),
@@ -287,6 +285,11 @@ namespace IngameScript {
             OneValueRule(Type<IncrementCommandParameter>, requiredEither<VariableCommandParameter>(),
                 (i, v) => v.Satisfied() && v.GetValue().value is AmbiguousStringVariable,
                 (i, v) => new CommandReferenceParameter(new VariableIncrementCommand(((AmbiguousStringVariable)v.value).value, i.value, null))),
+
+            //ListIndexAssignmentProcessor
+            TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, list, value) => AllSatisfied(list, value) && list.GetValue().value is ListIndexVariable,
+                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.value, value.value, p.value))),
 
             //PrintCommandProcessor
             OneValueRule(Type<PrintCommandParameter>, requiredRight<VariableCommandParameter>(),
