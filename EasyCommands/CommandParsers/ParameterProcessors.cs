@@ -35,14 +35,6 @@ namespace IngameScript {
             public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
-        public class IgnoreProcessor : ParameterProcessor<IgnoreCommandParameter> {
-            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
-                finalParameters = NewList<CommandParameter>();
-                p.RemoveAt(i);
-                return true;
-            }
-        }
-
         public class ParenthesisProcessor : ParameterProcessor<OpenParenthesisCommandParameter> {
             public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
                 finalParameters = null;
