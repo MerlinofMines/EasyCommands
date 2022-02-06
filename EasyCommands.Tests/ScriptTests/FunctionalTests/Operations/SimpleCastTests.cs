@@ -42,10 +42,14 @@ Print -1 as bool
         public void CastStringAsBool() {
             var script = @"
 Print ""True"" as bool
-Print ""1"" as bool
+Print ""true"" as bool
 Print ""False"" as bool
+Print ""false"" as bool
+Print ""1"" as bool
 Print ""0"" as bool
+Print ""-1"" as bool
 Print ""abc"" as bool
+Print ""0:0:0"" as bool
 ";
 
             using (var test = new ScriptTest(script)) {
@@ -55,7 +59,12 @@ Print ""abc"" as bool
                 Assert.AreEqual("True", test.Logger[1]);
                 Assert.AreEqual("False", test.Logger[2]);
                 Assert.AreEqual("False", test.Logger[3]);
-                Assert.AreEqual("Exception Occurred:", test.Logger[4]);
+                Assert.AreEqual("True", test.Logger[4]);
+                Assert.AreEqual("False", test.Logger[5]);
+                Assert.AreEqual("True", test.Logger[6]);
+                Assert.AreEqual("False", test.Logger[7]);
+                Assert.AreEqual("Exception Occurred:", test.Logger[8]);
+                Assert.AreEqual("Cannot convert vector to boolean", test.Logger[9]);
             }
         }
 

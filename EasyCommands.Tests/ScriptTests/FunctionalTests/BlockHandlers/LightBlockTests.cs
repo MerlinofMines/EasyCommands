@@ -47,7 +47,7 @@ turn on the ""cool light""
         public void SetLightBlockColorFromVector() {
             String script = @"
 :lightshow
-set the ""cool light"" color to ""255:128:0""
+set the ""cool light"" color to 255:128:0
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {

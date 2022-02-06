@@ -105,37 +105,6 @@ namespace IngameScript {
             }
         }
 
-        public class PrimitiveProcessor<T> : ParameterProcessor<T> where T : class, PrimitiveCommandParameter {
-            public override List<Type> GetProcessedTypes() => NewList(typeof(BooleanCommandParameter), typeof(StringCommandParameter));
-
-            public override bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches) {
-                if (p[i] is StringCommandParameter) {
-                    p[i] = GetParameter((StringCommandParameter)p[i]);
-                } else if (p[i] is BooleanCommandParameter) {
-                    p[i] = new VariableCommandParameter(GetStaticVariable(((BooleanCommandParameter)p[i]).value));
-                } else {
-                    finalParameters = null;
-                    return false;
-                }
-                finalParameters = NewList(p[i]);
-                return true;
-            }
-
-            VariableCommandParameter GetParameter(StringCommandParameter value) {
-                Primitive primitive;
-                ParsePrimitive(value.value, out primitive);
-
-                Variable variable = new AmbiguousStringVariable(value.value);
-
-                if (primitive != null || value.isExplicit) {
-                    variable = new StaticVariable(primitive ?? ResolvePrimitive(value.value));
-                    if (variable.GetValue().returnType == Return.VECTOR)
-                        variable = new VectorVariable(variable);
-                }
-                return new VariableCommandParameter(variable);
-            }
-        }
-
         class BranchingProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
             List<ParameterProcessor<T>> processors;
 

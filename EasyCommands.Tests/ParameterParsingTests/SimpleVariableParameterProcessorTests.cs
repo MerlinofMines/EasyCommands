@@ -255,11 +255,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void ParseSimpleVector() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to \"53573.9750085028:-26601.8512032533:12058.8229348438\"");
+            var command = program.ParseCommand("assign a to 53573.9750085028:-26601.8512032533:12058.8229348438");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignCommand.variable is VectorVariable);
-            var variable = assignCommand.variable as VectorVariable;
+            var variable = assignCommand.variable;
             Assert.AreEqual(Return.VECTOR, variable.GetValue().returnType);
             Vector3D vector = CastVector(variable.GetValue());
             Assert.AreEqual(53573.9750085028, vector.X);
@@ -270,11 +269,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         [TestMethod]
         public void ParseVectorFromGPSCoordinate() {
             var program = MDKFactory.CreateProgram<Program>();
-            var command = program.ParseCommand("assign a to \"GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:\"");
+            var command = program.ParseCommand("assign a to \"GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:\" as vector");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignCommand.variable is VectorVariable);
-            var variable = assignCommand.variable as VectorVariable;
+            var variable = assignCommand.variable;
             Assert.AreEqual(Return.VECTOR, variable.GetValue().returnType);
             Vector3D vector = CastVector(variable.GetValue());
             Assert.AreEqual(53573.9750085028, vector.X);

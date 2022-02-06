@@ -46,7 +46,10 @@ namespace IngameScript {
             KeyValuePair(typeof(bool), NewDictionary(
                 CastFunction(Return.BOOLEAN, p => p.value),
                 CastFunction(Return.NUMERIC, p => CastNumber(p) != 0),
-                CastFunction(Return.STRING, p => bool.Parse(CastString(p))),
+                CastFunction(Return.STRING, p => {
+                    Primitive primitive;
+                    return ParsePrimitive(CastString(p), out primitive) ? CastBoolean(primitive) : "true" == CastString(p).ToLower();
+                }),
                 CastFunction(Return.DEFAULT, Failure(Return.BOOLEAN))
             )),
             KeyValuePair(typeof(float), NewDictionary(
@@ -66,7 +69,7 @@ namespace IngameScript {
             KeyValuePair(typeof(Vector3D), NewDictionary(
                 CastFunction(Return.STRING, p => GetVector(CastString(p)).Value),
                 CastFunction(Return.VECTOR, p => p.value),
-                CastFunction(Return.COLOR, p => new Vector3D(CastColor(p).R, CastColor(p).G, CastColor(p).B)),
+                CastFunction(Return.COLOR, p => Vector(CastColor(p).R, CastColor(p).G, CastColor(p).B)),
                 CastFunction(Return.DEFAULT, Failure(Return.VECTOR))
             )),
             KeyValuePair(typeof(Color), NewDictionary(
@@ -117,7 +120,7 @@ namespace IngameScript {
                 double result;
                 if (Double.TryParse(component, out result)) components.Add(result);
             }
-            return components.Count() == 3 ? new Vector3D(components[0], components[1], components[2]) : (Vector3D?)null;
+            return components.Count() == 3 ? Vector(components[0], components[1], components[2]) : (Vector3D?)null;
         }
 
         static string VectorToString(Vector3D vector) => vector.X + ":" + vector.Y + ":" + vector.Z;
