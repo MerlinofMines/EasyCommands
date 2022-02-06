@@ -23,10 +23,6 @@ namespace IngameScript {
             Primitive GetValue();
         }
 
-        public static Variable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
-        public static Variable EmptyList() => GetStaticVariable(NewKeyedList());
-        public static Variable StaticVectorVariable(double x, double y, double z) => new VectorVariable(GetStaticVariable(new Vector3D(x, y, z)));
-
         public class StaticVariable : Variable {
             public Primitive primitive;
 
@@ -56,30 +52,12 @@ namespace IngameScript {
         }
 
         public class VectorVariable : Variable {
-            public Variable vec, X, Y, Z;
-
-            public VectorVariable(Variable vector) {
-                vec = vector;
-            }
-            public VectorVariable(Variable x, Variable y, Variable z) {
-                X = x;
-                Y = y;
-                Z = z;
-            }
+            public Variable X, Y, Z;
 
             public Primitive GetValue() {
-                if (vec != null) {
-                    if (vec.GetValue().returnType == Return.VECTOR)
-                        return vec.GetValue();
-                    else
-                        throw new Exception("Invalid Vector");
-                }
-                else {
-                    if (NewList(X, Y, Z).All(v => v.GetValue().returnType == Return.NUMERIC))
-                        return ResolvePrimitive(new Vector3D(CastNumber(X.GetValue()), CastNumber(Y.GetValue()), CastNumber(Z.GetValue())));
-                    else
-                        throw new Exception("Invalid Variable in Vector");
-                }
+                if (NewList(X, Y, Z).All(v => v.GetValue().returnType == Return.NUMERIC))
+                    return ResolvePrimitive(Vector(CastNumber(X.GetValue()), CastNumber(Y.GetValue()), CastNumber(Z.GetValue())));
+                throw new Exception("Invalid Variable in Vector");
             }
         }
 

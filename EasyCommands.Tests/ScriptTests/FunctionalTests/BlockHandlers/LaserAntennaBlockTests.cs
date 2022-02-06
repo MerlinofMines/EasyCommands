@@ -47,7 +47,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void SetTheLaserAntennaTargetImplicit() {
-            using (ScriptTest test = new ScriptTest(@"set the ""test laser"" to ""1:2:3""")) {
+            using (ScriptTest test = new ScriptTest(@"set the ""test laser"" to 1:2:3")) {
                 Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
                 test.MockBlocksOfType("test laser", mockLaserAntenna);
 

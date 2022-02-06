@@ -50,7 +50,13 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
-                NoValueRule(Type<AmbiguousStringCommandParameter>, b => new StringCommandParameter(b.value, false))),
+                NoValueRule(Type<AmbiguousStringCommandParameter>,
+                    s => {
+                        Primitive primitive;
+                        CommandParameter parameter = new StringCommandParameter(s.value, false);
+                        if (s.isImplicit && ParsePrimitive(s.value, out primitive)) parameter = new VariableCommandParameter(GetStaticVariable(primitive.value));
+                        return parameter;
+                    })),
 
             NoValueRule(Type<AmbiguousCommandParameter>, p => p.alternatives.Count > 0, p => p.alternatives),
 
@@ -127,7 +133,8 @@ namespace IngameScript {
                 (p, g, name) => new VariableAssignmentCommandParameter(name.value, p.value, g.HasValue())),
 
             //Primitive Processor
-            new PrimitiveProcessor<PrimitiveCommandParameter>(),
+            NoValueRule(Type<BooleanCommandParameter>, b => new VariableCommandParameter(GetStaticVariable(b.value))),
+            NoValueRule(Type<StringCommandParameter>, b => new VariableCommandParameter(new AmbiguousStringVariable(b.value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<PropertyAggregationCommandParameter>(),
@@ -164,7 +171,7 @@ namespace IngameScript {
             //VectorProcessor
             FourValueRule(Type<ColonSeparatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<ColonSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
                 (sep1, x, y, sep2, z) => AllSatisfied(x, y, z) && !(x.GetValue().value is VectorVariable || y.GetValue().value is VectorVariable || z.GetValue().value is VectorVariable),
-                (sep1, x, y, sep2, z) => new VariableCommandParameter(new VectorVariable(x.value, y.value, z.value))),
+                (sep1, x, y, sep2, z) => new VariableCommandParameter(new VectorVariable { X = x.value, Y = y.value, Z = z.value })),
 
             //Tier0OperationProcessor
             BiOperandProcessor(0),

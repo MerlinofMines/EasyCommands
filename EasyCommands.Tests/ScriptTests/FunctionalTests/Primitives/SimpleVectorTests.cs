@@ -15,6 +15,15 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void PrintVectorFromAmbiguousString() {
+            using (var test = new ScriptTest(@"Print ""Vector: "" + ""0:1:2""")) {
+                test.RunOnce();
+
+                Assert.AreEqual("Vector: 0:1:2", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetVectorX() {
             using (var test = new ScriptTest(@"Print ""X: "" + (0:1:2).x")) {
                 test.RunOnce();

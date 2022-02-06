@@ -19,14 +19,55 @@ False: off, terminate, cancel, end, false, stop, stopped, halt, halted
 
 ## String
 
-String primitives allow you to specify human readable things to render on screen.  These are useful for messages and labels
+String primitives allow you to specify human readable things to render on screen.  These are useful for messages and labels.
 
 ```
 set myMessage to "This is my message"
 print "My Message is: " + myMessage
 ```
 
-String do not have to be wrapped in quotes, but best practice would be to wrap things you intend to be strings.
+String do not have to be wrapped in quotes, but best practice would be to wrap things you intend to be strings.  Any random text is considered a string if and only if it does not map to a reserved keyword, function name, or variable name and cannot be parsed as a different primitive (like a vector or a color).  EasyCommands will attempt to parse any non-quoted strings as other primitives types before considering them as a string.
+
+```
+set a to red
+print "a is: " + a
+#a is: #FF0000
+
+print "a is: " + "a"
+#a is: a
+```
+
+That said, you can cast quoted strings to other primitive types using the cast operation.
+
+Colors:
+
+```
+set myString to "red"
+print myString
+#red
+
+print myString as color
+#FF0000
+```
+
+Vectors:
+
+```
+set a to 4
+Print "Vector: " + a:b:c
+#Vector: 4:b:c
+
+Print "String: " + "a:b:c"
+#String: a:b:c
+```
+
+This is also handy for parsing GPS coordinates as vectors.
+
+```
+set myVector to "GPS:merlin waypoint:1:2:3:#FFFF0000"
+print "myVector is: " + myVector
+#myVector is: 1:2:3
+```
 
 ### Explicit Strings
 

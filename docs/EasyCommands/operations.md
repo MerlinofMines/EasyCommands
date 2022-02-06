@@ -333,6 +333,35 @@ set myVector to myVector as vector
 set the "Remote Control" destination to myVector
 ```
 
+### Supported Casts
+
+#### Boolean
+* Number -> Bool, returns true if != 0, false otherwise
+* String -> Bool, returns true if the string is a represents a number != 0, or if the lowercase string equals "true".  Throws an exception if the string represents a vector or color.  Returns false otherwise.
+
+#### Number
+* Bool -> Number, returns 1 if true, 0 otherwise
+* String -> Number, attempts to parse the given string as a number.  Throws a script halting exception if unable to parse.
+* Vector -> Number, returns the vector's length
+
+#### String
+* Bool -> String, returns ```True``` if true, ```False``` otherwise
+* Number -> String, returns the string version of the number
+* Vector -> String, returns the string version of the vector, in the form ```x:y:z```
+* Color -> String, returns the hex string version of the color, in the form ```#RRGGBB```
+* List -> String, prints out the list in the form ```[key1->value1,value2,key3->value3]``` (keys only included if present, order maintained)
+
+#### Vector
+* String -> Vector, attempts to parse the given String as a vector by separating values by colon and looking for 3 numeric values.  Can be used to parse vectors as well as GPS coordinates.
+* Color -> Vector, returns a vector whose x,y,z components are the r,g,b components of the color, respectively.
+
+#### Color
+* String -> Color, attempts to parse the given String as a color, using either known colors (```red```) or Hex syntax (```#FF0000```)
+* Vector -> Color, returns a Color whose r,g,b components are the x,y,z components of the vector, respectively.  Useful for creating colors directly using RGB values.
+
+#### List
+List has no supported conversion types currently
+
 ### Comparison
 
 There are a few different comparisons supported by EasyCommands.  Comparison support and behavior changes slightly based on the input types, see below for description.

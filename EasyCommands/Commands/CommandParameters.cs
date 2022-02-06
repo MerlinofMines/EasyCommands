@@ -22,7 +22,6 @@ namespace IngameScript {
         public interface CommandParameter {
             string Token { get; set; }
         }
-        public interface PrimitiveCommandParameter : CommandParameter { }
         public abstract class SimpleCommandParameter : CommandParameter {
             public string Token { get; set; }
         }
@@ -119,7 +118,7 @@ namespace IngameScript {
             }
         }
 
-        public class AmbiguousStringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+        public class AmbiguousStringCommandParameter : ValueCommandParameter<String> {
             public List<CommandParameter> subTokens;
             public bool isImplicit;
             public AmbiguousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
@@ -128,7 +127,7 @@ namespace IngameScript {
             }
         }
 
-        public class StringCommandParameter : ValueCommandParameter<String>, PrimitiveCommandParameter {
+        public class StringCommandParameter : ValueCommandParameter<String> {
             public bool isExplicit;
 
             public StringCommandParameter(string value, bool isExpl) : base(value) {
@@ -136,7 +135,7 @@ namespace IngameScript {
             }
         }
 
-        public class BooleanCommandParameter : ValueCommandParameter<bool>, PrimitiveCommandParameter {
+        public class BooleanCommandParameter : ValueCommandParameter<bool> {
             public BooleanCommandParameter(bool value) : base(value) {}
         }
 

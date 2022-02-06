@@ -29,7 +29,7 @@ namespace IngameScript {
 
                 var overrideHandler = DirectionalTypedHandler(Direction.NONE,
                         TypeHandler(ReturnTypedHandler(Return.VECTOR,
-                            TypeHandler(VectorHandler(b => new Vector3D(-b.Pitch * RadiansPerSecToRPM, b.Yaw * RadiansPerSecToRPM, b.Roll * RadiansPerSecToRPM), (b, v) => {
+                            TypeHandler(VectorHandler(b => Vector(-b.Pitch * RadiansPerSecToRPM, b.Yaw * RadiansPerSecToRPM, b.Roll * RadiansPerSecToRPM), (b, v) => {
                                 b.Pitch = RPMToRadiansPerSec * (float)-v.X;
                                 b.Yaw = RPMToRadiansPerSec * (float)v.Y;
                                 b.Roll = RPMToRadiansPerSec * (float)v.Z;
