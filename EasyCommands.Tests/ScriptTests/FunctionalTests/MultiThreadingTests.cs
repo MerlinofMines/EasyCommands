@@ -188,7 +188,7 @@ async call printLocalVariable 2
 
 :printLocalVariable ""a""
 print 'Variable is: ' + a
-assign ""a"" to a + 2
+assign a to a + 2
 goto printLocalVariable a
 ";
 
@@ -210,13 +210,13 @@ goto printLocalVariable a
         public void asyncCommandsShareGlobalVariables() {
             String script = @"
 :main
-assign global ""a"" to 1
+assign global a to 1
 async call printGlobalVariable
 async call printGlobalVariable
 
 :printGlobalVariable
 print 'Variable is: ' + a
-assign global ""a"" to a + 2
+assign global a to a + 2
 goto printGlobalVariable
 ";
 
@@ -238,7 +238,7 @@ goto printGlobalVariable
         public void asyncCommandLocalVariablesTakePrecedenceOverGlobalVariables() {
             String script = @"
 :main
-assign global ""a"" to 1
+assign global a to 1
 async call printVariable
 async call printVariable
 call ""printGlobalVariable""
@@ -249,7 +249,7 @@ goto ""printGlobalVariable""
 
 :printVariable
 print 'Variable is: ' + a
-assign ""a"" to a + 2
+assign a to a + 2
 goto printVariable
 ";
 
@@ -273,11 +273,11 @@ goto printVariable
         public void asyncCommandVariablesArePassedToAsyncThread() {
             String script = @"
 :main
-assign ""i"" to 0
+assign i to 0
 async call printLocalVariable i
-assign ""i"" to i + 1
+assign i to i + 1
 async call printLocalVariable i
-assign ""i"" to i + 1
+assign i to i + 1
 
 :printLocalVariable ""a""
 print 'Variable is: ' + a
@@ -295,12 +295,12 @@ print 'Variable is: ' + a
         public void asyncCommandParametersAreProperlySetInAWhileLoop() {
             String script = @"
 :main
-assign ""i"" to 0
+assign i to 0
 while i < 2
   async call printLocalVariable i
-  assign ""i"" to i + 1
+  assign i to i + 1
 
-:printLocalVariable ""a""
+:printLocalVariable a
 print 'Variable is: ' + a
 ";
 

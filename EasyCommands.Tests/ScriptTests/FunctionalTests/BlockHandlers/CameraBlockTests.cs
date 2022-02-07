@@ -35,7 +35,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void getCameraRange() {
             String script = @"
-assign ""a"" to ""mock camera"" range
+assign a to ""mock camera"" range
 print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {

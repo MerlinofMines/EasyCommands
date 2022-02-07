@@ -10,8 +10,8 @@ namespace EasyCommands.Tests.ScriptTests {
     public class ShipProximityTests {
         string script = @"
 :setup
-assign ""LASER_SCAN_DISTANCE"" to 10000
-assign ""LASER_CAMERA"" to 'My Camera'
+assign LASER_SCAN_DISTANCE to 10000
+assign LASER_CAMERA to 'My Camera'
 set $LASER_CAMERA camera range to LASER_SCAN_DISTANCE
 
 while true
@@ -24,13 +24,13 @@ when $LASER_CAMERA camera is triggered
   Print ""Closest Approach: "" + round ( closestDistance / 10 ) / 100 + ""km""
 
 :calculateClosestDistance
-assign ""distanceVector"" to avg $LASER_CAMERA camera position - avg $LASER_CAMERA camera target
-assign ""velocityVector"" to avg $LASER_CAMERA camera targetVelocity
+assign distanceVector to avg $LASER_CAMERA camera position - avg $LASER_CAMERA camera target
+assign velocityVector to avg $LASER_CAMERA camera targetVelocity
 if abs velocityVector < 0.0001
-  assign ""closestDistance"" to abs distanceVector
+  assign closestDistance to abs distanceVector
 else
-  assign ""vang"" to acos ( ( distanceVector . velocityVector ) / ( abs distanceVector * abs velocityVector ) )
-  assign ""closestDistance"" to sin vang * abs distanceVector
+  assign vang to acos ( ( distanceVector . velocityVector ) / ( abs distanceVector * abs velocityVector ) )
+  assign closestDistance to sin vang * abs distanceVector
 ";
 
         [TestMethod]

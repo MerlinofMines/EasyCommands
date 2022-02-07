@@ -53,15 +53,12 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     s => {
                         Primitive primitive;
-                        CommandParameter parameter = new StringCommandParameter(s.value, false);
-                        if (s.isImplicit && ParsePrimitive(s.value, out primitive)) parameter = new VariableCommandParameter(GetStaticVariable(primitive.value));
-                        return parameter;
+                        Variable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
+                        if (s.isImplicit && ParsePrimitive(s.value, out primitive)) variable = GetStaticVariable(primitive.value);
+                        return new VariableCommandParameter(variable);
                     })),
 
             NoValueRule(Type<AmbiguousCommandParameter>, p => p.alternatives.Count > 0, p => p.alternatives),
-
-            OneValueRule(Type<ListCommandParameter>, requiredLeft<StringCommandParameter>(),
-                (list, name) => new ListIndexCommandParameter(new ListIndexVariable(new InMemoryVariable(name.value), list.value))),
 
             OneValueRule(Type<ListIndexCommandParameter>, requiredRight<ListCommandParameter>(),
                 (index, list) => new ListIndexCommandParameter(new ListIndexVariable(index.value, list.value))),
@@ -113,28 +110,26 @@ namespace IngameScript {
             NoValueRule(Type<IgnoreCommandParameter>, p => NewList<CommandParameter>()),
 
             //FunctionProcessor
-            OneValueRule(Type<StringCommandParameter>, requiredLeft<FunctionCommandParameter>(),
-                (name, function) => new FunctionDefinitionCommandParameter(() => CastString(new AmbiguousStringVariable(name.value).GetValue()), function.value)),
+            OneValueRule(Type<VariableCommandParameter>, requiredLeft<FunctionCommandParameter>(),
+                (name, function) => new FunctionDefinitionCommandParameter(() => CastString(name.value.GetValue()), function.value)),
 
             //PropertyProcessor
             NoValueRule(Type<PropertyCommandParameter>, p => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
-            OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<StringCommandParameter>(),
-                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(new AmbiguousStringVariable(v.value)))),
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
             //StringAssignmentProcessor
-            TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<StringCommandParameter>(),
-                (p, g, name) => new VariableAssignmentCommandParameter(name.value, p.value, g.HasValue())),
+            TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, g, name) => AllSatisfied(g, name) && (name.GetValue().value is AmbiguousStringVariable),
+                (p, g, name) => new VariableAssignmentCommandParameter(((AmbiguousStringVariable)name.value).value, p.value, g.HasValue())),
 
             //Primitive Processor
             NoValueRule(Type<BooleanCommandParameter>, b => new VariableCommandParameter(GetStaticVariable(b.value))),
-            NoValueRule(Type<StringCommandParameter>, b => new VariableCommandParameter(new AmbiguousStringVariable(b.value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<PropertyAggregationCommandParameter>(),

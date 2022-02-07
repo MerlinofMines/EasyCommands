@@ -401,7 +401,7 @@ namespace IngameScript {
             var commandParameters = NewList<CommandParameter>();
             String t = token.token;
             if (token.isExplicitString) {
-                commandParameters.Add(new StringCommandParameter(token.original, true));
+                commandParameters.Add(new VariableCommandParameter(GetStaticVariable(token.original)));
             } else if (token.isString) {
                 List<Token> subTokens = Tokenize(t);
                 List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);

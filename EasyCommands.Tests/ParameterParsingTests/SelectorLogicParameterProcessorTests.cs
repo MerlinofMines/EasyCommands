@@ -145,6 +145,33 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(bc.entityProvider is BlockSelector);
             BlockSelector sep = (BlockSelector)bc.entityProvider;
             Assert.IsTrue(sep.selector is AmbiguousStringVariable);
+            Assert.AreEqual("a", ((AmbiguousStringVariable)sep.selector).value);
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+        }
+
+        [TestMethod]
+        public void StringSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand(@"turn on the ""a"" sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
+            Assert.IsTrue(sep.selector is StaticVariable);
+            Assert.AreEqual("a", CastString(sep.selector.GetValue()));
+            Assert.AreEqual(Block.SOUND, sep.blockType);
+        }
+
+        [TestMethod]
+        public void ExplicitStringSelector() {
+            var program = MDKFactory.CreateProgram<Program>();
+            var command = program.ParseCommand(@"turn on the 'a' sirens");
+            Assert.IsTrue(command is BlockCommand);
+            BlockCommand bc = (BlockCommand)command;
+            Assert.IsTrue(bc.entityProvider is BlockSelector);
+            BlockSelector sep = (BlockSelector)bc.entityProvider;
+            Assert.IsTrue(sep.selector is StaticVariable);
+            Assert.AreEqual("a", CastString(sep.selector.GetValue()));
             Assert.AreEqual(Block.SOUND, sep.blockType);
         }
 
@@ -159,9 +186,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(Block.SOUND, sep.blockType);
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable variable = (ListIndexVariable)sep.selector;
-            Assert.IsTrue(variable.expectedList is InMemoryVariable);
-            InMemoryVariable list = (InMemoryVariable)variable.expectedList;
-            Assert.AreEqual("a", list.variableName);
+            Assert.IsTrue(variable.expectedList is AmbiguousStringVariable);
+            AmbiguousStringVariable list = (AmbiguousStringVariable)variable.expectedList;
+            Assert.AreEqual("a", list.value);
             Assert.IsTrue(variable.index is IndexVariable);
             IndexVariable index = (IndexVariable)variable.index;
             Assert.AreEqual(0, CastNumber(CastList(index.GetValue()).GetValues()[0].GetValue()));
@@ -184,9 +211,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
             Assert.IsTrue(second.expectedList is ListIndexVariable);
             ListIndexVariable first = (ListIndexVariable)second.expectedList;
-            Assert.IsTrue(first.expectedList is InMemoryVariable);
-            InMemoryVariable firstList = (InMemoryVariable)first.expectedList;
-            Assert.AreEqual("a", firstList.variableName);
+            Assert.IsTrue(first.expectedList is AmbiguousStringVariable);
+            AmbiguousStringVariable firstList = (AmbiguousStringVariable)first.expectedList;
+            Assert.AreEqual("a", firstList.value);
             Assert.IsTrue(first.index is IndexVariable);
             IndexVariable firstIndex = (IndexVariable)first.index;
             Assert.AreEqual(0, CastNumber(CastList(firstIndex.GetValue()).GetValues()[0].GetValue()));
@@ -223,9 +250,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             List<Variable> listIndexes = CastList(selector.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
-            Assert.IsTrue(selector.expectedList is InMemoryVariable);
-            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
-            Assert.AreEqual("mySirens", list.variableName);
+            Assert.IsTrue(selector.expectedList is AmbiguousStringVariable);
+            AmbiguousStringVariable list = (AmbiguousStringVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.value);
         }
 
         [TestMethod]
@@ -242,9 +269,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             List<Variable> listIndexes = CastList(selector.index.GetValue()).GetValues();
             Assert.AreEqual(1, listIndexes.Count);
             Assert.AreEqual(0f, listIndexes[0].GetValue().value);
-            Assert.IsTrue(selector.expectedList is InMemoryVariable);
-            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
-            Assert.AreEqual("mySirens", list.variableName);
+            Assert.IsTrue(selector.expectedList is AmbiguousStringVariable);
+            AmbiguousStringVariable list = (AmbiguousStringVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.value);
         }
 
         [TestMethod]
@@ -266,9 +293,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             List<Variable> innerIndex = CastList(selector.index.GetValue()).GetValues();
             Assert.AreEqual(1, innerIndex.Count);
             Assert.AreEqual(0f, innerIndex[0].GetValue().value);
-            Assert.IsTrue(selector.expectedList is InMemoryVariable);
-            InMemoryVariable list = (InMemoryVariable)selector.expectedList;
-            Assert.AreEqual("mySirens", list.variableName);
+            Assert.IsTrue(selector.expectedList is AmbiguousStringVariable);
+            AmbiguousStringVariable list = (AmbiguousStringVariable)selector.expectedList;
+            Assert.AreEqual("mySirens", list.value);
         }
 
         [TestMethod]

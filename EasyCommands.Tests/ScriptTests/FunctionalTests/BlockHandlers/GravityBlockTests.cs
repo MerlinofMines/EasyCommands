@@ -12,7 +12,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void getGravityGeneratorStrength() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" strength
+assign a to ""test gravityGenerator"" strength
 print ""Strength: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -42,7 +42,7 @@ set ""test gravityGenerator"" strength to 0.2
         [TestMethod]
         public void getGravityGeneratorRange() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" range
+assign a to ""test gravityGenerator"" range
 print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -58,7 +58,7 @@ print ""Range: "" + a
         [TestMethod]
         public void getGravityGeneratorSize() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" size
+assign a to ""test gravityGenerator"" size
 print ""Field Size: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -74,7 +74,7 @@ print ""Field Size: "" + a
         [TestMethod]
         public void getGravityGeneratorHeight() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" upper range
+assign a to ""test gravityGenerator"" upper range
 print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -90,7 +90,7 @@ print ""Range: "" + a
         [TestMethod]
         public void getGravityGeneratorWidth() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" left range
+assign a to ""test gravityGenerator"" left range
 print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -106,7 +106,7 @@ print ""Range: "" + a
         [TestMethod]
         public void getGravityGeneratorDepth() {
             String script = @"
-assign ""a"" to ""test gravityGenerator"" forward range
+assign a to ""test gravityGenerator"" forward range
 print ""Range: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -226,7 +226,7 @@ set ""test gravityGenerator"" forward range to 2
         [TestMethod]
         public void getSphericalGravityGeneratorStrength() {
             String script = @"
-assign ""a"" to ""test gravitySphere"" strength
+assign a to ""test gravitySphere"" strength
 print ""Strength: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -256,7 +256,7 @@ set ""test gravitySphere"" strength to 0.2
         [TestMethod]
         public void getSphericalGravityGeneratorRadius() {
             String script = @"
-assign ""a"" to ""test gravitySphere"" radius
+assign a to ""test gravitySphere"" radius
 print ""Radius: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -286,7 +286,7 @@ set ""test gravitySphere"" radius to 200
         [TestMethod]
         public void getSphericalGravityGeneratorSize() {
             String script = @"
-assign ""a"" to ""test gravitySphere"" size
+assign a to ""test gravitySphere"" size
 print ""Size: "" + a
 ";
             using (var test = new ScriptTest(script)) {

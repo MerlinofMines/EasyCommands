@@ -13,7 +13,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void getCargoCapacity() {
             String script = @"
-assign ""a"" to ""mock cargo"" capacity
+assign a to ""mock cargo"" capacity
 print ""Cargo Capacity: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -34,7 +34,7 @@ print ""Cargo Capacity: "" + a
         [TestMethod]
         public void getCargoVolume() {
             String script = @"
-assign ""a"" to ""mock cargo"" volume
+assign a to ""mock cargo"" volume
 print ""Cargo Volume: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -55,7 +55,7 @@ print ""Cargo Volume: "" + a
         [TestMethod]
         public void getCargoWeight() {
             String script = @"
-assign ""a"" to ""mock cargo"" weight
+assign a to ""mock cargo"" weight
 print ""Cargo Weight: "" + a + ""Kg""
 ";
             using (var test = new ScriptTest(script)) {
@@ -76,7 +76,7 @@ print ""Cargo Weight: "" + a + ""Kg""
         [TestMethod]
         public void getCargoRatio() {
             String script = @"
-assign ""a"" to ""mock cargo"" ratio
+assign a to ""mock cargo"" ratio
 print ""Cargo Ratio: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -98,7 +98,7 @@ print ""Cargo Ratio: "" + a
         [TestMethod]
         public void getCargoAmount() {
              String script = @"
-assign ""a"" to ""mock cargo"" ""ore"" amount
+assign a to ""mock cargo"" ""ore"" amount
 print ""Ore Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -139,7 +139,7 @@ print ""Types: "" + ""mock cargo"" types
         [TestMethod]
         public void GetCargoCustomItemAmount() {
             String script = @"
-assign ""a"" to ""mock cargo"" ""CustomItem"" amount
+assign a to ""mock cargo"" ""CustomItem"" amount
 print ""Custom Item Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -160,7 +160,7 @@ print ""Custom Item Amount: "" + a
         [TestMethod]
         public void GetCargoCustomItemTypeAmount() {
             String script = @"
-assign ""a"" to ""mock cargo"" ""MyObjectBuilder_Ore."" amount
+assign a to ""mock cargo"" ""MyObjectBuilder_Ore."" amount
 print ""Custom Type Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -183,7 +183,7 @@ print ""Custom Type Amount: "" + a
         [TestMethod]
         public void getCargoAmountFromMultipleInventoriesOnSameBlock() {
             String script = @"
-assign ""a"" to ""mock cargo"" inventories ""ore"" amount
+assign a to ""mock cargo"" inventories ""ore"" amount
 print ""Ore Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -206,7 +206,7 @@ print ""Ore Amount: "" + a
         [TestMethod]
         public void getCargoAmountFromSpecificInventoryOfBlockWithMultipleInventories() {
             String script = @"
-assign ""a"" to ""mock cargo"" inventories[1] ""ore"" amount
+assign a to ""mock cargo"" inventories[1] ""ore"" amount
 print ""Ore Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
@@ -229,7 +229,7 @@ print ""Ore Amount: "" + a
         [TestMethod]
         public void getCargoAmountFromBlockGroupInventories() {
             String script = @"
-assign ""a"" to ""mock cargo"" group inventories ""ore"" amount
+assign a to ""mock cargo"" group inventories ""ore"" amount
 print ""Ore Amount: "" + a
 ";
             using (var test = new ScriptTest(script)) {
