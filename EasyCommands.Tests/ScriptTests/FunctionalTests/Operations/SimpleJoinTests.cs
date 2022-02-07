@@ -23,7 +23,18 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("one->1, two->2, three->3", test.Logger[0]);
+                Assert.AreEqual("1, 2, 3", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void JoinListOfSpacedStrings() {
+            using (var test = new ScriptTest(@"print [""string one"", ""string two"", ""string three""] joined "", """)) {
+                test.MockNextBoundedRandoms(10, 6);
+
+                test.RunOnce();
+
+                Assert.AreEqual("string one, string two, string three", test.Logger[0]);
             }
         }
 

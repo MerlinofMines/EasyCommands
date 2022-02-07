@@ -465,7 +465,7 @@ Keywords: ```^, pow, xor```
 * **(Vector, Vector)**: Returns the angle (in degrees) between the two given vectors (get it? ```^```)
 
 ### Join
-Joins a given list by the given string separator by casting each list value to a string and then joining them together using the given separator.
+Joins a given list by the given string separator by casting each list value to a string and then joining them together using the given separator.  When joining values the keys are stripped.  Only the values get joined.
 
 Keywords: ```join, joined```
 
@@ -477,6 +477,17 @@ set myOutput to [1,2,3] joined ", "
 ```
 #Line Separated Values
 set myOutput to [1,2,3] joined "\n"
+print myOutput
+#1
+#2
+#3
+```
+
+```
+#Keys are stripped
+set myOutput to ["one" -> 1, "two" -> 2, "three" -> 3] joined ", "
+print myOutput
+#1, 2, 3
 ```
 
 ### Modulus
