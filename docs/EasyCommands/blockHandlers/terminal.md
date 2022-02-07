@@ -69,6 +69,35 @@ power on the "Hydrogen Thrusters"
 turn on the "Exterior Lights"
 ```
 
+### "CustomData" property
+* Primitive Type: String
+* Keywords: ```data, customdata```
+
+Gets or Sets the blocks `CustomData` field. 
+
+```
+#Output your current program
+print my data
+
+#Delete your current program (do not actually do this).
+set my data to ""
+```
+
+
+### "DetailedInfo" property
+* Read-only
+* Primitive Type: String
+* Keywords: ```info, details, detailedinfo```
+
+Returns the detailed info of the block. `DetailedInfo` contains the text on the right hand site of the terminal menu.
+
+```
+set myInfo to "Battery" details split "\n"
+
+#Output stored power
+Print myInfo[6]
+```
+
 ### "Position" property
 * Read-only
 * Primitive Type: Vector
