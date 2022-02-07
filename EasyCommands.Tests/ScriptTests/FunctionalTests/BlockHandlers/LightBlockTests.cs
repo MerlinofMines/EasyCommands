@@ -136,7 +136,7 @@ turn on the ""hangar lights""
         [TestMethod]
         public void UseVariableAsImplicitBlockSelector() {
             String script = @"
-assign ""myLights"" to 'test lights'
+assign myLights to 'test lights'
 turn on $myLights
 ";
 
@@ -153,7 +153,7 @@ turn on $myLights
         [TestMethod]
         public void UseVariableAsImplicitBlockSelectorInConditionAndBlockCommand() {
             String script = @"
-assign ""myLights"" to 'test lights'
+assign myLights to 'test lights'
 if $myLights are on
   Print 'You Left The Lights On'
   turn off $myLights

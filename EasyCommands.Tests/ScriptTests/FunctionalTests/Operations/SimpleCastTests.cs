@@ -64,7 +64,7 @@ Print ""0:0:0"" as bool
                 Assert.AreEqual("True", test.Logger[6]);
                 Assert.AreEqual("False", test.Logger[7]);
                 Assert.AreEqual("Exception Occurred:", test.Logger[8]);
-                Assert.AreEqual("Cannot convert vector to boolean", test.Logger[9]);
+                Assert.AreEqual("Cannot convert vector 0:0:0 to boolean", test.Logger[9]);
             }
         }
 
@@ -74,7 +74,7 @@ Print ""0:0:0"" as bool
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert vector to boolean", test.Logger[1]);
+                Assert.AreEqual("Cannot convert vector 0:0:1 to boolean", test.Logger[1]);
             }
         }
 
@@ -84,7 +84,7 @@ Print ""0:0:0"" as bool
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert color to boolean", test.Logger[1]);
+                Assert.AreEqual("Cannot convert color #FFFFFF to boolean", test.Logger[1]);
             }
         }
 
@@ -94,7 +94,7 @@ Print ""0:0:0"" as bool
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert list to boolean", test.Logger[1]);
+                Assert.AreEqual("Cannot convert list [0,1,2] to boolean", test.Logger[1]);
             }
         }
         #endregion Boolean
@@ -164,7 +164,7 @@ Print ""abc"" as number
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert color to number", test.Logger[1]);
+                Assert.AreEqual("Cannot convert color #FFFFFF to number", test.Logger[1]);
             }
         }
 
@@ -176,7 +176,7 @@ Print ""abc"" as number
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert list to number", test.Logger[1]);
+                Assert.AreEqual("Cannot convert list [0,1,2] to number", test.Logger[1]);
             }
         }
         #endregion Number
@@ -256,7 +256,7 @@ Print ""abc"" as number
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert boolean to vector", test.Logger[1]);
+                Assert.AreEqual("Cannot convert boolean True to vector", test.Logger[1]);
             }
         }
 
@@ -267,7 +267,7 @@ Print ""abc"" as number
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert number to vector", test.Logger[1]);
+                Assert.AreEqual("Cannot convert number 1 to vector", test.Logger[1]);
             }
         }
 
@@ -311,7 +311,7 @@ Print ""abc"" as vector
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert list to vector", test.Logger[1]);
+                Assert.AreEqual("Cannot convert list [0,1,2] to vector", test.Logger[1]);
             }
         }
         #endregion Vector
@@ -323,7 +323,7 @@ Print ""abc"" as vector
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert boolean to color", test.Logger[1]);
+                Assert.AreEqual("Cannot convert boolean True to color", test.Logger[1]);
             }
         }
 
@@ -391,7 +391,7 @@ Print -128:128:356 as color
                 test.RunOnce();
 
                 Assert.AreEqual("Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Cannot convert list to color", test.Logger[1]);
+                Assert.AreEqual("Cannot convert list [0,1,2] to color", test.Logger[1]);
             }
         }
         #endregion Color

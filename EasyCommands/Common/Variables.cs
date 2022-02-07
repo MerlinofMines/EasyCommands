@@ -165,16 +165,6 @@ namespace IngameScript {
             }
         }
 
-        public class InMemoryVariable : Variable {
-            public String variableName;
-
-            public InMemoryVariable(string v) {
-                variableName = v;
-            }
-
-            public Primitive GetValue() => PROGRAM.GetVariable(variableName).GetValue();
-        }
-
         public class ListAggregateVariable : Variable {
             public Variable expectedList;
             public Aggregator aggregator;

@@ -127,14 +127,6 @@ namespace IngameScript {
             }
         }
 
-        public class StringCommandParameter : ValueCommandParameter<String> {
-            public bool isExplicit;
-
-            public StringCommandParameter(string value, bool isExpl) : base(value) {
-                isExplicit = isExpl;
-            }
-        }
-
         public class BooleanCommandParameter : ValueCommandParameter<bool> {
             public BooleanCommandParameter(bool value) : base(value) {}
         }
