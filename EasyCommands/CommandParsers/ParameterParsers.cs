@@ -146,6 +146,8 @@ namespace IngameScript {
             AddPropertyWords(Words("types", "blueprints"), Property.TYPES);
             AddPropertyWords(PluralWords("altitude", "elevation"), Property.ALTITUDE);
             AddPropertyWords(Words("weight", "mass"), Property.WEIGHT);
+            AddPropertyWords(Words("data", "customdata"), Property.DATA);
+            AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));

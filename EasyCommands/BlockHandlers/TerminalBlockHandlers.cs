@@ -66,6 +66,8 @@ namespace IngameScript {
                 AddVectorHandler(Property.POSITION, block => block.GetPosition());
                 AddStringHandler(Property.NAME, b => b.CustomName, (b, v) => b.CustomName = v);
                 AddBooleanHandler(Property.SHOW, b => b.ShowInTerminal, (b, v) => b.ShowInTerminal = v);
+                AddStringHandler(Property.DATA, b => b.CustomData, (b, v) => b.CustomData = v);
+                AddStringHandler(Property.INFO, b => b.DetailedInfo);
                 AddListHandler(Property.PROPERTIES, b => {
                     var properties = NewList<ITerminalProperty>();
                     b.GetProperties(properties);

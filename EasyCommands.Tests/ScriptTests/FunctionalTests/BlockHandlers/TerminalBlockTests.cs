@@ -99,6 +99,54 @@ show the ""test terminal""
         }
 
         [TestMethod]
+        public void GetBlockCustomData() {
+            String script = @"
+print my data
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+
+                test.RunUntilDone();
+
+                Assert.AreEqual(script, test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetBlockCustomData() {
+            String script = @"
+set ""test terminal"" data to ""custom data""
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+
+                test.RunUntilDone();
+
+                mockBlock.VerifySet(b => b.CustomData = "custom data");
+            }
+        }
+
+        [TestMethod]
+        public void GetBlockDetailedInfo() {
+            String script = @"
+print ""Detailed Info: "" + ""test terminal"" info
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                mockBlock.Setup(b => b.DetailedInfo).Returns("all the details");
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Detailed Info: all the details", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetBlockPosition() {
             String script = @"print ""Position: "" + the ""test terminal"" position";
 
