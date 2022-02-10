@@ -65,6 +65,11 @@ namespace IngameScript {
         public void InitializeOperators() {
             //Object
             AddUniOperation<KeyedList>(UniOperand.RANDOM, a => a.GetValue(ResolvePrimitive(randomGenerator.Next(a.keyedValues.Count))).GetValue().value);
+            AddUniOperation<object>(UniOperand.CAST, a => a);
+            AddUniOperation<string>(UniOperand.CAST, a => {
+                Primitive output;
+                return ParsePrimitive(a, out output) ? output.value : a;
+            });
 
             //List
             AddBiOperation<KeyedList, object>(BiOperand.ADD, (a, b) => Combine(a, b));
@@ -130,6 +135,7 @@ namespace IngameScript {
 
             //String
             AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));
+            AddUniOperation<object>(UniOperand.TYPE, a => PROGRAM.returnToString[ResolvePrimitive(a).returnType]);
             AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)));
             AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)) + b);
             AddBiOperation<string, string>(BiOperand.SUBTRACT, (a, b) => a.Contains(b) ? a.Remove(a.IndexOf(b)) + a.Substring(a.IndexOf(b) + b.Length) :  a);

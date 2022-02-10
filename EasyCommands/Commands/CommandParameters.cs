@@ -53,6 +53,7 @@ namespace IngameScript {
         public class TernaryConditionSeparatorParameter : SimpleCommandParameter { }
         public class MinusCommandParameter : SimpleCommandParameter { }
         public class RoundCommandParameter : SimpleCommandParameter { }
+        public class CastCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;

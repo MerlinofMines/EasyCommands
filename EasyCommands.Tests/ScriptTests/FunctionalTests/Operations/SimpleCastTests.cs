@@ -5,6 +5,361 @@ namespace EasyCommands.Tests.ScriptTests
     [TestClass]
     public class SimpleCastTests
     {
+        #region RightUniOperand
+        [TestMethod]
+        public void CastBool() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast true
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("True", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastTrueStringToBool() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""true""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("True", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastFalseStringToBool() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""false""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("False", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastTRUEStringToBool() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""TRUE""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("True", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastFALSEStringToBool() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""FALSE""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("False", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastIntegerToNumber() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast 100
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("100", test.Logger[0]);
+                Assert.AreEqual("number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastIntegerStringToNumber() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""100""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("100", test.Logger[0]);
+                Assert.AreEqual("number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastDecimalToNumber() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast 3.1415
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("3.1415", test.Logger[0]);
+                Assert.AreEqual("number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastDecimalStringToNumber() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""3.1415""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("3.1415", test.Logger[0]);
+                Assert.AreEqual("number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastVector() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast 1:2:3
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("1:2:3", test.Logger[0]);
+                Assert.AreEqual("vector", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastVectorString() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""1:2:3""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("1:2:3", test.Logger[0]);
+                Assert.AreEqual("vector", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastGPSCoordinateStringAsVector() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("53573.9750085028:-26601.8512032533:12058.8229348438", test.Logger[0]);
+                Assert.AreEqual("vector", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastColor() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast red
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("#FF0000", test.Logger[0]);
+                Assert.AreEqual("color", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastColorString() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""red""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("#FF0000", test.Logger[0]);
+                Assert.AreEqual("color", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastHexColor() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast #FF0000
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("#FF0000", test.Logger[0]);
+                Assert.AreEqual("color", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastHexColorString() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""#FF0000""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("#FF0000", test.Logger[0]);
+                Assert.AreEqual("color", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastList() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast [1,2,3]
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("[1,2,3]", test.Logger[0]);
+                Assert.AreEqual("list", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastListStringNotSupported() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""[1,2,3]""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("[1,2,3]", test.Logger[0]);
+                Assert.AreEqual("string", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastNonPrimitiveReturnOriginalString() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast unknownString
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("unknownString", test.Logger[0]);
+                Assert.AreEqual("string", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastString() {
+            using (var test = new ScriptTest(@"
+set myVariable to cast ""unknownString""
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("unknownString", test.Logger[0]);
+                Assert.AreEqual("string", test.Logger[1]);
+            }
+        }
+        #endregion
+
+        #region LeftUniOperand
+        [TestMethod]
+        public void BoolStringResolved() {
+            using (var test = new ScriptTest(@"
+set myVariable to ""true"" resolved
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("True", test.Logger[0]);
+                Assert.AreEqual("boolean", test.Logger[1]);
+            }
+
+        }
+
+        [TestMethod]
+        public void DecimalStringResolved() {
+            using (var test = new ScriptTest(@"
+set myVariable to ""3.1415"" resolved
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("3.1415", test.Logger[0]);
+                Assert.AreEqual("number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void VectorStringResolved() {
+            using (var test = new ScriptTest(@"
+set myVariable to ""1:2:3"" resolved
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("1:2:3", test.Logger[0]);
+                Assert.AreEqual("vector", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void HexColorStringResolved() {
+            using (var test = new ScriptTest(@"
+set myVariable to ""#FF0000"" resolved
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("#FF0000", test.Logger[0]);
+                Assert.AreEqual("color", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void StringResolved() {
+            using (var test = new ScriptTest(@"
+set myVariable to ""unknownString"" resolved
+print myVariable
+print myVariable type
+")) {
+                test.RunOnce();
+
+                Assert.AreEqual("unknownString", test.Logger[0]);
+                Assert.AreEqual("string", test.Logger[1]);
+            }
+        }
+        #endregion
+
         #region Boolean
         [TestMethod]
         public void CastBoolAsBool() {
@@ -284,6 +639,17 @@ Print ""abc"" as vector
                 Assert.AreEqual("0:0:7", test.Logger[0]);
                 Assert.AreEqual("Exception Occurred:", test.Logger[1]);
 
+            }
+        }
+
+        [TestMethod]
+        public void CastGPSStringAsVector() {
+            var script = @"Print ""GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:"" as vector";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.AreEqual("53573.9750085028:-26601.8512032533:12058.8229348438", test.Logger[0]);
             }
         }
 

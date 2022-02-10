@@ -69,7 +69,37 @@ Print "Result: " + result
 #Result: 8
 ```
 
-### The Minus Sign
+## Casting Variables To Other Types
+Sometimes you may want to convert one input type to another, for example, a string input which is actually supposed to be a number.  You can do this using the Cast Operation.
+
+Keywords:  ```cast, as, resolve, resolved```
+
+The Cast operation can be used as either a UniOperand or as BiOperand.
+
+### Casting As a UniOperand
+
+When used as a UniOperand, the Cast operand will attempt to parse a given string variable as another variable type, by looking at its structure.  Here are some Examples:
+
+```
+set myBool to cast "true"
+set myNumber to cast "3.14"
+set myVector to cast "1:2:3"
+set myColor to cast "red"
+set myColor to cast "#FF0000"
+set myString to cast "Some random String"
+```
+
+Casting strings to lists is not currently supported.  If the input variable is not a string, it is returned without any conversion.  So casting a vector does nothing.
+
+See the Cast under UniOperands for more information.
+
+### Casting as a BiOperand
+
+When used as a BiOperand, the Cast Operation expects the second variable to be a string representing one of the supported cast types.
+
+See Cast under BiOperands below for more information.
+
+## The Minus Sign
 ```-``` can be used as either a UniOperand to negate a value (See the Not Operation)), or as a BiOperand to subtract a value from another value (see the Subtraction operation).
 
 ```
@@ -138,14 +168,6 @@ Keywords: ```abs, absolute```
 * **(Number)**: Absolute value of the number
 * **(Vector)**: Returns the length of the vector
 
-### Sign
-Behavior varies based on input type.
-
-Keywords: ```sign, quantize```
-
-* **(Number)**: Return the sign of the number or 0
-* **(Vector)**: Returns the vector with the sign of each component or 0
-
 ### Arc Cosine
 Performs the arc cosine operation on the given numeric value
 
@@ -160,6 +182,29 @@ Keywords: ```asin, arcsin```
 Performs the arc tan operation on the given numeric value
 
 Keywords: ```atan, arctan```
+
+### Cast (Before or After)
+Casts the given string variable to another variable type by attempting to resolve it to the appropriate type.
+
+Keywords: ```cast, resolve, resolved```
+
+```
+#number
+set myVariable to cast "123.4"
+
+#Vector
+set myVariable to "1:2:3" resolved
+
+#Color
+set myVariable to resolve "#FF0000"
+```
+
+If the input type is not a string, will return the original value.  If the input string cannot be parsed as a supported Primitive Type, the original string will be returned.
+
+```
+#Returns the original string
+set myVariable to resolve "Some Random String"
+```
 
 ### Cosine
 Performs the cosine operation on the given numeric value
@@ -247,6 +292,14 @@ Shuffles the given list.  This does not modify the input list but rather returns
 
 Keywords: ```shuffle, shuffled```
 
+### Sign
+Behavior varies based on input type.
+
+Keywords: ```sign, quantize```
+
+* **(Number)**: Return the sign of the number or 0
+* **(Vector)**: Returns the vector with the sign of each component or 0
+
 ### Sin
 Performs the sin operation on the given numeric value
 
@@ -286,6 +339,63 @@ wait 30 ticks
 #Wait 30 seconds
 wait 30
 ```
+
+### Type (After)
+Returns the [Primitive Type](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") of the given variable as a string.
+
+Keywords: ```type```
+
+Possible output values: ```boolean, string, number, vector, color, list```
+
+```
+set myVariable to "True"
+print myVariable type
+#bool
+
+#Notice the quotes
+set myVariable to "123"
+print myVariable type
+#string
+
+set myVariable to 123
+print myVariable type
+#number
+
+set myVariable to 1:2:3
+print myVariable type
+#vector
+
+set myVariable to #FF0000
+print myVariable type
+#color
+
+set myVariable to [1,2,3]
+print myVariable type
+#list
+```
+
+This is particularly useful when trying to cast arbitrary input as a value.
+
+```
+#Pretend the text is "1"
+set myInput to "My Display" text
+
+#This will resolve the input string to a primitive type but you don't know which
+set myResolvedVariable to resolve myInput
+
+#This will tell you what type you are dealing with
+set myVariableType to myResolvedVariable type
+print "Type: " + myVariableType
+#number
+
+if myVariableType is number
+  set myNewValue to myResolvedVariable + 10
+  print myNewValue
+  #11
+else
+  set "My Display" text to "Input must be a number! Try again"
+```
+
 ### Values (After)
 Gets the values from the given list (ignoring keys).  The list is expected to come before the operand.
 
@@ -325,12 +435,27 @@ This special operation allows you to cast a given value as another value.  This 
 
 Keywords: ```cast, as```
 
-Cast Types: ```bool, string, number, vector, color, list```
+Cast Types: ```bool, boolean, string, number, vector, color, list```
 
 ```
 set myVector to 1 + ":" + 2 + ":" + 3
 set myVector to myVector as vector
 set the "Remote Control" destination to myVector
+```
+
+If you attempt to cast a variable to a type that it cannot be converted to, you will get a script halting exception.  So before casting to a specific type make sure you know you can cast it to that type.
+
+If you are unsure of the type, use the "Cast" UniOperand to cast it to whatever type it actually is, and then check its type using the Type operation before converting.
+
+```
+#Pretend I don't know what this value is
+set myInputValue to "My Display" text
+
+set myResolvedValue to cast myInputValue
+if myResolvedValue type is not number
+  Print "Input Value must be a number!"
+else
+  Print "Input Number is: " + myResolvedValue
 ```
 
 ### Supported Casts

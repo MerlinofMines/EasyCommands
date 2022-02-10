@@ -4,6 +4,8 @@ Primitive Types in EasyCommands represent the different kinds of [Variables](htt
 
 See [Operations](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") for a list of all the operations that you can perform on the various primitive types.
 
+You can also convert some primitive types to other primitive types using the Cast Operation.  See [Casting Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") for more information.
+
 ## Boolean
 The most basic primitive type is boolean, which can either be true or false.  Booleans are used when evaluating conditions and setting true/false like "Enabled".
 ```
@@ -53,19 +55,15 @@ print myString as color
 Vectors:
 
 ```
-set a to 4
-Print "Vector: " + a:b:c
-#Vector: 4:b:c
-
-Print "String: " + "a:b:c"
-#String: a:b:c
+Print "Vector: " + "1:2:3" as vector
+#Vector: 1:2:3
 ```
 
 This is also handy for parsing GPS coordinates as vectors.
 
 ```
 set myVector to "GPS:merlin waypoint:1:2:3:#FFFF0000"
-print "myVector is: " + myVector
+print "myVector is: " + myVector as vector
 #myVector is: 1:2:3
 ```
 
@@ -139,10 +137,10 @@ Internally numbers are stored using floating point precision (as is most of Easy
 
 ## Vectors
 
-Vectors represent 3D coordinates and are used for a variety of purposes, such as for positions, directions, target locations, detected entity locations, and some other interesting properties.  They take the form "x:y:z" where x,y,z represent the x,y,z coordinates, respectively.
+Vectors represent 3D coordinates and are used for a variety of purposes, such as for positions, directions, target locations, detected entity locations, and some other interesting properties.  They take the form ```x:y:z``` where x,y,z represent the x,y,z coordinates, respectively.
 
 ```
-set myCoords to "4:5:6"
+set myCoords to 4:5:6
 set the "Remote Control" waypoint to myCoords
 set myPosition to my position
 ```
@@ -160,7 +158,7 @@ Print "Z: " + myVector.z
 
 ### Creating Vectors Using Variables
 
-You can create vectors using [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") using the syntax "a:b:c" where a,b,c are the names of variables.  Note that you must use "a:b:c" format.  "a : b : c" will not work.
+You can create vectors using [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") using the syntax "a:b:c" where a,b,c are the names of variables.  Note that you must use ```a:b:c``` format.  ```a : b : c``` will not work.
 
 Similar rules for setting or binding variables applies to Variable Vectors.  Setting a variable to a variable vector will set a static vector based on the values of the variables at the time it was created.  Binding a variable to a variable vector will effectively create a vector with dynamic values.
 
@@ -186,9 +184,19 @@ print "My Dynamic Vector: " + myDynamicVector
 #4:2:3
 ```
 
+### Creating Vectors from GPS coordinates
+
+Vectors can be parsed from GPS coordinates by using the GPS coordinate as a String (wrapped in quotes) and then casting to a vector.
+
+```
+set myVector to "GPS:surface:53573.9750085028:-26601.8512032533:12058.8229348438:#FF75C9F1:" as vector
+print myVector
+#53573.9750085028:-26601.8512032533:12058.8229348438
+```
+
 ## Colors
 
-There are some blocks types that support colors, such as text colors on screen.  You can create colors using special reserved keywords, or by explicitly declaring hex values.
+There are some blocks types that support colors, such as text colors on screen.  You can create colors using special reserved keywords, or by explicitly declaring hex values, or using casting a vector representing R:G:B.
 
 ```
 #All of these are the equivalent color

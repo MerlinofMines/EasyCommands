@@ -155,6 +155,13 @@ namespace IngameScript {
                 NoValueRule(Type<RoundCommandParameter>, round => new UniOperationCommandParameter(UniOperand.ROUND))
             ),
 
+            //CastProcessor
+            new BranchingProcessor<CastCommandParameter>(
+                NoValueRule(Type<CastCommandParameter>, round => new BiOperandCommandParameter(BiOperand.CAST, 4)),
+                NoValueRule(Type<CastCommandParameter>, round => new LeftUniOperationCommandParameter(UniOperand.CAST)),
+                NoValueRule(Type<CastCommandParameter>, round => new UniOperationCommandParameter(UniOperand.CAST))
+            ),
+
             //AfterUniOperationProcessor
             OneValueRule(Type<LeftUniOperationCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),
