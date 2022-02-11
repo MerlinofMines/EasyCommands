@@ -69,6 +69,7 @@ namespace IngameScript {
                 { Block.THRUSTER, new ThrusterBlockHandler()},
                 { Block.TURBINE, new EngineBlockHandler<IMyPowerProducer>("WindTurbine") },
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
+                { Block.TURRET_CONTROLLER, new TurretControlBlockHandler()},
                 { Block.WARHEAD, new WarheadBlockHandler() },
                 { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() }
             };

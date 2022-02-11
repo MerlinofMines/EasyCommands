@@ -50,7 +50,7 @@ power off "My Rotor"
 ## "Angle" Property
 * Primitive Type: Numeric
 * Takes an optional Direction (Clockwise/Counterclockwise)
-* Keywords: ```angle, angles```
+* Keywords: ```angle, angles, azimuth, azimuths```
 
 Gets or sets the rotor's angle.  When setting, takes an optional direction (Clockwise, Counterclockwise) indicating the direction to move the rotor to get to the desired angle.
 

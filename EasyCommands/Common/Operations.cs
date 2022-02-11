@@ -115,7 +115,7 @@ namespace IngameScript {
             AddBiOperation<float, float>(BiOperand.ROUND, (a, b) => Math.Round(a, (int)b));
             AddBiOperation<Vector3D, Vector3D>(BiOperand.DOT, (a, b) => a.Dot(b));
             AddBiOperation<Color, Vector3D>(BiOperand.DOT, (a, b) => (a.ToVector3()*255).Dot(b));
-            AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => 180 * Math.Acos(a.Dot(b) / (a.Length() * b.Length())) / Math.PI);
+            AddBiOperation<Vector3D, Vector3D>(BiOperand.EXPONENT, (a, b) => Math.Acos(a.Dot(b) / (a.Length() * b.Length())) * RadiansToDegrees);
 
             //String
             AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));

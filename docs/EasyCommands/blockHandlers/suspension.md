@@ -44,7 +44,7 @@ set "My Wheel" height to 0.5
 
 ## "Angle" Property
 * Primitive Type: Numeric
-* Keywords: ```angle, angles```
+* Keywords: ```angle, angles, azimuth, azimuths```
 
 Gets/Sets the Wheel steering angle. Values for this property range from -45 (Left) to 45 (Right), with 0 = Straight Forward.
 

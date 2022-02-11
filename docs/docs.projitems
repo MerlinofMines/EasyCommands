@@ -33,6 +33,7 @@
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\jumpDrive.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\thruster.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\timer.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\turretController.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\turret.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\warhead.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\turbine.md" />

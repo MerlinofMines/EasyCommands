@@ -103,7 +103,7 @@ namespace IngameScript {
 
             //Property Words
             AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale")), Property.LEVEL);
-            AddPropertyWords(PluralWords("angle"), Property.ANGLE);
+            AddPropertyWords(PluralWords("angle", "azimuth"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "detach", "disconnected", "detached", "undock", "undocked"), Property.CONNECTED, false);
@@ -360,6 +360,7 @@ namespace IngameScript {
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
             AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
             AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
+            AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
         }
 
         String[] Words(params String[] words) => words;
