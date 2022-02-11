@@ -166,6 +166,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
 * [Guns](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gun "Gun Handler")
 * [Gyroscopes](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gyroscope "Gyroscope Handler")
+* [HeatVent](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/heatVent "HeatVent Handler")
 * [Hinges](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/hinge "Hinge Handler")
 * [Hydrogen Engines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/engine "Hydrogen Engine Handler")
 * [Inventories](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Handler")

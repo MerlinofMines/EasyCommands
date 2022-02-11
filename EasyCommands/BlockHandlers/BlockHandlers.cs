@@ -36,6 +36,7 @@ namespace IngameScript {
                 { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { Block.GYROSCOPE, new GyroscopeBlockHandler<IMyGyro>() },
+                { Block.HEAT_VENT, new HeatVentBlockHandler() },
                 { Block.HINGE, new RotorBlockHandler(IsHinge) },
                 { Block.JUMPDRIVE, new JumpDriveBlockHandler() },
                 { Block.LASER_ANTENNA, new LaserAntennaBlockHandler() },

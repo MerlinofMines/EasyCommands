@@ -354,6 +354,7 @@ namespace IngameScript {
             AddBlockWords(Words("laser", "laserantenna"), Block.LASER_ANTENNA);
             AddBlockWords(Words("terminal"), Block.TERMINAL);
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
+            AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
         }
 
         String[] Words(params String[] words) => words;
