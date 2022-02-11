@@ -40,6 +40,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Grinder - ```grinder```, ```grinders```
 * Gun - ```gun, railgun, cannon, autocannon, rocket, missile, launcher```, ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
 * Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
+* HeatVent - ```heatVent```, ```heatVents```
 * Hinge - ```hinge```, ```hinges```
 * Hydrogen Engine - ```engine```, ```engines```
 * Inventory - ```cargo, container, inventory, inventories```, ```cargos, containers```
