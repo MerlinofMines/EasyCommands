@@ -123,10 +123,20 @@ namespace IngameScript {
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
-            //StringAssignmentProcessor
+            //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, g, name) => AllSatisfied(g, name) && (name.GetValue().value is AmbiguousStringVariable),
                 (p, g, name) => new VariableAssignmentCommandParameter(((AmbiguousStringVariable)name.value).value, p.value, g.HasValue())),
+
+            //IncreaseProcessor
+            OneValueRule(Type<IncreaseCommandParameter>, requiredRight<VariableCommandParameter>(),
+                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
+                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
+
+            //IncrementProcessor
+            OneValueRule(Type<IncrementCommandParameter>, requiredLeft<VariableCommandParameter>(),
+                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
+                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
 
             //Primitive Processor
             NoValueRule(Type<BooleanCommandParameter>, b => new VariableCommandParameter(GetStaticVariable(b.value))),
@@ -287,13 +297,7 @@ namespace IngameScript {
                             b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
                     })),
 
-            //VariableIncrementCommand
-            ThreeValueRule(Type<IncrementCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<IncrementCommandParameter>(),
-                (i, v, d, i2) => AllSatisfied(v, d) && v.GetValue().value is AmbiguousStringVariable,
-                (i, v, d, i2) => new CommandReferenceParameter(new VariableIncrementCommand(((AmbiguousStringVariable)v.value).value, i.value && (i2.HasValue() ? i2.GetValue().value : true), d.value))),
-            OneValueRule(Type<IncrementCommandParameter>, requiredEither<VariableCommandParameter>(),
-                (i, v) => v.Satisfied() && v.GetValue().value is AmbiguousStringVariable,
-                (i, v) => new CommandReferenceParameter(new VariableIncrementCommand(((AmbiguousStringVariable)v.value).value, i.value, null))),
+            NoValueRule(Type<RelativeCommandParameter>, b => NewList<CommandParameter>()),
 
             //ListIndexAssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -315,6 +319,14 @@ namespace IngameScript {
             //VariableAssignmentProcessor
             OneValueRule(Type<VariableAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.value, p.useReference, p.isGlobal))),
+
+            //VariableIncrementProcessor
+            OneValueRule(Type<VariableIncrementCommandParameter>, optionalRight<VariableCommandParameter>(),
+                (increment, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable.HasValue() ? variable.GetValue().value : GetStaticVariable(1)))),
+            //Handles --i
+            OneValueRule(Type<IncrementCommandParameter>, requiredRight<VariableCommandParameter>(),
+                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
+                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
 
             //SendCommandProcessor
             //Note: Message to send always comes first: "send <command> to <tag>" is only supported format

@@ -432,5 +432,118 @@ turn on $myPistons['top piston'][1]
                 mockPiston3.VerifySet(p => p.Enabled = true);
             }
         }
+
+        [TestMethod]
+        public void IncreaseSelectorByVariableAmount() {
+            String script = @"
+set myVariable to 1
+increase the ""test beacon"" range by myVariable
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(b => b.Radius).Returns(5f);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.Radius = 6f);
+            }
+        }
+
+        [TestMethod]
+        public void IncreaseSelectorBySelectorAmount() {
+            String script = @"
+increase the ""test beacon 1"" range by ""test beacon 2"" range
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon1 = new Mock<IMyBeacon>();
+                var mockBeacon2 = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon 1", mockBeacon1);
+                test.MockBlocksOfType("test beacon 2", mockBeacon2);
+                mockBeacon1.Setup(b => b.Radius).Returns(3f);
+                mockBeacon2.Setup(b => b.Radius).Returns(4f);
+
+                test.RunUntilDone();
+
+                mockBeacon1.VerifySet(p => p.Radius = 7f);
+            }
+        }
+
+        [TestMethod]
+        public void IncrementSelectorByVariableAmount() {
+            String script = @"
+set myVariable to 1
+""test beacon"" range += myVariable
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(b => b.Radius).Returns(5f);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.Radius = 6f);
+            }
+        }
+
+        [TestMethod]
+        public void IncrementSelectorBySelectorAmount() {
+            String script = @"
+""test beacon 1"" range += ""test beacon 2"" range
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon1 = new Mock<IMyBeacon>();
+                var mockBeacon2 = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon 1", mockBeacon1);
+                test.MockBlocksOfType("test beacon 2", mockBeacon2);
+                mockBeacon1.Setup(b => b.Radius).Returns(3f);
+                mockBeacon2.Setup(b => b.Radius).Returns(4f);
+
+                test.RunUntilDone();
+
+                mockBeacon1.VerifySet(p => p.Radius = 7f);
+            }
+        }
+
+        [TestMethod]
+        public void DecreaseSelectorByVariableAmount() {
+            String script = @"
+set myVariable to 1
+decrease the ""test beacon"" range by myVariable
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(b => b.Radius).Returns(5f);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.Radius = 4f);
+            }
+        }
+
+        [TestMethod]
+        public void DecrementSelectorByVariableAmount() {
+            String script = @"
+set myVariable to 1
+""test beacon"" range -= myVariable
+";
+
+            using (var test = new ScriptTest(script)) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(b => b.Radius).Returns(5f);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.Radius = 4f);
+            }
+        }
+
     }
 }

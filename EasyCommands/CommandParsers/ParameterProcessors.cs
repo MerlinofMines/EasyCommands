@@ -140,20 +140,24 @@ namespace IngameScript {
 
         static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);
-            var incrementProcessor = eitherList<IncrementCommandParameter>(true);
+            var increaseProcessor = requiredLeft<IncreaseCommandParameter>();
+            var incrementProcessor = requiredRight<IncrementCommandParameter>();
             var variableProcessor = requiredEither<VariableCommandParameter>();
             var propertyProcessor = requiredEither<PropertySupplierCommandParameter>();
             var directionProcessor = requiredEither<DirectionCommandParameter>();
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
+            var relativeProcessor = requiredRight<RelativeCommandParameter>();
             var processors = NewList<DataProcessor>(
                 assignmentProcessor,
+                increaseProcessor,
                 incrementProcessor,
                 variableProcessor,
                 propertyProcessor,
                 directionProcessor,
                 reverseProcessor,
-                notProcessor);
+                notProcessor,
+                relativeProcessor);
 
             CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.Satisfied() && x != directionProcessor && x != propertyProcessor);
             Convert<SelectorCommandParameter> convert = (p) => {
@@ -172,14 +176,14 @@ namespace IngameScript {
                 }
 
                 if (incrementProcessor.Satisfied()) {
-                    propertySupplier = propertySupplier.WithIncrement(incrementProcessor.GetValue()
-                        .Select(v => v.value)
-                        .Aggregate((a, b) => a && b));
-                }
+                    propertySupplier = propertySupplier.WithIncrement(incrementProcessor.GetValue().value);
+                } else if (increaseProcessor.Satisfied()) {
+                    propertySupplier = propertySupplier.WithIncrement(increaseProcessor.GetValue().value);
+                } else if (relativeProcessor.Satisfied()) propertySupplier = propertySupplier.WithIncrement(true);
 
                 Action<BlockHandler, Object> blockAction;
                 if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
-                else if (AllSatisfied(incrementProcessor)) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
+                else if (increaseProcessor.Satisfied() || incrementProcessor.Satisfied() || relativeProcessor.Satisfied()) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
                 else blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
 

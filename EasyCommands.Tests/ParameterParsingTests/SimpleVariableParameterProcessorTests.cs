@@ -37,7 +37,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableIncrementCommand);
             VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
             Assert.AreEqual("i", incrementCommand.variableName);
-            Assert.IsNull(incrementCommand.variable);
+            Assert.AreEqual(1f, incrementCommand.variable.GetValue().value);
             Assert.IsTrue(incrementCommand.increment);
         }
 
@@ -48,7 +48,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableIncrementCommand);
             VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
             Assert.AreEqual("i", incrementCommand.variableName);
-            Assert.IsNull(incrementCommand.variable);
+            Assert.AreEqual(1f, incrementCommand.variable.GetValue().value);
             Assert.IsTrue(incrementCommand.increment);
         }
 
@@ -59,7 +59,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableIncrementCommand);
             VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
             Assert.AreEqual("i", incrementCommand.variableName);
-            Assert.IsNull(incrementCommand.variable);
+            Assert.AreEqual(1f, incrementCommand.variable.GetValue().value);
             Assert.IsTrue(incrementCommand.increment);
         }
 
@@ -116,7 +116,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableIncrementCommand);
             VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
             Assert.AreEqual("i", incrementCommand.variableName);
-            Assert.IsNull(incrementCommand.variable);
+            Assert.AreEqual(1f, incrementCommand.variable.GetValue().value);
             Assert.IsFalse(incrementCommand.increment);
         }
 
@@ -127,7 +127,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableIncrementCommand);
             VariableIncrementCommand incrementCommand = (VariableIncrementCommand)command;
             Assert.AreEqual("i", incrementCommand.variableName);
-            Assert.IsNull(incrementCommand.variable);
+            Assert.AreEqual(1f, incrementCommand.variable.GetValue().value);
             Assert.IsFalse(incrementCommand.increment);
         }
 

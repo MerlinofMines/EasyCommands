@@ -54,6 +54,7 @@ namespace IngameScript {
         public class MinusCommandParameter : SimpleCommandParameter { }
         public class RoundCommandParameter : SimpleCommandParameter { }
         public class CastCommandParameter : SimpleCommandParameter { }
+        public class RelativeCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;
@@ -91,6 +92,10 @@ namespace IngameScript {
             public AssignmentCommandParameter(bool reference = false) : base(reference) { }
         }
 
+        public class IncreaseCommandParameter : ValueCommandParameter<bool> {
+            public IncreaseCommandParameter(bool increase = true) : base(increase) { }
+        }
+
         public class IncrementCommandParameter : ValueCommandParameter<bool> {
             public IncrementCommandParameter(bool increase = true) : base(increase) { }
         }
@@ -104,6 +109,13 @@ namespace IngameScript {
                 variableName = variable;
                 useReference = reference;
                 isGlobal = global;
+            }
+        }
+
+        public class VariableIncrementCommandParameter : ValueCommandParameter<bool> {
+            public string variableName;
+            public VariableIncrementCommandParameter(string variable, bool increase = true) : base(increase) {
+                variableName = variable;
             }
         }
 
