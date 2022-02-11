@@ -26,8 +26,16 @@ namespace IngameScript {
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
         string[] thirdPassTokens = new[] { "." };
 
-        Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>();
-        Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>();
+        Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>(
+            KeyValuePair(UniOperand.CAST, "cast"),
+            KeyValuePair(UniOperand.ROUND, "round"),
+            KeyValuePair(UniOperand.REVERSE, "negate")
+        );
+        Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>(
+            KeyValuePair(BiOperand.CAST, "cast"),
+            KeyValuePair(BiOperand.ROUND, "round"),
+            KeyValuePair(BiOperand.COMPARE, "compare")
+        );
         Dictionary<Return, String> returnToString = NewDictionary(
             KeyValuePair(Return.BOOLEAN, "boolean"),
             KeyValuePair(Return.NUMERIC, "number"),
@@ -39,6 +47,7 @@ namespace IngameScript {
 
         static Dictionary<string, Converter> castMap = NewDictionary(
             CastFunction("bool", p => CastBoolean(p)),
+            CastFunction("boolean", p => CastBoolean(p)),
             CastFunction("string", CastString),
             CastFunction("number", p => CastNumber(p)),
             CastFunction("vector", p => CastVector(p)),
@@ -230,6 +239,7 @@ namespace IngameScript {
             AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
             AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
             AddLeftUniOperationWords(Words("values"), UniOperand.VALUES);
+            AddLeftUniOperationWords(Words("type"), UniOperand.TYPE);
 
             //Tier 0 Operations
             AddWords(Words("dot", "."), new BiOperandCommandParameter(BiOperand.DOT, 0));
@@ -249,11 +259,11 @@ namespace IngameScript {
             AddBiOperationWords(Words("minus"), BiOperand.SUBTRACT, 3);
 
             //Tier 4 Operations
-            AddBiOperationWords(Words("as", "cast"), BiOperand.CAST, 4);
             AddBiOperationWords(Words(".."), BiOperand.RANGE, 4);
 
             AddWords(Words("-"), new MinusCommandParameter());
             AddWords(Words("round", "rnd", "rounded"), new RoundCommandParameter());
+            AddWords(Words("as", "cast", "resolve", "resolved"), new CastCommandParameter());
 
             //List Words
             AddWords(Words("["), new OpenBracketCommandParameter());
@@ -458,10 +468,12 @@ namespace IngameScript {
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
             primitive = null;
+            bool boolean;
             var vector = GetVector(token);
             Double numeric;
             var color = GetColor(token);
-            if (Double.TryParse(token, out numeric)) primitive = ResolvePrimitive((float)numeric);
+            if (bool.TryParse(token, out boolean)) primitive = ResolvePrimitive(boolean);
+            if (Double.TryParse(token, out numeric)) primitive = ResolvePrimitive(numeric);
             if (vector.HasValue) primitive = ResolvePrimitive(vector.Value);
             if (color.HasValue) primitive = ResolvePrimitive(color.Value);
             return primitive != null;

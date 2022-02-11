@@ -48,7 +48,7 @@ namespace IngameScript {
                 CastFunction(Return.NUMERIC, p => CastNumber(p) != 0),
                 CastFunction(Return.STRING, p => {
                     Primitive primitive;
-                    return ParsePrimitive(CastString(p), out primitive) ? CastBoolean(primitive) : "true" == CastString(p).ToLower();
+                    return ParsePrimitive(CastString(p), out primitive) ? CastBoolean(primitive) : false;
                 }),
                 CastFunction(Return.DEFAULT, Failure(Return.BOOLEAN))
             )),

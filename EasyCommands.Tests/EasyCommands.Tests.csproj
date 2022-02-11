@@ -177,7 +177,9 @@
     <Compile Include="ScriptTests\FunctionalTests\Commands\ControlCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\IterationCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\ListenCommandTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Operations\Comparisons\SimpleInvalidComparisonsTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\RoundOperatorTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Operations\SimpleTypeOperatorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\SimplePowerOperatorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\SimpleJoinTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\SimpleRandomTests.cs" />

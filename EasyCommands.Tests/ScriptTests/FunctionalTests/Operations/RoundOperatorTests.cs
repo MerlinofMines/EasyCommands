@@ -89,5 +89,40 @@ namespace EasyCommands.Tests.ScriptTests {
             }
         }
         #endregion
+
+        #region InvalidRounding
+        [TestMethod]
+        public void CannotRoundString() {
+            using (var test = new ScriptTest(@"print ""myString"" rounded")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Cannot perform operation: round on type: string", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CannotRoundStringToDigits() {
+            using (var test = new ScriptTest(@"print ""myString"" rounded to 2 digits")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Cannot perform operation: round on types: string, number", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CannotRoundNumberToStringDigits() {
+            using (var test = new ScriptTest(@"print 123 rounded to ""myString"" digits")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Cannot perform operation: round on types: number, string", test.Logger[1]);
+            }
+        }
+        #endregion
     }
 }
