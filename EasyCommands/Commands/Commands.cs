@@ -160,7 +160,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                Primitive delta = variable != null ? variable.GetValue() : ResolvePrimitive(1);
+                Primitive delta = variable.GetValue();
                 if (!increment) delta = delta.Not();
 
                 Variable newValue = new StaticVariable(PROGRAM.GetVariable(variableName).GetValue().Plus(delta));

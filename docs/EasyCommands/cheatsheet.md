@@ -168,8 +168,8 @@ These properties require a Variable value as part of the property
 * Action Upwards - ```raise, extend```
 * Action Downwards - ```retract```
 * Reverse - ```reverse, reversed```
-* Increment -  ```increase, increment, add, by, ++, +=``` (also used for incrementing variables)
-* Decrement - ```decrease, decrement, reduce, subtract, --, -=``` (also used for decrementing variables)
+* Increment -  ```increase, increment, by, ++, +=``` (also used for incrementing variables)
+* Decrement - ```decrease, decrement, reduce, --, -=``` (also used for decrementing variables)
 
 ### Directions
 * Up - ```up, upward, upwards, upper```

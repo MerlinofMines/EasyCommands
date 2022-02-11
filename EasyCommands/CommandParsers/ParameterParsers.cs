@@ -90,9 +90,12 @@ namespace IngameScript {
             AddWords(Words("reverse", "reversed"), new ReverseCommandParameter());
             AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
             AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("increase", "increment", "add", "by", "++", "+="), new IncrementCommandParameter());
-            AddWords(Words("decrease", "decrement", "reduce", "subtract", "--", "-="), new IncrementCommandParameter(false));
+            AddWords(Words("increase", "increment"), new IncreaseCommandParameter());
+            AddWords(Words("decrease", "decrement", "reduce"), new IncreaseCommandParameter(false));
+            AddWords(Words("++", "+="), new IncrementCommandParameter());
+            AddWords(Words("--", "-="), new IncrementCommandParameter(false));
             AddWords(Words("global"), new GlobalCommandParameter());
+            AddWords(Words("by"), new RelativeCommandParameter());
 
             //Value Words
             AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));

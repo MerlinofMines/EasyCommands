@@ -199,6 +199,7 @@
     <Compile Include="ScriptTests\FunctionalTests\Operations\Comparisons\SimpleComparisonsStringTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\Comparisons\SimpleComparisonsVectorTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Operations\Comparisons\SimpleComparisonsListTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Variables\IncrementVariableTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Variables\VectorVariableTests.cs" />
     <Compile Include="ScriptTests\MockEntityUtility.cs" />
     <Compile Include="ScriptTests\ExampleScriptTests\ReverseSirensTests.cs" />
