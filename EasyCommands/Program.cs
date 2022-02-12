@@ -159,8 +159,12 @@ namespace IngameScript {
 
         void RunThreads() {
             try {
+                // invalidate block & group cache
+                invalidBlockCache = true;
+                invalidGroupCache = true;
+
                 //If no current commands, we've been asked to restart.  start at the top.
-                if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
+                if (threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
                     FunctionDefinition defaultFunctionDefinition = functions[defaultFunction];
                     threadQueue.Add(new Thread(defaultFunctionDefinition.function.Clone(), "Main", defaultFunctionDefinition.functionName));
                 }
