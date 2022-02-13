@@ -62,14 +62,12 @@ namespace IngameScript {
 
             public override string Name(IMyTextSurface block) => block.DisplayName;
 
-            public override void GetInstances(IMyTerminalBlock b, List<IMyTextSurface> surfaces) {
-                if (b is IMyTextSurface) surfaces.Add((IMyTextSurface)b);
-                else if (b is IMyTextSurfaceProvider) Add((IMyTextSurfaceProvider)b, surfaces);
-            }
-
-            void Add(IMyTextSurfaceProvider p, List<IMyTextSurface> surfaces) {
-                for (int i = 0; i < p.SurfaceCount; i++) surfaces.Add(p.GetSurface(i));
-            }
+            public override IEnumerable<IMyTextSurface> GetInstances(IMyTerminalBlock block) =>
+                block is IMyTextSurface ?
+                Enumerable.Repeat((IMyTextSurface)block, 1) :
+                block is IMyTextSurfaceProvider ?
+                Enumerable.Range(0, ((IMyTextSurfaceProvider)block).SurfaceCount).Select(i => ((IMyTextSurfaceProvider)block).GetSurface(i)) :
+                Enumerable.Empty<IMyTextSurface>();
         }
     }
 }

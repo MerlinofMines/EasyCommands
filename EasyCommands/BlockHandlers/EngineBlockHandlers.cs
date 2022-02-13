@@ -28,9 +28,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, b => b.CurrentOutput);
             }
 
-            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) => base.GetBlocksOfType(selector).Where(blockFilter).ToList();
-
-            public override List<T> GetBlocksOfTypeInGroup(string groupName) => base.GetBlocksOfTypeInGroup(groupName).Where(blockFilter).ToList();
+            public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                base.SelectBlocksByType(blocks, selector).Where(blockFilter);
         }
     }
 }

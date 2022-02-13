@@ -53,14 +53,6 @@ namespace IngameScript {
             }
         }
 
-        public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
-            public FunctionalBlockHandler() : base() {
-                var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
-                AddPropertyHandler(Property.ENABLE, enableHandler);
-                AddPropertyHandler(Property.POWER, enableHandler);
-            }
-        }
-
         public class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockHandler() {
                 AddVectorHandler(Property.POSITION, block => block.GetPosition());
@@ -94,21 +86,9 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
             }
 
-            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                var blocks = NewList<T>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType<T>(blocks, selector);
-                return blocks;
-            }
 
-            public override List<T> GetBlocksOfTypeInGroup(String groupName) {
-                var blockGroups = NewList<IMyBlockGroup>();
-                PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-                IMyBlockGroup group = blockGroups.Find(g => g.Name.Equals(groupName));
-                var blocks = NewList<T>();
-                if (group == null) return blocks;
-                group.GetBlocksOfType<T>(blocks);
-                return blocks;
-            }
+            public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                blocks.Where(b => selector == null || selector(b)).OfType<T>();
 
             public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 try {
@@ -143,6 +123,13 @@ namespace IngameScript {
                     .ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
 
             public PropertyHandler<T> TerminalBlockPropertyHandler(String propertyId, object delta) => new TerminalBlockPropertyHandler<T>(propertyId, ResolvePrimitive(delta));
+        }
+        public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
+            public FunctionalBlockHandler() {
+                var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
+                AddPropertyHandler(Property.ENABLE, enableHandler);
+                AddPropertyHandler(Property.POWER, enableHandler);
+            }
         }
 
         /// <summary>

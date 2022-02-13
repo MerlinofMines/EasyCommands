@@ -42,11 +42,8 @@ namespace IngameScript {
                 blockFilter = filter;
             }
 
-            public override List<IMyMotorStator> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) =>
-                base.GetBlocksOfType(selector).Where(blockFilter).ToList();
-
-            public override List<IMyMotorStator> GetBlocksOfTypeInGroup(string groupName) =>
-                base.GetBlocksOfTypeInGroup(groupName).Where(blockFilter).ToList();
+            public override IEnumerable<IMyMotorStator> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                base.SelectBlocksByType(blocks, selector).Where(blockFilter);
         }
 
         public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {

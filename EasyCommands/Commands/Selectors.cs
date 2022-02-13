@@ -87,16 +87,15 @@ namespace IngameScript {
             public List<Object> GetEntities() {
                 String selectorString = CastString(selector.GetValue());
                 bool resolvedIsGroup = false;
-                Block bt = blockType.HasValue ? blockType.Value : ResolveType(selectorString, out resolvedIsGroup);
+                Block bt = blockType ?? ResolveType(selectorString, out resolvedIsGroup);
                 bool useGroup = isGroup || resolvedIsGroup;
-                List<object> entities = useGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, block => block.CustomName.Equals(selectorString));
+                var entities = useGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, b => b.CustomName.Equals(selectorString));
                 return entities;
             }
 
             public Block GetBlockType() {
-                if (blockType.HasValue) return blockType.Value;
                 bool ignored;
-                return ResolveType(CastString(selector.GetValue()), out ignored);
+                return blockType ?? ResolveType(CastString(selector.GetValue()), out ignored);
             }
 
             Block ResolveType(String selector, out bool isGroup) {
@@ -130,7 +129,7 @@ namespace IngameScript {
 
             public Block GetBlockType() => blockType;
 
-            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType, block => true);
+            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType);
         }
     }
 }

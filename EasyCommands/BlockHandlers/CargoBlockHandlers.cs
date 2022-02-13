@@ -39,13 +39,8 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SHOW;
             }
 
-            public override void GetInstances(IMyTerminalBlock block, List<IMyInventory> instances) {
-                for (int i = 0; i < block.InventoryCount; i++) {
-                    instances.Add(block.GetInventory(i));
-                }
-            }
-
             public override string Name(IMyInventory block) => GetOwner(block).CustomName;
+            public override IEnumerable<IMyInventory> GetInstances(IMyTerminalBlock block) => Enumerable.Range(0, block.InventoryCount).Select(i => block.GetInventory(i));
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {

@@ -10,6 +10,11 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public List<IMyTerminalBlock> blockCache = NewList<IMyTerminalBlock>();
+        public List<IMyBlockGroup> groupCache = NewList<IMyBlockGroup>();
+        public bool invalidBlockCache = true;
+        public bool invalidGroupCache = true;
+
         public static class BlockHandlerRegistry {
             static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
@@ -71,9 +76,23 @@ namespace IngameScript {
                 return blockHandlers[blockType];
             }
 
-            public static List<Object> GetBlocks(Block blockType, Func<IMyTerminalBlock, bool> selector) => blockHandlers[blockType].GetBlocks(selector);
+            public static List<Object> GetBlocks(Block blockType, Func<IMyTerminalBlock, bool> selector = null) {
+                if (PROGRAM.invalidBlockCache) {
+                    PROGRAM.GridTerminalSystem.GetBlocks(PROGRAM.blockCache);
+                    PROGRAM.invalidBlockCache = false;
+                }
+                return blockHandlers[blockType].SelectBlocks(PROGRAM.blockCache, selector);
+            }
 
-            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) => blockHandlers[blockType].GetBlocksInGroup(groupName);
+            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) {
+                if (PROGRAM.invalidGroupCache) {
+                    PROGRAM.GridTerminalSystem.GetBlockGroups(PROGRAM.groupCache);
+                    PROGRAM.invalidGroupCache = false;
+                }
+                var blocks = NewList<IMyTerminalBlock>();
+                PROGRAM.groupCache.Find(g => g.Name == groupName)?.GetBlocks(blocks);
+                return blockHandlers[blockType].SelectBlocks(blocks);
+            }
         }
 
         //Property Getters
@@ -144,43 +163,22 @@ namespace IngameScript {
             }
         }
 
+        public class TypeHandler<T, U> {
+            public PropertyHandler<T> handler;
+            public U[] supportedTypes;
+        }
+
         public interface BlockHandler {
             PropertySupplier GetDefaultProperty(Return type);
             PropertySupplier GetDefaultProperty(Direction direction);
             Direction GetDefaultDirection();
-            List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector);
-            List<Object> GetBlocksInGroup(String groupName);
+            List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
             String GetName(Object block);
 
             Primitive GetPropertyValue(Object block, PropertySupplier property);
             void UpdatePropertyValue(Object block, PropertySupplier property);
             void IncrementPropertyValue(Object block, PropertySupplier property);
             void ReverseNumericPropertyValue(Object block, PropertySupplier property);
-        }
-
-        public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {
-            public override List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector) {
-                var blocks = NewList<IMyTerminalBlock>();
-                PROGRAM.GridTerminalSystem.GetBlocksOfType(blocks, selector);
-
-                var instances = NewList<T>();
-                blocks.ForEach((b) => GetInstances(b, instances));
-                return instances;
-            }
-
-            public override List<T> GetBlocksOfTypeInGroup(String groupName) {
-                var blockGroups = NewList<IMyBlockGroup>();
-                PROGRAM.GridTerminalSystem.GetBlockGroups(blockGroups);
-                IMyBlockGroup group = blockGroups.Find(g => g.Name == groupName);
-                var instances = NewList<T>();
-                if (group == null) return instances;
-                var blocks = NewList<IMyTerminalBlock>();
-                group.GetBlocksOfType<IMyTerminalBlock>(blocks);
-                blocks.ForEach((b) => GetInstances(b, instances));
-                return instances;
-            }
-
-            public abstract void GetInstances(IMyTerminalBlock block, List<T> instances);
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
@@ -194,17 +192,17 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.STRING] = Property.NAMES;
             }
 
-            public List<Object> GetBlocks(Func<IMyTerminalBlock, bool> selector) => GetBlocksOfType(selector).Select(t => t as object).ToList();
-            public List<Object> GetBlocksInGroup(String groupName) => GetBlocksOfTypeInGroup(groupName).Select(t => t as object).ToList();
             public string GetName(object block) => Name((T)block);
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
-                if(propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
+                if (propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
                 throw new Exception(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
             }
 
-            public abstract List<T> GetBlocksOfType(Func<IMyTerminalBlock, bool> selector);
-            public abstract List<T> GetBlocksOfTypeInGroup(String name);
+            public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock =>
+                SelectBlocksByType(blocks, selector).Select(b => b as Object).ToList();
+
+            public abstract IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
             public abstract string Name(T block);
 
             public Direction GetDefaultDirection() => defaultDirection;
@@ -223,9 +221,9 @@ namespace IngameScript {
             }
 
             public void UpdatePropertyValue(Object block, PropertySupplier property) {
-                if(property.propertyValue != null) {
+                if (property.propertyValue != null) {
                     Primitive value = property.propertyValue.GetValue();
-                    if(property.direction != null) {
+                    if (property.direction != null) {
                         GetPropertyHandler(property).SetDirection((T)block, property, property.direction.Value, value);
                     } else {
                         GetPropertyHandler(property).Set((T)block, property, value);
@@ -284,7 +282,7 @@ namespace IngameScript {
                 AddPropertyHandler(property, ListHandler(Get, Set));
             }
 
-            public void AddDirectionHandlers(Property property, Direction defaultDirection, params TypeHandler<T,Direction>[] handlers) {
+            public void AddDirectionHandlers(Property property, Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) {
                 AddPropertyHandler(property, DirectionalTypedHandler(defaultDirection, handlers));
             }
 
@@ -300,9 +298,9 @@ namespace IngameScript {
                 supportedTypes = values
             };
 
-            PropertyHandler<T> TypedHandler<U>(U defaultType, Func<PropertySupplier,U> Resolver, params TypeHandler<T,U>[] handlers) {
+            PropertyHandler<T> TypedHandler<U>(U defaultType, Func<PropertySupplier, U> Resolver, params TypeHandler<T, U>[] handlers) {
                 var typeHandlers = NewDictionary<U, PropertyHandler<T>>();
-                foreach (TypeHandler<T,U> handler in handlers) foreach (U type in handler.supportedTypes) typeHandlers.Add(type, handler.handler);
+                foreach (TypeHandler<T, U> handler in handlers) foreach (U type in handler.supportedTypes) typeHandlers.Add(type, handler.handler);
                 return new SimplePropertySupplierBasedHandler<T>(p => typeHandlers.GetValueOrDefault(Resolver(p), typeHandlers[defaultType]));
             }
 
@@ -315,9 +313,11 @@ namespace IngameScript {
             PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set ?? ((b, v) => { }), Cast, delta);
         }
 
-        public class TypeHandler<T, U> {
-            public PropertyHandler<T> handler;
-            public U[] supportedTypes;
+        public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {
+            public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                blocks.Where(b => selector == null || selector(b)).SelectMany(b => GetInstances(b));
+
+            public abstract IEnumerable<T> GetInstances(IMyTerminalBlock block);
         }
     }
 }

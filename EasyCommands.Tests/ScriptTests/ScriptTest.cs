@@ -283,23 +283,25 @@ namespace EasyCommands.Tests.ScriptTests
             public List<IMyTerminalBlock> GetBlocks() => mockBlocks;
 
             public void GetBlocks(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks
-                    .Where(block => collect == null ? true : collect(block))
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
 
             public void GetBlocksOfType<T>(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) where T : class {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks
                     .Where(block => block is T)
-                    .Where(block => collect == null ? true : collect(block))
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
 
             public void GetBlocksOfType<T>(List<T> blocks, Func<T, bool> collect = null) where T : class {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks
-                    .Where(block => block is T)
-                    .Select(block => (T) block)
-                    .Where(block => collect == null ? true : collect(block))
+                    .OfType<T>()
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
         }
@@ -325,8 +327,9 @@ namespace EasyCommands.Tests.ScriptTests
             }
 
             public void GetBlockGroups(List<IMyBlockGroup> blockGroups, Func<IMyBlockGroup, bool> collect = null) {
+                blockGroups.Clear();
                 blockGroups.AddRange(mockGroups
-                    .Where(group => collect == null ? true : collect(group))
+                    .Where(group => collect == null || collect(group))
                     .ToList());
             }
 
@@ -337,21 +340,23 @@ namespace EasyCommands.Tests.ScriptTests
             }
 
             public void GetBlocks(List<IMyTerminalBlock> blocks) {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks.ToList());
             }
 
             public void GetBlocksOfType<T>(List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) where T : class {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks
                     .Where(block => block is T)
-                    .Where(block => collect == null ? true : collect(block))
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
 
             public void GetBlocksOfType<T>(List<T> blocks, Func<T, bool> collect = null) where T : class {
+                blocks.Clear();
                 blocks.AddRange(mockBlocks
-                    .Where(block => block is T)
-                    .Select(block => (T) block)
-                    .Where(block => collect == null ? true : collect(block))
+                    .OfType<T>()
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
 
@@ -368,7 +373,7 @@ namespace EasyCommands.Tests.ScriptTests
             public void SearchBlocksOfName(string name, List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
                 blocks.AddRange(mockBlocks
                     .Where(block => block.CustomName == name)
-                    .Where(block => collect == null ? true : collect(block))
+                    .Where(block => collect == null || collect(block))
                     .ToList());
             }
         }
@@ -421,7 +426,7 @@ namespace EasyCommands.Tests.ScriptTests
     public class MockBroadcastListener : IMyBroadcastListener {
 
         public List<string> messages = new List<string>();
-        public string Tag { get; set; } 
+        public string Tag { get; set; }
         public bool IsActive { get; set; }
 
         public MockBroadcastListener(string tag, params string[] messages) {
