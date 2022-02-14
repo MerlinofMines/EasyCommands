@@ -49,27 +49,21 @@ namespace IngameScript {
 
             public Block GetBlockType() => selector.GetBlockType();
 
-            public List<object> GetEntities() {
+            public List<Object> GetEntities() {
                 var entities = selector.GetEntities();
-                var selectedEntities = NewList<Object>();
                 BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
-                var indexes = CastList(index.GetValue()).GetValues()
-                    .Select(v => v.GetValue());
-
-                foreach (Primitive p in indexes) {
-                    //Return empty list if index > Count
-                    if (p.returnType == Return.NUMERIC) {
-                        int i = (int)CastNumber(p);
-                        if (i < entities.Count) selectedEntities.Add(entities[i]);
-                    }
-                    if (p.returnType == Return.STRING) {
-                        var entityName = CastString(p);
-                        selectedEntities.AddRange(entities.Where(o => entityName == b.GetName(o)));
-                    }
-                    //Other Index types not supported
-                }
-                return selectedEntities;
+                return CastList(index.GetValue()).GetValues()
+                    .Select(v => v.GetValue())
+                    .SelectMany(p => {
+                        if (p.returnType == Return.NUMERIC)
+                            return entities.GetRange((int)CastNumber(p), 1);
+                        else if (p.returnType == Return.STRING) {
+                            var s = CastString(p);
+                            return entities.Where(o => s == b.GetName(o));
+                        } else
+                            return NewList<Object>();
+                    }).ToList();
             }
         }
 
@@ -85,12 +79,10 @@ namespace IngameScript {
             }
 
             public List<Object> GetEntities() {
-                String selectorString = CastString(selector.GetValue());
-                bool resolvedIsGroup = false;
+                var selectorString = CastString(selector.GetValue());
+                var resolvedIsGroup = false;
                 Block bt = blockType ?? ResolveType(selectorString, out resolvedIsGroup);
-                bool useGroup = isGroup || resolvedIsGroup;
-                var entities = useGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, b => b.CustomName.Equals(selectorString));
-                return entities;
+                return isGroup || resolvedIsGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, selectorString);
             }
 
             public Block GetBlockType() {
@@ -115,9 +107,8 @@ namespace IngameScript {
                 blockType = type;
             }
 
-            public Block GetBlockType() => blockType.GetValueOrDefault(Block.PROGRAM);
-
-            public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(GetBlockType(), (b) => (blockType.HasValue && blockType.Value != Block.DISPLAY) || b.EntityId.Equals(PROGRAM.Me.EntityId));
+            public Block GetBlockType() => blockType ?? Block.PROGRAM;
+            public List<object> GetEntities() => BlockHandlerRegistry.GetSelf(blockType) ?? BlockHandlerRegistry.GetBlocks(GetBlockType());
         }
 
         public class BlockTypeSelector : Selector {
@@ -128,7 +119,6 @@ namespace IngameScript {
             }
 
             public Block GetBlockType() => blockType;
-
             public List<object> GetEntities() => BlockHandlerRegistry.GetBlocks(blockType);
         }
     }

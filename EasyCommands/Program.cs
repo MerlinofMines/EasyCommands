@@ -1,4 +1,4 @@
-﻿using Sandbox.Game.EntityComponents;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -160,8 +160,8 @@ namespace IngameScript {
         void RunThreads() {
             try {
                 // invalidate block & group cache
-                invalidBlockCache = true;
-                invalidGroupCache = true;
+                blockCache.Clear();
+                groupCache.Clear();
 
                 //If no current commands, we've been asked to restart.  start at the top.
                 if (threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {

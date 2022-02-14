@@ -41,8 +41,8 @@ namespace IngameScript {
             static Dictionary<String, TerminalPropertyConverter> TerminalPropertyValueConversion = NewDictionary(
                 KeyValuePair("StringBuilder", PropertyConverter((b, p) => b.GetValue<StringBuilder>(p).ToString(), (b, p, v) => b.SetValue(p, new StringBuilder(CastString(v))))),
                 KeyValuePair("Boolean", PropertyConverter((b, p) => b.GetValueBool(p), (b, p, v) => b.SetValueBool(p, CastBoolean(v)))),
-                KeyValuePair( "Single", PropertyConverter((b, p) => b.GetValueFloat(p), (b, p, v) => b.SetValueFloat(p, CastNumber(v)))),
-                KeyValuePair( "Int64", PropertyConverter((b, p) => (float)b.GetValue<long>(p), (b, p, v) => b.SetValue(p, (long)CastNumber(v)))),
+                KeyValuePair("Single", PropertyConverter((b, p) => b.GetValueFloat(p), (b, p, v) => b.SetValueFloat(p, CastNumber(v)))),
+                KeyValuePair("Int64", PropertyConverter((b, p) => (float)b.GetValue<long>(p), (b, p, v) => b.SetValue(p, (long)CastNumber(v)))),
                 KeyValuePair("Color", PropertyConverter((b, p) => b.GetValueColor(p), (b, p, v) => b.SetValueColor(p, CastColor(v))))
             );
 
@@ -104,23 +104,24 @@ namespace IngameScript {
 
             public void SetCustomProperty(T block, String key, String value) {
                 var d = GetCustomData(block);
-                d[key] = value; SaveCustomData(block, d);
+                d[key] = value;
+                SaveCustomData(block, d);
             }
 
             public void DeleteCustomProperty(T block, String key) {
                 var d = GetCustomData(block);
-                if (d.ContainsKey(key)) d.Remove(key);
+                d.Remove(key);
                 SaveCustomData(block, d);
             }
 
-            public void SaveCustomData(T block, Dictionary<String, String> data) {
-                block.CustomData = String.Join("\n", data.Keys.Select(k => k + "=" + data[k]).ToList());
-            }
+            public void SaveCustomData(T block, Dictionary<String, String> data) =>
+                block.CustomData = String.Join("\n", data.Select(p => p.Key + "=" + p.Value));
 
             public Dictionary<String, String> GetCustomData(T block) =>
                 block.CustomData
                     .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                    .ToDictionary(k => k.Split('=')[0], v => v.Split('=')[1]);
+                    .Select(line => line.Split('='))
+                    .ToDictionary(token => token[0], token => token[1]);
 
             public PropertyHandler<T> TerminalBlockPropertyHandler(String propertyId, object delta) => new TerminalBlockPropertyHandler<T>(propertyId, ResolvePrimitive(delta));
         }
