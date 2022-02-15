@@ -11,8 +11,8 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public List<IMyTerminalBlock> blockCache = NewList<IMyTerminalBlock>();
-        public List<IMyBlockGroup> groupCache = NewList<IMyBlockGroup>();
         public Cache<Block, List<Object>> selectorCache = new Cache<Block, List<Object>>();
+        public Cache<Block, List<Object>> groupCache = new Cache<Block, List<Object>>();
 
         public static class BlockHandlerRegistry {
             static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
@@ -88,14 +88,12 @@ namespace IngameScript {
                     blockHandlers[blockType].SelectBlocks(PROGRAM.blockCache, b => s?.Equals(b.CustomName) ?? true));
             }
 
-            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) {
-                if (PROGRAM.groupCache.Count == 0)
-                    PROGRAM.GridTerminalSystem.GetBlockGroups(PROGRAM.groupCache);
-
-                var blocks = NewList<IMyTerminalBlock>();
-                PROGRAM.groupCache.Find(g => g.Name == groupName)?.GetBlocks(blocks);
-                return blockHandlers[blockType].SelectBlocks(blocks);
-            }
+            public static List<Object> GetBlocksInGroup(Block blockType, String groupName) =>
+                PROGRAM.groupCache.GetOrCreate(blockType, groupName, s => {
+                    var blocks = NewList<IMyTerminalBlock>();
+                    PROGRAM.GridTerminalSystem.GetBlockGroupWithName(s)?.GetBlocks(blocks);
+                    return blockHandlers[blockType].SelectBlocks(blocks);
+                });
         }
 
         //Property Getters
