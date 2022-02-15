@@ -71,7 +71,10 @@ namespace IngameScript {
                     return NewKeyedList(actions.Select(p => GetStaticVariable(p.Id)));
                 });
 
-                AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>((b, p) => p.attributeValue.GetValue(), (b, p, v) => b.ApplyAction(CastString(p.attributeValue.GetValue())), ResolvePrimitive(0)));
+                AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>(
+                    (b, p) => p.attributeValue.GetValue(),
+                    (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
+                    ResolvePrimitive(0)));
 
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
                     TypeHandler(VectorHandler(b => b.WorldMatrix.Forward), Direction.FORWARD),
@@ -85,7 +88,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
                 defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
             }
-
 
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
                 blocks.Where(b => selector == null || selector(b)).OfType<T>();
