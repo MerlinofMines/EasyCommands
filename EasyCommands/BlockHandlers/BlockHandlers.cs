@@ -14,6 +14,7 @@ namespace IngameScript {
         public Cache<Block, List<Object>> selectorCache = new Cache<Block, List<Object>>();
         public Cache<Block, List<Object>> groupCache = new Cache<Block, List<Object>>();
         public Cache<Type, ITerminalAction> actionCache = new Cache<Type, ITerminalAction>();
+        public Cache<Type, ITerminalProperty> propertyCache = new Cache<Type, ITerminalProperty>();
 
         public static class BlockHandlerRegistry {
             static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {

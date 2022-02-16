@@ -24,8 +24,8 @@ namespace IngameScript {
                 var openHandler = BooleanHandler(b => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
                 AddPropertyHandler(Property.OPEN, openHandler);
                 AddPropertyHandler(Property.TRIGGER, openHandler);
-                AddPropertyHandler(Property.AUTO, TerminalBlockPropertyHandler("AutoDeploy", true));
-                AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("AutoDeployHeight", 500));
+                AddPropertyHandler(Property.AUTO, TerminalPropertyHandler("AutoDeploy", true));
+                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("AutoDeployHeight", 500));
                 AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
                 AddVectorHandler(Property.VELOCITY, b => b.GetVelocity());
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());

@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class OreDetectorHandler : FunctionalBlockHandler<IMyOreDetector> {
             public OreDetectorHandler() {
-                AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("Range", 50));
+                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Range", 50));
                 AddBooleanHandler(Property.SUPPLY, b => b.BroadcastUsingAntennas, (b, v) => b.BroadcastUsingAntennas = v);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
