@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class Cache<T, U> {
-            Dictionary<MyTuple<T, string>, U> storage = NewDictionary<MyTuple<T, string>, U>();
+            public Dictionary<MyTuple<T, string>, U> storage = NewDictionary<MyTuple<T, string>, U>();
             public U GetOrCreate(T key1, string key2, Func<string, U> create) {
                 var key = MyTuple.Create(key1, key2);
                 return storage.ContainsKey(key) ? storage[key] : storage[key] = create(key2);
