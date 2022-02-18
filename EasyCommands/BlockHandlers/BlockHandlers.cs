@@ -12,6 +12,7 @@ namespace IngameScript {
     partial class Program {
         public List<IMyTerminalBlock> blockCache = NewList<IMyTerminalBlock>();
         public List<IMyBlockGroup> groupCache = NewList<IMyBlockGroup>();
+        public Cache<Block, List<Object>> selectorCache = new Cache<Block, List<Object>>();
 
         public static class BlockHandlerRegistry {
             static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
@@ -82,7 +83,9 @@ namespace IngameScript {
             public static List<Object> GetBlocks(Block blockType, string selector = null) {
                 if (PROGRAM.blockCache.Count == 0)
                     PROGRAM.GridTerminalSystem.GetBlocks(PROGRAM.blockCache);
-                return blockHandlers[blockType].SelectBlocks(PROGRAM.blockCache, b => selector?.Equals(b.CustomName) ?? true);
+
+                return PROGRAM.selectorCache.GetOrCreate(blockType, selector, s =>
+                    blockHandlers[blockType].SelectBlocks(PROGRAM.blockCache, b => s?.Equals(b.CustomName) ?? true));
             }
 
             public static List<Object> GetBlocksInGroup(Block blockType, String groupName) {
