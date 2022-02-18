@@ -101,7 +101,7 @@ Print myInfo[6]
 ### "Position" property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```position, positions, coordinate, coordinates, location, locations```
+* Keywords: ```position, positions, location, locations```
 
 Returns the current position of the given block, in World Coordinates.
 
