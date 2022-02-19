@@ -22,13 +22,13 @@ namespace IngameScript {
         public class HeatVentBlockHandler : FunctionalBlockHandler<IMyHeatVent> {
             public HeatVentBlockHandler() {
                 AddDirectionHandlers(Property.COLOR, Direction.UP,
-                    TypeHandler(TerminalBlockPropertyHandler("ColorMax", Color.Black), Direction.UP),
-                    TypeHandler(TerminalBlockPropertyHandler("ColorMin", Color.Black), Direction.DOWN));
-                AddPropertyHandler(Property.RANGE, TerminalBlockPropertyHandler("Radius", 1));
-                AddPropertyHandler(Property.VOLUME, TerminalBlockPropertyHandler("Intensity", 1));
-                AddPropertyHandler(Property.FALLOFF, TerminalBlockPropertyHandler("Falloff", 0.3));
-                AddPropertyHandler(Property.OFFSET, TerminalBlockPropertyHandler("Offset", 0.5));
-                AddPropertyHandler(Property.RATIO, TerminalBlockPropertyHandler("PowerDependency", 10));
+                    TypeHandler(TerminalPropertyHandler("ColorMax", Color.Black), Direction.UP),
+                    TypeHandler(TerminalPropertyHandler("ColorMin", Color.Black), Direction.DOWN));
+                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Radius", 1));
+                AddPropertyHandler(Property.VOLUME, TerminalPropertyHandler("Intensity", 1));
+                AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.3));
+                AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Offset", 0.5));
+                AddPropertyHandler(Property.RATIO, TerminalPropertyHandler("PowerDependency", 10));
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByDirection[Direction.UP] = Property.COLOR;

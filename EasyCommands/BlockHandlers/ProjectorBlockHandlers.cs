@@ -24,8 +24,8 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.RemainingBlocks == 0);
                 AddNumericHandler(Property.RATIO, b => 1 - b.RemainingBlocks / (float)b.TotalBlocks);
                 AddBooleanHandler(Property.SHOW, b => b.IsProjecting, (b, v) => b.ShowOnlyBuildable = !v);
-                AddPropertyHandler(Property.LOCKED, TerminalBlockPropertyHandler("KeepProjection", ""));
-                AddPropertyHandler(Property.LEVEL, TerminalBlockPropertyHandler("Scale", 0.1f));
+                AddPropertyHandler(Property.LOCKED, TerminalPropertyHandler("KeepProjection", ""));
+                AddPropertyHandler(Property.LEVEL, TerminalPropertyHandler("Scale", 0.1f));
 
                 AddDirectionHandlers(Property.ROLL_INPUT, Direction.NONE,
                     TypeHandler(VectorHandler(b => GetRotation(b), (b, v) => b.ProjectionRotation = Vector(Clamp(v.X), Clamp(v.Y), Clamp(v.Z))), Direction.NONE),

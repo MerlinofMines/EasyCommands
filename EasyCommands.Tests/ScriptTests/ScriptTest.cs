@@ -333,11 +333,7 @@ namespace EasyCommands.Tests.ScriptTests
                     .ToList());
             }
 
-            public IMyBlockGroup GetBlockGroupWithName(string name) {
-                return mockGroups
-                    .Where(group => group.Name == name)
-                    .FirstOrDefault(null);
-            }
+            public IMyBlockGroup GetBlockGroupWithName(string name) => mockGroups.FirstOrDefault(group => group.Name == name);
 
             public void GetBlocks(List<IMyTerminalBlock> blocks) {
                 blocks.Clear();
@@ -364,11 +360,7 @@ namespace EasyCommands.Tests.ScriptTests
                 throw new NotImplementedException();
             }
 
-            public IMyTerminalBlock GetBlockWithName(string name) {
-                return mockBlocks
-                    .Where(block => block.CustomName == name)
-                    .FirstOrDefault(null);
-            }
+            public IMyTerminalBlock GetBlockWithName(string name) => mockBlocks.FirstOrDefault(block => block.CustomName == name);
 
             public void SearchBlocksOfName(string name, List<IMyTerminalBlock> blocks, Func<IMyTerminalBlock, bool> collect = null) {
                 blocks.AddRange(mockBlocks

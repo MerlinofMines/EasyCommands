@@ -26,7 +26,7 @@ namespace IngameScript {
                 AddBooleanHandler(Property.LOCKED, b => b.Brake, (b, v) => b.Brake = v);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    TypeHandler(TerminalBlockPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
+                    TypeHandler(TerminalPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
                     TypeHandler(NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v), Direction.LEFT, Direction.RIGHT));
 
                 AddNumericHandler(Property.VELOCITY, b => b.PropulsionOverride, (b,v) => b.PropulsionOverride = v, 0.1f);

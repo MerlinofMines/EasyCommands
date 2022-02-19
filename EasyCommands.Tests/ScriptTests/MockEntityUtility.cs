@@ -19,7 +19,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         public static void MockGetProperty<T, U>(Mock<T> mockBlock, String propertyId, U value) where T : class, IMyTerminalBlock {
             var property = MockProperty<T,U>(mockBlock, propertyId);
-            property.Setup(b => b.GetValue(It.IsAny<IMyCubeBlock>())).Returns(value);
+            property.Setup(b => b.GetValue(It.IsAny<T>())).Returns(value);
         }
 
         public static Mock<ITerminalProperty<U>> MockProperty<T,U>(Mock<T> mockBlock, String propertyId) where T : class, IMyTerminalBlock {

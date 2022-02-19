@@ -172,6 +172,7 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\Selectors.cs" />
     <Compile Include="Common\Aggregators.cs" />
+    <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\Collections.cs" />
     <Compile Include="Common\Items.cs" />
     <Compile Include="Common\Operations.cs" />

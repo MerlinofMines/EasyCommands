@@ -32,7 +32,7 @@ namespace IngameScript {
                 AddPropertyHandler(Property.AUTO, enableHandler);
                 AddPropertyHandler(Property.RUN, enableHandler);
                 AddNumericHandler(Property.RANGE, b => b.SpeedLimit, (b, v) => b.SpeedLimit = v, 10);
-                AddPropertyHandler(Property.CONNECTED, TerminalBlockPropertyHandler("DockingMode", true));
+                AddPropertyHandler(Property.CONNECTED, TerminalPropertyHandler("DockingMode", true));
                 AddVectorHandler(Property.TARGET, b => b.CurrentWaypoint.Coords, (b,v) => SetWaypoints(b, CastList(ResolvePrimitive(v))));
                 AddListHandler(Property.WAYPOINTS,
                     b => {
