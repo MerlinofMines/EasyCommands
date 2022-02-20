@@ -28,6 +28,7 @@ namespace IngameScript {
 
         //Utilities for constructing collections with few characters
         public static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
+        public static T[] NewArray<T>(params T[] elements) => elements;
         public static Dictionary<T, U> NewDictionary<T, U>(params KeyValuePair<T, U>[] elements) => elements.ToDictionary(e => e.Key, e => e.Value);
         public static KeyValuePair<T, U> KeyValuePair<T, U>(T key, U value) => new KeyValuePair<T, U>(key, value);
         public static Variable EmptyList() => GetStaticVariable(NewKeyedList());

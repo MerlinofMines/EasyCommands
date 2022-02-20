@@ -26,13 +26,17 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.Status == MyJumpDriveStatus.Ready);
                 AddBooleanHandler(Property.SUPPLY, b => !b.Recharge, (b, v) => b.Recharge = !v);
 
-                var jumpDistanceHandler = DirectionalTypedHandler(Direction.NONE,
-                    TypeHandler(NumericHandler(b => b.JumpDistanceMeters, (b,v) => b.SetValueFloat("JumpDistance", 100 * (v - b.MinJumpDistanceMeters) / (b.MaxJumpDistanceMeters - b.MinJumpDistanceMeters))), Direction.NONE),
-                    TypeHandler(NumericHandler(b => b.MaxJumpDistanceMeters), Direction.UP),
-                    TypeHandler(NumericHandler(b => b.MinJumpDistanceMeters), Direction.DOWN));
+                var jumpDistanceHandler = NumericHandler(b => b.JumpDistanceMeters, (b, v) => b.SetValueFloat("JumpDistance", 100 * (v - b.MinJumpDistanceMeters) / (b.MaxJumpDistanceMeters - b.MinJumpDistanceMeters)));
+                AddPropertyHandler(jumpDistanceHandler, Property.RANGE);
+                AddPropertyHandler(jumpDistanceHandler, Property.LEVEL);
 
-                AddPropertyHandler(Property.LEVEL, jumpDistanceHandler);
-                AddPropertyHandler(Property.RANGE, jumpDistanceHandler);
+                var maxJumpDistanceHandler = NumericHandler(b => b.MaxJumpDistanceMeters);
+                AddPropertyHandler(maxJumpDistanceHandler, Property.RANGE, Property.UP);
+                AddPropertyHandler(maxJumpDistanceHandler, Property.LEVEL, Property.UP);
+
+                var minJumpDistanceHandler = NumericHandler(b => b.MaxJumpDistanceMeters);
+                AddPropertyHandler(minJumpDistanceHandler, Property.RANGE, Property.DOWN);
+                AddPropertyHandler(minJumpDistanceHandler, Property.LEVEL, Property.DOWN);
             }
         }
     }

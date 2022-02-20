@@ -38,8 +38,8 @@ namespace IngameScript {
                 }, SetImages);
                 AddStringHandler(Property.POSITION, b => (b.Alignment + "").ToLower(), (b, v) => b.Alignment = v == "center" ? TextAlignment.CENTER : v == "right" ? TextAlignment.RIGHT : TextAlignment.LEFT);
                 AddNumericHandler(Property.INTERVAL, b => b.ChangeInterval, (b, v) => b.ChangeInterval = v, 1);
-                AddPropertyHandler(Property.LEVEL, fontSizeHandler);
-                AddPropertyHandler(Property.COLOR, fontColorHandler);
+                AddPropertyHandler(fontSizeHandler, Property.LEVEL);
+                AddPropertyHandler(fontColorHandler, Property.COLOR);
                 AddColorHandler(Property.BACKGROUND, b => b.ContentType == ContentType.SCRIPT ? b.ScriptBackgroundColor : b.BackgroundColor, (b, v) => { if (b.ContentType == ContentType.SCRIPT) b.ScriptBackgroundColor = v; else b.BackgroundColor = v; });
                 AddReturnHandlers(Property.FONT, Return.STRING,
                     TypeHandler(StringHandler(b => b.Font, (b,v) => b.Font = v), Return.STRING),
@@ -51,7 +51,6 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
                 defaultPropertiesByPrimitive[Return.LIST] = Property.MEDIA_LIST;
-                defaultPropertiesByDirection[Direction.UP] = Property.TEXT;
             }
 
             void SetImages(IMyTextSurface block, KeyedList images) {

@@ -144,20 +144,16 @@ namespace IngameScript {
             public BooleanCommandParameter(bool value) : base(value) {}
         }
 
-        public class DirectionCommandParameter : ValueCommandParameter<Direction> {
-            public DirectionCommandParameter(Direction value) : base(value) {}
-        }
-
-        public class ValuePropertyCommandParameter : ValueCommandParameter<ValueProperty> {
-            public ValuePropertyCommandParameter(ValueProperty value) : base(value) {}
+        public class AttributePropertyCommandParameter : ValueCommandParameter<Property> {
+            public AttributePropertyCommandParameter(Property value) : base(value) {}
         }
 
         public class PropertyCommandParameter : ValueCommandParameter<Property> {
             public PropertyCommandParameter(Property value) : base(value) { }
         }
 
-        public class PropertySupplierCommandParameter : ValueCommandParameter<PropertySupplier> {
-            public PropertySupplierCommandParameter(PropertySupplier value) : base(value) {}
+        public class PropertyValueCommandParameter : ValueCommandParameter<PropertyValue> {
+            public PropertyValueCommandParameter(PropertyValue value) : base(value) {}
         }
 
         public class ListCommandParameter : ValueCommandParameter<Variable> {

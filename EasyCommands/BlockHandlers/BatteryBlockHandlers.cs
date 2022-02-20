@@ -29,7 +29,6 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, b => b.CurrentOutput);
                 AddNumericHandler(Property.LEVEL, b => b.CurrentStoredPower);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
              }
         }
     }

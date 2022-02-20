@@ -21,15 +21,32 @@ namespace IngameScript {
     partial class Program {
         public class PistonBlockHandler : FunctionalBlockHandler<IMyPistonBase> {
             public PistonBlockHandler() : base() {
-                AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    TypeHandler(NumericHandler(b => b.MaxLimit, (b, v) => b.MaxLimit = v, 1), Direction.UP, Direction.FORWARD),
-                    TypeHandler(NumericHandler(b => b.MinLimit, (b, v) => b.MinLimit = v, 1), Direction.DOWN, Direction.BACKWARD));
+                var maxLimitHandler = NumericHandler(b => b.MaxLimit, (b, v) => b.MaxLimit = v, 1);
+                AddPropertyHandler(maxLimitHandler, Property.RANGE);
+                AddPropertyHandler(maxLimitHandler, Property.RANGE, Property.UP);
+                AddPropertyHandler(NumericHandler(b => b.MinLimit, (b, v) => b.MinLimit = v, 1), Property.RANGE, Property.DOWN);
+                
+                var reverseHandler = BooleanHandler(b => b.Velocity < 0, (b, v) => { if (v) b.Reverse(); });
+                AddPropertyHandler(reverseHandler, Property.REVERSE);
+                AddPropertyHandler(reverseHandler, Property.LEVEL, Property.REVERSE);
+
+                var heightHandler = NumericHandler(b => b.CurrentPosition, ExtendPistonToValue, 1);
+                AddPropertyHandler(heightHandler, Property.LEVEL);
+                AddReturnHandlers(Property.UP, Return.BOOLEAN,
+                    TypeHandler(BooleanHandler(b => b.Velocity > 0, (b, v) => b.Velocity = v ? Math.Abs(b.Velocity) : 0), Return.BOOLEAN),
+                    TypeHandler(heightHandler, Return.NUMERIC));
+                AddReturnHandlers(Property.DOWN, Return.BOOLEAN,
+                    TypeHandler(BooleanHandler(b => b.Velocity < 0, (b, v) => b.Velocity = v ? Math.Abs(b.Velocity) : 0), Return.BOOLEAN),
+                    TypeHandler(heightHandler, Return.NUMERIC));
+
+                AddBooleanHandler(Property.UP, );
+                AddBooleanHandler(Property.DOWN, b => b.Velocity < 0, (b, v) => b.Velocity = v ? -Math.Abs(b.Velocity) : 0);
+
                 AddPropertyHandler(Property.LEVEL, new PistonHeightHandler());
+
                 AddNumericHandler(Property.VELOCITY, (b) => b.Velocity, (b,v) => b.Velocity = v,1);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
-                defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
-                defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
             }
         }
 

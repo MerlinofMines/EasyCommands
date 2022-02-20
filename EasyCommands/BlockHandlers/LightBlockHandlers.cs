@@ -30,7 +30,6 @@ namespace IngameScript {
                 AddNumericHandler(Property.FALLOFF, (b) => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
             }
         }
     }

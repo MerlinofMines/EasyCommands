@@ -38,7 +38,6 @@ namespace IngameScript {
                 AddBooleanHandler(Property.SHOW, b => b.ShowShipName, (b, v) => b.ShowShipName = v);
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
         }
     }

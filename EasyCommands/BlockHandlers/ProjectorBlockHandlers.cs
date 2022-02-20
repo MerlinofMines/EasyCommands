@@ -24,26 +24,36 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.RemainingBlocks == 0);
                 AddNumericHandler(Property.RATIO, b => 1 - b.RemainingBlocks / (float)b.TotalBlocks);
                 AddBooleanHandler(Property.SHOW, b => b.IsProjecting, (b, v) => b.ShowOnlyBuildable = !v);
-                AddPropertyHandler(Property.LOCKED, TerminalPropertyHandler("KeepProjection", ""));
-                AddPropertyHandler(Property.LEVEL, TerminalPropertyHandler("Scale", 0.1f));
+                AddPropertyHandler(TerminalPropertyHandler("KeepProjection", ""), Property.LOCKED);
+                AddPropertyHandler(TerminalPropertyHandler("Scale", 0.1f), Property.LEVEL);
 
-                AddDirectionHandlers(Property.ROLL_INPUT, Direction.NONE,
-                    TypeHandler(VectorHandler(b => GetRotation(b), (b, v) => b.ProjectionRotation = Vector(Clamp(v.X), Clamp(v.Y), Clamp(v.Z))), Direction.NONE),
-                    TypeHandler(NumericHandler(b => GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(v, 0, 0))), Direction.UP),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(-v, 0, 0))), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, v, 0))), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, -v, 0))), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, v))), Direction.CLOCKWISE),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, -v))), Direction.COUNTERCLOCKWISE));
+                AddVectorHandler(Property.ROLL_INPUT, b => GetRotation(b), (b, v) => b.ProjectionRotation = Vector(Clamp(v.X), Clamp(v.Y), Clamp(v.Z)));
+                AddPropertyHandler(NumericHandler(b => GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(v, 0, 0))),
+                    Property.ROLL_INPUT, Property.UP);
+                AddPropertyHandler(NumericHandler(b => -GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(-v, 0, 0))),
+                    Property.ROLL_INPUT, Property.DOWN);
+                AddPropertyHandler(NumericHandler(b => GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, v, 0))),
+                    Property.ROLL_INPUT, Property.RIGHT);
+                AddPropertyHandler(NumericHandler(b => -GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, -v, 0))),
+                    Property.ROLL_INPUT, Property.LEFT);
+                AddPropertyHandler(NumericHandler(b => GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, v))),
+                    Property.ROLL_INPUT, Property.CLOCKWISE);
+                AddPropertyHandler(NumericHandler(b => -GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, -v))),
+                    Property.ROLL_INPUT, Property.COUNTERCLOCKWISE);
 
-                AddDirectionHandlers(Property.OFFSET, Direction.NONE,
-                    TypeHandler(VectorHandler(b => GetOffset(b), (b,v) => b.ProjectionOffset = new Vector3I(v)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => GetOffset(b).X, (b, v) => SetOffset(b, Vector(0, 1, 1),  Vector(v, 0, 0))), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).X, (b,v) => SetOffset(b, Vector(0, 1, 1), Vector(-v, 0, 0))), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, v, 0))), Direction.UP),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, -v, 0))), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0), Vector(0, 0, v))), Direction.FORWARD),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0),  Vector(0, 0, -v))), Direction.BACKWARD));
+                AddVectorHandler(Property.OFFSET, b => GetOffset(b), (b, v) => b.ProjectionOffset = new Vector3I(v));
+                AddPropertyHandler(NumericHandler(b => GetOffset(b).X, (b, v) => SetOffset(b, Vector(0, 1, 1), Vector(v, 0, 0))),
+                    Property.OFFSET, Property.RIGHT);
+                AddPropertyHandler(NumericHandler(b => -GetOffset(b).X, (b, v) => SetOffset(b, Vector(0, 1, 1), Vector(-v, 0, 0))),
+                    Property.OFFSET, Property.LEFT);
+                AddPropertyHandler(NumericHandler(b => GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, v, 0))),
+                    Property.OFFSET, Property.UP);
+                AddPropertyHandler(NumericHandler(b => -GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, -v, 0))),
+                    Property.OFFSET, Property.DOWN);
+                AddPropertyHandler(NumericHandler(b => GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0), Vector(0, 0, v))),
+                    Property.OFFSET, Property.FORWARD);
+                AddPropertyHandler(NumericHandler(b => -GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0), Vector(0, 0, -v))),
+                    Property.OFFSET, Property.BACKWARD);
             }
 
             void SetRotation(IMyProjector projector, Vector3I clearVector, Vector3I newOffset) => projector.ProjectionRotation = GetRotation(projector) * clearVector + new Vector3I(Clamp(newOffset.X), Clamp(newOffset.Y), Clamp(newOffset.Z));

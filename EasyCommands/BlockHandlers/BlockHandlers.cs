@@ -100,46 +100,33 @@ namespace IngameScript {
 
         //Property Getters
         public delegate Primitive GetProperty<T>(T block, PropertySupplier property);
-        public delegate Primitive GetPropertyDirection<T>(T block, PropertySupplier property, Direction direction);
         public delegate void SetProperty<T>(T block, PropertySupplier property, Primitive value);
-        public delegate void SetPropertyDirection<T>(T block, PropertySupplier property, Direction direction, Primitive value);
         public delegate void IncrementProperty<T>(T block, PropertySupplier property);
         public delegate void IncrementPropertyValue<T>(T block, PropertySupplier property, Primitive deltaValue);
-        public delegate void IncrementPropertyValueDirection<T>(T block, PropertySupplier property, Direction direction, Primitive deltaValue);
-        public delegate void MovePropertyValue<T>(T block, PropertySupplier property, Direction direction);
-        public delegate void ReversePropertyValue<T>(T block, PropertySupplier property);
 
         //Getters
         public delegate U GetTypedProperty<T, U>(T block);
-        public delegate U GetTypedPropertyDirection<T, U>(T block, Direction direction);
 
         //Setters
         public delegate void SetTypedProperty<T, U>(T block, U value);
-        public delegate void SetTypedPropertyDirection<T, U>(T block, Direction direction, U value);
 
         public class PropertyHandler<T> {
             public GetProperty<T> Get;
-            public GetPropertyDirection<T> GetDirection;
             public SetProperty<T> Set;
-            public SetPropertyDirection<T> SetDirection;
             public IncrementProperty<T> Increment;
             public IncrementPropertyValue<T> IncrementValue;
-            public IncrementPropertyValueDirection<T> IncrementValueDirection;
-            public MovePropertyValue<T> Move;
-            public ReversePropertyValue<T> Reverse;
         }
 
         public class SimplePropertyHandler<T> : PropertyHandler<T> {
             public SimplePropertyHandler(GetProperty<T> Getter, SetProperty<T> Setter, Primitive delta) {
                 Get = Getter;
                 Set = Setter;
-                GetDirection = (b, p, d) => Get(b, p);
-                SetDirection = (b, p, d, v) => Set(b, p, v);
                 Increment = (b, p) => IncrementValue(b, p, delta);
                 IncrementValue = (b, p, v) => Set(b, p, Get(b, p).Plus(Multiply(v, p)));
-                IncrementValueDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(v, p)));
-                Move = (b, p, d) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(delta, p)));
-                Reverse = (b, p) => Set(b, p, Get(b, p).Not());
+                //TODO: Remove
+                //IncrementValueDirection = (b, p, d, v) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(v, p)));
+                //Move = (b, p, d) => SetDirection(b, p, d, GetDirection(b, p, d).Plus(Multiply(delta, p)));
+                //Reverse = (b, p) => Set(b, p, Get(b, p).Not());
             }
 
             Primitive Multiply(Primitive p, PropertySupplier property) => property.increment ?? true ? p : p.Not();
@@ -157,12 +144,14 @@ namespace IngameScript {
             public SimplePropertySupplierBasedHandler(GetPropertyHandler<T> GetHandler) {
                 Get = (b, p) => GetHandler(p).Get(b, p);
                 Set = (b, p, v) => GetHandler(p).Set(b, p, v);
-                GetDirection = (b, p, d) => GetHandler(p).GetDirection(b, p, d);
-                SetDirection = (b, p, d, v) => GetHandler(p).SetDirection(b, p, d, v);
-                IncrementValueDirection = (b, p, d, v) => GetHandler(p).IncrementValueDirection(b, p, d, v);
                 IncrementValue = (b, p, v) => GetHandler(p).IncrementValue(b, p, v);
                 Increment = (b, p) => GetHandler(p).Increment(b, p);
-                Move = (b, p, d) => GetHandler(p).Move(b, p, d);
+
+                //TODO: Remove
+                //GetDirection = (b, p, d) => GetHandler(p).GetDirection(b, p, d);
+                //SetDirection = (b, p, d, v) => GetHandler(p).SetDirection(b, p, d, v);
+                //IncrementValueDirection = (b, p, d, v) => GetHandler(p).IncrementValueDirection(b, p, d, v);
+                //Move = (b, p, d) => GetHandler(p).Move(b, p, d);
             }
         }
 
@@ -172,23 +161,20 @@ namespace IngameScript {
         }
 
         public interface BlockHandler {
-            PropertySupplier GetDefaultProperty(Return type);
-            PropertySupplier GetDefaultProperty(Direction direction);
-            Direction GetDefaultDirection();
+            Property GetDefaultProperty(Return type);
+            Property GetDefaultProperty();
             List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
             String GetName(Object block);
 
             Primitive GetPropertyValue(Object block, PropertySupplier property);
             void UpdatePropertyValue(Object block, PropertySupplier property);
             void IncrementPropertyValue(Object block, PropertySupplier property);
-            void ReverseNumericPropertyValue(Object block, PropertySupplier property);
         }
 
         public abstract class BlockHandler<T> : BlockHandler where T : class {
-            public Dictionary<String, PropertyHandler<T>> propertyHandlers = NewDictionary<String, PropertyHandler<T>>();
+            public Dictionary<int, PropertyHandler<T>> propertyHandlers = NewDictionary<int, PropertyHandler<T>>();
             public Dictionary<Return, Property> defaultPropertiesByPrimitive = NewDictionary<Return, Property>();
-            public Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();
-            public Direction defaultDirection = Direction.UP;
+            public Property defaultProperty = Property.NAMES;
 
             public BlockHandler() {
                 AddListHandler(Property.NAMES, b => CastList(ResolvePrimitive(Name(b))));
@@ -198,8 +184,9 @@ namespace IngameScript {
             public string GetName(object block) => Name((T)block);
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
-                if (propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
-                throw new Exception(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
+                int hashCode = property.GetHashCode();
+                if (propertyHandlers.ContainsKey(hashCode)) return propertyHandlers[hashCode];
+                throw new Exception(typeof(T).Name + " does not have property support for: " + property.GetPropertyString());
             }
 
             public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock =>
@@ -208,71 +195,48 @@ namespace IngameScript {
             public abstract IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
             public abstract string Name(T block);
 
-            public Direction GetDefaultDirection() => defaultDirection;
+            public Property GetDefaultProperty() => defaultProperty;
+            public Property GetDefaultProperty(Return type) => defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultProperty);
+            public Primitive GetPropertyValue(object block, PropertySupplier property) =>
+                GetPropertyHandler(property).Get((T)block, property);
 
-            public PropertySupplier GetDefaultProperty(Direction direction) =>
-                new PropertySupplier(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "");
+            public void UpdatePropertyValue(object block, PropertySupplier property) =>
+                GetPropertyHandler(property).Set((T)block, property, property.propertyValue?.GetValue() ?? ResolvePrimitive(true));
 
-            public PropertySupplier GetDefaultProperty(Return type) =>
-                new PropertySupplier(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]) + "");
-
-            public Primitive GetPropertyValue(object block, PropertySupplier property) {
-                Primitive value = property.direction.HasValue ?
-                    GetPropertyHandler(property).GetDirection((T)block, property, property.direction.Value) :
-                    GetPropertyHandler(property).Get((T)block, property);
-                return property.inverse ? value.Not() : value;
-            }
-
-            public void UpdatePropertyValue(Object block, PropertySupplier property) {
-                if (property.propertyValue != null) {
-                    Primitive value = property.propertyValue.GetValue();
-                    if (property.direction != null) {
-                        GetPropertyHandler(property).SetDirection((T)block, property, property.direction.Value, value);
-                    } else {
-                        GetPropertyHandler(property).Set((T)block, property, value);
-                    }
-                } else {
-                    GetPropertyHandler(property).Move((T)block, property, property.direction ?? defaultDirection);
-                }
-            }
-
-            public void IncrementPropertyValue(Object block, PropertySupplier property) {
+            public void IncrementPropertyValue(object block, PropertySupplier property) {
                 if (property.propertyValue == null) {
                     GetPropertyHandler(property).Increment((T)block, property);
                 } else {
-                    Primitive value = property.propertyValue.GetValue();
-                    if (property.direction != null) {
-                        GetPropertyHandler(property).IncrementValueDirection((T)block, property, property.direction.Value, value);
-                    } else {
-                        GetPropertyHandler(property).IncrementValue((T)block, property, value);
-                    }
+                    GetPropertyHandler(property).IncrementValue((T)block, property, property.propertyValue.GetValue());
                 }
             }
 
-            public void ReverseNumericPropertyValue(Object block, PropertySupplier property) => GetPropertyHandler(property).Reverse((T)block, property);
-            public void AddPropertyHandler(Property property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
-            public void AddPropertyHandler(ValueProperty property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
-            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) =>
-                AddPropertyHandler(property, BooleanHandler(Get, Set));
-            public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) =>
-                AddPropertyHandler(property, StringHandler(Get, Set));
-            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) =>
-                AddPropertyHandler(property, NumericHandler(Get, Set, delta));
-            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set = null) =>
-                AddPropertyHandler(property, VectorHandler(Get, Set));
-            public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) =>
-                AddPropertyHandler(property, ColorHandler(Get, Set));
-            public void AddListHandler(Property property, GetTypedProperty<T, KeyedList> Get, SetTypedProperty<T, KeyedList> Set = null) =>
-                AddPropertyHandler(property, ListHandler(Get, Set));
-            public void AddDirectionHandlers(Property property, Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) =>
-                AddPropertyHandler(property, DirectionalTypedHandler(defaultDirection, handlers));
-            public void AddReturnHandlers(Property property, Return defaultReturn, params TypeHandler<T, Return>[] handlers) =>
-                AddPropertyHandler(property, ReturnTypedHandler(defaultReturn, handlers));
+            public void AddPropertyHandler(PropertyHandler<T> handler, params Property[] properties) {
+                propertyHandlers[GetPropertiesHashCode(properties.Select(p => p + ""))] = handler;
+                if (!properties.Contains(Property.REVERSE))
+                    propertyHandlers[GetPropertiesHashCode(properties.Concat(NewList(Property.REVERSE)).Select(p => p + ""))] = ReverseHandler(handler);
+            }
 
-            public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) =>
-                TypedHandler(defaultDirection, p => p.direction.GetValueOrDefault(defaultDirection), handlers);
+            public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) =>
+                AddPropertyHandler(BooleanHandler(Get, Set), NewArray(property));
+            public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) =>
+                AddPropertyHandler(StringHandler(Get, Set), NewArray(property));
+            public void AddNumericHandler(Property property, GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) =>
+                AddPropertyHandler(NumericHandler(Get, Set, delta), NewArray(property));
+            public void AddVectorHandler(Property property, GetTypedProperty<T, Vector3D> Get, SetTypedProperty<T, Vector3D> Set = null) =>
+                AddPropertyHandler(VectorHandler(Get, Set), NewArray(property));
+            public void AddColorHandler(Property property, GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) =>
+                AddPropertyHandler(ColorHandler(Get, Set), NewArray(property));
+            public void AddListHandler(Property property, GetTypedProperty<T, KeyedList> Get, SetTypedProperty<T, KeyedList> Set = null) =>
+                AddPropertyHandler(ListHandler(Get, Set), NewArray(property));
+            public void AddReturnHandlers(Property property, Return defaultReturn, params TypeHandler<T, Return>[] handlers) =>
+                AddPropertyHandler(ReturnTypedHandler(defaultReturn, handlers), NewArray(property));
+
             public PropertyHandler<T> ReturnTypedHandler(Return defaultReturn, params TypeHandler<T, Return>[] handlers) =>
                 TypedHandler(defaultReturn, p => p.propertyValue != null ? p.propertyValue.GetValue().returnType : Return.DEFAULT, handlers);
+
+            //This function generates the same hashcode for a given property set regardless of ordering
+            int GetPropertiesHashCode(IEnumerable<string> properties) => properties.Aggregate(0, (a, b) => a.GetHashCode() ^ b.GetHashCode());
 
             public TypeHandler<T, U> TypeHandler<U>(PropertyHandler<T> h, params U[] values) => new TypeHandler<T, U> {
                 handler = h,
@@ -292,6 +256,7 @@ namespace IngameScript {
             public PropertyHandler<T> ColorHandler(GetTypedProperty<T, Color> Get, SetTypedProperty<T, Color> Set = null) => TypedPropertyHandler(Get, Set, CastColor, new Color(10, 10, 10));
             public PropertyHandler<T> ListHandler(GetTypedProperty<T, KeyedList> Get, SetTypedProperty<T, KeyedList> Set = null) => TypedPropertyHandler(Get, Set, CastList, NewKeyedList());
             PropertyHandler<T> TypedPropertyHandler<U>(GetTypedProperty<T, U> Get, SetTypedProperty<T, U> Set, Func<Primitive, U> Cast, U delta) => new SimpleTypedHandler<T, U>(Get, Set ?? ((b, v) => { }), Cast, delta);
+            PropertyHandler<T> ReverseHandler(PropertyHandler<T> handler) => new SimplePropertyHandler<T>((b,p) => handler.Get(b,p).Not(), (b,p,v) => handler.Set(b,p,v.Not()), ResolvePrimitive(false));
         }
 
         public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {

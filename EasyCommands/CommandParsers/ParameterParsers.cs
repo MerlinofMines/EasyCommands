@@ -75,21 +75,21 @@ namespace IngameScript {
             AddWords(Words("$"), new VariableSelectorCommandParameter());
 
             //Direction Words
-            AddDirectionWords(Words("up", "upward", "upwards", "upper"), Direction.UP);
-            AddDirectionWords(Words("down", "downward", "downwards", "lower"), Direction.DOWN);
-            AddDirectionWords(Words("left", "lefthand"), Direction.LEFT);
-            AddDirectionWords(Words("right", "righthand"), Direction.RIGHT);
-            AddDirectionWords(Words("forward", "forwards", "front"), Direction.FORWARD);
-            AddDirectionWords(Words("backward", "backwards", "back"), Direction.BACKWARD);
-            AddDirectionWords(Words("clockwise", "clock"), Direction.CLOCKWISE);
-            AddDirectionWords(Words("counterclockwise", "counter", "counterclock"), Direction.COUNTERCLOCKWISE);
+            AddPropertyWords(Words("up", "upward", "upwards", "upper"), Property.UP);
+            AddPropertyWords(Words("down", "downward", "downwards", "lower"), Property.DOWN);
+            AddPropertyWords(Words("left", "lefthand"), Property.LEFT);
+            AddPropertyWords(Words("right", "righthand"), Property.RIGHT);
+            AddPropertyWords(Words("forward", "forwards", "front"), Property.FORWARD);
+            AddPropertyWords(Words("backward", "backwards", "back"), Property.BACKWARD);
+            AddPropertyWords(Words("clockwise", "clock"), Property.CLOCKWISE);
+            AddPropertyWords(Words("counterclockwise", "counter", "counterclock"), Property.COUNTERCLOCKWISE);
 
             //Action Words
             AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
             AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate", "apply"), new AssignmentCommandParameter());
             AddWords(Words("reverse", "reversed"), new ReverseCommandParameter());
-            AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
+            AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new PropertyCommandParameter(Property.UP));
+            AddWords(Words("retract"), new AssignmentCommandParameter(), new PropertyCommandParameter(Property.DOWN));
             AddWords(Words("increase", "increment"), new IncreaseCommandParameter());
             AddWords(Words("decrease", "decrement", "reduce"), new IncreaseCommandParameter(false));
             AddWords(Words("++", "+="), new IncrementCommandParameter());
@@ -97,9 +97,9 @@ namespace IngameScript {
             AddWords(Words("global"), new GlobalCommandParameter());
             AddWords(Words("by"), new RelativeCommandParameter());
 
-            //Value Words
-            AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
-            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
+            //Boolean Words
+            AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new VariableCommandParameter(GetStaticVariable(true)));
+            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new VariableCommandParameter(GetStaticVariable(false)));
 
             //Property Words
             AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale")), Property.LEVEL);
@@ -162,11 +162,11 @@ namespace IngameScript {
             AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
 
             //ValueProperty Words
-            AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
-            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
-            AddWords(Words("action"), new ValuePropertyCommandParameter(ValueProperty.ACTION));
-            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
-            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
+            AddWords(PluralWords("amount"), new AttributePropertyCommandParameter(Property.AMOUNT));
+            AddWords(Words("property", "attribute"), new AttributePropertyCommandParameter(Property.PROPERTY));
+            AddWords(Words("action"), new AttributePropertyCommandParameter(Property.ACTION));
+            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new AttributePropertyCommandParameter(Property.CREATE));
+            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new AttributePropertyCommandParameter(Property.DESTROY));
 
             //Special Command Words
             AddWords(Words("times", "iterations"), new RepeatCommandParameter());
@@ -371,12 +371,8 @@ namespace IngameScript {
         }
 
         void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
-            if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
+            if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new PropertyCommandParameter(Property.REVERSE));
             else AddWords(words, new PropertyCommandParameter(property));
-        }
-
-        void AddDirectionWords(String[] words, Direction direction) {
-            AddWords(words, new DirectionCommandParameter(direction));
         }
 
         void AddRightUniOperationWords(String[] words, UniOperand operand) {

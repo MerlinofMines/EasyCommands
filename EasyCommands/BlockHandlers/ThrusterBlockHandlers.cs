@@ -22,12 +22,11 @@ namespace IngameScript {
         public class ThrusterBlockHandler : FunctionalBlockHandler<IMyThrust> {
             public ThrusterBlockHandler() {
                 var currentThrustHandler = NumericHandler(b => b.CurrentThrust, (b, v) => b.ThrustOverride = v, 5000);
-                AddPropertyHandler(Property.LEVEL, currentThrustHandler);
-                AddPropertyHandler(Property.VOLUME, currentThrustHandler);
+                AddPropertyHandler(currentThrustHandler, Property.LEVEL);
+                AddPropertyHandler(currentThrustHandler, Property.VOLUME);
                 AddNumericHandler(Property.RANGE, b => b.MaxThrust, (b, v) => b.ThrustOverride = v, 5000);
                 AddNumericHandler(Property.RATIO, b => b.ThrustOverridePercentage, (b, v) => b.ThrustOverridePercentage = v, 0.1f);
                 AddNumericHandler(Property.OVERRIDE, b => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000);
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
             }
         }

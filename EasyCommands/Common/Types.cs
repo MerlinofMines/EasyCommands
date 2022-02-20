@@ -24,9 +24,75 @@ namespace IngameScript {
         #endregion
 
         public enum Block { PISTON, ROTOR, PROGRAM, TIMER, LIGHT, PROJECTOR, MERGE, CONNECTOR, WELDER, GRINDER, DOOR, DISPLAY, SOUND, CAMERA, SENSOR, BEACON, ANTENNA, COCKPIT, CRYO_CHAMBER, REMOTE, THRUSTER, AIRVENT, GUN, GENERATOR, TANK, MAGNET, BATTERY, PARACHUTE, SUSPENSION, DETECTOR, DRILL, ENGINE, SORTER, TURRET, GYROSCOPE, GRAVITY_GENERATOR, GRAVITY_SPHERE, CARGO, WARHEAD, ASSEMBLER, EJECTOR, COLLECTOR, DECOY, HINGE, JUMPDRIVE, LASER_ANTENNA, TERMINAL, REFINERY, REACTOR, TURBINE, SOLAR_PANEL, HEAT_VENT }
-        public enum Property { ENABLE, POWER, CONNECTED, LOCKED, COMPLETE, OPEN, TRIGGER, SUPPLY, AUTO, OVERRIDE, LEVEL, ANGLE, VELOCITY, RATIO, FONT, VOLUME, RANGE, INPUT, ROLL_INPUT, NAME, RUN, TEXT, COLOR, BACKGROUND, MEDIA, MEDIA_LIST, INTERVAL, OFFSET, FALLOFF, POSITION, DIRECTION, TARGET, WAYPOINTS, TARGET_VELOCITY, STRENGTH, COUNTDOWN, SHOW, PROPERTIES, ACTIONS, NAMES, USE, TYPES, NATURAL_GRAVITY, ARTIFICIAL_GRAVITY, ALTITUDE, WEIGHT, DATA, INFO }
-        public enum ValueProperty { AMOUNT, CREATE, DESTROY, PROPERTY, ACTION };
-        public enum Direction { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE, NONE }
+        public enum Property { 
+            ENABLE,
+            POWER,
+            CONNECTED,
+            LOCKED,
+            COMPLETE,
+            OPEN,
+            TRIGGER,
+            SUPPLY,
+            AUTO,
+            OVERRIDE,
+            LEVEL,
+            ANGLE,
+            VELOCITY,
+            RATIO,
+            FONT,
+            VOLUME,
+            RANGE,
+            INPUT,
+            ROLL_INPUT,
+            NAME,
+            RUN,
+            TEXT,
+            COLOR,
+            BACKGROUND,
+            MEDIA,
+            MEDIA_LIST,
+            INTERVAL,
+            OFFSET,
+            FALLOFF,
+            POSITION,
+            DIRECTION,
+            TARGET,
+            WAYPOINTS,
+            TARGET_VELOCITY,
+            STRENGTH,
+            COUNTDOWN,
+            SHOW,
+            PROPERTIES,
+            ACTIONS,
+            NAMES,
+            USE,
+            TYPES,
+            NATURAL_GRAVITY,
+            ARTIFICIAL_GRAVITY,
+            ALTITUDE,
+            WEIGHT,
+            DATA,
+            INFO,
+            REVERSE, 
+
+            //Value Properties
+            AMOUNT,
+            CREATE,
+            DESTROY,
+            PROPERTY,
+            ACTION,
+
+            //Direction Properties
+            UP,
+            DOWN,
+            LEFT,
+            RIGHT,
+            FORWARD,
+            BACKWARD,
+            CLOCKWISE,
+            COUNTERCLOCKWISE
+        }
+
         public enum ProgramState { RUNNING, STOPPED, COMPLETE, PAUSED }
         public enum Return { NUMERIC, BOOLEAN, STRING, VECTOR, COLOR, LIST, DEFAULT }
         public enum BiOperand { ADD, SUBTRACT, MULTIPLY, DIVIDE, MOD, AND, OR, COMPARE, DOT, EXPONENT, RANGE, CAST, CONTAINS, SPLIT, JOIN, ROUND };

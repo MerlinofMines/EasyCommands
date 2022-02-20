@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class CargoHandler : MultiInstanceBlockHandler<IMyInventory> {
             public CargoHandler() {
-                AddPropertyHandler(ValueProperty.AMOUNT, amountHandler);
+                AddPropertyHandler(amountHandler, Property.AMOUNT);
                 AddNumericHandler(Property.RATIO, i => (float)(i.CurrentVolume.RawValue / (double)i.MaxVolume.RawValue));
                 AddNumericHandler(Property.RANGE, i => (float)i.MaxVolume * 1000); //Volumes are returned in kL, convert to L
                 AddNumericHandler(Property.VOLUME, i => (float)i.CurrentVolume * 1000); //Volumes are returned in kL, convert to L
@@ -44,7 +44,7 @@ namespace IngameScript {
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {
-                    var itemString = CastString(p.attributeValue.GetValue());
+                    var itemString = CastString(p.properties[0].attributeValue.GetValue());
                     var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(itemString));
                     double totalAmount = 0;
                     var items = NewList<MyInventoryItem>();

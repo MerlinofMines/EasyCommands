@@ -23,8 +23,8 @@ namespace IngameScript {
             public LandingGearHandler() {
                 AddBooleanHandler(Property.AUTO, b => b.AutoLock, (b, v) => b.AutoLock = v);
                 var lockHandler = BooleanHandler(b => b.IsLocked, (b, v) => { if (v) b.Lock(); else b.Unlock(); });
-                AddPropertyHandler(Property.LOCKED, lockHandler);
-                AddPropertyHandler(Property.CONNECTED, lockHandler);
+                AddPropertyHandler(lockHandler, Property.LOCKED);
+                AddPropertyHandler(lockHandler, Property.CONNECTED);
             }
         }
     }

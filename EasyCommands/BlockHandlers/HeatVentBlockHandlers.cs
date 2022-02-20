@@ -21,17 +21,17 @@ namespace IngameScript {
     partial class Program {
         public class HeatVentBlockHandler : FunctionalBlockHandler<IMyHeatVent> {
             public HeatVentBlockHandler() {
-                AddDirectionHandlers(Property.COLOR, Direction.UP,
-                    TypeHandler(TerminalPropertyHandler("ColorMax", Color.Black), Direction.UP),
-                    TypeHandler(TerminalPropertyHandler("ColorMin", Color.Black), Direction.DOWN));
-                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Radius", 1));
-                AddPropertyHandler(Property.VOLUME, TerminalPropertyHandler("Intensity", 1));
-                AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.3));
-                AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Offset", 0.5));
-                AddPropertyHandler(Property.RATIO, TerminalPropertyHandler("PowerDependency", 10));
+                var maxColorHandler = TerminalPropertyHandler("ColorMax", Color.Black);
+                AddPropertyHandler(maxColorHandler, Property.COLOR);
+                AddPropertyHandler(maxColorHandler, Property.COLOR, Property.UP);
+                AddPropertyHandler(TerminalPropertyHandler("ColorMin", Color.Black), Property.COLOR, Property.DOWN);
+                AddPropertyHandler(TerminalPropertyHandler("Radius", 1), Property.RANGE);
+                AddPropertyHandler(TerminalPropertyHandler("Intensity", 1), Property.VOLUME);
+                AddPropertyHandler(TerminalPropertyHandler("Falloff", 0.3), Property.FALLOFF);
+                AddPropertyHandler(TerminalPropertyHandler("Offset", 0.5), Property.OFFSET);
+                AddPropertyHandler(TerminalPropertyHandler("PowerDependency", 10), Property.RATIO);
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByDirection[Direction.UP] = Property.COLOR;
             }
         }
     }

@@ -21,27 +21,30 @@ namespace IngameScript {
     partial class Program {
         public class CameraBlockHandler : FunctionalBlockHandler<IMyCameraBlock> {
             public CameraBlockHandler() {
-                AddBooleanHandler(Property.TRIGGER, (b) => CastVector(GetPropertyValue(b, new PropertySupplier(Property.TARGET+""))) != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
+                AddBooleanHandler(Property.TRIGGER, b => GetTarget(b) != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(Property.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
                 AddVectorHandler(Property.TARGET_VELOCITY, (b) => GetVector(GetCustomProperty(b, "Velocity")).GetValueOrDefault());
                 //TODO: Use setter to scan specific vector?
-                AddVectorHandler(Property.TARGET, (b) => {
-                    var range = (double)GetRange(b);
-                    b.EnableRaycast = true;
-                    if (b.CanScan(range)) {
-                        MyDetectedEntityInfo detectedEntity = b.Raycast(range);
-                        if (!detectedEntity.IsEmpty()) {
-                            SetCustomProperty(b, "Target", VectorToString(GetPosition(detectedEntity)));
-                            SetCustomProperty(b, "Velocity", VectorToString(detectedEntity.Velocity));
-                        } else {
-                            DeleteCustomProperty(b, "Target");
-                        }
-                    }
-                    return GetVector(GetCustomProperty(b, "Target") ?? "").GetValueOrDefault();
-                });
+                AddVectorHandler(Property.TARGET, GetTarget);
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
             }
+
+            public Vector3D GetTarget(IMyCameraBlock b) {
+                var range = (double)GetRange(b);
+                b.EnableRaycast = true;
+                if (b.CanScan(range)) {
+                    MyDetectedEntityInfo detectedEntity = b.Raycast(range);
+                    if (!detectedEntity.IsEmpty()) {
+                        SetCustomProperty(b, "Target", VectorToString(GetPosition(detectedEntity)));
+                        SetCustomProperty(b, "Velocity", VectorToString(detectedEntity.Velocity));
+                    } else {
+                        DeleteCustomProperty(b, "Target");
+                    }
+                }
+                return GetVector(GetCustomProperty(b, "Target") ?? "").GetValueOrDefault();
+            }
+
             public float GetRange(IMyCameraBlock b) => float.Parse(GetCustomProperty(b, "Range") ?? "1000");
         }
     }

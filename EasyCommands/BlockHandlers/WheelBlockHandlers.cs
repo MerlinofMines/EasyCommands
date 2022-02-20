@@ -25,17 +25,21 @@ namespace IngameScript {
                 AddNumericHandler(Property.ANGLE, b => (float)(-b.SteerAngle*180/Math.PI), (b, v) => { b.SteeringOverride = (float)(v * Math.PI / 144); b.MaxSteerAngle = 1; }, .1f);
                 AddBooleanHandler(Property.LOCKED, b => b.Brake, (b, v) => b.Brake = v);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
-                AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    TypeHandler(TerminalPropertyHandler("Speed Limit", 5), Direction.UP, Direction.DOWN),
-                    TypeHandler(NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v), Direction.LEFT, Direction.RIGHT));
+
+                var speedLimitHandler = TerminalPropertyHandler("Speed Limit", 5);
+                AddPropertyHandler(speedLimitHandler, Property.RANGE);
+                AddPropertyHandler(speedLimitHandler, Property.RANGE, Property.UP);
+                AddPropertyHandler(speedLimitHandler, Property.RANGE, Property.DOWN);
+
+                var angleLimitHandler = NumericHandler(b => b.MaxSteerAngle, (b, v) => b.MaxSteerAngle = v);
+                AddPropertyHandler(angleLimitHandler, Property.RANGE, Property.LEFT);
+                AddPropertyHandler(angleLimitHandler, Property.RANGE, Property.RIGHT);
 
                 AddNumericHandler(Property.VELOCITY, b => b.PropulsionOverride, (b,v) => b.PropulsionOverride = v, 0.1f);
                 AddNumericHandler(Property.STRENGTH, b => b.Strength, (b, v) => b.Strength = v, 10);
                 AddNumericHandler(Property.POWER, b => b.Power, (b, v) => b.Power = v, 10);
                 AddNumericHandler(Property.RATIO, b => b.Friction, (b, v) => b.Friction = v, 10);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
-                defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
-                defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
             }
         }
     }

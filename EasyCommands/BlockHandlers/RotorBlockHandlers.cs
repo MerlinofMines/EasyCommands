@@ -24,21 +24,50 @@ namespace IngameScript {
         public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
             Func<IMyMotorStator, bool> blockFilter;
             public RotorBlockHandler(Func<IMyMotorStator, bool> filter) {
-                AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
-                AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    TypeHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
-                    TypeHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg= v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
                 AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
                 AddNumericHandler(Property.LEVEL, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
                 AddBooleanHandler(Property.LOCKED, b => b.RotorLock, (b, v) => b.RotorLock = v);
                 AddNumericHandler(Property.STRENGTH, b => b.Torque, (b,v) => b.Torque = v, 1000);
+
+                var upperLimitHandler = NumericHandler(b => b.UpperLimitDeg, (b, v) => b.UpperLimitDeg = v, 10);
+                AddPropertyHandler(upperLimitHandler, Property.RANGE);
+                AddPropertyHandler(upperLimitHandler, Property.RANGE, Property.UP);
+                AddPropertyHandler(upperLimitHandler, Property.RANGE, Property.CLOCKWISE);
+
+                var lowerLimitHandler = NumericHandler(b => b.UpperLimitDeg, (b, v) => b.UpperLimitDeg = v, 10);
+                AddPropertyHandler(lowerLimitHandler, Property.RANGE, Property.DOWN);
+                AddPropertyHandler(lowerLimitHandler, Property.RANGE, Property.COUNTERCLOCKWISE);
+
+                GetTypedProperty<IMyMotorStator, float> GetAngle = b => b.Angle * (float)(180 / Math.PI);
+
+                AddNumericHandler(Property.ANGLE, GetAngle, RotateToValue);
+                AddBooleanHandler(Property.REVERSE, b => b.TargetVelocityRPM < 0, (b, v) => b.TargetVelocityRPM = v ? -b.TargetVelocityRPM : 0);
+
+                var clockwiseAngleHandler = NumericHandler(GetAngle, (b, v) => RotateToValue(b, v, Property.CLOCKWISE));
+                AddPropertyHandler(clockwiseAngleHandler,
+                    Property.ANGLE, Property.CLOCKWISE);
+                AddPropertyHandler(clockwiseAngleHandler,
+                    Property.ANGLE, Property.UP);
+
+                var counterClockwiseAngleHandler = NumericHandler(GetAngle, (b, v) => RotateToValue(b, v, Property.COUNTERCLOCKWISE));
+                AddPropertyHandler(counterClockwiseAngleHandler,
+                    Property.ANGLE, Property.COUNTERCLOCKWISE);
+                AddPropertyHandler(counterClockwiseAngleHandler,
+                    Property.ANGLE, Property.DOWN);
+
+                var clockwiseRotateHandler = BooleanHandler(b => b.TargetVelocityRPM > 0, (b, v) => b.TargetVelocityRPM = v ? Math.Abs(b.TargetVelocityRPM) : 0);
+                AddReturnHandlers(Property.CLOCKWISE, Return.BOOLEAN,
+                    TypeHandler(clockwiseRotateHandler, Return.BOOLEAN),
+                    TypeHandler(NumericHandler(b => b.TargetVelocityRPM, (b, v) => RotateToValue(b, v, Property.CLOCKWISE)), Return.NUMERIC));
+
+                var counterClockwiseRotateHandler = BooleanHandler(b => b.TargetVelocityRPM < 0, (b, v) => b.TargetVelocityRPM = v ? -Math.Abs(b.TargetVelocityRPM) : 0);
+                AddReturnHandlers(Property.CLOCKWISE, Return.BOOLEAN,
+                    TypeHandler(clockwiseRotateHandler, Return.BOOLEAN),
+                    TypeHandler(NumericHandler(b => b.TargetVelocityRPM, (b, v) => RotateToValue(b, v, Property.COUNTERCLOCKWISE)), Return.NUMERIC));
+
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.ANGLE;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.LEVEL);
-                defaultPropertiesByDirection.Add(Direction.DOWN, Property.LEVEL);
-                defaultPropertiesByDirection.Add(Direction.CLOCKWISE, Property.ANGLE);
-                defaultPropertiesByDirection.Add(Direction.COUNTERCLOCKWISE, Property.ANGLE);
-                defaultDirection = Direction.CLOCKWISE;
+                defaultProperty = Property.CLOCKWISE;
                 blockFilter = filter;
             }
 
@@ -46,32 +75,7 @@ namespace IngameScript {
                 base.SelectBlocksByType(blocks, selector).Where(blockFilter);
         }
 
-        public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {
-            public RotorAngleHandler() {
-                Get = (b, p) => ResolvePrimitive(b.Angle * (float)(180 / Math.PI));
-                GetDirection = (b, p, d) => Get(b, p);
-                Set = (b, p, v) => RotateToValue(b, v);
-                SetDirection = (b, p, d, v) => RotateToValue(b, v, d);
-                IncrementValueDirection = (b, p, d, v) => {
-                    if (d == Direction.CLOCKWISE || d == Direction.UP) RotateToValue(b, Get(b, p).Plus(v), d);
-                    if (d == Direction.COUNTERCLOCKWISE || d == Direction.DOWN) RotateToValue(b, Get(b, p).Minus(v), d);
-                };
-                IncrementValue = (b, p, v) => IncrementValueDirection(b, p, Direction.CLOCKWISE, v);
-                Increment = (b, p) => IncrementValue(b, p, ResolvePrimitive(10));
-                Move = (b, p, d) => {
-                    if (d == Direction.CLOCKWISE) b.TargetVelocityRPM = Math.Abs(b.TargetVelocityRPM);
-                    if (d == Direction.COUNTERCLOCKWISE) b.TargetVelocityRPM = -Math.Abs(b.TargetVelocityRPM);
-                };
-                Reverse = (b, p) => b.TargetVelocityRPM *= -1;
-            }
-        }
-
-        static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
-            if(primitive.returnType!=Return.NUMERIC) {
-                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
-            }
-
-            float value = CastNumber(primitive);
+        static void RotateToValue(IMyMotorStator rotor, float value) {
             float newValue = GetCorrectedAngle(value);
 
             //TODO: We might find that in some cases, it's faster to go the other way.
@@ -84,27 +88,23 @@ namespace IngameScript {
             }
         }
 
-        static void RotateToValue(IMyMotorStator rotor, Primitive primitive, Direction direction) {
-            if (primitive.returnType != Return.NUMERIC) {
-                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
-            }
-
-            float value = GetCorrectedAngle(CastNumber(primitive));
+        static void RotateToValue(IMyMotorStator rotor, float angle, Property direction) {
+            float value = GetCorrectedAngle(angle);
             float currentAngle = rotor.Angle * (180 / (float)Math.PI);
 
             switch (direction) {
-                case Direction.CLOCKWISE:
+                case Property.CLOCKWISE:
                     if (value < currentAngle) value = GetCorrectedAngle(value + 360);
                     rotor.UpperLimitDeg = value;
                     rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
                     break;
-                case Direction.COUNTERCLOCKWISE:
+                case Property.COUNTERCLOCKWISE:
                     if (value > currentAngle) value = GetCorrectedAngle(value - 360);
                     rotor.LowerLimitDeg = value;
                     rotor.TargetVelocityRPM = -Math.Abs(rotor.TargetVelocityRPM);
                     break;
                 default:
-                    RotateToValue(rotor, primitive);
+                    RotateToValue(rotor, angle);
                     break;
             }
         }

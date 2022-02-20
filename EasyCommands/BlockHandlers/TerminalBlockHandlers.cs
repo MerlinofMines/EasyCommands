@@ -33,7 +33,7 @@ namespace IngameScript {
         };
 
         public class TerminalPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
-            public TerminalPropertyHandler(String propertyId, Primitive delta) : this(new PropertySupplier(propertyId), delta) { }
+            public TerminalPropertyHandler(String propertyId, Primitive delta) : this(new PropertySupplier().WithProperties(NewList(new PropertyValue(propertyId))), delta) { }
             public TerminalPropertyHandler(PropertySupplier propertySupplier, Primitive delta) : base(
                 (b, p) => { var property = GetTerminalProperty(b, propertySupplier); return ResolvePrimitive(TerminalPropertyConversions[property.TypeName].GetValue(property, b));  },
                 (b, p, v) => { var property = GetTerminalProperty(b, propertySupplier); TerminalPropertyConversions[property.TypeName].SetValue(property, b, v); },
@@ -48,10 +48,10 @@ namespace IngameScript {
             );
 
             static ITerminalProperty GetTerminalProperty(T block, PropertySupplier propertySupplier) =>
-                PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.propertyType, s =>{
+                PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.GetPropertyString(), s => {
                         var property = block.GetProperty(s);
                         if (property == null)
-                            throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
+                            throw new Exception(block.BlockDefinition.SubtypeName + " does not have property support for: " + s);
                         return property;
                     });
         }
@@ -74,18 +74,18 @@ namespace IngameScript {
                     return NewKeyedList(actions.Select(p => GetStaticVariable(p.Id)));
                 });
 
-                AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>(
-                    (b, p) => p.attributeValue.GetValue(),
-                    (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
-                    ResolvePrimitive(0)));
+                AddPropertyHandler(new SimplePropertyHandler<T>(
+                        (b, p) => p.properties[0].attributeValue.GetValue(),
+                        (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.properties[0].attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
+                        ResolvePrimitive(0)),
+                    Property.ACTION);
 
-                AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Forward), Direction.FORWARD),
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Backward), Direction.BACKWARD),
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Up), Direction.UP),
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Down), Direction.DOWN),
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Left), Direction.LEFT),
-                    TypeHandler(VectorHandler(b => b.WorldMatrix.Right), Direction.RIGHT));
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Forward), Property.DIRECTION, Property.FORWARD);
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Backward), Property.DIRECTION, Property.BACKGROUND);
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Up), Property.DIRECTION, Property.UP);
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Down), Property.DIRECTION, Property.DOWN);
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Left), Property.DIRECTION, Property.LEFT);
+                AddPropertyHandler(VectorHandler(b => b.WorldMatrix.Right), Property.DIRECTION, Property.RIGHT);
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
@@ -133,8 +133,8 @@ namespace IngameScript {
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() {
                 var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
-                AddPropertyHandler(Property.ENABLE, enableHandler);
-                AddPropertyHandler(Property.POWER, enableHandler);
+                AddPropertyHandler(enableHandler, Property.ENABLE);
+                AddPropertyHandler(enableHandler, Property.POWER);
             }
         }
 

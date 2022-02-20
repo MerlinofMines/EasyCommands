@@ -22,8 +22,8 @@ namespace IngameScript {
         public class GyroscopeBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyGyro {
             public GyroscopeBlockHandler() {
                 var powerHandler = NumericHandler(b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
-                AddPropertyHandler(Property.RANGE, powerHandler);
-                AddPropertyHandler(Property.POWER, powerHandler);
+                AddPropertyHandler(powerHandler, Property.RANGE);
+                AddPropertyHandler(powerHandler, Property.POWER);
 
                 AddBooleanHandler(Property.AUTO, b => !b.GyroOverride, (b, v) => b.GyroOverride = !v);
 

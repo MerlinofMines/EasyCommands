@@ -143,8 +143,7 @@ namespace IngameScript {
             var increaseProcessor = requiredLeft<IncreaseCommandParameter>();
             var incrementProcessor = requiredRight<IncrementCommandParameter>();
             var variableProcessor = requiredEither<VariableCommandParameter>();
-            var propertyProcessor = requiredEither<PropertySupplierCommandParameter>();
-            var directionProcessor = requiredEither<DirectionCommandParameter>();
+            var propertyProcessor = eitherList<PropertyValueCommandParameter>(true);
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
             var relativeProcessor = requiredRight<RelativeCommandParameter>();
@@ -154,15 +153,13 @@ namespace IngameScript {
                 incrementProcessor,
                 variableProcessor,
                 propertyProcessor,
-                directionProcessor,
                 reverseProcessor,
                 notProcessor,
                 relativeProcessor);
 
-            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.Satisfied() && x != directionProcessor && x != propertyProcessor);
+            CanConvert<SelectorCommandParameter> canConvert = (p) => processors.Exists(x => x.Satisfied() && x != propertyProcessor);
             Convert<SelectorCommandParameter> convert = (p) => {
-                PropertySupplier propertySupplier = propertyProcessor.Satisfied() ? propertyProcessor.GetValue().value : new PropertySupplier();
-                if (directionProcessor.Satisfied()) propertySupplier = propertySupplier.WithDirection(directionProcessor.GetValue().value);
+                PropertySupplier propertySupplier = new PropertySupplier().WithProperties(ResolvePropertyValues(propertyProcessor.GetValue()));
 
                 Variable variableValue = GetStaticVariable(true);
                 if (variableProcessor.Satisfied()) {
@@ -181,10 +178,10 @@ namespace IngameScript {
                     propertySupplier = propertySupplier.WithIncrement(increaseProcessor.GetValue().value);
                 } else if (relativeProcessor.Satisfied()) propertySupplier = propertySupplier.WithIncrement(true);
 
+                if (reverseProcessor.Satisfied()) propertySupplier.properties.Add(new PropertyValue(Property.REVERSE + "", reverseProcessor.GetValue().Token));
+
                 Action<BlockHandler, Object> blockAction;
-                if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
-                else if (increaseProcessor.Satisfied() || incrementProcessor.Satisfied() || relativeProcessor.Satisfied()) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
-                else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
+                if (increaseProcessor.Satisfied() || incrementProcessor.Satisfied() || relativeProcessor.Satisfied()) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
                 else blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
 
                 return new CommandReferenceParameter(new BlockCommand(p.value, blockAction));

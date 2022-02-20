@@ -26,7 +26,6 @@ namespace IngameScript {
                 AddBooleanHandler(Property.SUPPLY, b => b.Enabled, (b, v) => b.Enabled = v);
                 defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
         }
     }

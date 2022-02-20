@@ -52,10 +52,9 @@ namespace IngameScript {
 
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
-                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Range", 100));
+                AddPropertyHandler(TerminalPropertyHandler("Range", 100), Property.RANGE);
                 AddBooleanHandler(Property.TRIGGER, (b) => b.IsShooting, Shoot);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
             void Shoot(IMyUserControllableGun gun, bool b) =>
                 PROGRAM.actionCache.GetOrCreate(gun.GetType(), b ? "Shoot_On" : "Shoot_Off", s => gun.GetActionWithName(s)).Apply(gun);

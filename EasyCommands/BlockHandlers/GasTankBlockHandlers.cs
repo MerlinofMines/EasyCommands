@@ -27,7 +27,6 @@ namespace IngameScript {
                 AddNumericHandler(Property.RATIO, b => (float)b.FilledRatio);
                 AddNumericHandler(Property.LEVEL, b => (float)(b.FilledRatio * b.Capacity));
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
             }
         }
     }

@@ -24,9 +24,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v, 0.1f);
                 AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v, 50);
                 AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 10);
-                AddPropertyHandler(Property.MEDIA, ReturnTypedHandler(Return.STRING,
+                AddPropertyHandler(ReturnTypedHandler(Return.STRING,
                     TypeHandler(BooleanHandler((b) => b.DetailedInfo.Contains("Loop timer"), (b, v) => { if (v) b.Play(); else b.Stop(); }), Return.BOOLEAN),
-                    TypeHandler(StringHandler(b => b.SelectedSound, (b, v) => b.SelectedSound = v), Return.STRING)));
+                    TypeHandler(StringHandler(b => b.SelectedSound, (b, v) => b.SelectedSound = v), Return.STRING)), Property.MEDIA);
 
                 AddListHandler(Property.MEDIA_LIST, b => {
                     var availableSounds = NewList<string>();
