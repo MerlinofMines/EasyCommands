@@ -107,7 +107,7 @@ namespace IngameScript {
             new MultiListProcessor(),
 
             //IgnoreProcessor
-            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<CommandParameter>()),
+            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<ICommandParameter>()),
 
             //FunctionProcessor
             OneValueRule(Type<VariableCommandParameter>, requiredLeft<FunctionCommandParameter>(),
@@ -233,7 +233,7 @@ namespace IngameScript {
             //ThatBlockConditionProcessor
             FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), optionalRight<PropertySupplierCommandParameter>(), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (with, p, prop, dir, var) => p.Satisfied() && (var.GetValue().HasValue() || prop.GetValue().HasValue()),
-                (with, p, prop, dir, var) => NewList<CommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true))))),
+                (with, p, prop, dir, var) => NewList<ICommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true))))),
 
             //ConditionalSelectorProcessor
             TwoValueRule(Type<ThatCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
@@ -297,7 +297,7 @@ namespace IngameScript {
                             b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
                     })),
 
-            NoValueRule(Type<RelativeCommandParameter>, b => NewList<CommandParameter>()),
+            NoValueRule(Type<RelativeCommandParameter>, b => NewList<ICommandParameter>()),
 
             //ListIndexAssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -370,11 +370,11 @@ namespace IngameScript {
         /// </summary>
         /// <param name="commandParameters"></param>
         /// <returns></returns>
-        public List<List<CommandParameter>> ProcessParameters(List<CommandParameter> commandParameters) {
+        public List<List<ICommandParameter>> ProcessParameters(List<ICommandParameter> commandParameters) {
             var sortedParameterProcessors = new SortedList<IParameterProcessor, int>();
             var processorRanks = new HashSet<int>();
 
-            var branches = NewList<List<CommandParameter>>();
+            var branches = NewList<List<ICommandParameter>>();
             AddProcessors(commandParameters, sortedParameterProcessors, processorRanks);
 
             int processorIndex = 0;
@@ -385,7 +385,7 @@ namespace IngameScript {
                 IParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
                 for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
-                        List<CommandParameter> finalParameters;
+                        List<ICommandParameter> finalParameters;
                         if (current.Process(commandParameters, i, out finalParameters, branches)) {
                             AddProcessors(finalParameters, sortedParameterProcessors, processorRanks);
                             processed = true;
@@ -419,8 +419,8 @@ namespace IngameScript {
             }
         }
 
-        public T ParseParameters<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
-            var branches = NewList<List<CommandParameter>>();
+        public T ParseParameters<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter {
+            var branches = NewList<List<ICommandParameter>>();
             branches.Add(parameters);
 
             //Branches
@@ -435,7 +435,7 @@ namespace IngameScript {
             return null;
         }
 
-        void AddProcessors(List<CommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
+        void AddProcessors(List<ICommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
             var processors = types.Select(t => t.GetType())
                 .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<IParameterProcessor>()))
                 .Where(p => !processorRanks.Contains(p.Rank));
@@ -446,6 +446,6 @@ namespace IngameScript {
             }
         }
 
-        static T findLast<T>(List<CommandParameter> parameters) where T : class, CommandParameter => parameters.Where(p => p is T).Select(p => (T)p).LastOrDefault();
+        static T findLast<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter => parameters.Where(p => p is T).Select(p => (T)p).LastOrDefault();
     }
 }

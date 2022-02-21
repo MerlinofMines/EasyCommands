@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Internal (Don't touch!)
-        Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
+        Dictionary<String, List<ICommandParameter>> propertyWords = NewDictionary<string, List<ICommandParameter>>();
 
         string[] firstPassTokens = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=", "::"};
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
@@ -402,25 +402,25 @@ namespace IngameScript {
             AddWords(groupWords, new BlockTypeCommandParameter(blockType), new GroupCommandParameter());
         }
 
-        void AddAmbiguousWords(String[] words, params CommandParameter[] commandParameters) {
+        void AddAmbiguousWords(String[] words, params ICommandParameter[] commandParameters) {
             foreach (String word in words)
                 AddWords(Words(word), new AmbiguousStringCommandParameter(word, false, new AmbiguousCommandParameter(commandParameters)));
         }
 
-        void AddWords(String[] words, params CommandParameter[] commandParameters) {
+        void AddWords(String[] words, params ICommandParameter[] commandParameters) {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
-        List<CommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
+        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
 
-        List<CommandParameter> ParseCommandParameters(Token token) {
-            var commandParameters = NewList<CommandParameter>();
+        List<ICommandParameter> ParseCommandParameters(Token token) {
+            var commandParameters = NewList<ICommandParameter>();
             String t = token.token;
             if (token.isExplicitString) {
                 commandParameters.Add(new VariableCommandParameter(GetStaticVariable(token.original)));
             } else if (token.isString) {
                 List<Token> subTokens = Tokenize(t);
-                List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
+                List<ICommandParameter> subtokenParams = ParseCommandParameters(subTokens);
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
             } else if (propertyWords.ContainsKey(t)) {
                 commandParameters.AddList(propertyWords[t]);

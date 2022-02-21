@@ -19,10 +19,10 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface CommandParameter {
+        public interface ICommandParameter {
             string Token { get; set; }
         }
-        public abstract class SimpleCommandParameter : CommandParameter {
+        public abstract class SimpleCommandParameter : ICommandParameter {
             public string Token { get; set; }
         }
         public class IndexCommandParameter : SimpleCommandParameter { }
@@ -124,17 +124,17 @@ namespace IngameScript {
         }
 
         public class AmbiguousCommandParameter : SimpleCommandParameter {
-            public List<CommandParameter> alternatives;
+            public List<ICommandParameter> alternatives;
 
-            public AmbiguousCommandParameter(params CommandParameter[] commands) {
+            public AmbiguousCommandParameter(params ICommandParameter[] commands) {
                 alternatives = commands.ToList();
             }
         }
 
         public class AmbiguousStringCommandParameter : ValueCommandParameter<String> {
-            public List<CommandParameter> subTokens;
+            public List<ICommandParameter> subTokens;
             public bool isImplicit;
-            public AmbiguousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
+            public AmbiguousStringCommandParameter(String value, bool impl, params ICommandParameter[] SubTokens) : base(value) {
                 subTokens = SubTokens.ToList();
                 isImplicit = impl;
             }

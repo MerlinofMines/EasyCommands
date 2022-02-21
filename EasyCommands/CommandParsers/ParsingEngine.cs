@@ -166,7 +166,7 @@ namespace IngameScript {
         public Command ParseCommand(String commandLine, int lineNumber = 0) =>
             ParseCommand(ParseCommandParameters(Tokenize(commandLine)), lineNumber);
 
-        Command ParseCommand(List<CommandParameter> parameters, int lineNumber) {
+        Command ParseCommand(List<ICommandParameter> parameters, int lineNumber) {
             CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
 
             if (command == null) throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);
@@ -175,7 +175,7 @@ namespace IngameScript {
 
         public class CommandLine {
             public int depth, lineNumber;
-            public List<CommandParameter> commandParameters;
+            public List<ICommandParameter> commandParameters;
 
             public CommandLine(String command, int line) {
                 depth = command.TakeWhile(Char.IsWhiteSpace).Count();
