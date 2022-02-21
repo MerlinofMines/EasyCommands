@@ -197,11 +197,11 @@ namespace IngameScript {
             AddWords(Words("that", "which", "whose"), new ThatCommandParameter());
 
             //Comparison Words
-            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.Compare(b) < 0));
-            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.Compare(b) <= 0));
-            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.Compare(b) == 0));
-            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.Compare(b) >= 0));
-            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.Compare(b) > 0));
+            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) < 0));
+            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) <= 0));
+            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) == 0));
+            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) >= 0));
+            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) > 0));
             AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PROGRAM.PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
@@ -209,8 +209,8 @@ namespace IngameScript {
             AddWords(Words("all"), new AggregationModeCommandParameter(AggregationMode.ALL));
             AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
             AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
-            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b))));
-            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b))));
+            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Min() ?? ResolvePrimitive(0)));
+            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Max() ?? ResolvePrimitive(0)));
             AddWords(Words("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddAmbiguousWords(Words("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));

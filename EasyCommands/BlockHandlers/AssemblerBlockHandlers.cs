@@ -55,8 +55,7 @@ namespace IngameScript {
                 MyFixedPoint value = currentItems
                     .Where(item => definitions.Contains(item.BlueprintId))
                     .Select(item => item.Amount)
-                    .DefaultIfEmpty(MyFixedPoint.Zero)
-                    .Aggregate((sum, val) => sum + val);
+                    .Aggregate(MyFixedPoint.Zero, (sum, val) => sum + val);
                 return (float)value;
             }
 
@@ -71,4 +70,3 @@ namespace IngameScript {
         }
     }
 }
- 
