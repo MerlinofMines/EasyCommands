@@ -20,17 +20,17 @@ using VRageMath;
 namespace IngameScript {
     partial class Program : MyGridProgram {
 
-        public interface ParameterProcessor : IComparable<ParameterProcessor> {
+        public interface IParameterProcessor : IComparable<IParameterProcessor> {
             int Rank { get; set; }
             List<Type> GetProcessedTypes();
             bool CanProcess(CommandParameter p);
             bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
 
-        public abstract class ParameterProcessor<T> : ParameterProcessor where T : class, CommandParameter {
+        public abstract class ParameterProcessor<T> : IParameterProcessor where T : class, CommandParameter {
             public int Rank { get; set; }
             public virtual List<Type> GetProcessedTypes() => NewList(typeof(T));
-            public int CompareTo(ParameterProcessor other) => Rank.CompareTo(other.Rank);
+            public int CompareTo(IParameterProcessor other) => Rank.CompareTo(other.Rank);
             public bool CanProcess(CommandParameter p) => p is T;
             public abstract bool Process(List<CommandParameter> p, int i, out List<CommandParameter> finalParameters, List<List<CommandParameter>> branches);
         }
@@ -118,7 +118,7 @@ namespace IngameScript {
                 var copy = new List<CommandParameter>(p);
 
                 bool processed = false;
-                foreach (ParameterProcessor processor in eligibleProcessors) {
+                foreach (IParameterProcessor processor in eligibleProcessors) {
                     if (processed) {
                         List<CommandParameter> ignored;
                         var additionalCopy = new List<CommandParameter>(copy);

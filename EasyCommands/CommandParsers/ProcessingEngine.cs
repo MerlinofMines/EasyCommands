@@ -20,8 +20,8 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<ParameterProcessor>>();
-        List<ParameterProcessor> parameterProcessors = NewList<ParameterProcessor>(
+        Dictionary<Type, List<IParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<IParameterProcessor>>();
+        List<IParameterProcessor> parameterProcessors = NewList<IParameterProcessor>(
             new ParenthesisProcessor(),
             new ListProcessor(),
 
@@ -371,7 +371,7 @@ namespace IngameScript {
         /// <param name="commandParameters"></param>
         /// <returns></returns>
         public List<List<CommandParameter>> ProcessParameters(List<CommandParameter> commandParameters) {
-            var sortedParameterProcessors = new SortedList<ParameterProcessor, int>();
+            var sortedParameterProcessors = new SortedList<IParameterProcessor, int>();
             var processorRanks = new HashSet<int>();
 
             var branches = NewList<List<CommandParameter>>();
@@ -382,7 +382,7 @@ namespace IngameScript {
             while (processorIndex < sortedParameterProcessors.Count) {
                 bool revisit = false;
                 bool processed = false;
-                ParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
+                IParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
                 for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
                         List<CommandParameter> finalParameters;
@@ -408,12 +408,12 @@ namespace IngameScript {
 
         public void InitializeProcessors() {
             for (int i = 0; i < parameterProcessors.Count; i++) {
-                ParameterProcessor processor = parameterProcessors[i];
+                IParameterProcessor processor = parameterProcessors[i];
                 processor.Rank = i;
 
                 List<Type> types = processor.GetProcessedTypes();
                 foreach (Type t in types) {
-                    if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<ParameterProcessor>();
+                    if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<IParameterProcessor>();
                     parameterProcessorsByParameterType[t].Add(processor);
                 }
             }
@@ -435,12 +435,12 @@ namespace IngameScript {
             return null;
         }
 
-        void AddProcessors(List<CommandParameter> types, SortedList<ParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
+        void AddProcessors(List<CommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
             var processors = types.Select(t => t.GetType())
-                .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<ParameterProcessor>()))
+                .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<IParameterProcessor>()))
                 .Where(p => !processorRanks.Contains(p.Rank));
 
-            foreach (ParameterProcessor processor in processors) {
+            foreach (IParameterProcessor processor in processors) {
                 sortedParameterProcessors[processor] = processor.Rank;
                 processorRanks.Add(processor.Rank);
             }
