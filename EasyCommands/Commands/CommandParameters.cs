@@ -235,8 +235,8 @@ namespace IngameScript {
             }
         }
 
-        public class SelectorCommandParameter : ValueCommandParameter<Selector> {
-            public SelectorCommandParameter(Selector value) : base(value) {
+        public class SelectorCommandParameter : ValueCommandParameter<ISelector> {
+            public SelectorCommandParameter(ISelector value) : base(value) {
             }
         }
 

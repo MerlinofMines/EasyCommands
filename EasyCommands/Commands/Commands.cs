@@ -260,10 +260,10 @@ namespace IngameScript {
         public class NullCommand : Command { public override bool Execute() => true; }
 
         public class BlockCommand : Command {
-            public Selector entityProvider;
+            public ISelector entityProvider;
             public Action<IBlockHandler, Object> blockAction;
 
-            public BlockCommand(Selector provider, Action<IBlockHandler, Object> action) {
+            public BlockCommand(ISelector provider, Action<IBlockHandler, Object> action) {
                 entityProvider = provider;
                 blockAction = action;
             }
@@ -276,11 +276,11 @@ namespace IngameScript {
         }
 
         public class TransferItemCommand : Command {
-            public Selector from;//Must be Inventory
-            public Selector to;//Must be Inventory
+            public ISelector from;//Must be Inventory
+            public ISelector to;//Must be Inventory
             public Variable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
 
-            public TransferItemCommand(Selector source, Selector destination, Variable firstVariable, Variable secondVariable) {
+            public TransferItemCommand(ISelector source, ISelector destination, Variable firstVariable, Variable secondVariable) {
                 from = source;
                 to = destination;
                 first = firstVariable;

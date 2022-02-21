@@ -108,9 +108,9 @@ namespace IngameScript {
         public class AggregateConditionVariable : Variable {
             public AggregationMode aggregationMode;
             public BlockCondition blockCondition;
-            public Selector entityProvider;
+            public ISelector entityProvider;
 
-            public AggregateConditionVariable(AggregationMode aggregation, BlockCondition condition, Selector provider) {
+            public AggregateConditionVariable(AggregationMode aggregation, BlockCondition condition, ISelector provider) {
                 aggregationMode = aggregation;
                 blockCondition = condition;
                 entityProvider = provider;
@@ -133,10 +133,10 @@ namespace IngameScript {
 
         public class AggregatePropertyVariable : Variable {
             public Aggregator aggregator;
-            public Selector entityProvider;
+            public ISelector entityProvider;
             public PropertySupplier property;
 
-            public AggregatePropertyVariable(Aggregator agg, Selector provider, PropertySupplier p) {
+            public AggregatePropertyVariable(Aggregator agg, ISelector provider, PropertySupplier p) {
                 aggregator = agg;
                 entityProvider = provider;
                 property = p;
