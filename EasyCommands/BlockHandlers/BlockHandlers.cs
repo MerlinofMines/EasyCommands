@@ -17,7 +17,7 @@ namespace IngameScript {
         public Cache<Type, ITerminalProperty> propertyCache = new Cache<Type, ITerminalProperty>();
 
         public static class BlockHandlerRegistry {
-            static Dictionary<Block, BlockHandler> blockHandlers = new Dictionary<Block, BlockHandler> {
+            static Dictionary<Block, IBlockHandler> blockHandlers = new Dictionary<Block, IBlockHandler> {
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
                 { Block.ASSEMBLER, new AssemblerBlockHandler()},
@@ -72,7 +72,7 @@ namespace IngameScript {
                 { Block.WELDER, new FunctionalBlockHandler<IMyShipWelder>() }
             };
 
-            public static BlockHandler GetBlockHandler(Block blockType) {
+            public static IBlockHandler GetBlockHandler(Block blockType) {
                 if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
                 return blockHandlers[blockType];
             }
@@ -171,7 +171,7 @@ namespace IngameScript {
             public U[] supportedTypes;
         }
 
-        public interface BlockHandler {
+        public interface IBlockHandler {
             PropertySupplier GetDefaultProperty(Return type);
             PropertySupplier GetDefaultProperty(Direction direction);
             Direction GetDefaultDirection();
@@ -184,7 +184,7 @@ namespace IngameScript {
             void ReverseNumericPropertyValue(Object block, PropertySupplier property);
         }
 
-        public abstract class BlockHandler<T> : BlockHandler where T : class {
+        public abstract class BlockHandler<T> : IBlockHandler where T : class {
             public Dictionary<String, PropertyHandler<T>> propertyHandlers = NewDictionary<String, PropertyHandler<T>>();
             public Dictionary<Return, Property> defaultPropertiesByPrimitive = NewDictionary<Return, Property>();
             public Dictionary<Direction, Property> defaultPropertiesByDirection = NewDictionary<Direction, Property>();

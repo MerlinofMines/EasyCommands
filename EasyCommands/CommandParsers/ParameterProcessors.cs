@@ -181,7 +181,7 @@ namespace IngameScript {
                     propertySupplier = propertySupplier.WithIncrement(increaseProcessor.GetValue().value);
                 } else if (relativeProcessor.Satisfied()) propertySupplier = propertySupplier.WithIncrement(true);
 
-                Action<BlockHandler, Object> blockAction;
+                Action<IBlockHandler, Object> blockAction;
                 if (AllSatisfied(reverseProcessor)) blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
                 else if (increaseProcessor.Satisfied() || incrementProcessor.Satisfied() || relativeProcessor.Satisfied()) blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AllSatisfied(directionProcessor)) blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));

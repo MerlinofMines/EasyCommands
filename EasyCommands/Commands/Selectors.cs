@@ -51,7 +51,7 @@ namespace IngameScript {
 
             public List<Object> GetEntities() {
                 var entities = selector.GetEntities();
-                BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
+                IBlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
                 return CastList(index.GetValue()).GetValues()
                     .Select(v => v.GetValue())

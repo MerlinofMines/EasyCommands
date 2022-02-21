@@ -33,7 +33,7 @@ namespace IngameScript {
                 propertyWord = word;
             }
 
-            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) =>
+            public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) =>
                 (propertyType == ValueProperty.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
 
             public PropertySupplier ResolveDynamicProperty() {
@@ -53,7 +53,7 @@ namespace IngameScript {
                 return supplier;
             }
 
-            PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {
+            PropertySupplier ResolvePropertyType(IBlockHandler blockHandler, Return? defaultType = null) {
                 if (propertyType != null) return this;
                 if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
                 if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().returnType);

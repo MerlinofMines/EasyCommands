@@ -261,15 +261,15 @@ namespace IngameScript {
 
         public class BlockCommand : Command {
             public Selector entityProvider;
-            public Action<BlockHandler, Object> blockAction;
+            public Action<IBlockHandler, Object> blockAction;
 
-            public BlockCommand(Selector provider, Action<BlockHandler, Object> action) {
+            public BlockCommand(Selector provider, Action<IBlockHandler, Object> action) {
                 entityProvider = provider;
                 blockAction = action;
             }
 
             public override bool Execute() {
-                BlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
+                IBlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
                 entityProvider.GetEntities().ForEach(e => blockAction(handler, e));
                 return true;
             }
