@@ -148,7 +148,7 @@ namespace IngameScript {
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
             var relativeProcessor = requiredRight<RelativeCommandParameter>();
-            var processors = NewList<DataProcessor>(
+            var processors = NewList<IDataProcessor>(
                 assignmentProcessor,
                 increaseProcessor,
                 incrementProcessor,
@@ -207,11 +207,11 @@ namespace IngameScript {
 
         //Rule Processors
         class RuleProcessor<T> : ParameterProcessor<T> where T : class, CommandParameter {
-            List<DataProcessor> processors;
+            List<IDataProcessor> processors;
             CanConvert<T> canConvert;
             Convert<T> convert;
 
-            public RuleProcessor(List<DataProcessor> proc, CanConvert<T> canConv, Convert<T> conv) {
+            public RuleProcessor(List<IDataProcessor> proc, CanConvert<T> canConv, Convert<T> conv) {
                 processors = proc;
                 canConvert = canConv;
                 convert = conv;
@@ -252,31 +252,31 @@ namespace IngameScript {
         static RuleProcessor<T> NoValueRule<T>(Supplier<T> type, Convert<T> convert) where T : class, CommandParameter => NoValueRule(type, (p) => true, convert);
 
         static RuleProcessor<T> NoValueRule<T>(Supplier<T> type, CanConvert<T> canConvert, Convert<T> convert) where T : class, CommandParameter =>
-            new RuleProcessor<T>(NewList<DataProcessor>(), canConvert, convert);
+            new RuleProcessor<T>(NewList<IDataProcessor>(), canConvert, convert);
 
         static RuleProcessor<T> OneValueRule<T, U>(Supplier<T> type, DataProcessor<U> u, OneValueConvert<T, U> convert) where T : class, CommandParameter =>
             OneValueRule(type, u, (p, a) => a.Satisfied(), convert);
 
         static RuleProcessor<T> OneValueRule<T, U>(Supplier<T> type, DataProcessor<U> u, OneValueCanConvert<T, U> canConvert, OneValueConvert<T, U> convert) where T : class, CommandParameter =>
-            new RuleProcessor<T>(NewList<DataProcessor>(u), (p) => canConvert(p, u), (p) => convert(p, u.GetValue()));
+            new RuleProcessor<T>(NewList<IDataProcessor>(u), (p) => canConvert(p, u), (p) => convert(p, u.GetValue()));
 
         static RuleProcessor<T> TwoValueRule<T, U, V>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter =>
             TwoValueRule(type, u, v, (p, a, b) => AllSatisfied(a, b), convert);
 
         static RuleProcessor<T> TwoValueRule<T, U, V>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, TwoValueCanConvert<T, U, V> canConvert, TwoValueConvert<T, U, V> convert) where T : class, CommandParameter =>
-            new RuleProcessor<T>(NewList<DataProcessor>(u, v), (p) => canConvert(p, u, v), (p) => convert(p, u.GetValue(), v.GetValue()));
+            new RuleProcessor<T>(NewList<IDataProcessor>(u, v), (p) => canConvert(p, u, v), (p) => convert(p, u.GetValue(), v.GetValue()));
 
         static RuleProcessor<T> ThreeValueRule<T, U, V, W>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter =>
             ThreeValueRule(type, u, v, w, (p, a, b, c) => AllSatisfied(a, b, c), convert);
 
         static RuleProcessor<T> ThreeValueRule<T, U, V, W>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, ThreeValueCanConvert<T, U, V, W> canConvert, ThreeValueConvert<T, U, V, W> convert) where T : class, CommandParameter =>
-            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w), p => canConvert(p, u, v, w), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue()));
+            new RuleProcessor<T>(NewList<IDataProcessor>(u, v, w), p => canConvert(p, u, v, w), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue()));
 
         static RuleProcessor<T> FourValueRule<T, U, V, W, X>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter =>
             FourValueRule(type, u, v, w, x, (p, a, b, c, d) => AllSatisfied(a, b, c, d), convert);
 
         static RuleProcessor<T> FourValueRule<T, U, V, W, X>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, CommandParameter =>
-            new RuleProcessor<T>(NewList<DataProcessor>(u, v, w, x), p => canConvert(p, u, v, w, x), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue(), x.GetValue()));
+            new RuleProcessor<T>(NewList<IDataProcessor>(u, v, w, x), p => canConvert(p, u, v, w, x), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue(), x.GetValue()));
 
         //Utility delegates to efficiently create Rule Processors
         delegate bool CanConvert<T>(T t);

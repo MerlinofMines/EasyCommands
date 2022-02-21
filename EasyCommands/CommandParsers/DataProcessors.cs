@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        interface DataProcessor {
+        interface IDataProcessor {
             void Clear();
             bool SetValue(object p);
             bool Satisfied();
@@ -29,7 +29,7 @@ namespace IngameScript {
         }
 
         //Required Data Processors
-        class DataProcessor<T> : DataProcessor {
+        class DataProcessor<T> : IDataProcessor {
             T value;
             public bool left, right, required;
             public virtual T GetValue() => value;
@@ -100,6 +100,6 @@ namespace IngameScript {
             required = required
         };
 
-        static bool AllSatisfied(params DataProcessor[] processors) => processors.All(p => p.Satisfied());
+        static bool AllSatisfied(params IDataProcessor[] processors) => processors.All(p => p.Satisfied());
     }
 }
