@@ -193,10 +193,9 @@ namespace IngameScript {
             return new RuleProcessor<SelectorCommandParameter>(processors, canConvert, convert);
         }
 
-        static ICommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, CommandReferenceParameter metFetcher,
-            Optional<ElseCommandParameter> otherwise, Optional<CommandReferenceParameter> notMetFetcher) {
+        static ICommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, CommandReferenceParameter metFetcher, ElseCommandParameter otherwise, CommandReferenceParameter notMetFetcher) {
             Command metCommand = metFetcher.value;
-            Command notMetCommand = otherwise.HasValue() ? notMetFetcher.GetValue().value : new NullCommand();
+            Command notMetCommand = otherwise != null ? notMetFetcher.value : new NullCommand();
             if (condition.swapCommands) {
                 var temp = metCommand;
                 metCommand = notMetCommand;

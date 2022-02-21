@@ -35,5 +35,6 @@ namespace IngameScript {
         //Other useful utilities
         public static IVariable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
         public static Vector3D Vector(double x, double y, double z) => new Vector3D(x, y, z);
+        public static bool AnyNotNull(params Object[] objects) => objects.Any(o => o != null);
     }
 }

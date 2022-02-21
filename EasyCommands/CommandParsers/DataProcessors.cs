@@ -34,8 +34,8 @@ namespace IngameScript {
             public bool left, right, required;
             public virtual T GetValue() => value;
             public virtual bool SetValue(object p) {
-                var setValue = p is T && value == null;
-                if (setValue) value = (T)p;
+                var setValue = value == null && p is T;
+                value = setValue ? (T)p : value;
                 return setValue;
             }
             public bool Left(object o) => left && SetValue(o);
@@ -53,22 +53,8 @@ namespace IngameScript {
         };
 
         //Optional Data Processors
-        class OptionalDataProcessor<T> : DataProcessor<Optional<T>> {
-            T value;
-            public override Optional<T> GetValue() => new Optional<T> { t = value };
-            public override bool SetValue(object p) {
-                var setValue = p is T && value == null;
-                if (setValue) value = (T)p;
-                return setValue;
-            }
+        class OptionalDataProcessor<T> : DataProcessor<T> {
             public override bool Satisfied() => true;
-            public override void Clear() => value = default(T);
-        }
-
-        public class Optional<T> {
-            public T t;
-            public bool HasValue() => t != null;
-            public T GetValue(T defaultValue = default(T)) => t != null ? t : defaultValue;
         }
 
         static OptionalDataProcessor<T> optionalRight<T>() => optional<T>(false, true);
