@@ -62,7 +62,7 @@ namespace IngameScript {
                             var s = CastString(p);
                             return entities.Where(o => s == b.GetName(o));
                         } else
-                            return NewList<Object>();
+                            return Empty<Object>();
                     }).ToList();
             }
         }

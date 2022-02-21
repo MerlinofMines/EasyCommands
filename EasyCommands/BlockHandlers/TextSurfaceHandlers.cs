@@ -64,10 +64,10 @@ namespace IngameScript {
 
             public override IEnumerable<IMyTextSurface> GetInstances(IMyTerminalBlock block) =>
                 block is IMyTextSurface
-                    ? Enumerable.Repeat((IMyTextSurface)block, 1)
+                    ? Once((IMyTextSurface)block)
                     : block is IMyTextSurfaceProvider
-                        ? Enumerable.Range(0, ((IMyTextSurfaceProvider)block).SurfaceCount).Select(((IMyTextSurfaceProvider)block).GetSurface)
-                        : Enumerable.Empty<IMyTextSurface>();
+                        ? Range(0, ((IMyTextSurfaceProvider)block).SurfaceCount).Select(((IMyTextSurfaceProvider)block).GetSurface)
+                        : Empty<IMyTextSurface>();
         }
     }
 }

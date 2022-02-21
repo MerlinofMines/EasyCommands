@@ -30,10 +30,15 @@ namespace IngameScript {
         public static List<T> NewList<T>(params T[] elements) => new List<T>(elements);
         public static Dictionary<T, U> NewDictionary<T, U>(params KeyValuePair<T, U>[] elements) => elements.ToDictionary(e => e.Key, e => e.Value);
         public static KeyValuePair<T, U> KeyValuePair<T, U>(T key, U value) => new KeyValuePair<T, U>(key, value);
-        public static IVariable EmptyList() => GetStaticVariable(NewKeyedList());
+
+        //Utilities for constructing enumerables
+        public static IEnumerable<int> Range(int start, int count) => Enumerable.Range(start, count);
+        public static IEnumerable<T> Empty<T>() => Enumerable.Empty<T>();
+        public static IEnumerable<T> Once<T>(T element) => Enumerable.Repeat(element, 1);
 
         //Other useful utilities
         public static IVariable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));
+        public static IVariable EmptyList() => GetStaticVariable(NewKeyedList());
         public static Vector3D Vector(double x, double y, double z) => new Vector3D(x, y, z);
         public static bool AnyNotNull(params Object[] objects) => objects.Any(o => o != null);
     }

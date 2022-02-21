@@ -99,7 +99,7 @@ namespace IngameScript {
         public class MultiListProcessor : ParameterProcessor<ListCommandParameter> {
             public override bool Process(List<ICommandParameter> p, int i, out List<ICommandParameter> finalParameters, List<List<ICommandParameter>> branches) {
                 while (i > 1 && p[i - 1] is ListCommandParameter) i--;
-                finalParameters = NewList<ICommandParameter>(new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, GetVariables(NewKeyedList())[0])));
+                finalParameters = NewList<ICommandParameter>(new ListIndexCommandParameter(new ListIndexVariable(((ListCommandParameter)p[i]).value, EmptyList())));
                 p[i] = finalParameters[0];
                 return true;
             }

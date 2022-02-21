@@ -81,7 +81,7 @@ namespace IngameScript {
             )),
             KeyValuePair(typeof(KeyedList), NewDictionary(
                 CastFunction(Return.LIST, p => p.value),
-                CastFunction(Return.DEFAULT, p => NewKeyedList(NewList(GetStaticVariable(p.value))))
+                CastFunction(Return.DEFAULT, p => NewKeyedList(Once(GetStaticVariable(p.value))))
             ))
             );
 

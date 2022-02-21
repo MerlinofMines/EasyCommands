@@ -215,7 +215,7 @@ namespace IngameScript {
             public void SetValue(IVariable value) {
                 var list = CastList(expectedList.GetValue());
                 var indexes = GetIndexValues();
-                if (indexes.Count == 0) indexes.AddRange(Enumerable.Range(0, list.GetValues().Count).Select(i => ResolvePrimitive(i)));
+                if (indexes.Count == 0) indexes.AddRange(Range(0, list.GetValues().Count).Select(i => ResolvePrimitive(i)));
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 

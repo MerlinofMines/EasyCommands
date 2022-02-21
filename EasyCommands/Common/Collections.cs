@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
 
         static KeyedList NewKeyedList(IEnumerable<IVariable> values = null) =>
-            new KeyedList { keyedValues = NewList((values ?? NewList<IVariable>()).ToArray()).ConvertAll(AsKeyedVariable) };
+            new KeyedList { keyedValues = (values ?? Empty<IVariable>()).Select(AsKeyedVariable).ToList() };
 
         public class KeyedList {
             public List<KeyedVariable> keyedValues;

@@ -65,7 +65,7 @@ namespace IngameScript {
             globalVariables = NewDictionary(
                 KeyValuePair("pi", GetStaticVariable(Math.PI)),
                 KeyValuePair("e", GetStaticVariable(Math.E)),
-                KeyValuePair("empty", GetStaticVariable(NewKeyedList())),
+                KeyValuePair("empty", EmptyList()),
                 KeyValuePair("x", GetStaticVariable(Vector(1 ,0, 0))),
                 KeyValuePair("y", GetStaticVariable(Vector(0, 1, 0))),
                 KeyValuePair("z", GetStaticVariable(Vector(0, 0, 1))),

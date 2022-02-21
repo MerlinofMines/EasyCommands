@@ -60,11 +60,11 @@ namespace IngameScript {
             AddBiOperation<object, KeyedList>(BiOperand.ADD, (a, b) => Combine(a, b));
             AddBiOperation<KeyedList, object>(BiOperand.SUBTRACT, (a, b) => a.Remove(CastList(ResolvePrimitive(b))));
             AddBiOperation<float, float>(BiOperand.RANGE, (a, b) => {
-                var range = Enumerable.Range((int)Math.Min(a, b), (int)(Math.Abs(b - a) + 1)).Select(i => GetStaticVariable(i));
+                var range = Range((int)Math.Min(a, b), (int)(Math.Abs(b - a) + 1)).Select(i => GetStaticVariable(i));
                 if (a > b) range = range.Reverse();
                 return NewKeyedList(range);
             });
-            AddBiOperation<string, string>(BiOperand.SPLIT, (a, b) => NewKeyedList(a.Split(NewList(CastString(ResolvePrimitive(b))).ToArray(), StringSplitOptions.None).Select(GetStaticVariable)));
+            AddBiOperation<string, string>(BiOperand.SPLIT, (a, b) => NewKeyedList(a.Split(Once(CastString(ResolvePrimitive(b))).ToArray(), StringSplitOptions.None).Select(GetStaticVariable)));
             AddUniOperation<KeyedList>(UniOperand.KEYS, a => a.Keys());
             AddUniOperation<KeyedList>(UniOperand.VALUES, a => a.Values());
             AddUniOperation<KeyedList>(UniOperand.REVERSE, a => NewKeyedList(a.keyedValues.Select(b => b).Reverse()));
@@ -156,7 +156,6 @@ namespace IngameScript {
             AddBiOperation<Color, float>(BiOperand.DIVIDE, (a, b) => Color.Multiply(a, 1/b));
         }
 
-        static List<IVariable> GetVariables(params object[] o) => o.ToList().Select(GetStaticVariable).ToList();
         static KeyedList Combine(object a, object b) => CastList(ResolvePrimitive(a)).Combine(CastList(ResolvePrimitive(b)));
     }
 }

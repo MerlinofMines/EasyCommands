@@ -444,22 +444,20 @@ namespace IngameScript {
                 u => u.Replace(" : ", " :: ")
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .SelectMany(v => firstPass(v))
-                    .Select(v => new Token(v, false, false))
-                    .ToArray())
+                    .Select(v => new Token(v, false, false)))
             .ToList();
         }
 
-        Token[] TokenizeEnclosed(String token, string characters, Func<String, Token[]> parseSubTokens) =>
+        IEnumerable<Token> TokenizeEnclosed(String token, string characters, Func<String, IEnumerable<Token>> parseSubTokens) =>
             characters.Length == 0 ? parseSubTokens(token) :
                 token.Trim().Split(characters[0])
                 .SelectMany((element, index) => index % 2 == 0  // If even index
-                    ? TokenizeEnclosed(element, characters.Remove(0,1), parseSubTokens)  // Split the item
-                    : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
-                .ToArray();
+                    ? TokenizeEnclosed(element, characters.Remove(0, 1), parseSubTokens)  // Split the item
+                    : Once(new Token(element, true, characters.Length > 1)));  // Keep the entire item
 
         IEnumerable<String> PrimitivePass(String token, Pass nextPass = null) {
             Primitive ignored;
-            return ParsePrimitive(token, out ignored) || nextPass == null ? new[] { token } : nextPass(token);
+            return ParsePrimitive(token, out ignored) || nextPass == null ? Once(token) : nextPass(token);
         }
 
         IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
@@ -467,7 +465,7 @@ namespace IngameScript {
             foreach (var s in separators) newCommand = newCommand.Replace(s, " " + s + " ");
             return newCommand
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(token => separators.Contains(token) || nextPass == null ? new[] { token } : nextPass(token));
+                .SelectMany(token => separators.Contains(token) || nextPass == null ? Once(token) : nextPass(token));
         }
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
