@@ -93,7 +93,7 @@ namespace IngameScript {
             }
 
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(b => selector == null || selector(b)).OfType<T>();
+                blocks.Where(selector ?? (b => true)).OfType<T>();
 
             public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 try {

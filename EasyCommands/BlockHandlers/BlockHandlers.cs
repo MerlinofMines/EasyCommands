@@ -296,7 +296,7 @@ namespace IngameScript {
 
         public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(b => selector == null || selector(b)).SelectMany(b => GetInstances(b));
+                blocks.Where(selector ?? (b => true)).SelectMany(b => GetInstances(b));
             public abstract IEnumerable<T> GetInstances(IMyTerminalBlock block);
         }
     }
