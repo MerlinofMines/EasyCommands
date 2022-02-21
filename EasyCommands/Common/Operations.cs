@@ -22,45 +22,29 @@ namespace IngameScript {
         public delegate Primitive UniOperation(Primitive a);
         public delegate Primitive BiOperation(Primitive a, Primitive b);
 
-        Dictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>> BiOperations
-            = NewDictionary<BiOperand, Dictionary<Return, Dictionary<Return, BiOperation>>>();
+        Dictionary<MyTuple<UniOperand, Return>, UniOperation> UniOperations = NewDictionary<MyTuple<UniOperand, Return>, UniOperation>();
+        Dictionary<MyTuple<BiOperand, Return, Return>, BiOperation> BiOperations = NewDictionary<MyTuple<BiOperand, Return, Return>, BiOperation>();
 
-        Dictionary<UniOperand, Dictionary<Return, UniOperation>> UniOperations
-            = NewDictionary<UniOperand, Dictionary<Return, UniOperation>>();
+        public Primitive PerformOperation(UniOperand type, Primitive a) =>
+            UniOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType), p => {
+                throw new Exception("Cannot perform operation: " + PROGRAM.uniOperandToString[type] + " on type: " + PROGRAM.returnToString[p.returnType]);
+            })(a);
 
-        public Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) {
-            if (!BiOperations.ContainsKey(type)
-                || !BiOperations[type].ContainsKey(a.returnType)
-                || !BiOperations[type][a.returnType].ContainsKey(b.returnType)) {
-                throw new Exception("Cannot perform operation: " + PROGRAM.biOperandToString[type] + " on types: " + PROGRAM.returnToString[a.returnType] + ", " + PROGRAM.returnToString[b.returnType]);
-            }
-            return BiOperations[type][a.returnType][b.returnType](a, b);
-        }
+        public Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) =>
+            BiOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType, b.returnType), (p, q) => {
+                throw new Exception("Cannot perform operation: " + PROGRAM.biOperandToString[type] + " on types: " + PROGRAM.returnToString[p.returnType] + ", " + PROGRAM.returnToString[q.returnType]);
+            })(a, b);
 
-        public Primitive PerformOperation(UniOperand type, Primitive a) {
-            if (!UniOperations.ContainsKey(type)
-                || !UniOperations[type].ContainsKey(a.returnType)) {
-                throw new Exception("Cannot perform operation: " + PROGRAM.uniOperandToString[type] + " on type: " + PROGRAM.returnToString[a.returnType]);
-            }
-            return UniOperations[type][a.returnType](a);
+        void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {
+            foreach (Return t in GetTypes(typeof(T)))
+                UniOperations[MyTuple.Create(type, t)] = p => ResolvePrimitive(resolver((T)p.value));
         }
 
         void AddBiOperation<T, U>(BiOperand type, Func<T, U, object> resolver) {
-            if (!BiOperations.ContainsKey(type)) BiOperations[type] = NewDictionary<Return, Dictionary<Return, BiOperation>>();
-            foreach (Return a in GetTypes(typeof(T))) {
-                foreach(Return b in GetTypes(typeof(U))) {
-                    if (!BiOperations[type].ContainsKey(a)) BiOperations[type][a] = NewDictionary<Return, BiOperation>();
-                    BiOperations[type][a][b] = (t, u) => ResolvePrimitive(resolver((T)t.value, (U)u.value));
-                }
-            }
+            foreach (var k in GetTypes(typeof(T)).SelectMany(t => GetTypes(typeof(U)), (t, u) => MyTuple.Create(type, t, u)))
+                BiOperations[k] = (p, q) => ResolvePrimitive(resolver((T)p.value, (U)q.value));
         }
 
-        void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {
-            if (!UniOperations.ContainsKey(type)) UniOperations[type] = NewDictionary<Return, UniOperation>();
-            foreach (Return a in GetTypes(typeof(T))) {
-                UniOperations[type][a] = t => ResolvePrimitive(resolver((T)t.value));
-            }
-        }
 
         public void InitializeOperators() {
             //Object
