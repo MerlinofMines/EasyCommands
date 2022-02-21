@@ -444,6 +444,6 @@ namespace IngameScript {
             }
         }
 
-        static T findLast<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter => parameters.Where(p => p is T).Select(p => (T)p).LastOrDefault();
+        static T findLast<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter => parameters.OfType<T>().LastOrDefault();
     }
 }

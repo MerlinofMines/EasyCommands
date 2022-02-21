@@ -293,9 +293,8 @@ namespace IngameScript {
                 var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue())));
                 var items = NewList<MyInventoryItem>();
 
-                var toInventories = to.GetEntities().Select(i => (IMyInventory)i).Where(i => !i.IsFull).ToList();
-                var fromInventories = from.GetEntities().Select(i => (IMyInventory)i)
-                    .Where(i => toInventories.All(to => i.Owner.EntityId != to.Owner.EntityId)); //Don't transfer to yourself
+                var toInventories = to.GetEntities().Cast<IMyInventory>().Where(i => !i.IsFull).ToList();
+                var fromInventories = from.GetEntities().Cast<IMyInventory>().Where(i => toInventories.All(to => i.Owner.EntityId != to.Owner.EntityId));
 
                 MyFixedPoint amountLeft = MyFixedPoint.MaxValue;
                 if (second != null) amountLeft = (MyFixedPoint)CastNumber(first.GetValue());
