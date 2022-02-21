@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class PropertySupplier {
             public String propertyType, propertyWord;
-            public Variable attributeValue, propertyValue;
+            public IVariable attributeValue, propertyValue;
             public Direction? direction;
             public bool? increment;
             public bool inverse;
@@ -73,13 +73,13 @@ namespace IngameScript {
                 return copy;
             }
 
-            public PropertySupplier WithPropertyValue(Variable propertyValue) {
+            public PropertySupplier WithPropertyValue(IVariable propertyValue) {
                 PropertySupplier copy = Copy();
                 copy.propertyValue = propertyValue;
                 return copy;
             }
 
-            public PropertySupplier WithAttributeValue(Variable attributeValue) {
+            public PropertySupplier WithAttributeValue(IVariable attributeValue) {
                 PropertySupplier copy = Copy();
                 copy.attributeValue = attributeValue;
                 return copy;

@@ -762,7 +762,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
+            List<IVariable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(4, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().value);
             Assert.AreEqual(1f, listValues[1].GetValue().value);
@@ -776,7 +776,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0 + [1, 2, 3]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
+            List<IVariable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(4, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().value);
             Assert.AreEqual(1f, listValues[1].GetValue().value);
@@ -808,7 +808,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to [0, 1, 2] + [3, 4, 5]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            List<Variable> listValues = CastList(assignment.variable.GetValue()).GetValues();
+            List<IVariable> listValues = CastList(assignment.variable.GetValue()).GetValues();
             Assert.AreEqual(6, listValues.Count);
             Assert.AreEqual(0f, listValues[0].GetValue().value);
             Assert.AreEqual(1f, listValues[1].GetValue().value);

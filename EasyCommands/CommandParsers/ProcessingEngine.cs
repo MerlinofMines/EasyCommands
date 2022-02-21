@@ -53,7 +53,7 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     s => {
                         Primitive primitive;
-                        Variable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
+                        IVariable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
                         if (s.isImplicit && ParsePrimitive(s.value, out primitive)) variable = GetStaticVariable(primitive.value);
                         return new VariableCommandParameter(variable);
                     })),

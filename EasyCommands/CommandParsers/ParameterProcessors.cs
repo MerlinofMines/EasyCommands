@@ -70,7 +70,7 @@ namespace IngameScript {
         public class ListProcessor : ParameterProcessor<OpenBracketCommandParameter> {
             public override bool Process(List<ICommandParameter> p, int i, out List<ICommandParameter> finalParameters, List<List<ICommandParameter>> branches) {
                 finalParameters = null;
-                var indexValues = NewList<Variable>();
+                var indexValues = NewList<IVariable>();
                 int startIndex = i;
                 for (int j = startIndex + 1; j < p.Count; j++) {
                     if (p[j] is OpenBracketCommandParameter) return false;
@@ -88,9 +88,9 @@ namespace IngameScript {
                 throw new Exception("Missing Closing Bracket for List");
             }
 
-            Variable ParseVariable(List<ICommandParameter> p, int startIndex, int endIndex) {
+            IVariable ParseVariable(List<ICommandParameter> p, int startIndex, int endIndex) {
                 var range = p.GetRange(startIndex + 1, endIndex - (startIndex + 1));
-                ValueCommandParameter<Variable> variable = PROGRAM.ParseParameters<ValueCommandParameter<Variable>>(range);
+                ValueCommandParameter<IVariable> variable = PROGRAM.ParseParameters<ValueCommandParameter<IVariable>>(range);
                 if (variable == null) throw new Exception("List Index Values Must Resolve To a Variable");
                 return variable.value;
             }
@@ -164,7 +164,7 @@ namespace IngameScript {
                 PropertySupplier propertySupplier = propertyProcessor.Satisfied() ? propertyProcessor.GetValue().value : new PropertySupplier();
                 if (directionProcessor.Satisfied()) propertySupplier = propertySupplier.WithDirection(directionProcessor.GetValue().value);
 
-                Variable variableValue = GetStaticVariable(true);
+                IVariable variableValue = GetStaticVariable(true);
                 if (variableProcessor.Satisfied()) {
                     variableValue = variableProcessor.GetValue().value;
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);

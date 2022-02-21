@@ -41,7 +41,7 @@ namespace IngameScript {
 
         List<Thread> threadQueue = NewList<Thread>();
         List<Thread> asyncThreadQueue = NewList<Thread>();
-        Dictionary<String, Variable> globalVariables = NewDictionary<String, Variable>();
+        Dictionary<String, IVariable> globalVariables = NewDictionary<String, IVariable>();
 
         Dictionary<ProgramState, KeyValuePair<String, bool>> programStateMap = NewDictionary(
             KeyValuePair(ProgramState.RUNNING, KeyValuePair("Running", true)),
@@ -93,11 +93,11 @@ namespace IngameScript {
             if (asyncThreadQueue.Count > maxAsyncThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxAsyncThreads + "concurrent async commands");
         }
 
-        public void SetGlobalVariable(String variableName, Variable variable) {
+        public void SetGlobalVariable(String variableName, IVariable variable) {
             globalVariables[variableName] = variable;
         }
 
-        public Variable GetVariable(String variableName) {
+        public IVariable GetVariable(String variableName) {
             Thread currentThread = GetCurrentThread();
             if(currentThread.threadVariables.ContainsKey(variableName)) {
                 return currentThread.threadVariables[variableName];
@@ -208,7 +208,7 @@ namespace IngameScript {
 
         public class Thread {
             public Command Command { get; set; }
-            public Dictionary<String, Variable> threadVariables = NewDictionary<string, Variable>();
+            public Dictionary<String, IVariable> threadVariables = NewDictionary<string, IVariable>();
             String prefix;
             String name;
 

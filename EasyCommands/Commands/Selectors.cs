@@ -40,9 +40,9 @@ namespace IngameScript {
 
         public class IndexSelector : ISelector {
             public ISelector selector;
-            public Variable index;
+            public IVariable index;
 
-            public IndexSelector(ISelector sel, Variable ind) {
+            public IndexSelector(ISelector sel, IVariable ind) {
                 selector = sel;
                 index = ind;
             }
@@ -70,9 +70,9 @@ namespace IngameScript {
         public class BlockSelector : ISelector {
             public Block? blockType;
             public bool isGroup;
-            public Variable selector;
+            public IVariable selector;
 
-            public BlockSelector(Block? type, bool group, Variable sel) {
+            public BlockSelector(Block? type, bool group, IVariable sel) {
                 blockType = type;
                 isGroup = group;
                 selector = sel;

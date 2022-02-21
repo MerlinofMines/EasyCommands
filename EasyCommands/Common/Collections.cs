@@ -20,23 +20,23 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        static KeyedList NewKeyedList(IEnumerable<Variable> values = null) =>
-            new KeyedList { keyedValues = NewList((values ?? NewList<Variable>()).ToArray()).ConvertAll(AsKeyedVariable) };
+        static KeyedList NewKeyedList(IEnumerable<IVariable> values = null) =>
+            new KeyedList { keyedValues = NewList((values ?? NewList<IVariable>()).ToArray()).ConvertAll(AsKeyedVariable) };
 
         public class KeyedList {
             public List<KeyedVariable> keyedValues;
 
-            public List<Variable> GetValues() => keyedValues.ConvertAll(v => (Variable)v);
+            public List<IVariable> GetValues() => keyedValues.ConvertAll(v => (IVariable)v);
 
             //If numeric, get by index.  If string, get by key value
-            public Variable GetValue(Primitive key) {
+            public IVariable GetValue(Primitive key) {
                 switch(key.returnType) {
                     case Return.NUMERIC:
                         return keyedValues[(int)CastNumber(key)];
                     case Return.STRING:
                         var keyString = CastString(key);
                         return keyedValues.Where(v => v.GetKey() == CastString(key))
-                            .Cast<Variable>()
+                            .Cast<IVariable>()
                             .DefaultIfEmpty(EmptyList())
                             .First();
                     default:
@@ -45,7 +45,7 @@ namespace IngameScript {
             }
 
             //If numeric, set by Index.  If string, put (or append) keyed value
-            public void SetValue(Primitive key, Variable value) {
+            public void SetValue(Primitive key, IVariable value) {
                 if (key.returnType == Return.NUMERIC) {
                     keyedValues[(int)CastNumber(key)] = AsKeyedVariable(value);
                 } else if (key.returnType == Return.STRING) {

@@ -24,7 +24,7 @@ namespace IngameScript {
         public BlockCondition AndCondition(BlockCondition a, BlockCondition b) => new BlockCondition((block, blockType) => a(block, blockType) && b(block, blockType));
         public BlockCondition OrCondition(BlockCondition a, BlockCondition b) => new BlockCondition((block, blockType) => a(block, blockType) || b(block, blockType));
 
-        public static BlockCondition BlockPropertyCondition(PropertySupplier property, PrimitiveComparator comparator, Variable comparisonValue) => (block, blockType) => {
+        public static BlockCondition BlockPropertyCondition(PropertySupplier property, PrimitiveComparator comparator, IVariable comparisonValue) => (block, blockType) => {
             Primitive value = comparisonValue.GetValue();
             IBlockHandler handler = BlockHandlerRegistry.GetBlockHandler(blockType);
             return comparator(handler.GetPropertyValue(block, property.WithPropertyValue(comparisonValue).Resolve(handler, value.returnType)), value);

@@ -172,7 +172,7 @@ namespace IngameScript {
             AddBiOperation<Color, float>(BiOperand.DIVIDE, (a, b) => Color.Multiply(a, 1/b));
         }
 
-        static List<Variable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
+        static List<IVariable> GetVariables(params object[] o) => o.ToList().Select(p => GetStaticVariable(p)).ToList();
         static KeyedList Combine(object a, object b) => CastList(ResolvePrimitive(a)).Combine(CastList(ResolvePrimitive(b)));
     }
 }
