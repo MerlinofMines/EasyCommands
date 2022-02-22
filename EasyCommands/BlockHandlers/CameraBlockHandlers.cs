@@ -29,15 +29,15 @@ namespace IngameScript {
                     var range = (double)GetRange(b);
                     b.EnableRaycast = true;
                     if (b.CanScan(range)) {
-                        MyDetectedEntityInfo detectedEntity = b.Raycast(range);
-                        if (!detectedEntity.IsEmpty()) {
+                        var detectedEntity = b.Raycast(range);
+                        if (detectedEntity.IsEmpty()) {
+                            DeleteCustomProperty(b, "Target");
+                        } else {
                             SetCustomProperty(b, "Target", VectorToString(GetPosition(detectedEntity)));
                             SetCustomProperty(b, "Velocity", VectorToString(detectedEntity.Velocity));
-                        } else {
-                            DeleteCustomProperty(b, "Target");
                         }
                     }
-                    return GetVector(GetCustomProperty(b, "Target") ?? "").GetValueOrDefault();
+                    return GetVector(GetCustomProperty(b, "Target") ?? "") ?? Vector3D.Zero;
                 });
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;

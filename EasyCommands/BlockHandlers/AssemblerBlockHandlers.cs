@@ -52,11 +52,10 @@ namespace IngameScript {
                 var definitions = PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p));
                 var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
-                MyFixedPoint value = currentItems
+                return (float)currentItems
                     .Where(item => definitions.Contains(item.BlueprintId))
                     .Select(item => item.Amount)
                     .Aggregate(MyFixedPoint.Zero, (sum, val) => sum + val);
-                return (float)value;
             }
 
             void AddQueueItem(IMyAssembler b, PropertySupplier p) {

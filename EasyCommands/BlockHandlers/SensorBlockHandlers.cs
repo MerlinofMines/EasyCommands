@@ -21,19 +21,15 @@ namespace IngameScript {
     partial class Program {
         public class SensorBlockHandler : FunctionalBlockHandler<IMySensorBlock> {
             public SensorBlockHandler() {
-                AddBooleanHandler(Property.TRIGGER, (b) => b.IsActive);
+                AddBooleanHandler(Property.TRIGGER, b => b.IsActive);
                 AddBooleanHandler(Property.MEDIA, b => b.PlayProximitySound, (b, v) => b.PlayProximitySound = v);
-                AddVectorHandler(Property.TARGET, (b) => {
-                    MyDetectedEntityInfo lastDetectedEntity = b.LastDetectedEntity;
-                    Vector3D position = Vector3D.Zero;
-                    if (!lastDetectedEntity.IsEmpty()) position = GetPosition(lastDetectedEntity);
-                    return position;
+                AddVectorHandler(Property.TARGET, b => {
+                    var lastDetectedEntity = b.LastDetectedEntity;
+                    return lastDetectedEntity.IsEmpty() ? Vector3D.Zero : GetPosition(lastDetectedEntity);
                 });
-                AddVectorHandler(Property.TARGET_VELOCITY, (b) => {
-                    MyDetectedEntityInfo lastDetectedEntity = b.LastDetectedEntity;
-                    Vector3D hitPosition = Vector3D.Zero;
-                    if (!lastDetectedEntity.IsEmpty()) hitPosition = lastDetectedEntity.Velocity;
-                    return hitPosition;
+                AddVectorHandler(Property.TARGET_VELOCITY, b => {
+                    var lastDetectedEntity = b.LastDetectedEntity;
+                    return lastDetectedEntity.IsEmpty() ? Vector3.Zero : lastDetectedEntity.Velocity;
                 });
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;

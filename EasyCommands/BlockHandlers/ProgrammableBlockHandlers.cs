@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class ProgramBlockHandler : FunctionalBlockHandler<IMyProgrammableBlock> {
-            public ProgramBlockHandler() : base() {
+            public ProgramBlockHandler() {
                 AddBooleanHandler(Property.COMPLETE, block => !block.IsRunning);
                 AddStringHandler(Property.TEXT, block => block.TerminalRunArgument);
                 AddReturnHandlers(Property.RUN, Return.STRING,

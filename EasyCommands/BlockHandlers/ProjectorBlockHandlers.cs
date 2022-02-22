@@ -46,7 +46,7 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => -GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0),  Vector(0, 0, -v))), Direction.BACKWARD));
             }
 
-            void SetRotation(IMyProjector projector, Vector3I clearVector, Vector3I newOffset) => projector.ProjectionRotation = GetRotation(projector) * clearVector + new Vector3I(Clamp(newOffset.X), Clamp(newOffset.Y), Clamp(newOffset.Z));
+            void SetRotation(IMyProjector projector, Vector3I clearVector, Vector3I newOffset) => projector.ProjectionRotation = GetRotation(projector) * clearVector + Vector(Clamp(newOffset.X), Clamp(newOffset.Y), Clamp(newOffset.Z));
             Vector3I GetRotation(IMyProjector projector) => projector.ProjectionRotation;
 
             void SetOffset(IMyProjector projector, Vector3I clearVector, Vector3I newOffset) => projector.ProjectionOffset = GetOffset(projector) * clearVector + newOffset;
