@@ -116,7 +116,7 @@ namespace IngameScript {
                     }
                 }
 
-                return switchExecution ? false : function.Execute();
+                return !switchExecution && function.Execute();
             }
             public override Command Clone() => new FunctionCommand(switchExecution, functionName, inputParameters);
             public override void Reset() => function = null;
@@ -194,7 +194,7 @@ namespace IngameScript {
         public delegate bool ControlFunction(Thread currentThread);
 
         public IInterruptableCommand GetInterrupableCommand(string controlStatement) {
-            IInterruptableCommand breakCommand = GetCurrentThread().GetCurrentCommand<IInterruptableCommand>(command => !(command is ConditionalCommand) || ((ConditionalCommand)command).alwaysEvaluate);
+            IInterruptableCommand breakCommand = GetCurrentThread().GetCurrentCommand<IInterruptableCommand>(command => (command as ConditionalCommand)?.alwaysEvaluate ?? true);
             if (breakCommand == null) throw new Exception("Invalid use of " + controlStatement + " command");
             return breakCommand;
         }
@@ -387,8 +387,7 @@ namespace IngameScript {
             public IVariable loopCount;
             int loopsLeft;
 
-            public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) : this(commandsToExecute, new StaticVariable(ResolvePrimitive(loops))) {
-
+            public MultiActionCommand(List<Command> commandsToExecute, int loops = 1) : this(commandsToExecute, GetStaticVariable(loops)) {
             }
 
             public MultiActionCommand(List<Command> commands, IVariable loops) {
@@ -397,7 +396,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if (currentCommands == null || currentCommands.Count == 0) {
+                if ((currentCommands?.Count ?? 0) == 0) {
                     currentCommands = commandsToExecute.Select(c => c.Clone()).ToList();//Deep Copy
                     if (loopsLeft == 0) loopsLeft = (int)Math.Round(CastNumber(loopCount.GetValue()));
                     loopsLeft -= 1;
@@ -411,7 +410,7 @@ namespace IngameScript {
                     }
                 }
 
-                if (currentCommands != null && currentCommands.Count > 0) return false;
+                if (currentCommands?.Count > 0) return false;
                 if (loopsLeft <= 0) return true;
 
                 Reset();
@@ -438,7 +437,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if (listElements == null) listElements = CastList(list.GetValue()).GetValues();
+                listElements = listElements ?? CastList(list.GetValue()).GetValues();
 
                 if (executed && listElements.Count == 0) return true;
 
@@ -451,7 +450,7 @@ namespace IngameScript {
                 if (!executed) executed = command.Execute();
                 if (executed) command.Reset();
 
-                return executed && (listElements == null || listElements.Count == 0);
+                return executed && ((listElements?.Count ?? 0) == 0);
             }
 
             public override void Reset() {

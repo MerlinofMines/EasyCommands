@@ -144,6 +144,6 @@ namespace IngameScript {
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        static Vector3D GetPosition(MyDetectedEntityInfo entity) => entity.HitPosition.GetValueOrDefault(entity.Position);
+        static Vector3D GetPosition(MyDetectedEntityInfo entity) => entity.HitPosition ?? entity.Position;
     }
 }

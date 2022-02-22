@@ -28,13 +28,8 @@ namespace IngameScript {
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
             }
 
-            Vector3D GetTarget(IMyLargeTurretBase turret) {
-                Vector3D? target = Vector3D.Zero;
-                var customTarget = GetCustomProperty(turret, "target");
-                if (customTarget != null) target = GetVector(customTarget);
-                else if (turret.HasTarget) target = GetPosition(turret.GetTargetedEntity());
-                return target.Value;
-            }
+            Vector3D GetTarget(IMyLargeTurretBase turret) =>
+                GetVector(GetCustomProperty(turret, "target") ?? "") ?? (turret.HasTarget ? GetPosition(turret.GetTargetedEntity()) : Vector3D.Zero);
 
             void ResetTarget(IMyLargeTurretBase turret) {
                 //Idle Movement setting gets reset when calling ResetTargetingToDefault(), so need to re-apply it.
@@ -53,7 +48,7 @@ namespace IngameScript {
         public class GunBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyUserControllableGun {
             public GunBlockHandler() {
                 AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Range", 100));
-                AddBooleanHandler(Property.TRIGGER, (b) => b.IsShooting, Shoot);
+                AddBooleanHandler(Property.TRIGGER, b => b.IsShooting, Shoot);
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }

@@ -247,6 +247,6 @@ namespace IngameScript {
             public int CompareTo(KeyedVariable other) => (int)CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, GetValue(), other.GetValue()));
         }
 
-        public static KeyedVariable AsKeyedVariable(IVariable variable) => (variable is KeyedVariable) ? (KeyedVariable)variable : new KeyedVariable(null, variable);
+        public static KeyedVariable AsKeyedVariable(IVariable variable) => variable as KeyedVariable ?? new KeyedVariable(null, variable);
     }
 }

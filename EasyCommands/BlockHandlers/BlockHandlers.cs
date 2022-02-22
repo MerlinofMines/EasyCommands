@@ -270,9 +270,9 @@ namespace IngameScript {
                 AddPropertyHandler(property, ReturnTypedHandler(defaultReturn, handlers));
 
             public PropertyHandler<T> DirectionalTypedHandler(Direction defaultDirection, params TypeHandler<T, Direction>[] handlers) =>
-                TypedHandler(defaultDirection, p => p.direction.GetValueOrDefault(defaultDirection), handlers);
+                TypedHandler(defaultDirection, p => p.direction ?? defaultDirection, handlers);
             public PropertyHandler<T> ReturnTypedHandler(Return defaultReturn, params TypeHandler<T, Return>[] handlers) =>
-                TypedHandler(defaultReturn, p => p.propertyValue != null ? p.propertyValue.GetValue().returnType : Return.DEFAULT, handlers);
+                TypedHandler(defaultReturn, p => p.propertyValue?.GetValue().returnType ?? Return.DEFAULT, handlers);
 
             public TypeHandler<T, U> TypeHandler<U>(PropertyHandler<T> h, params U[] values) => new TypeHandler<T, U> {
                 handler = h,

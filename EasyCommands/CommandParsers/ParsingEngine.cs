@@ -62,8 +62,7 @@ namespace IngameScript {
 
                     parsingTasks.Add(new ParseCommandLineTask(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).ToList(), startingLineNumber, commandLines => {
                         parsingTasks.Add(new ParseCommmandTask(commandLines, 0, true, command => {
-                            if (!(command is MultiActionCommand)) command = new MultiActionCommand(NewList<Command>(command));
-                            functions[functionName].function = (MultiActionCommand)command;
+                            functions[functionName].function = command as MultiActionCommand ?? new MultiActionCommand(NewList<Command>(command));
                             defaultFunction = functionName;
                         }).GetTask());
                     }).GetTask());

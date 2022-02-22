@@ -45,7 +45,7 @@ namespace IngameScript {
                     PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                     BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
                     if (property != null) supplier = WithPropertyType(property.value+"");
-                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
+                    if (!booleanParameter?.value ?? false) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 } else {
                     supplier = WithPropertyType(propertyString);
                 }
@@ -55,10 +55,11 @@ namespace IngameScript {
 
             PropertySupplier ResolvePropertyType(IBlockHandler blockHandler, Return? defaultType = null) {
                 if (propertyType != null) return this;
-                if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
-                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().returnType);
-                if (defaultType.HasValue) return blockHandler.GetDefaultProperty(defaultType.Value);
-                return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
+                if (direction != null) return blockHandler.GetDefaultProperty(direction.Value);
+                var returnType = propertyValue?.GetValue().returnType ?? defaultType;
+                return returnType != null
+                    ? blockHandler.GetDefaultProperty(returnType.Value)
+                    : blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
             }
 
             public PropertySupplier WithDirection(Direction? direction) {
