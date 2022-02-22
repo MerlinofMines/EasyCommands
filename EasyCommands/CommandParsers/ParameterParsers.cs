@@ -415,18 +415,14 @@ namespace IngameScript {
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
             var commandParameters = NewList<ICommandParameter>();
-            String t = token.token;
-            if (token.isExplicitString) {
+            if (token.isExplicitString)
                 commandParameters.Add(new VariableCommandParameter(GetStaticVariable(token.original)));
-            } else if (token.isString) {
-                List<Token> subTokens = Tokenize(t);
-                List<ICommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
-            } else if (propertyWords.ContainsKey(t)) {
-                commandParameters.AddList(propertyWords[t]);
-            } else { //If no property matches, must be a string
+            else if (token.isString)
+                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, ParseCommandParameters(Tokenize(token.token)).ToArray()));
+            else if (propertyWords.ContainsKey(token.token))
+                commandParameters.AddList(propertyWords[token.token]);
+            else //If no property matches, must be a string
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
-            }
 
             commandParameters[0].Token = token.original;
             return commandParameters;
@@ -482,10 +478,8 @@ namespace IngameScript {
         }
 
         public class Token {
-            public String token;
-            public String original;
-            public bool isString;
-            public bool isExplicitString;
+            public String token, original;
+            public bool isString, isExplicitString;
 
             public Token(string tokenParameter, bool isStringParameter, bool isExplicit) {
                 isString = isStringParameter;

@@ -376,10 +376,10 @@ namespace IngameScript {
             AddProcessors(commandParameters, sortedParameterProcessors, processorRanks);
 
             int processorIndex = 0;
-
             while (processorIndex < sortedParameterProcessors.Count) {
                 bool revisit = false;
                 bool processed = false;
+
                 IParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
                 for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
@@ -388,17 +388,21 @@ namespace IngameScript {
                             AddProcessors(finalParameters, sortedParameterProcessors, processorRanks);
                             processed = true;
                             break;
-                        } else revisit = true;
+                        } else
+                            revisit = true;
                     }
                 }
+
                 if (processed) {
                     processorIndex = 0;
                     continue;
                 }
+
                 if (!revisit) {
                     sortedParameterProcessors.Remove(current);
                     processorRanks.Remove(current.Rank);
-                } else processorIndex++;
+                } else
+                    processorIndex++;
             }
 
             return branches;
@@ -409,19 +413,14 @@ namespace IngameScript {
                 IParameterProcessor processor = parameterProcessors[i];
                 processor.Rank = i;
 
-                List<Type> types = processor.GetProcessedTypes();
-                foreach (Type t in types) {
-                    if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<IParameterProcessor>();
-                    parameterProcessorsByParameterType[t].Add(processor);
-                }
+                var t = processor.GetProcessedTypes();
+                if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<IParameterProcessor>();
+                parameterProcessorsByParameterType[t].Add(processor);
             }
         }
 
         public T ParseParameters<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter {
-            var branches = NewList<List<ICommandParameter>>();
-            branches.Add(parameters);
-
-            //Branches
+            var branches = NewList(parameters);
             while (branches.Count > 0) {
                 branches.AddRange(ProcessParameters(branches[0]));
                 if (branches[0].Count == 1 && branches[0][0] is T) {

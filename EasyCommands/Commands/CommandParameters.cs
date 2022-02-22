@@ -102,8 +102,7 @@ namespace IngameScript {
 
         public class VariableAssignmentCommandParameter : SimpleCommandParameter {
             public string variableName;
-            public bool useReference;
-            public bool isGlobal;
+            public bool useReference, isGlobal;
 
             public VariableAssignmentCommandParameter(string variable, bool reference, bool global) {
                 variableName = variable;
@@ -187,9 +186,7 @@ namespace IngameScript {
         }
 
         public class IfCommandParameter : SimpleCommandParameter {
-            public bool inverseCondition;
-            public bool alwaysEvaluate;
-            public bool swapCommands;
+            public bool inverseCondition, alwaysEvaluate, swapCommands;
 
             public IfCommandParameter(bool inverse, bool alwaysEval, bool swap) {
                 inverseCondition = inverse;
@@ -199,8 +196,7 @@ namespace IngameScript {
         }
 
         public class ConditionCommandParameter : ValueCommandParameter<IVariable> {
-            public bool alwaysEvaluate;
-            public bool swapCommands;
+            public bool alwaysEvaluate, swapCommands;
 
             public ConditionCommandParameter(IVariable value, bool alwaysEval, bool swap) : base(value) {
                 alwaysEvaluate = alwaysEval;

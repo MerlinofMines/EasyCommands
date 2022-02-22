@@ -22,14 +22,14 @@ namespace IngameScript {
 
         public interface IParameterProcessor : IComparable<IParameterProcessor> {
             int Rank { get; set; }
-            List<Type> GetProcessedTypes();
+            Type GetProcessedTypes();
             bool CanProcess(ICommandParameter p);
             bool Process(List<ICommandParameter> p, int i, out List<ICommandParameter> finalParameters, List<List<ICommandParameter>> branches);
         }
 
         public abstract class ParameterProcessor<T> : IParameterProcessor where T : class, ICommandParameter {
             public int Rank { get; set; }
-            public virtual List<Type> GetProcessedTypes() => NewList(typeof(T));
+            public virtual Type GetProcessedTypes() => typeof(T);
             public int CompareTo(IParameterProcessor other) => Rank.CompareTo(other.Rank);
             public bool CanProcess(ICommandParameter p) => p is T;
             public abstract bool Process(List<ICommandParameter> p, int i, out List<ICommandParameter> finalParameters, List<List<ICommandParameter>> branches);
@@ -51,11 +51,11 @@ namespace IngameScript {
                             if (finalParameters.Count == 1) break;
                         }
 
-                        for (int k = 0; k < alternateBranches.Count; k++) {
-                            alternateBranches[k].Insert(0, new OpenParenthesisCommandParameter());
-                            alternateBranches[k].Add(new CloseParenthesisCommandParameter());
+                        foreach (var branch in alternateBranches) {
+                            branch.Insert(0, new OpenParenthesisCommandParameter());
+                            branch.Add(new CloseParenthesisCommandParameter());
                             var copy = new List<ICommandParameter>(p);
-                            copy.InsertRange(i, alternateBranches[k]);
+                            copy.InsertRange(i, branch);
                             branches.Add(copy);
                         }
 
@@ -90,7 +90,7 @@ namespace IngameScript {
 
             IVariable ParseVariable(List<ICommandParameter> p, int startIndex, int endIndex) {
                 var range = p.GetRange(startIndex + 1, endIndex - (startIndex + 1));
-                ValueCommandParameter<IVariable> variable = PROGRAM.ParseParameters<ValueCommandParameter<IVariable>>(range);
+                var variable = PROGRAM.ParseParameters<ValueCommandParameter<IVariable>>(range);
                 if (variable == null) throw new Exception("List Index Values Must Resolve To a Variable");
                 return variable.value;
             }
@@ -239,7 +239,7 @@ namespace IngameScript {
 
                 p.RemoveRange(k, j - k);
                 if (converted is ICommandParameter) {
-                    finalParameters = NewList<ICommandParameter>((ICommandParameter)converted);
+                    finalParameters = NewList((ICommandParameter)converted);
                 } else if (converted is List<ICommandParameter>) {
                     finalParameters = (List<ICommandParameter>)converted;
                 } else throw new Exception("Final parameters must be CommandParameter");

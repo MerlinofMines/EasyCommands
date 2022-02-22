@@ -91,8 +91,7 @@ namespace IngameScript {
             }
 
             Block ResolveType(String selector, out bool isGroup) {
-                var tokens = PROGRAM.Tokenize(selector);
-                var parameters = PROGRAM.ParseCommandParameters(tokens);
+                var parameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(selector));
                 var blockType = findLast<BlockTypeCommandParameter>(parameters);
                 isGroup = findLast<GroupCommandParameter>(parameters) != null;
                 if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);

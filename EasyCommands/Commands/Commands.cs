@@ -106,9 +106,8 @@ namespace IngameScript {
 
                     function = definition.function.Clone();
 
-                    for (int i = 0; i < parameterCount; i++) {
+                    for (int i = 0; i < parameterCount; i++)
                         currentThread.threadVariables[definition.parameterNames[i]] = new StaticVariable(inputParameters[i].GetValue().DeepCopy());
-                    }
 
                     if (switchExecution) {
                         currentThread.Command = function;
@@ -127,8 +126,7 @@ namespace IngameScript {
         public class VariableAssignmentCommand : Command {
             public String variableName;
             public IVariable variable;
-            public bool isGlobal;
-            public bool useReference;
+            public bool isGlobal, useReference;
 
             public VariableAssignmentCommand(string name, IVariable var, bool reference, bool global) {
                 variableName = name;
@@ -207,6 +205,7 @@ namespace IngameScript {
         public class WaitCommand : Command {
             public IVariable waitInterval;
             double remainingWaitTime = -1;
+
             public WaitCommand(IVariable variable) {
                 waitInterval = variable;
             }
@@ -234,11 +233,10 @@ namespace IngameScript {
 
             public override bool Execute() {
                 var broadcastTag = CastString(tag.GetValue());
-                if (shouldListen) {
+                if (shouldListen)
                     PROGRAM.IGC.RegisterBroadcastListener(broadcastTag);
-                } else {
+                else
                     PROGRAM.BroadCastListenerAction(listener => listener.Tag == broadcastTag, listener => PROGRAM.IGC.DisableBroadcastListener(listener));
-                }
                 return true;
             }
         }
@@ -276,9 +274,9 @@ namespace IngameScript {
         }
 
         public class TransferItemCommand : Command {
-            public ISelector from;//Must be Inventory
-            public ISelector to;//Must be Inventory
-            public IVariable first, second;//One of these is an amount (nullable), other must be ItemFilter (non nullable)
+            public ISelector from, to;
+            //One of these is an amount (nullable), other must be ItemFilter (non nullable)
+            public IVariable first, second;
 
             public TransferItemCommand(ISelector source, ISelector destination, IVariable firstVariable, IVariable secondVariable) {
                 from = source;
