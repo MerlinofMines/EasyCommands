@@ -184,8 +184,8 @@ namespace IngameScript {
         public ItemFilter Ingot(String subType = null) => IsItemType("MyObjectBuilder_Ingot", subType);
         public ItemFilter Ore(String subType = null) => IsItemType("MyObjectBuilder_Ore", subType);
         public ItemFilter Tool(String subType = null) => IsItemType("MyObjectBuilder_PhysicalGunObject", subType);
-        public ItemFilter ToolType(params String[] matches) => (i) => i.Type.TypeId.Equals("MyObjectBuilder_PhysicalGunObject") && matches.Any(s => i.Type.SubtypeId.Contains(s));
-        public ItemFilter IsItemType(String itemType, String subType = null) => (i) => (string.IsNullOrEmpty(itemType) || i.Type.TypeId.Equals(itemType)) && (string.IsNullOrEmpty(subType) || i.Type.SubtypeId.Equals(subType));
+        public ItemFilter ToolType(params String[] matches) => i => i.Type.TypeId.Equals("MyObjectBuilder_PhysicalGunObject") && matches.Any(s => i.Type.SubtypeId.Contains(s));
+        public ItemFilter IsItemType(String itemType, String subType = null) => i => (string.IsNullOrEmpty(itemType) || i.Type.TypeId.Equals(itemType)) && (string.IsNullOrEmpty(subType) || i.Type.SubtypeId.Equals(subType));
 
         public ItemFilter DynamicItemType(string[] itemTypeSplit) => itemTypeSplit.Count() == 2 ? IsItemType(itemTypeSplit[0], itemTypeSplit[1]) : IsItemType("", itemTypeSplit[0]);
 

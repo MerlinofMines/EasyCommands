@@ -195,8 +195,7 @@ namespace IngameScript {
         }
 
         public class ListIndexVariable : IVariable {
-            public IVariable expectedList;
-            public IVariable index;
+            public IVariable expectedList, index;
 
             public ListIndexVariable(IVariable list, IVariable i) {
                 expectedList = list;

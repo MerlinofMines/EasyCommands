@@ -39,7 +39,7 @@ namespace IngameScript {
         }
 
         delegate Object Converter(Primitive p);
-        static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair<T, Converter>(r, func);
+        static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair(r, func);
         static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + PROGRAM.returnToString[p.returnType] + " " + CastString(p) + " to " + PROGRAM.returnToString[returnType]); };
 
         static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
@@ -96,7 +96,8 @@ namespace IngameScript {
             KeyValuePair(typeof(KeyedList), Return.LIST)
         );
 
-        public static List<Return> GetTypes(Type type) => type != typeof(object)
+        public static List<Return> GetTypes(Type type) =>
+            type != typeof(object)
             ? NewList(PrimitiveTypeMap[type])
             : NewList((Return[])Enum.GetValues(typeof(Return)));
 
