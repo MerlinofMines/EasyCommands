@@ -100,8 +100,8 @@ namespace IngameScript {
             }
 
             public Primitive GetValue() {
-                var list = CastList(expectedList.GetValue()).GetValues();
-                return ResolvePrimitive(Evaluate(list.Count, list.Where(v => comparator(v.GetValue(), comparisonValue.GetValue())).Count(), aggregationMode));
+                var list = CastList(expectedList.GetValue());
+                return ResolvePrimitive(Evaluate(list.keyedValues.Count, list.keyedValues.Count(v => comparator(v.GetValue(), comparisonValue.GetValue())), aggregationMode));
             }
         }
 
@@ -174,7 +174,7 @@ namespace IngameScript {
                 aggregator = agg;
             }
 
-            public Primitive GetValue() => aggregator(CastList(expectedList.GetValue()).GetValues(), v => ((IVariable)v).GetValue());
+            public Primitive GetValue() => aggregator(CastList(expectedList.GetValue()).keyedValues, v => ((IVariable)v).GetValue());
         }
 
         public class IndexVariable : IVariable {
@@ -186,7 +186,7 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 KeyedList list = CastList(expectedIndex.GetValue());
-                if (list.GetValues().Count == 1) {
+                if (list.keyedValues.Count == 1) {
                     Primitive onlyValue = list.GetValue(ResolvePrimitive(0)).GetValue();
                     if (onlyValue.returnType == Return.LIST) list = CastList(onlyValue);
                 }
@@ -215,14 +215,14 @@ namespace IngameScript {
             public void SetValue(IVariable value) {
                 var list = CastList(expectedList.GetValue());
                 var indexes = GetIndexValues();
-                if (indexes.Count == 0) indexes.AddRange(Range(0, list.GetValues().Count).Select(i => ResolvePrimitive(i)));
+                if (indexes.Count == 0) indexes.AddRange(Range(0, list.keyedValues.Count).Select(i => ResolvePrimitive(i)));
                 indexes.ForEach(index => list.SetValue(index, value));
             }
 
-            List<Primitive> GetIndexValues() => CastList(index.GetValue()).GetValues().Select(i => i.GetValue()).ToList();
+            List<Primitive> GetIndexValues() => CastList(index.GetValue()).keyedValues.Select(i => i.GetValue()).ToList();
         }
 
-        public class KeyedVariable : IVariable, IComparable<KeyedVariable> {
+        public class KeyedVariable : IVariable, IComparable<KeyedVariable>, IEquatable<KeyedVariable> {
             public IVariable Key, Value;
 
             public KeyedVariable(IVariable key, IVariable value) {
@@ -241,10 +241,8 @@ namespace IngameScript {
 
             String Wrap(String value) => value.Contains(" ") ? "\"" + value + "\"" : value;
 
-            public override bool Equals(Object variable) => GetKey() == ((KeyedVariable)variable).GetKey() && Value.GetValue().value.Equals(((KeyedVariable)variable).Value.GetValue().value);
-            public override int GetHashCode() => base.GetHashCode();
-
-            public int CompareTo(KeyedVariable other) => (int)CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, GetValue(), other.GetValue()));
+            public bool Equals(KeyedVariable variable) => GetKey() == variable.GetKey() && GetValue().value.Equals(variable.GetValue().value);
+            public int CompareTo(KeyedVariable other) => GetValue().CompareTo(other.GetValue());
         }
 
         public static KeyedVariable AsKeyedVariable(IVariable variable) => variable as KeyedVariable ?? new KeyedVariable(null, variable);

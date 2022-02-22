@@ -53,7 +53,7 @@ namespace IngameScript {
                 var entities = selector.GetEntities();
                 IBlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
-                return CastList(index.GetValue()).GetValues()
+                return CastList(index.GetValue()).keyedValues
                     .Select(v => v.GetValue())
                     .SelectMany(p => {
                         if (p.returnType == Return.NUMERIC)

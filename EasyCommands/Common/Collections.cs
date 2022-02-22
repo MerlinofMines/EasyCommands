@@ -35,7 +35,7 @@ namespace IngameScript {
                         return keyedValues[(int)CastNumber(key)];
                     case Return.STRING:
                         var keyString = CastString(key);
-                        return keyedValues.Where(v => v.GetKey() == CastString(key))
+                        return keyedValues.Where(v => v.GetKey() == keyString)
                             .Cast<IVariable>()
                             .DefaultIfEmpty(EmptyList())
                             .First();
@@ -51,9 +51,10 @@ namespace IngameScript {
                 } else if (key.returnType == Return.STRING) {
                     var keyString = CastString(key);
                     KeyedVariable existing = keyedValues.Where(v => v.GetKey() == keyString).FirstOrDefault();
-                    if (existing == null) {
+                    if (existing == null)
                         keyedValues.Add(new KeyedVariable(GetStaticVariable(keyString), value));
-                    } else existing.Value = value;
+                    else
+                        existing.Value = value;
                 } else throw new Exception("Cannot set collection value by value: " + key.value);
             }
 
@@ -71,9 +72,7 @@ namespace IngameScript {
 
             public KeyedList Keys() => NewKeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.GetKey())));
             public KeyedList Values() => NewKeyedList(keyedValues.Select(v => v.Value));
-
             public KeyedList DeepCopy() => NewKeyedList(keyedValues.Select(k => k.DeepCopy()));
-
             public String Print() => "[" + string.Join(",", keyedValues.Select(k => k.Print())) + "]";
         }
     }
