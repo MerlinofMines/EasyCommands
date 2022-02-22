@@ -40,29 +40,16 @@ namespace IngameScript {
                     implicitMainOffset--;
                 }
 
-                var functionIndices = NewList<int>();
-                for (int i = commandStrings.Count - 1; i >= 0; i--) {
-                    if (commandStrings[i].StartsWith(":")) { functionIndices.Add(i); }
-                }
-
+                var functionIndices = Range(0, commandStrings.Count).Where(i => commandStrings[i].StartsWith(":")).Reverse();
                 foreach (int i in functionIndices) {
-                    String functionString = commandStrings[i].Remove(0, 1).Trim();
-                    List<Token> nameAndParams = Tokenize(functionString);
-                    String functionName = nameAndParams[0].original;
-                    nameAndParams.RemoveAt(0);
-                    FunctionDefinition definition = new FunctionDefinition(functionName, nameAndParams.Select(t => t.original).ToList());
-                    functions[functionName] = definition;
-                }
+                    var nameAndParams = Tokenize(commandStrings[i].Remove(0, 1).Trim());
+                    var functionName = nameAndParams[0].original;
 
-                foreach (int i in functionIndices) {
-                    int startingLineNumber = i + 1 + implicitMainOffset;
-                    String functionString = commandStrings[i].Remove(0, 1).Trim();
-                    List<Token> nameAndParams = Tokenize(functionString);
-                    String functionName = nameAndParams[0].original;
+                    functions[functionName] = new FunctionDefinition(functionName, nameAndParams.Skip(1).Select(t => t.original).ToList());
 
-                    parsingTasks.Add(new ParseCommandLineTask(commandStrings.GetRange(i + 1, commandStrings.Count - (i + 1)).ToList(), startingLineNumber, commandLines => {
+                    parsingTasks.Add(new ParseCommandLineTask(commandStrings.GetRange(i + 1, commandStrings.Count - i - 1), implicitMainOffset + i + 1, commandLines => {
                         parsingTasks.Add(new ParseCommmandTask(commandLines, 0, true, command => {
-                            functions[functionName].function = command as MultiActionCommand ?? new MultiActionCommand(NewList<Command>(command));
+                            functions[functionName].function = command as MultiActionCommand ?? new MultiActionCommand(NewList(command));
                             defaultFunction = functionName;
                         }).GetTask());
                     }).GetTask());
