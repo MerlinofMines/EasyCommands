@@ -19,16 +19,16 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface Selector {
+        public interface ISelector {
             List<Object> GetEntities();
             Block GetBlockType();
         }
 
-        public class ConditionalSelector : Selector {
-            public Selector selector;
+        public class ConditionalSelector : ISelector {
+            public ISelector selector;
             public BlockCondition condition;
 
-            public ConditionalSelector(Selector sel, BlockCondition cond) {
+            public ConditionalSelector(ISelector sel, BlockCondition cond) {
                 selector = sel;
                 condition = cond;
             }
@@ -38,11 +38,11 @@ namespace IngameScript {
             public List<object> GetEntities() => selector.GetEntities().Where(b => condition(b, selector.GetBlockType())).ToList();
         }
 
-        public class IndexSelector : Selector {
-            public Selector selector;
-            public Variable index;
+        public class IndexSelector : ISelector {
+            public ISelector selector;
+            public IVariable index;
 
-            public IndexSelector(Selector sel, Variable ind) {
+            public IndexSelector(ISelector sel, IVariable ind) {
                 selector = sel;
                 index = ind;
             }
@@ -51,9 +51,9 @@ namespace IngameScript {
 
             public List<Object> GetEntities() {
                 var entities = selector.GetEntities();
-                BlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
+                IBlockHandler b = BlockHandlerRegistry.GetBlockHandler(GetBlockType());
 
-                return CastList(index.GetValue()).GetValues()
+                return CastList(index.GetValue()).keyedValues
                     .Select(v => v.GetValue())
                     .SelectMany(p => {
                         if (p.returnType == Return.NUMERIC)
@@ -62,17 +62,17 @@ namespace IngameScript {
                             var s = CastString(p);
                             return entities.Where(o => s == b.GetName(o));
                         } else
-                            return NewList<Object>();
+                            return Empty<Object>();
                     }).ToList();
             }
         }
 
-        public class BlockSelector : Selector {
+        public class BlockSelector : ISelector {
             public Block? blockType;
             public bool isGroup;
-            public Variable selector;
+            public IVariable selector;
 
-            public BlockSelector(Block? type, bool group, Variable sel) {
+            public BlockSelector(Block? type, bool group, IVariable sel) {
                 blockType = type;
                 isGroup = group;
                 selector = sel;
@@ -91,8 +91,7 @@ namespace IngameScript {
             }
 
             Block ResolveType(String selector, out bool isGroup) {
-                var tokens = PROGRAM.Tokenize(selector);
-                var parameters = PROGRAM.ParseCommandParameters(tokens);
+                var parameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(selector));
                 var blockType = findLast<BlockTypeCommandParameter>(parameters);
                 isGroup = findLast<GroupCommandParameter>(parameters) != null;
                 if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
@@ -100,7 +99,7 @@ namespace IngameScript {
             }
         }
 
-        public class SelfSelector : Selector {
+        public class SelfSelector : ISelector {
             public Block? blockType;
 
             public SelfSelector(Block? type) {
@@ -111,7 +110,7 @@ namespace IngameScript {
             public List<object> GetEntities() => BlockHandlerRegistry.GetSelf(blockType) ?? BlockHandlerRegistry.GetBlocks(GetBlockType());
         }
 
-        public class BlockTypeSelector : Selector {
+        public class BlockTypeSelector : ISelector {
             public Block blockType;
 
             public BlockTypeSelector(Block type) {

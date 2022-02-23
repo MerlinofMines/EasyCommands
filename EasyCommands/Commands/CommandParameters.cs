@@ -19,10 +19,10 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public interface CommandParameter {
+        public interface ICommandParameter {
             string Token { get; set; }
         }
-        public abstract class SimpleCommandParameter : CommandParameter {
+        public abstract class SimpleCommandParameter : ICommandParameter {
             public string Token { get; set; }
         }
         public class IndexCommandParameter : SimpleCommandParameter { }
@@ -102,8 +102,7 @@ namespace IngameScript {
 
         public class VariableAssignmentCommandParameter : SimpleCommandParameter {
             public string variableName;
-            public bool useReference;
-            public bool isGlobal;
+            public bool useReference, isGlobal;
 
             public VariableAssignmentCommandParameter(string variable, bool reference, bool global) {
                 variableName = variable;
@@ -119,22 +118,22 @@ namespace IngameScript {
             }
         }
 
-        public class VariableCommandParameter : ValueCommandParameter<Variable> {
-            public VariableCommandParameter(Variable value) : base(value) {}
+        public class VariableCommandParameter : ValueCommandParameter<IVariable> {
+            public VariableCommandParameter(IVariable value) : base(value) {}
         }
 
         public class AmbiguousCommandParameter : SimpleCommandParameter {
-            public List<CommandParameter> alternatives;
+            public List<ICommandParameter> alternatives;
 
-            public AmbiguousCommandParameter(params CommandParameter[] commands) {
+            public AmbiguousCommandParameter(params ICommandParameter[] commands) {
                 alternatives = commands.ToList();
             }
         }
 
         public class AmbiguousStringCommandParameter : ValueCommandParameter<String> {
-            public List<CommandParameter> subTokens;
+            public List<ICommandParameter> subTokens;
             public bool isImplicit;
-            public AmbiguousStringCommandParameter(String value, bool impl, params CommandParameter[] SubTokens) : base(value) {
+            public AmbiguousStringCommandParameter(String value, bool impl, params ICommandParameter[] SubTokens) : base(value) {
                 subTokens = SubTokens.ToList();
                 isImplicit = impl;
             }
@@ -160,16 +159,16 @@ namespace IngameScript {
             public PropertySupplierCommandParameter(PropertySupplier value) : base(value) {}
         }
 
-        public class ListCommandParameter : ValueCommandParameter<Variable> {
-            public ListCommandParameter(Variable v) : base(v) {}
+        public class ListCommandParameter : ValueCommandParameter<IVariable> {
+            public ListCommandParameter(IVariable v) : base(v) {}
         }
 
         public class ListIndexCommandParameter : ValueCommandParameter<ListIndexVariable> {
             public ListIndexCommandParameter(ListIndexVariable v) : base(v) {}
         }
 
-        public class IndexSelectorCommandParameter : ValueCommandParameter<Variable> {
-            public IndexSelectorCommandParameter(Variable value) : base(value) {}
+        public class IndexSelectorCommandParameter : ValueCommandParameter<IVariable> {
+            public IndexSelectorCommandParameter(IVariable value) : base(value) {}
         }
 
         public class FunctionCommandParameter : ValueCommandParameter<bool> {
@@ -187,9 +186,7 @@ namespace IngameScript {
         }
 
         public class IfCommandParameter : SimpleCommandParameter {
-            public bool inverseCondition;
-            public bool alwaysEvaluate;
-            public bool swapCommands;
+            public bool inverseCondition, alwaysEvaluate, swapCommands;
 
             public IfCommandParameter(bool inverse, bool alwaysEval, bool swap) {
                 inverseCondition = inverse;
@@ -198,11 +195,10 @@ namespace IngameScript {
             }
         }
 
-        public class ConditionCommandParameter : ValueCommandParameter<Variable> {
-            public bool alwaysEvaluate;
-            public bool swapCommands;
+        public class ConditionCommandParameter : ValueCommandParameter<IVariable> {
+            public bool alwaysEvaluate, swapCommands;
 
-            public ConditionCommandParameter(Variable value, bool alwaysEval, bool swap) : base(value) {
+            public ConditionCommandParameter(IVariable value, bool alwaysEval, bool swap) : base(value) {
                 alwaysEvaluate = alwaysEval;
                 swapCommands = swap;
             }
@@ -216,8 +212,8 @@ namespace IngameScript {
             public CommandReferenceParameter(Command value) : base(value) { }
         }
 
-        public class RepetitionCommandParameter : ValueCommandParameter<Variable> {
-            public RepetitionCommandParameter(Variable value) : base(value) {}
+        public class RepetitionCommandParameter : ValueCommandParameter<IVariable> {
+            public RepetitionCommandParameter(IVariable value) : base(value) {}
         }
 
         public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode> {
@@ -235,8 +231,8 @@ namespace IngameScript {
             }
         }
 
-        public class SelectorCommandParameter : ValueCommandParameter<Selector> {
-            public SelectorCommandParameter(Selector value) : base(value) {
+        public class SelectorCommandParameter : ValueCommandParameter<ISelector> {
+            public SelectorCommandParameter(ISelector value) : base(value) {
             }
         }
 

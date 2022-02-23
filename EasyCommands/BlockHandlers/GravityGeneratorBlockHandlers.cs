@@ -36,10 +36,10 @@ namespace IngameScript {
                 var rangeHandler = DirectionalTypedHandler(Direction.NONE,
                     TypeHandler(ReturnTypedHandler(Return.VECTOR,
                         TypeHandler(VectorHandler(b => b.FieldSize, (b, v) => b.FieldSize = v), Return.VECTOR),
-                        TypeHandler(NumericHandler(b => b.FieldSize.Length(), (b, v) => b.FieldSize = new Vector3(v, v, v), 25), Return.NUMERIC)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => b.FieldSize.Y, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, v, b.FieldSize.Z)), Direction.UP, Direction.DOWN),
-                    TypeHandler(NumericHandler(b => b.FieldSize.X, (b, v) => b.FieldSize = new Vector3(v, b.FieldSize.Y, b.FieldSize.Z)), Direction.LEFT, Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => b.FieldSize.Z, (b, v) => b.FieldSize = new Vector3(b.FieldSize.X, b.FieldSize.Y, v)), Direction.FORWARD, Direction.BACKWARD)
+                        TypeHandler(NumericHandler(b => b.FieldSize.Length(), (b, v) => b.FieldSize = Vector(v, v, v), 25), Return.NUMERIC)), Direction.NONE),
+                    TypeHandler(NumericHandler(b => b.FieldSize.Y, (b, v) => b.FieldSize = Vector(b.FieldSize.X, v, b.FieldSize.Z)), Direction.UP, Direction.DOWN),
+                    TypeHandler(NumericHandler(b => b.FieldSize.X, (b, v) => b.FieldSize = Vector(v, b.FieldSize.Y, b.FieldSize.Z)), Direction.LEFT, Direction.RIGHT),
+                    TypeHandler(NumericHandler(b => b.FieldSize.Z, (b, v) => b.FieldSize = Vector(b.FieldSize.X, b.FieldSize.Y, v)), Direction.FORWARD, Direction.BACKWARD)
                     );
                 AddPropertyHandler(Property.RANGE, rangeHandler);
                 AddPropertyHandler(Property.LEVEL, rangeHandler);

@@ -34,7 +34,7 @@ namespace IngameScript {
                 AddListHandler(Property.MEDIA_LIST, b => {
                     var images = NewList<string>();
                     b.GetSelectedImages(images);
-                    return NewKeyedList(images.Select(i => GetStaticVariable(i)));
+                    return NewKeyedList(images.Select(GetStaticVariable));
                 }, SetImages);
                 AddStringHandler(Property.POSITION, b => (b.Alignment + "").ToLower(), (b, v) => b.Alignment = v == "center" ? TextAlignment.CENTER : v == "right" ? TextAlignment.RIGHT : TextAlignment.LEFT);
                 AddNumericHandler(Property.INTERVAL, b => b.ChangeInterval, (b, v) => b.ChangeInterval = v, 1);
@@ -63,11 +63,11 @@ namespace IngameScript {
             public override string Name(IMyTextSurface block) => block.DisplayName;
 
             public override IEnumerable<IMyTextSurface> GetInstances(IMyTerminalBlock block) =>
-                block is IMyTextSurface ?
-                Enumerable.Repeat((IMyTextSurface)block, 1) :
-                block is IMyTextSurfaceProvider ?
-                Enumerable.Range(0, ((IMyTextSurfaceProvider)block).SurfaceCount).Select(i => ((IMyTextSurfaceProvider)block).GetSurface(i)) :
-                Enumerable.Empty<IMyTextSurface>();
+                block is IMyTextSurface
+                    ? Once((IMyTextSurface)block)
+                    : block is IMyTextSurfaceProvider
+                        ? Range(0, ((IMyTextSurfaceProvider)block).SurfaceCount).Select(((IMyTextSurfaceProvider)block).GetSurface)
+                        : Empty<IMyTextSurface>();
         }
     }
 }

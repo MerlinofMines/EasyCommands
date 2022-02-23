@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        public class Primitive {
+        public class Primitive : IComparable<Primitive> {
             public Return returnType;
             public object value;
 
@@ -33,13 +33,13 @@ namespace IngameScript {
             public Primitive Minus(Primitive p) => PROGRAM.PerformOperation(BiOperand.SUBTRACT, this, p);
             public Primitive Multiply(Primitive p) => PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
             public Primitive Divide(Primitive p) => PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
-            public int Compare(Primitive p) => Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
+            public int CompareTo(Primitive p) => Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
             public Primitive Not() => PROGRAM.PerformOperation(UniOperand.REVERSE, this);
-            public Primitive DeepCopy() => ResolvePrimitive((value is KeyedList) ? ((KeyedList)value).DeepCopy() : value);
+            public Primitive DeepCopy() => ResolvePrimitive((value as KeyedList)?.DeepCopy() ?? value);
         }
 
         delegate Object Converter(Primitive p);
-        static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair<T, Converter>(r, func);
+        static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair(r, func);
         static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + PROGRAM.returnToString[p.returnType] + " " + CastString(p) + " to " + PROGRAM.returnToString[returnType]); };
 
         static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
@@ -48,7 +48,7 @@ namespace IngameScript {
                 CastFunction(Return.NUMERIC, p => CastNumber(p) != 0),
                 CastFunction(Return.STRING, p => {
                     Primitive primitive;
-                    return ParsePrimitive(CastString(p), out primitive) ? CastBoolean(primitive) : false;
+                    return ParsePrimitive(CastString(p), out primitive) && CastBoolean(primitive);
                 }),
                 CastFunction(Return.DEFAULT, Failure(Return.BOOLEAN))
             )),
@@ -81,7 +81,7 @@ namespace IngameScript {
             )),
             KeyValuePair(typeof(KeyedList), NewDictionary(
                 CastFunction(Return.LIST, p => p.value),
-                CastFunction(Return.DEFAULT, p => NewKeyedList(NewList(GetStaticVariable(p.value))))
+                CastFunction(Return.DEFAULT, p => NewKeyedList(Once(GetStaticVariable(p.value))))
             ))
             );
 
@@ -96,8 +96,10 @@ namespace IngameScript {
             KeyValuePair(typeof(KeyedList), Return.LIST)
         );
 
-        public static List<Return> GetTypes(Type type) => type != typeof(object) ? NewList(PrimitiveTypeMap[type])
-            : ((Return[])Enum.GetValues(typeof(Return))).ToList();
+        public static List<Return> GetTypes(Type type) =>
+            type != typeof(object)
+            ? NewList(PrimitiveTypeMap[type])
+            : NewList((Return[])Enum.GetValues(typeof(Return)));
 
         public static Primitive ResolvePrimitive(object o) => new Primitive(PrimitiveTypeMap[o.GetType()], (o is double || o is int) ? Convert.ToSingle(o) : o);
 
@@ -110,9 +112,10 @@ namespace IngameScript {
         public static Color CastColor(Primitive p) => Cast<Color>(p);
         public static KeyedList CastList(Primitive p) => Cast<KeyedList>(p);
 
-        public static Color? GetColor(String s) => (s.StartsWith("#") && s.Length == 7) ?
-            new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2))) :
-            (colors.ContainsKey(s.ToLower()) ? colors[s.ToLower()] : (Color?)null);
+        public static Color? GetColor(String s) =>
+            (s.StartsWith("#") && s.Length == 7)
+            ? new Color(HexToInt(s.Substring(1, 2)), HexToInt(s.Substring(3, 2)), HexToInt(s.Substring(5, 2)))
+            : (colors.ContainsKey(s.ToLower()) ? colors[s.ToLower()] : (Color?)null);
 
         public static Vector3D? GetVector(String s) {
             var components = NewList<double>();
@@ -124,11 +127,9 @@ namespace IngameScript {
         }
 
         static string VectorToString(Vector3D vector) => vector.X + ":" + vector.Y + ":" + vector.Z;
-
         static string ColorToString(Color color) => "#" + IntToHex(color.R) + IntToHex(color.G) + IntToHex(color.B);
 
         static int HexToInt(string hex) => int.Parse(hex.ToUpper(), System.Globalization.NumberStyles.AllowHexSpecifier);
-
         static string IntToHex(int hex) => hex.ToString("X2");
     }
 }

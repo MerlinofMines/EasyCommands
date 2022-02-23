@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class ConnectorBlockHandler : EjectorBlockHandler {
-            public ConnectorBlockHandler() : base() {
+            public ConnectorBlockHandler() {
                 AddBooleanHandler(Property.LOCKED, Connected, Connect);
                 AddBooleanHandler(Property.CONNECTED, Connected, Connect);
                 AddNumericHandler(Property.STRENGTH, b => b.PullStrength, (b, v) => b.PullStrength = v, 0.01f);
@@ -35,7 +35,7 @@ namespace IngameScript {
         }
 
         public class EjectorBlockHandler : FunctionalBlockHandler<IMyShipConnector> {
-            public EjectorBlockHandler() : base() {
+            public EjectorBlockHandler() {
                 AddBooleanHandler(Property.AUTO, b => b.ThrowOut, (b,v) => b.ThrowOut = v);
                 AddBooleanHandler(Property.SUPPLY, b => !b.CollectAll, (b,v) => b.CollectAll = !v);
             }

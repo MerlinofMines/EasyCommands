@@ -20,16 +20,16 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<Type, List<ParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<ParameterProcessor>>();
-        List<ParameterProcessor> parameterProcessors = NewList<ParameterProcessor>(
+        Dictionary<Type, List<IParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<IParameterProcessor>>();
+        List<IParameterProcessor> parameterProcessors = NewList<IParameterProcessor>(
             new ParenthesisProcessor(),
             new ListProcessor(),
 
             //SelectorVariableSelectorProcessor
             ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<AmbiguousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), new AmbiguousStringVariable(selector.value)))),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType?.value, group != null, new AmbiguousStringVariable(selector.value)))),
             ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null, group.HasValue(), selector.value))),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType?.value, group != null, selector.value))),
 
             //SelectorProcessor
             new BranchingProcessor<AmbiguousStringCommandParameter>(
@@ -38,22 +38,20 @@ namespace IngameScript {
                     p => p.subTokens),
                 TwoValueRule(Type<AmbiguousStringCommandParameter>, optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
                         (p, blockType, group) => {
-                            if (!blockType.GetValue().HasValue()) {
-                                BlockTypeCommandParameter type = findLast<BlockTypeCommandParameter>(p.subTokens);
-                                if (type != null) blockType.SetValue(type);
-                                GroupCommandParameter g = findLast<GroupCommandParameter>(p.subTokens);
-                                if (g != null) group.SetValue(g);
+                            if (blockType.GetValue() == null) {
+                                blockType.SetValue(findLast<BlockTypeCommandParameter>(p.subTokens));
+                                group.SetValue(findLast<GroupCommandParameter>(p.subTokens));
                             }
-                            return blockType.GetValue().HasValue();
+                            return blockType.GetValue() != null;
                         },
-                        (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.GetValue().value, group.HasValue(), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                        (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     s => {
                         Primitive primitive;
-                        Variable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
+                        IVariable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
                         if (s.isImplicit && ParsePrimitive(s.value, out primitive)) variable = GetStaticVariable(primitive.value);
                         return new VariableCommandParameter(variable);
                     })),
@@ -68,15 +66,15 @@ namespace IngameScript {
 
             //SelfSelectorProcessor
             TwoValueRule(Type<SelfCommandParameter>, optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType.HasValue() ? blockType.GetValue().value : (Block?)null))),
+                (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType?.value))),
 
             //VariableSelectorProcessor
             TwoValueRule(Type<VariableCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group.HasValue(), p.value))),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.value))),
 
             //ListSelectorProcessor
             TwoValueRule(Type<ListIndexCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group.HasValue(), p.value))),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.value))),
 
             //ImplicitAllSelectorProcessor
             OneValueRule(Type<BlockTypeCommandParameter>, optionalRight<GroupCommandParameter>(),
@@ -107,7 +105,7 @@ namespace IngameScript {
             new MultiListProcessor(),
 
             //IgnoreProcessor
-            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<CommandParameter>()),
+            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<ICommandParameter>()),
 
             //FunctionProcessor
             OneValueRule(Type<VariableCommandParameter>, requiredLeft<FunctionCommandParameter>(),
@@ -126,7 +124,7 @@ namespace IngameScript {
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (p, g, name) => AllSatisfied(g, name) && (name.GetValue().value is AmbiguousStringVariable),
-                (p, g, name) => new VariableAssignmentCommandParameter(((AmbiguousStringVariable)name.value).value, p.value, g.HasValue())),
+                (p, g, name) => new VariableAssignmentCommandParameter(((AmbiguousStringVariable)name.value).value, p.value, g != null)),
 
             //IncreaseProcessor
             OneValueRule(Type<IncreaseCommandParameter>, requiredRight<VariableCommandParameter>(),
@@ -147,7 +145,7 @@ namespace IngameScript {
 
             //ListComparisonProcessor
             ThreeValueRule(Type<ListIndexCommandParameter>, requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
-                (list, comparison, value, aggregation) => new VariableCommandParameter(new ListAggregateConditionVariable(aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL, list.value, comparison.value, value.value))),
+                (list, comparison, value, aggregation) => new VariableCommandParameter(new ListAggregateConditionVariable(aggregation?.value ?? AggregationMode.ALL, list.value, comparison.value, value.value))),
 
             //ListIndexAsVariableProcessor
             NoValueRule(Type<ListIndexCommandParameter>, list => new VariableCommandParameter(list.value)),
@@ -232,8 +230,8 @@ namespace IngameScript {
 
             //ThatBlockConditionProcessor
             FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), optionalRight<PropertySupplierCommandParameter>(), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (with, p, prop, dir, var) => p.Satisfied() && (var.GetValue().HasValue() || prop.GetValue().HasValue()),
-                (with, p, prop, dir, var) => NewList<CommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true))))),
+                (with, p, prop, dir, var) => p.Satisfied() && AnyNotNull(var.GetValue(), prop.GetValue()),
+                (with, p, prop, dir, var) => NewList<ICommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop?.value ?? new PropertySupplier()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true))))),
 
             //ConditionalSelectorProcessor
             TwoValueRule(Type<ThatCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
@@ -241,16 +239,16 @@ namespace IngameScript {
 
             //PropertyAggregationProcessor
             ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, (prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null)))),
+                (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, (prop?.value ?? new PropertySupplier()).WithDirection(dir?.value)))),
 
             //BlockComparisonProcessor
             ThreeValueRule(Type<ComparisonCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (p, prop, dir, var) => var.GetValue().HasValue() || prop.GetValue().HasValue(),
-                (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition((prop.HasValue() ? prop.GetValue().value : new PropertySupplier()).WithDirection(dir.HasValue() ? dir.GetValue().value : (Direction?)null), new PrimitiveComparator(p.value), var.HasValue() ? var.GetValue().value : GetStaticVariable(true)))),
+                (p, prop, dir, var) => AnyNotNull(var.GetValue(), prop.GetValue()),
+                (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition((prop?.value ?? new PropertySupplier()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true)))),
 
             //AggregateConditionProcessor
             TwoValueRule(Type<BlockConditionCommandParameter>, optionalLeft<AggregationModeCommandParameter>(), requiredLeft<SelectorCommandParameter>(),
-                (p, aggregation, selector) => new VariableCommandParameter(new AggregateConditionVariable(aggregation.HasValue() ? aggregation.GetValue().value : AggregationMode.ALL, p.value, selector.value))),
+                (p, aggregation, selector) => new VariableCommandParameter(new AggregateConditionVariable(aggregation?.value ?? AggregationMode.ALL, p.value, selector.value))),
 
             //AggregateSelectorProcessor
             OneValueRule(Type<AggregationModeCommandParameter>, requiredRight<SelectorCommandParameter>(),
@@ -263,9 +261,9 @@ namespace IngameScript {
 
             //TransferCommandProcessor
             FourValueRule(Type<TransferCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).value, (t.value ? s2 : s1).value, v1.value, v2.HasValue() ? v2.GetValue().value : null))),
+                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).value, (t.value ? s2 : s1).value, v1.value, v2?.value))),
             FourValueRule(Type<TransferCommandParameter>, requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2.HasValue() ? v2.GetValue().value : null))),
+                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2?.value))),
 
             //Convert Ambiguous Colon to Ternary Condition Separator
             NoValueRule(Type<ColonSeparatorParameter>, b => new TernaryConditionSeparatorParameter()),
@@ -286,18 +284,18 @@ namespace IngameScript {
             new BranchingProcessor<SelectorCommandParameter>(
                 BlockCommandProcessor(),
                 TwoValueRule(Type<SelectorCommandParameter>, requiredEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s, p, d) => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.value, p.value.WithDirection(d.HasValue() ? d.GetValue().value : (Direction?)null)))),
+                    (s, p, d) => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.value, p.value.WithDirection(d?.value)))),
                 TwoValueRule(Type<SelectorCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s, p, d) => p.GetValue().HasValue() || d.GetValue().HasValue(),//Must have at least one!
+                    (s, p, d) => AnyNotNull(p.GetValue(), d.GetValue()),
                     (s, p, d) => {
-                        PropertySupplier property = p.HasValue() ? p.GetValue().value : new PropertySupplier();
-                        Direction? direction = d.HasValue() ? d.GetValue().value : (Direction?)null;
+                        PropertySupplier property = p?.value ?? new PropertySupplier();
+                        Direction? direction = d?.value;
                         if (direction == null) property = property.WithPropertyValue(GetStaticVariable(true));
                         return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) =>
                             b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
                     })),
 
-            NoValueRule(Type<RelativeCommandParameter>, b => NewList<CommandParameter>()),
+            NoValueRule(Type<RelativeCommandParameter>, b => NewList<ICommandParameter>()),
 
             //ListIndexAssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -310,7 +308,7 @@ namespace IngameScript {
 
             //WaitProcessor
             OneValueRule(Type<WaitCommandParameter>, optionalRight<VariableCommandParameter>(),
-                (p, time) => new CommandReferenceParameter(new WaitCommand(time.HasValue() ? time.GetValue().value : GetStaticVariable(0.01666f)))),
+                (p, time) => new CommandReferenceParameter(new WaitCommand(time?.value ?? GetStaticVariable(0.01666f)))),
 
             //FunctionCallCommandProcessor
             OneValueRule(Type<FunctionDefinitionCommandParameter>, rightList<VariableCommandParameter>(false),
@@ -322,7 +320,7 @@ namespace IngameScript {
 
             //VariableIncrementProcessor
             OneValueRule(Type<VariableIncrementCommandParameter>, optionalRight<VariableCommandParameter>(),
-                (increment, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable.HasValue() ? variable.GetValue().value : GetStaticVariable(1)))),
+                (increment, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable?.value ?? GetStaticVariable(1)))),
             //Handles --i
             OneValueRule(Type<IncrementCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
@@ -370,37 +368,41 @@ namespace IngameScript {
         /// </summary>
         /// <param name="commandParameters"></param>
         /// <returns></returns>
-        public List<List<CommandParameter>> ProcessParameters(List<CommandParameter> commandParameters) {
-            var sortedParameterProcessors = new SortedList<ParameterProcessor, int>();
+        public List<List<ICommandParameter>> ProcessParameters(List<ICommandParameter> commandParameters) {
+            var sortedParameterProcessors = new SortedList<IParameterProcessor, int>();
             var processorRanks = new HashSet<int>();
 
-            var branches = NewList<List<CommandParameter>>();
+            var branches = NewList<List<ICommandParameter>>();
             AddProcessors(commandParameters, sortedParameterProcessors, processorRanks);
 
             int processorIndex = 0;
-
             while (processorIndex < sortedParameterProcessors.Count) {
                 bool revisit = false;
                 bool processed = false;
-                ParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
+
+                IParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
                 for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
-                        List<CommandParameter> finalParameters;
+                        List<ICommandParameter> finalParameters;
                         if (current.Process(commandParameters, i, out finalParameters, branches)) {
                             AddProcessors(finalParameters, sortedParameterProcessors, processorRanks);
                             processed = true;
                             break;
-                        } else revisit = true;
+                        } else
+                            revisit = true;
                     }
                 }
+
                 if (processed) {
                     processorIndex = 0;
                     continue;
                 }
+
                 if (!revisit) {
                     sortedParameterProcessors.Remove(current);
                     processorRanks.Remove(current.Rank);
-                } else processorIndex++;
+                } else
+                    processorIndex++;
             }
 
             return branches;
@@ -408,22 +410,17 @@ namespace IngameScript {
 
         public void InitializeProcessors() {
             for (int i = 0; i < parameterProcessors.Count; i++) {
-                ParameterProcessor processor = parameterProcessors[i];
+                IParameterProcessor processor = parameterProcessors[i];
                 processor.Rank = i;
 
-                List<Type> types = processor.GetProcessedTypes();
-                foreach (Type t in types) {
-                    if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<ParameterProcessor>();
-                    parameterProcessorsByParameterType[t].Add(processor);
-                }
+                var t = processor.GetProcessedTypes();
+                if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<IParameterProcessor>();
+                parameterProcessorsByParameterType[t].Add(processor);
             }
         }
 
-        public T ParseParameters<T>(List<CommandParameter> parameters) where T : class, CommandParameter {
-            var branches = NewList<List<CommandParameter>>();
-            branches.Add(parameters);
-
-            //Branches
+        public T ParseParameters<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter {
+            var branches = NewList(parameters);
             while (branches.Count > 0) {
                 branches.AddRange(ProcessParameters(branches[0]));
                 if (branches[0].Count == 1 && branches[0][0] is T) {
@@ -435,17 +432,17 @@ namespace IngameScript {
             return null;
         }
 
-        void AddProcessors(List<CommandParameter> types, SortedList<ParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
+        void AddProcessors(List<ICommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
             var processors = types.Select(t => t.GetType())
-                .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<ParameterProcessor>()))
+                .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<IParameterProcessor>()))
                 .Where(p => !processorRanks.Contains(p.Rank));
 
-            foreach (ParameterProcessor processor in processors) {
+            foreach (IParameterProcessor processor in processors) {
                 sortedParameterProcessors[processor] = processor.Rank;
                 processorRanks.Add(processor.Rank);
             }
         }
 
-        static T findLast<T>(List<CommandParameter> parameters) where T : class, CommandParameter => parameters.Where(p => p is T).Select(p => (T)p).LastOrDefault();
+        static T findLast<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter => parameters.OfType<T>().LastOrDefault();
     }
 }

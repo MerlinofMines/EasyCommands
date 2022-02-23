@@ -27,7 +27,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if ( ( {a} + {b} ) > {c} ) set the \"pistons\" height to ( {a} + {b} )");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Variable condition = conditionalCommand.condition;
+            IVariable condition = conditionalCommand.condition;
             Assert.IsTrue(condition is ComparisonVariable);
             ComparisonVariable comparison = (ComparisonVariable)condition;
             Assert.IsTrue(comparison.a is BiOperandVariable);

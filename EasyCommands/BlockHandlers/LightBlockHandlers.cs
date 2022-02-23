@@ -21,13 +21,13 @@ namespace IngameScript {
     partial class Program {
         public class LightBlockHandler : FunctionalBlockHandler<IMyLightingBlock> {
             public LightBlockHandler() {
-                AddColorHandler(Property.COLOR, (b) => b.Color, (b, v) => b.Color = v);
-                AddNumericHandler(Property.RANGE, (b) => b.Radius, (b, v) => b.Radius = v, 3);
-                AddNumericHandler(Property.INTERVAL, (b) => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
-                AddNumericHandler(Property.LEVEL, (b) => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
-                AddNumericHandler(Property.OFFSET, (b) => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
-                AddNumericHandler(Property.VOLUME, (b) => b.Intensity, (b, v) => b.Intensity = v, 1f);
-                AddNumericHandler(Property.FALLOFF, (b) => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
+                AddColorHandler(Property.COLOR, b => b.Color, (b, v) => b.Color = v);
+                AddNumericHandler(Property.RANGE, b => b.Radius, (b, v) => b.Radius = v, 3);
+                AddNumericHandler(Property.INTERVAL, b => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
+                AddNumericHandler(Property.LEVEL, b => b.BlinkLength, (b, v) => b.BlinkLength = v, 0.1f);
+                AddNumericHandler(Property.OFFSET, b => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
+                AddNumericHandler(Property.VOLUME, b => b.Intensity, (b, v) => b.Intensity = v, 1f);
+                AddNumericHandler(Property.FALLOFF, b => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
                 defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
                 defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);

@@ -112,9 +112,8 @@ namespace IngameScript {
         static float GetCorrectedAngle(float angle) {
             float newAngle = angle;
             if (newAngle > 360) newAngle %= 360;
-            else if (newAngle < -360) {
+            else if (newAngle < -360)
                 newAngle = -((-newAngle) % 360);
-            }
             return newAngle;
         }
     }

@@ -93,7 +93,7 @@ namespace IngameScript {
             }
 
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(b => selector == null || selector(b)).OfType<T>();
+                blocks.Where(selector ?? (b => true)).OfType<T>();
 
             public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 try {
@@ -144,6 +144,6 @@ namespace IngameScript {
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        static Vector3D GetPosition(MyDetectedEntityInfo entity) => entity.HitPosition.GetValueOrDefault(entity.Position);
+        static Vector3D GetPosition(MyDetectedEntityInfo entity) => entity.HitPosition ?? entity.Position;
     }
 }

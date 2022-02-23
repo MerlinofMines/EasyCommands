@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class PropertySupplier {
             public String propertyType, propertyWord;
-            public Variable attributeValue, propertyValue;
+            public IVariable attributeValue, propertyValue;
             public Direction? direction;
             public bool? increment;
             public bool inverse;
@@ -33,7 +33,7 @@ namespace IngameScript {
                 propertyWord = word;
             }
 
-            public PropertySupplier Resolve(BlockHandler handler, Return? defaultType = null) =>
+            public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) =>
                 (propertyType == ValueProperty.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
 
             public PropertySupplier ResolveDynamicProperty() {
@@ -45,7 +45,7 @@ namespace IngameScript {
                     PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                     BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
                     if (property != null) supplier = WithPropertyType(property.value+"");
-                    if (booleanParameter != null && !booleanParameter.value) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
+                    if (!booleanParameter?.value ?? false) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 } else {
                     supplier = WithPropertyType(propertyString);
                 }
@@ -53,12 +53,13 @@ namespace IngameScript {
                 return supplier;
             }
 
-            PropertySupplier ResolvePropertyType(BlockHandler blockHandler, Return? defaultType = null) {
+            PropertySupplier ResolvePropertyType(IBlockHandler blockHandler, Return? defaultType = null) {
                 if (propertyType != null) return this;
-                if (direction.HasValue) return blockHandler.GetDefaultProperty(direction.Value);
-                if (propertyValue != null) return blockHandler.GetDefaultProperty(propertyValue.GetValue().returnType);
-                if (defaultType.HasValue) return blockHandler.GetDefaultProperty(defaultType.Value);
-                return blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
+                if (direction != null) return blockHandler.GetDefaultProperty(direction.Value);
+                var returnType = propertyValue?.GetValue().returnType ?? defaultType;
+                return returnType != null
+                    ? blockHandler.GetDefaultProperty(returnType.Value)
+                    : blockHandler.GetDefaultProperty(blockHandler.GetDefaultDirection());
             }
 
             public PropertySupplier WithDirection(Direction? direction) {
@@ -73,13 +74,13 @@ namespace IngameScript {
                 return copy;
             }
 
-            public PropertySupplier WithPropertyValue(Variable propertyValue) {
+            public PropertySupplier WithPropertyValue(IVariable propertyValue) {
                 PropertySupplier copy = Copy();
                 copy.propertyValue = propertyValue;
                 return copy;
             }
 
-            public PropertySupplier WithAttributeValue(Variable attributeValue) {
+            public PropertySupplier WithAttributeValue(IVariable attributeValue) {
                 PropertySupplier copy = Copy();
                 copy.attributeValue = attributeValue;
                 return copy;

@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         //Internal (Don't touch!)
-        Dictionary<String, List<CommandParameter>> propertyWords = NewDictionary<string, List<CommandParameter>>();
+        Dictionary<String, List<ICommandParameter>> propertyWords = NewDictionary<string, List<ICommandParameter>>();
 
         string[] firstPassTokens = new[] { "(", ")", "[", "]", ",", "*", "/", "!", "^", "..", "%", ">=", "<=", "==", "&&", "||", "@", "$", "->", "++", "+=", "--", "-=", "::"};
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
@@ -197,11 +197,11 @@ namespace IngameScript {
             AddWords(Words("that", "which", "whose"), new ThatCommandParameter());
 
             //Comparison Words
-            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.Compare(b) < 0));
-            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.Compare(b) <= 0));
-            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.Compare(b) == 0));
-            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.Compare(b) >= 0));
-            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.Compare(b) > 0));
+            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) < 0));
+            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) <= 0));
+            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) == 0));
+            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) >= 0));
+            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) > 0));
             AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PROGRAM.PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
@@ -209,8 +209,8 @@ namespace IngameScript {
             AddWords(Words("all"), new AggregationModeCommandParameter(AggregationMode.ALL));
             AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
             AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
-            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) < 0 ? a : b))));
-            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(b => primitiveSupplier(b)).DefaultIfEmpty(ResolvePrimitive(0)).Aggregate((a, b) => (a.Compare(b) > 0 ? a : b))));
+            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Min() ?? ResolvePrimitive(0)));
+            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Max() ?? ResolvePrimitive(0)));
             AddWords(Words("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddAmbiguousWords(Words("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
             AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
@@ -402,31 +402,27 @@ namespace IngameScript {
             AddWords(groupWords, new BlockTypeCommandParameter(blockType), new GroupCommandParameter());
         }
 
-        void AddAmbiguousWords(String[] words, params CommandParameter[] commandParameters) {
+        void AddAmbiguousWords(String[] words, params ICommandParameter[] commandParameters) {
             foreach (String word in words)
                 AddWords(Words(word), new AmbiguousStringCommandParameter(word, false, new AmbiguousCommandParameter(commandParameters)));
         }
 
-        void AddWords(String[] words, params CommandParameter[] commandParameters) {
+        void AddWords(String[] words, params ICommandParameter[] commandParameters) {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
-        List<CommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
+        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
 
-        List<CommandParameter> ParseCommandParameters(Token token) {
-            var commandParameters = NewList<CommandParameter>();
-            String t = token.token;
-            if (token.isExplicitString) {
+        List<ICommandParameter> ParseCommandParameters(Token token) {
+            var commandParameters = NewList<ICommandParameter>();
+            if (token.isExplicitString)
                 commandParameters.Add(new VariableCommandParameter(GetStaticVariable(token.original)));
-            } else if (token.isString) {
-                List<Token> subTokens = Tokenize(t);
-                List<CommandParameter> subtokenParams = ParseCommandParameters(subTokens);
-                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, subtokenParams.ToArray()));
-            } else if (propertyWords.ContainsKey(t)) {
-                commandParameters.AddList(propertyWords[t]);
-            } else { //If no property matches, must be a string
+            else if (token.isString)
+                commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, ParseCommandParameters(Tokenize(token.token)).ToArray()));
+            else if (propertyWords.ContainsKey(token.token))
+                commandParameters.AddList(propertyWords[token.token]);
+            else //If no property matches, must be a string
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
-            }
 
             commandParameters[0].Token = token.original;
             return commandParameters;
@@ -444,22 +440,20 @@ namespace IngameScript {
                 u => u.Replace(" : ", " :: ")
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .SelectMany(v => firstPass(v))
-                    .Select(v => new Token(v, false, false))
-                    .ToArray())
+                    .Select(v => new Token(v, false, false)))
             .ToList();
         }
 
-        Token[] TokenizeEnclosed(String token, string characters, Func<String, Token[]> parseSubTokens) =>
+        IEnumerable<Token> TokenizeEnclosed(String token, string characters, Func<String, IEnumerable<Token>> parseSubTokens) =>
             characters.Length == 0 ? parseSubTokens(token) :
                 token.Trim().Split(characters[0])
                 .SelectMany((element, index) => index % 2 == 0  // If even index
-                    ? TokenizeEnclosed(element, characters.Remove(0,1), parseSubTokens)  // Split the item
-                    : new Token[] { new Token(element, true, characters.Length > 1) })  // Keep the entire item
-                .ToArray();
+                    ? TokenizeEnclosed(element, characters.Remove(0, 1), parseSubTokens)  // Split the item
+                    : Once(new Token(element, true, characters.Length > 1)));  // Keep the entire item
 
         IEnumerable<String> PrimitivePass(String token, Pass nextPass = null) {
             Primitive ignored;
-            return ParsePrimitive(token, out ignored) || nextPass == null ? new[] { token } : nextPass(token);
+            return ParsePrimitive(token, out ignored) || nextPass == null ? Once(token) : nextPass(token);
         }
 
         IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
@@ -467,7 +461,7 @@ namespace IngameScript {
             foreach (var s in separators) newCommand = newCommand.Replace(s, " " + s + " ");
             return newCommand
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(token => separators.Contains(token) || nextPass == null ? new[] { token } : nextPass(token));
+                .SelectMany(token => separators.Contains(token) || nextPass == null ? Once(token) : nextPass(token));
         }
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
@@ -484,10 +478,8 @@ namespace IngameScript {
         }
 
         public class Token {
-            public String token;
-            public String original;
-            public bool isString;
-            public bool isExplicitString;
+            public String token, original;
+            public bool isString, isExplicitString;
 
             public Token(string tokenParameter, bool isStringParameter, bool isExplicit) {
                 isString = isStringParameter;

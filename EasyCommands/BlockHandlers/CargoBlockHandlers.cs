@@ -40,7 +40,7 @@ namespace IngameScript {
             }
 
             public override string Name(IMyInventory block) => GetOwner(block).CustomName;
-            public override IEnumerable<IMyInventory> GetInstances(IMyTerminalBlock block) => Enumerable.Range(0, block.InventoryCount).Select(i => block.GetInventory(i));
+            public override IEnumerable<IMyInventory> GetInstances(IMyTerminalBlock block) => Range(0, block.InventoryCount).Select(block.GetInventory);
 
             PropertyHandler<IMyInventory> amountHandler = new PropertyHandler<IMyInventory> {
                 Get = (b, p) => {
