@@ -87,5 +87,6 @@ namespace IngameScript {
         };
 
         static bool AllSatisfied(params IDataProcessor[] processors) => processors.All(p => p.Satisfied());
+        static bool AnySatisfied(params IDataProcessor[] processors) => processors.Any(p => p.Satisfied());
     }
 }
