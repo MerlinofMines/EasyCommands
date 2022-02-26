@@ -188,7 +188,7 @@ print 'Hello New World'
                 test.RunOnce();
                 Assert.AreEqual(1, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);
-                test.setScript(newScript);
+                test.SetScript(newScript);
                 test.Logger.Clear();
                 test.RunOnce();
                 Assert.AreEqual(1, test.Logger.Count);
@@ -212,7 +212,7 @@ print myValue";
                 test.RunOnce();
                 Assert.AreEqual(1, test.Logger.Count);
                 Assert.AreEqual("Hello World", test.Logger[0]);
-                test.setScript(newScript);
+                test.SetScript(newScript);
                 test.Logger.Clear();
                 test.RunOnce();
                 Assert.AreEqual(1, test.Logger.Count);

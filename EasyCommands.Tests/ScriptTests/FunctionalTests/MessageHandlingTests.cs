@@ -60,7 +60,7 @@ print 'Hello World 2'
                 Assert.AreEqual("Incoming Message", test.Logger[0]);
                 test.Logger.Clear();
 
-                test.setScript(@"print 'Hello World 2'");
+                test.SetScript(@"print 'Hello World 2'");
                 test.MockMessages("channel", "print message1", "print message2");
 
                 test.RunOnce();

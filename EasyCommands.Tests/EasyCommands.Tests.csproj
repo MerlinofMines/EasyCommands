@@ -142,6 +142,7 @@
     <Compile Include="ParameterParsingTests\SimpleVariableParameterProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\AggregateBlockPropertyProcessorTests.cs" />
     <Compile Include="ParameterParsingTests\TransferCommandProcessorTests.cs" />
+    <Compile Include="ScriptTests\MockGridTerminalSystem.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\HeatVentBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\AirVentBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\BeaconBlockTests.cs" />

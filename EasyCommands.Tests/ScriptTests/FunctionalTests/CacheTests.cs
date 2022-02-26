@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using Sandbox.ModAPI.Ingame;
@@ -150,31 +151,32 @@ turn on $selector
 ";
 
             using (var test = new ScriptTest(script)) {
+                var mockGrid = test.mockGrid;
                 var mockBlock = new Mock<IMyPistonBase>();
                 test.MockBlocksOfType("test piston", mockBlock);
 
                 test.RunOnce();
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
+                mockGrid.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>()), Times.Never());
+
                 Assert.AreEqual(0, test.program.selectorCache.storage.Count);
 
                 test.RunOnce();
 
+                mockGrid.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>()), Times.Once());
                 mockBlock.VerifySet(p => p.Enabled = false);
 
-                Assert.AreEqual(2, test.program.blockCache.Count);
                 Assert.AreEqual(1, test.program.selectorCache.storage.Count);
 
                 test.RunOnce();
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
-                Assert.AreEqual(0, test.program.selectorCache.storage.Count);
+                mockGrid.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>()), Times.Once());
 
                 test.RunOnce();
 
+                mockGrid.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>()), Times.Exactly(2));
                 mockBlock.VerifySet(p => p.Enabled = true);
 
-                Assert.AreEqual(2, test.program.blockCache.Count);
                 Assert.AreEqual(2, test.program.selectorCache.storage.Count);
 
                 Assert.AreEqual("[PISTON] <null>;[PISTON] test piston", string.Join(";", test.program.selectorCache.storage.Keys.Select(e => $"[{e.Item1}] {e.Item2 ?? "<null>"}")));
@@ -193,34 +195,34 @@ turn on $selector
 ";
 
             using (var test = new ScriptTest(script)) {
+                var mockGrid = test.mockGrid;
                 var mockBlock1 = new Mock<IMyPistonBase>();
                 var mockBlock2 = new Mock<IMyPistonBase>();
-                test.MockBlocksInGroup("test pistons", mockBlock1, mockBlock2);
+                var mockGroup = test.MockBlocksInGroup("test pistons", mockBlock1, mockBlock2);
 
                 test.RunOnce();
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
-                Assert.AreEqual(0, test.program.groupCache.storage.Count);
+                mockGroup.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>(), It.IsAny<Func<IMyTerminalBlock, bool>>()), Times.Never());
 
                 test.RunOnce();
 
+                mockGroup.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>(), It.IsAny<Func<IMyTerminalBlock, bool>>()), Times.Once());
                 mockBlock1.VerifySet(p => p.Enabled = false);
                 mockBlock2.VerifySet(p => p.Enabled = false);
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
-                Assert.AreEqual(1, test.program.groupCache.storage.Count);
-
                 test.RunOnce();
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
+                mockGroup.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>(), It.IsAny<Func<IMyTerminalBlock, bool>>()), Times.Once());
+
                 Assert.AreEqual(0, test.program.groupCache.storage.Count);
 
                 test.RunOnce();
 
+                mockGrid.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>()), Times.Never());
+                mockGroup.Verify(g => g.GetBlocks(It.IsAny<List<IMyTerminalBlock>>(), It.IsAny<Func<IMyTerminalBlock, bool>>()), Times.Exactly(2));
                 mockBlock1.VerifySet(p => p.Enabled = true);
                 mockBlock2.VerifySet(p => p.Enabled = true);
 
-                Assert.AreEqual(0, test.program.blockCache.Count);
                 Assert.AreEqual(1, test.program.groupCache.storage.Count);
 
                 Assert.AreEqual("[PISTON] test pistons", string.Join(";", test.program.groupCache.storage.Keys.Select(e => $"[{e.Item1}] {e.Item2}")));
