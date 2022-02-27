@@ -20,7 +20,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        Dictionary<Type, List<IParameterProcessor>> parameterProcessorsByParameterType = NewDictionary<Type, List<IParameterProcessor>>();
+        ILookup<Type, IParameterProcessor> parameterProcessorsByParameterType;
         List<IParameterProcessor> parameterProcessors = NewList<IParameterProcessor>(
             new ParenthesisProcessor(),
             new ListProcessor(),
@@ -409,14 +409,10 @@ namespace IngameScript {
         }
 
         public void InitializeProcessors() {
-            for (int i = 0; i < parameterProcessors.Count; i++) {
-                IParameterProcessor processor = parameterProcessors[i];
-                processor.Rank = i;
+            for (int i = 0; i < parameterProcessors.Count; i++)
+                parameterProcessors[i].Rank = i;
 
-                var t = processor.GetProcessedTypes();
-                if (!parameterProcessorsByParameterType.ContainsKey(t)) parameterProcessorsByParameterType[t] = NewList<IParameterProcessor>();
-                parameterProcessorsByParameterType[t].Add(processor);
-            }
+            parameterProcessorsByParameterType = parameterProcessors.ToLookup(p => p.GetProcessedTypes());
         }
 
         public T ParseParameters<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter {
@@ -434,7 +430,7 @@ namespace IngameScript {
 
         void AddProcessors(List<ICommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
             var processors = types.Select(t => t.GetType())
-                .SelectMany(t => parameterProcessorsByParameterType.GetValueOrDefault(t, NewList<IParameterProcessor>()))
+                .SelectMany(t => parameterProcessorsByParameterType[t])
                 .Where(p => !processorRanks.Contains(p.Rank));
 
             foreach (IParameterProcessor processor in processors) {
