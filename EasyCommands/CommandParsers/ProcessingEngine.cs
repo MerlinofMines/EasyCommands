@@ -369,23 +369,22 @@ namespace IngameScript {
         /// <param name="commandParameters"></param>
         /// <returns></returns>
         public List<List<ICommandParameter>> ProcessParameters(List<ICommandParameter> commandParameters) {
-            var sortedParameterProcessors = new SortedList<IParameterProcessor, int>();
-            var processorRanks = new HashSet<int>();
+            var sortedProcessors = NewList<IParameterProcessor>();
 
             var branches = NewList<List<ICommandParameter>>();
-            AddProcessors(commandParameters, sortedParameterProcessors, processorRanks);
+            AddProcessors(sortedProcessors, commandParameters);
 
             int processorIndex = 0;
-            while (processorIndex < sortedParameterProcessors.Count) {
+            while (processorIndex < sortedProcessors.Count) {
                 bool revisit = false;
                 bool processed = false;
 
-                IParameterProcessor current = sortedParameterProcessors.Keys[processorIndex];
+                IParameterProcessor current = sortedProcessors[processorIndex];
                 for (int i = commandParameters.Count - 1; i >= 0; i--) {
                     if (current.CanProcess(commandParameters[i])) {
                         List<ICommandParameter> finalParameters;
                         if (current.Process(commandParameters, i, out finalParameters, branches)) {
-                            AddProcessors(finalParameters, sortedParameterProcessors, processorRanks);
+                            AddProcessors(sortedProcessors, finalParameters);
                             processed = true;
                             break;
                         } else
@@ -398,10 +397,9 @@ namespace IngameScript {
                     continue;
                 }
 
-                if (!revisit) {
-                    sortedParameterProcessors.Remove(current);
-                    processorRanks.Remove(current.Rank);
-                } else
+                if (!revisit)
+                    sortedProcessors.RemoveAt(processorIndex);
+                else
                     processorIndex++;
             }
 
@@ -428,15 +426,12 @@ namespace IngameScript {
             return null;
         }
 
-        void AddProcessors(List<ICommandParameter> types, SortedList<IParameterProcessor, int> sortedParameterProcessors, HashSet<int> processorRanks) {
-            var processors = types.Select(t => t.GetType())
+        void AddProcessors(List<IParameterProcessor> processors, List<ICommandParameter> types) {
+            processors.AddRange(types
+                .Select(t => t.GetType())
                 .SelectMany(t => parameterProcessorsByParameterType[t])
-                .Where(p => !processorRanks.Contains(p.Rank));
-
-            foreach (IParameterProcessor processor in processors) {
-                sortedParameterProcessors[processor] = processor.Rank;
-                processorRanks.Add(processor.Rank);
-            }
+                .Except(processors));
+            processors.Sort();
         }
 
         static T findLast<T>(List<ICommandParameter> parameters) where T : class, ICommandParameter => parameters.OfType<T>().LastOrDefault();
