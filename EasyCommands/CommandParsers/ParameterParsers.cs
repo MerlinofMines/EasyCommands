@@ -414,7 +414,7 @@ namespace IngameScript {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
-        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(t => ParseCommandParameters(t)).ToList();
+        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(ParseCommandParameters).ToList();
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
             var commandParameters = NewList<ICommandParameter>();
