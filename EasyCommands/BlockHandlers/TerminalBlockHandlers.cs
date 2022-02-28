@@ -46,15 +46,15 @@ namespace IngameScript {
                 KeyValuePair("Int64", PropertyConverter((p, b) => (float)p.As<long>().GetValue(b), (p, b, v) => p.As<long>().SetValue(b, (long)CastNumber(v)))),
                 KeyValuePair("Color", PropertyConverter((p, b) => p.AsColor().GetValue(b), (p, b, v) => p.AsColor().SetValue(b, CastColor(v))))
             );
-
-            static ITerminalProperty GetTerminalProperty(T block, PropertySupplier propertySupplier) =>
-                PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.propertyType, s =>{
-                        var property = block.GetProperty(s);
-                        if (property == null)
-                            throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
-                        return property;
-                    });
         }
+
+        public static ITerminalProperty GetTerminalProperty(IMyTerminalBlock block, PropertySupplier propertySupplier) =>
+            PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.propertyType, s => {
+                var property = block.GetProperty(s);
+                if (property == null)
+                    throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
+                return property;
+        });
 
         public class TerminalBlockHandler<T> : BlockHandler<T> where T : class, IMyTerminalBlock {
             public TerminalBlockHandler() {
@@ -137,6 +137,20 @@ namespace IngameScript {
                 AddPropertyHandler(Property.POWER, enableHandler);
             }
         }
+
+        public class SubTypedBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyFunctionalBlock {
+            Func<T, bool> SubType;
+
+            public SubTypedBlockHandler(Func<T, bool> subType) {
+                SubType = subType;
+            }
+
+            public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                base.SelectBlocksByType(blocks, selector).Where(SubType);
+        }
+
+        public static Func<IMyFunctionalBlock, bool> IsSubType(string subType) => 
+            b => subType.Length == 0 || b.BlockDefinition.SubtypeId.Contains(subType);
 
         /// <summary>
         ///Provides a consistent way to get the most accurate position for a detected entity.

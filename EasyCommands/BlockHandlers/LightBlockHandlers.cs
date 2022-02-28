@@ -19,8 +19,32 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public class SearchLightHandler : SubTypedBlockHandler<IMyFunctionalBlock> {
+            Dictionary<String, int> targetingGroupLookup = NewDictionary(
+                KeyValuePair("Default", 0),
+                KeyValuePair("Power", 1),
+                KeyValuePair("Weapons", 2),
+                KeyValuePair("Propulsion", 3));
+
+            public SearchLightHandler() : base(IsSubType("Searchlight")) {
+                AddPropertyHandler(Property.COLOR, TerminalPropertyHandler("Color", Color.Black));
+                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Radius", 3));
+                AddPropertyHandler(Property.RADIUS, TerminalPropertyHandler("Range", 100));
+                AddPropertyHandler(Property.INTERVAL, TerminalPropertyHandler("Blink Interval", 0.1f));
+                AddPropertyHandler(Property.LEVEL, TerminalPropertyHandler("Blink Lenght", 0.1f));//Intentionally Typod
+                AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Blink Offset", 0.1f));
+                AddPropertyHandler(Property.VOLUME, TerminalPropertyHandler("Intensity", 1f));
+                AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.5f));
+                AddPropertyHandler(Property.ROLL_INPUT, TerminalPropertyHandler("EnableIdleMovement", 0.5f));
+                AddPropertyHandler(Property.LOCKED, TerminalPropertyHandler("EngableTargetLocking", 0.5f));
+                AddPropertyHandler(Property.TARGET, TerminalPropertyHandler())
+            }
+        }
+
+
         public class LightBlockHandler : FunctionalBlockHandler<IMyLightingBlock> {
             public LightBlockHandler() {
+
                 AddColorHandler(Property.COLOR, b => b.Color, (b, v) => b.Color = v);
                 AddNumericHandler(Property.RANGE, b => b.Radius, (b, v) => b.Radius = v, 3);
                 AddNumericHandler(Property.INTERVAL, b => b.BlinkIntervalSeconds, (b, v) => b.BlinkIntervalSeconds = v, 0.1f);
