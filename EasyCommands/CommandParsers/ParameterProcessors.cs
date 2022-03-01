@@ -229,18 +229,18 @@ namespace IngameScript {
                     else break;
                 }
 
-                var commandParameters = p.GetRange(k, j - k);
-
                 T hook = (T)p[i];
                 if (!canConvert(hook)) return false;
                 var converted = convert(hook);
 
-                p.RemoveRange(k, j - k);
-                if (converted is ICommandParameter) {
+                if (converted is ICommandParameter)
                     finalParameters = NewList((ICommandParameter)converted);
-                } else if (converted is List<ICommandParameter>) {
+                else if (converted is List<ICommandParameter>)
                     finalParameters = (List<ICommandParameter>)converted;
-                } else throw new Exception("Final parameters must be CommandParameter");
+                else
+                    throw new Exception("Final parameters must be CommandParameter");
+
+                p.RemoveRange(k, j - k);
                 p.InsertRange(k, finalParameters);
                 return true;
             }
