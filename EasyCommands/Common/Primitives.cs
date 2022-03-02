@@ -29,18 +29,18 @@ namespace IngameScript {
                 value = v;
             }
 
-            public Primitive Plus(Primitive p) => PROGRAM.PerformOperation(BiOperand.ADD, this, p);
-            public Primitive Minus(Primitive p) => PROGRAM.PerformOperation(BiOperand.SUBTRACT, this, p);
-            public Primitive Multiply(Primitive p) => PROGRAM.PerformOperation(BiOperand.MULTIPLY, this, p);
-            public Primitive Divide(Primitive p) => PROGRAM.PerformOperation(BiOperand.DIVIDE, this, p);
-            public int CompareTo(Primitive p) => Convert.ToInt32(CastNumber(PROGRAM.PerformOperation(BiOperand.COMPARE, this, p)));
-            public Primitive Not() => PROGRAM.PerformOperation(UniOperand.REVERSE, this);
+            public Primitive Plus(Primitive p) => PerformOperation(BiOperand.ADD, this, p);
+            public Primitive Minus(Primitive p) => PerformOperation(BiOperand.SUBTRACT, this, p);
+            public Primitive Multiply(Primitive p) => PerformOperation(BiOperand.MULTIPLY, this, p);
+            public Primitive Divide(Primitive p) => PerformOperation(BiOperand.DIVIDE, this, p);
+            public int CompareTo(Primitive p) => Convert.ToInt32(CastNumber(PerformOperation(BiOperand.COMPARE, this, p)));
+            public Primitive Not() => PerformOperation(UniOperand.REVERSE, this);
             public Primitive DeepCopy() => ResolvePrimitive((value as KeyedList)?.DeepCopy() ?? value);
         }
 
         delegate Object Converter(Primitive p);
         static KeyValuePair<T, Converter> CastFunction<T>(T r, Converter func) => KeyValuePair(r, func);
-        static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + PROGRAM.returnToString[p.returnType] + " " + CastString(p) + " to " + PROGRAM.returnToString[returnType]); };
+        static Converter Failure(Return returnType) => p => { throw new Exception("Cannot convert " + returnToString[p.returnType] + " " + CastString(p) + " to " + returnToString[returnType]); };
 
         static Dictionary<Type, Dictionary<Return, Converter>> castFunctions = NewDictionary(
             KeyValuePair(typeof(bool), NewDictionary(

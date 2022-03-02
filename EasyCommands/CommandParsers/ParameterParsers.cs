@@ -26,17 +26,17 @@ namespace IngameScript {
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
         string[] thirdPassTokens = new[] { "." };
 
-        Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>(
+        static Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>(
             KeyValuePair(UniOperand.CAST, "cast"),
             KeyValuePair(UniOperand.ROUND, "round"),
             KeyValuePair(UniOperand.REVERSE, "negate")
         );
-        Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>(
+        static Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>(
             KeyValuePair(BiOperand.CAST, "cast"),
             KeyValuePair(BiOperand.ROUND, "round"),
             KeyValuePair(BiOperand.COMPARE, "compare")
         );
-        Dictionary<Return, String> returnToString = NewDictionary(
+        static Dictionary<Return, String> returnToString = NewDictionary(
             KeyValuePair(Return.BOOLEAN, "boolean"),
             KeyValuePair(Return.NUMERIC, "number"),
             KeyValuePair(Return.STRING, "string"),
@@ -203,7 +203,7 @@ namespace IngameScript {
             AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) == 0));
             AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) >= 0));
             AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) > 0));
-            AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PROGRAM.PerformOperation(BiOperand.CONTAINS, a, b))));
+            AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
             AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));

@@ -25,14 +25,14 @@ namespace IngameScript {
         Dictionary<MyTuple<UniOperand, Return>, UniOperation> UniOperations = NewDictionary<MyTuple<UniOperand, Return>, UniOperation>();
         Dictionary<MyTuple<BiOperand, Return, Return>, BiOperation> BiOperations = NewDictionary<MyTuple<BiOperand, Return, Return>, BiOperation>();
 
-        public Primitive PerformOperation(UniOperand type, Primitive a) =>
-            UniOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType), p => {
-                throw new Exception("Cannot perform operation: " + PROGRAM.uniOperandToString[type] + " on type: " + PROGRAM.returnToString[p.returnType]);
+        public static Primitive PerformOperation(UniOperand type, Primitive a) =>
+            PROGRAM.UniOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType), p => {
+                throw new Exception("Cannot perform operation: " + uniOperandToString[type] + " on type: " + returnToString[p.returnType]);
             })(a);
 
-        public Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) =>
-            BiOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType, b.returnType), (p, q) => {
-                throw new Exception("Cannot perform operation: " + PROGRAM.biOperandToString[type] + " on types: " + PROGRAM.returnToString[p.returnType] + ", " + PROGRAM.returnToString[q.returnType]);
+        public static Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) =>
+            PROGRAM.BiOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType, b.returnType), (p, q) => {
+                throw new Exception("Cannot perform operation: " + biOperandToString[type] + " on types: " + returnToString[p.returnType] + ", " + returnToString[q.returnType]);
             })(a, b);
 
         void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {
@@ -119,7 +119,7 @@ namespace IngameScript {
 
             //String
             AddUniOperation<string>(UniOperand.REVERSE, a => new string(a.Reverse().ToArray()));
-            AddUniOperation<object>(UniOperand.TYPE, a => PROGRAM.returnToString[ResolvePrimitive(a).returnType]);
+            AddUniOperation<object>(UniOperand.TYPE, a => returnToString[ResolvePrimitive(a).returnType]);
             AddBiOperation<string, object>(BiOperand.ADD, (a, b) => a + CastString(ResolvePrimitive(b)));
             AddBiOperation<object, string>(BiOperand.ADD, (a, b) => CastString(ResolvePrimitive(a)) + b);
             AddBiOperation<string, string>(BiOperand.SUBTRACT, (a, b) => a.Contains(b) ? a.Remove(a.IndexOf(b)) + a.Substring(a.IndexOf(b) + b.Length) :  a);
