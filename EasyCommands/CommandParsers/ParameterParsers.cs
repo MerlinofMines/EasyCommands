@@ -26,12 +26,12 @@ namespace IngameScript {
         string[] secondPassTokens = new[] { "<", ">", "=", "&", "|", "-", "+", "?", ":" };
         string[] thirdPassTokens = new[] { "." };
 
-        static Dictionary<UniOperand, String> uniOperandToString = NewDictionary<UniOperand, String>(
+        static Dictionary<UniOperand, String> uniOperandToString = NewDictionary(
             KeyValuePair(UniOperand.CAST, "cast"),
             KeyValuePair(UniOperand.ROUND, "round"),
             KeyValuePair(UniOperand.REVERSE, "negate")
         );
-        static Dictionary<BiOperand, String> biOperandToString = NewDictionary<BiOperand, String>(
+        static Dictionary<BiOperand, String> biOperandToString = NewDictionary(
             KeyValuePair(BiOperand.CAST, "cast"),
             KeyValuePair(BiOperand.ROUND, "round"),
             KeyValuePair(BiOperand.COMPARE, "compare")
