@@ -70,6 +70,31 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheAntennaRadius() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Antenna Radius: "" + the ""test antenna"" radius")) {
+                Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
+                test.MockBlocksOfType("test antenna", mockAntenna);
+                mockAntenna.Setup(b => b.Radius).Returns(10000f);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Antenna Radius: 10000"));
+            }
+        }
+
+        [TestMethod]
+        public void SetTheAntennaRadius() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test antenna"" radius to 5000")) {
+                Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();
+                test.MockBlocksOfType("test antenna", mockAntenna);
+
+                test.RunUntilDone();
+
+                mockAntenna.VerifySet(b => b.Radius = 5000f);
+            }
+        }
+
+        [TestMethod]
         public void GetTheAntennaRange() {
             using (ScriptTest test = new ScriptTest(@"Print ""Antenna Range: "" + the ""test antenna"" range")) {
                 Mock<IMyRadioAntenna> mockAntenna = new Mock<IMyRadioAntenna>();

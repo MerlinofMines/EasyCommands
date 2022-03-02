@@ -60,6 +60,7 @@ namespace IngameScript {
                 { Block.SOLAR_PANEL, new EngineBlockHandler<IMySolarPanel>() },
                 { Block.SORTER, new SorterBlockerHandler() },
                 { Block.SOUND, new SoundBlockHandler() },
+                { Block.SEARCHLIGHT, new SearchlightHandler() },
                 { Block.SENSOR, new SensorBlockHandler() },
                 { Block.SUSPENSION, new WheelSuspensionBlockHandler() },
                 { Block.TANK, new GasTankBlockHandler() },

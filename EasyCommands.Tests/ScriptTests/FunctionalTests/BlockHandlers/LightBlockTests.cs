@@ -13,6 +13,56 @@ namespace EasyCommands.Tests.ScriptTests
     public class LightBlockTests
     {
         [TestMethod]
+        public void GetRadius() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Radius: "" + the ""test light"" radius")) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("test light", mockLight);
+                mockLight.Setup(b => b.Radius).Returns(10);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Radius: 10", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetRadius() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test light"" radius to 10")) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("test light", mockLight);
+
+                test.RunUntilDone();
+
+                mockLight.VerifySet(b => b.Radius = 10);
+            }
+        }
+
+        [TestMethod]
+        public void GetRange() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Range: "" + the ""test light"" range")) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("test light", mockLight);
+                mockLight.Setup(b => b.Radius).Returns(10);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Range: 10", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetRange() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test light"" range to 10")) {
+                var mockLight = new Mock<IMyLightingBlock>();
+                test.MockBlocksOfType("test light", mockLight);
+
+                test.RunUntilDone();
+
+                mockLight.VerifySet(b => b.Radius = 10);
+            }
+        }
+
+        [TestMethod]
         public void LightBlockHandlerTest()
         {
             String script = @"

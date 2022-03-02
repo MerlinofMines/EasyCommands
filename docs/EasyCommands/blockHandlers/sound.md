@@ -55,11 +55,24 @@ Print "Speaker Volume: " + "My Siren" volume
 set "My Siren" volume to 0.75
 ```
 
+## "Radius" Property
+* Primitive Type: Numeric
+* Keywords: ```radius, radii```
+
+Gets/Sets the radius the speaker plays sound within, in meters.  
+
+```
+Print "Speaker Range: " + "My Speaker" radius
+
+#50 meters
+set "My Speaker" radius to 50
+```
+
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, distance, distances, limit, limits, radius, radii```
+* Keywords: ```range, ranges, distance, distances, limit, limits```
 
-Gets/Sets the range the speaker plays sound within, in meters.  
+Same as Radius. Gets/Sets the range the speaker plays sound within, in meters.  
 
 ```
 Print "Speaker Range: " + "My Speaker" range

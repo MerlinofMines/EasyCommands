@@ -71,11 +71,23 @@ Print "Target Coords: " + "My Laser" coordinates
 set "My Laser" target to "12.3:45.6:78.9"
 ```
 
-## "Range" Propertyw
+## "Radius" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, limit, limits, distance, dinstances, radius, radii```
+* Keywords: ```radius, radii```
 
 Get/Sets the range of the laser antenna, in meters.  So 2000 = 2000m = 2km
+
+```
+Print "Range: " + "My Laser" radius
+
+set "My Laser" radius to 3000
+```
+
+## "Range" Propertyw
+* Primitive Type: Numeric
+* Keywords: ```range, ranges, limit, limits, distance, distances```
+
+Same as Radius. Get/Sets the range of the laser antenna, in meters.  So 2000 = 2000m = 2km
 
 ```
 Print "Range: " + "My Laser" range

@@ -109,7 +109,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Position (also Alignment) - ```position, positions, location, locations, alignment, alignments```
 * Power - ```power, powered```
 * Properties - ```properties, attributes```
-* Range (also Limit) - ```range, ranges, distance, distances, limit, limits, delay, delays, radius, radii, capacity, capacities```
+* Range (also Limit) - ```range, ranges, distance, distances, limit, limits, delay, delays, capacity, capacities```
+* Radius - ```radius, radii```
 * Ratio - ```ratio, ratios, percent, percents, percentage, percentages, progress, progresses```
 * Roll Input - ```roll, rolls, rollInput, rollInputs, rotation, rotations```
 * Run - ```run, running, execute, executing, script```

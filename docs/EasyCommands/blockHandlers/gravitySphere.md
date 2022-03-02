@@ -58,11 +58,23 @@ Print "Gravity: " + "My Gravity Generator" gravitySphere strength
 set "My Gravity Generator" gravitySphere strength to 5
 ```
 
+## "Radius" Property
+* Primitive Type: Numeric
+* Keywords: ```radius, radii```
+
+This property Gets/Sets the Radius of the Gravity Generator, in meters.
+
+```
+Print "Gravitation Field Radius: " + "Test Gravity Generator" gravitySphere radius
+
+set "Test Gravity Generator" gravitySphere radius to 3
+```
+
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, limit, limits, distance, distances, radius, radii```
+* Keywords: ```range, ranges, limit, limits, distance, distances```
 
-This property Gets/Sets the Range of the Gravity Generator, in meters.
+Same as Radius. This property Gets/Sets the Range of the Gravity Generator, in meters.
 
 ```
 Print "Gravitation Field Limit: " + "Test Gravity Generator" gravitySphere limit
@@ -74,7 +86,7 @@ set "Test Gravity Generator" gravitySphere limit to 3
 * Primitive Type: Numeric
 * Keywords: ```size, sizes, height, heights, length, lengths```
 
-Identical to the "Range" property.  This property Gets/Sets the Field Size of the Gravity Generator, in meters.
+Same as Radius. This property Gets/Sets the Field Size of the Gravity Generator, in meters.
 
 ```
 Print "Gravitation Field Size: " + "Test Gravity Generator" gravitySphere size

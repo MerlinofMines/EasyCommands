@@ -95,6 +95,44 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheLaserAntennaRadius() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Radius: "" + ""test laser"" radius")) {
+                Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
+                test.MockBlocksOfType("test laser", mockLaserAntenna);
+                mockLaserAntenna.Setup(b => b.Range).Returns(2000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Radius: 2000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheLaserAntennaRadius() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test laser"" radius to 2000")) {
+                Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
+                test.MockBlocksOfType("test laser", mockLaserAntenna);
+
+                test.RunUntilDone();
+
+                mockLaserAntenna.VerifySet(b => b.Range = 2000f);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheLaserAntennaRange() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Range: "" + ""test laser"" range")) {
+                Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();
+                test.MockBlocksOfType("test laser", mockLaserAntenna);
+                mockLaserAntenna.Setup(b => b.Range).Returns(2000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Range: 2000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void SetTheLaserAntennaRange() {
             using (ScriptTest test = new ScriptTest(@"set the ""test laser"" range to 2000")) {
                 Mock<IMyLaserAntenna> mockLaserAntenna = new Mock<IMyLaserAntenna>();

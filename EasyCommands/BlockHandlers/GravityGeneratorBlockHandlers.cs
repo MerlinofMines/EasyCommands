@@ -23,6 +23,7 @@ namespace IngameScript {
             public SphericalGravityGeneratorBlockHandler() {
                 var rangeHandler = NumericHandler(b => b.Radius, (b, v) => b.Radius = v, 25);
                 AddPropertyHandler(Property.RANGE, rangeHandler);
+                AddPropertyHandler(Property.RADIUS, rangeHandler);
                 AddPropertyHandler(Property.LEVEL, rangeHandler);
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b,v) => b.GravityAcceleration = v, 0.25f);
 

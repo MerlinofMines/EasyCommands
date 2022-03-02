@@ -254,12 +254,8 @@ set ""test gravitySphere"" strength to 0.2
         }
 
         [TestMethod]
-        public void getSphericalGravityGeneratorRadius() {
-            String script = @"
-assign a to ""test gravitySphere"" radius
-print ""Radius: "" + a
-";
-            using (var test = new ScriptTest(script)) {
+        public void GetSphericalGravityGeneratorRadius() {
+            using (var test = new ScriptTest(@"Print ""Radius: "" + ""test gravitySphere"" radius")) {
                 var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
                 mockGravityGenerator.Setup(b => b.Radius).Returns(100f);
                 test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
@@ -270,11 +266,31 @@ print ""Radius: "" + a
         }
 
         [TestMethod]
-        public void setSphericalGravityGeneratorRadius() {
-            String script = @"
-set ""test gravitySphere"" radius to 200
-";
-            using (var test = new ScriptTest(script)) {
+        public void SetSphericalGravityGeneratorRadius() {
+            using (var test = new ScriptTest(@"set ""test gravitySphere"" radius to 200")) {
+                var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
+                test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
+                test.RunUntilDone();
+
+                mockGravityGenerator.VerifySet(b => b.Radius = 200f);
+            }
+        }
+
+        [TestMethod]
+        public void GetSphericalGravityGeneratorRange() {
+            using (var test = new ScriptTest(@"Print ""Range: "" + ""test gravitySphere"" range")) {
+                var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
+                mockGravityGenerator.Setup(b => b.Radius).Returns(100f);
+                test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Range: 100"));
+            }
+        }
+
+        [TestMethod]
+        public void SetSphericalGravityGeneratorRange() {
+            using (var test = new ScriptTest(@"set ""test gravitySphere"" range to 200")) {
                 var mockGravityGenerator = new Mock<IMyGravityGeneratorSphere>();
                 test.MockBlocksOfType("test gravitySphere", mockGravityGenerator);
                 test.RunUntilDone();

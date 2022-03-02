@@ -47,11 +47,23 @@ turn off "My Light"
 power off "My Light"
 ```
 
+## "Radius" Property
+* Primitive Type: Numeric
+* Keywords: ```radius, radii```
+
+Gets/Sets the light radius, in meters, of the Light.
+
+```
+Print "Range: " + "My Light" radius
+
+set "My Light" radius to 200
+```
+
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, distance, distances, limit, limits, radius, radii```
+* Keywords: ```range, ranges, distance, distances, limit, limits```
 
-Gets/Sets the range, in meters, of the Light.
+Same as Radius. Gets/Sets the range, in meters, of the Light.
 
 ```
 Print "Range: " + "My Light" range
