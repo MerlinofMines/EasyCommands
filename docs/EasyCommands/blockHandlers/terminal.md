@@ -150,7 +150,7 @@ Print "My Properties: " + the "Test Piston" properties
 * Primitive type: Depends on the property.
 * Keywords: ```property, attribute```
 
-This property can get or set a given property for the block.  The attribute is expected to be a String representing the name of the property to be updated.  When resolving what property to get or set, the resolved value is first compared against known reserved keywords which represent other properties.  So, you can dynamically set properties using this feature:
+This property can get or set a given Terminal Property for the block.  The attribute is expected to be a String representing the name of the property to be updated.  When resolving what property to get or set, the resolved value is first compared against known reserved keywords which represent other properties.  So, you can dynamically set Terminal Properties using this feature:
 
 ```
 #These two commands are equivalent

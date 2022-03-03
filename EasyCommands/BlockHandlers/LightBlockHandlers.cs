@@ -39,6 +39,9 @@ namespace IngameScript {
                 AddPropertyHandler(Property.LOCKED, TerminalPropertyHandler("EnableTargetLocking", true));
                 //TODO: Add Blink Offset w/ Multi-Property Support
                 //TODO: Add Target Options support
+                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
             }
         }
 

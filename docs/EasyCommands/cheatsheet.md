@@ -59,10 +59,11 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Remote Control - ```remote, drone, robot```, ```remotes, drones, robots```
 * Refinery - ```refinery```, ```refineries```
 * Rotor - ```rotor```, ```rotors```
+* Searchlight - ```searchlight```, ```searchlights```
+* Sensor - ```sensor```, ```sensors```
 * Solar Panel - ```solar```, ```solars```
 * Sorter - ```sorter```, ```sorters```
 * Sound Block - ```speaker, alarm, siren```, ```speakers, alarms, sirens```
-* Sensor - ```sensor```, ```sensors```
 * Tank (Oxygen or Hydrogen) - ```tank```, ```tanks```
 * Terminal Block - ```terminal```, ```terminals```
 * Timer Block - ```timer```, ```timers```

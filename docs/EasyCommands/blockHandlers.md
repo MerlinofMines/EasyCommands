@@ -186,6 +186,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Refineries](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/refinery "Refinery Handler")
 * [Remote Controls](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/remote "Remote Control Handler")
 * [Rotors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/rotor "Rotor Handler")
+* [Searchlights](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/searchlight "Searchlight Block Handler")
 * [Sensors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sensor "Sensor Handler")
 * [Solar Panels](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/solar "Solar Panel Handler")
 * [Sorters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/sorter "Sorter Block Handler")
