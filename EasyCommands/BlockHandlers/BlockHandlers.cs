@@ -43,7 +43,7 @@ namespace IngameScript {
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { Block.GYROSCOPE, new GyroscopeBlockHandler<IMyGyro>() },
                 { Block.HEAT_VENT, new HeatVentBlockHandler() },
-                { Block.HINGE, new RotorBlockHandler(b => IsSubType("Hinge")(b)) },
+                { Block.HINGE, new RotorBlockHandler(IsSubType("Hinge")) },
                 { Block.JUMPDRIVE, new JumpDriveBlockHandler() },
                 { Block.LASER_ANTENNA, new LaserAntennaBlockHandler() },
                 { Block.LIGHT, new LightBlockHandler() },
