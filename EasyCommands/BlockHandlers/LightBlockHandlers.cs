@@ -20,12 +20,6 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
         public class SearchlightHandler : SubTypedBlockHandler<IMyFunctionalBlock> {
-            Dictionary<String, int> targetingGroupLookup = NewDictionary(
-                KeyValuePair("Default", 0),
-                KeyValuePair("Power", 1),
-                KeyValuePair("Weapons", 2),
-                KeyValuePair("Propulsion", 3));
-
             public SearchlightHandler() : base(IsSubType("Searchlight")) {
                 AddPropertyHandler(Property.COLOR, TerminalPropertyHandler("Color", Color.Black));
                 AddPropertyHandler(Property.RADIUS, TerminalPropertyHandler("Radius", 10));

@@ -143,7 +143,7 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("override", "dampener"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
             AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
-            AddPropertyWords(Words("target", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
+            AddPropertyWords(Words("target", "targeting", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);

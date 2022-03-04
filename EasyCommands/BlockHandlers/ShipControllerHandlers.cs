@@ -23,6 +23,7 @@ namespace IngameScript {
             public CockpitBlockHandler() {
                 AddNumericHandler(Property.RATIO, b => b.OxygenFilledRatio);
                 AddNumericHandler(Property.RANGE, b => b.OxygenCapacity);
+                AddPropertyHandler(Property.TARGET, TerminalPropertyHandler("TargetLocking", true));
             }
         }
 

@@ -120,7 +120,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Supply - 
   * ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```
   * (```stockpile, stockpiling, depressurize, depressurizing, gather, gathering, intake, recharge, recharging, consume, consuming, collect, collecting, disassemble, disassembling```)
-* Target (also Waypoint) - ```target, destination, waypoint, coords, coordinates```
+* Target (also Waypoint) - ```target, targeting, destination, waypoint, coords, coordinates```
 * Target Velocity - ```targetvelocity```
 * Text - ```text, texts, message, messages, argument, arguments```
 * Types - ```types, blueprints```
