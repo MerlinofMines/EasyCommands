@@ -46,11 +46,23 @@ turn off "My Ore Detector"
 power off "My Beacon"
 ```
 
+## "Radius" Property
+* Primitive Type: Numeric
+* Keywords: ```radius, radii```
+
+Gets/Sets the radius, in meters, of the Ore Detector, meaning the radius in which it will detect nearby ores.
+
+```
+Print "Radius: " + "My Ore Detector" radius
+
+set "My Ore Detector" radius to 200
+```
+
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, distance, distances, limit, limits, radius, radii```
+* Keywords: ```range, ranges, distance, distances, limit, limits```
 
-Gets/Sets the range, in meters, of the Ore Detector, meaning the radius in which it will detect nearby ores.
+Same as Radius. Gets/Sets the range, in meters, of the Ore Detector, meaning the radius in which it will detect nearby ores.
 
 ```
 Print "Range: " + "My Ore Detector" range

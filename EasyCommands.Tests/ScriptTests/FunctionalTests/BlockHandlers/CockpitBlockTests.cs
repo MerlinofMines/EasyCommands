@@ -550,5 +550,31 @@ namespace EasyCommands.Tests.ScriptTests {
                 Assert.AreEqual("Clockwise Roll: 1", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void GetTheCockpitTargetLocking() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Targeting: "" + the ""test cockpit"" is targeting")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                MockGetProperty(mockCockpit, "TargetLocking", true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Targeting: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheCockpitTargetLocking() {
+            using (ScriptTest test = new ScriptTest(@"turn on the ""test cockpit"" targeting")) {
+                Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
+                test.MockBlocksOfType("test cockpit", mockCockpit);
+                var mockTargeting = MockProperty<IMyCockpit, bool>(mockCockpit, "TargetLocking");
+
+                test.RunUntilDone();
+
+                mockTargeting.Verify(b => b.SetValue(mockCockpit.Object, true));
+            }
+        }
     }
 }

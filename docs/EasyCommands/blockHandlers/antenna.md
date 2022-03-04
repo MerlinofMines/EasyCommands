@@ -51,15 +51,27 @@ if the "Base Antenna" is broadcasting
   Print "Whoops! Didn't mean to tell everyone I was here"
   turn off the "Base Antenna"
 ```
+
+## "Radius" Property
+* Primitive Type: Numeric
+* Keywords: ```radius, radii```
+
+Get or sets the Antenna's Radius (meaning how far it broadcast).  Value is in meters, so 2000 = 2000m = 2km
+
+```
+Print "Antenna Radius: " + the "Base Antenna" radius
+set the "Base Antenna" radius to 3000
+```
+
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, distance, distances, limit, limits, radius, radii```
+* Keywords: ```range, ranges, distance, distances, limit, limits```
 
-Get or sets the Antenna's Range (meaning how far it broadcast).  Value is in meters, so 2000 = 2000m = 2km
+Same as Radius. Get or sets the Antenna's Range (meaning how far it broadcast).  Value is in meters, so 2000 = 2000m = 2km
 
 ```
 Print "Antenna Range: " + the "Base Antenna" range
-set the "Base Antenna" radius to 3000
+set the "Base Antenna" range to 3000
 ```
 
 ## "Show" Property

@@ -107,7 +107,7 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "detach", "disconnected", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
+            AddPropertyWords(Words("lock", "locked", "locking", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
             AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
@@ -128,7 +128,8 @@ namespace IngameScript {
             AddPropertyWords(Words("silence", "silent", "quiet"), Property.MEDIA, false);
             AddPropertyWords(Words("sounds", "songs", "images", "tracks"), Property.MEDIA_LIST);
             AddPropertyWords(AllWords(PluralWords("volume", "output"), Words("intensity", "intensities")), Property.VOLUME);
-            AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("radius", "radii", "capacity", "capacities")), Property.RANGE);
+            AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("capacity", "capacities")), Property.RANGE);
+            AddPropertyWords(Words("radius", "radii"), Property.RADIUS);
             AddPropertyWords(PluralWords("interval"), Property.INTERVAL);
             AddPropertyWords(PluralWords("offset", "padding"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
@@ -142,7 +143,7 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("override", "dampener"), Words("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
             AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
-            AddPropertyWords(Words("target", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
+            AddPropertyWords(Words("target", "targeting", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
             AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
@@ -358,6 +359,7 @@ namespace IngameScript {
             AddBlockWords(Words("terminal"), Block.TERMINAL);
             AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
             AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
+            AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
         }
 
         String[] Words(params String[] words) => words;

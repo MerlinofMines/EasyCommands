@@ -58,6 +58,31 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheBeaconRadius() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Beacon Radius: "" + the ""test beacon"" radius")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+                mockBeacon.Setup(b => b.Radius).Returns(10000f);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Beacon Radius: 10000"));
+            }
+        }
+
+        [TestMethod]
+        public void SetTheBeaconRadius() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test beacon"" radius to 5000")) {
+                Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(b => b.Radius = 5000f);
+            }
+        }
+
+        [TestMethod]
         public void GetTheBeaconRange() {
             using (ScriptTest test = new ScriptTest(@"Print ""Beacon Range: "" + the ""test beacon"" range")) {
                 Mock<IMyBeacon> mockBeacon = new Mock<IMyBeacon>();

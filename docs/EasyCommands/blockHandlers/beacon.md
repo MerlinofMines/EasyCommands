@@ -73,9 +73,20 @@ set the "Base Beacon" text to "Come and get me!"
 
 ## "Range" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, limit, limits, distance, dinstances, radius, radii```
+* Keywords: ```radius, radii```
 
-Get/Sets the range that the beacon broadcasts to, in meters.  So 2000 = 2000m = 2km
+Get/Sets the radius that the beacon broadcasts to, in meters.  So 2000 = 2000m = 2km
+
+```
+Print "Broadcasting Radius: " + the "Base Beacon" radius
+
+set the "Base Beacon" radius to 3000
+```
+## "Range" Property
+* Primitive Type: Numeric
+* Keywords: ```range, ranges, limit, limits, distance, distances```
+
+Same as Radius. Get/Sets the range that the beacon broadcasts to, in meters.  So 2000 = 2000m = 2km
 
 ```
 Print "Broadcasting Range: " + the "Base Beacon" range

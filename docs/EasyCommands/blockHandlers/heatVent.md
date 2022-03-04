@@ -69,7 +69,7 @@ set "My HeatVent lower color to red
 
 ## "Radius" Property
 * Primitive Type: Numeric
-* Keywords: ```range, ranges, distance, distances, limit, limts, radius, radii```
+* Keywords: ```radius, radii```
 
 Gets/Sets the HeatVent's light radius, in meters.
 
@@ -79,6 +79,20 @@ print "My HeatVent" radius
 
 #Set the radius
 set "My HeatVent" radius to 5
+```
+
+## "Range" Property
+* Primitive Type: Numeric
+* Keywords: ```range, ranges, distance, distances, limit, limits```
+
+Same as Radius. Gets/Sets the HeatVent's light radius, in meters.
+
+```
+#Get the range
+print "My HeatVent" range
+
+#Set the range
+set "My HeatVent" range to 5
 ```
 
 ## "Intensity" Property

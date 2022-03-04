@@ -118,6 +118,33 @@ namespace EasyCommands.Tests.ScriptTests {
                 var mockSpeaker = new Mock<IMySoundBlock>();
                 test.MockBlocksOfType("test speaker", mockSpeaker);
 
+                test.RunOnce();
+
+                mockSpeaker.VerifySet(b => b.Range = 200);
+            }
+        }
+
+        [TestMethod]
+        public void GetSpeakerRadius() {
+            string script = @"print ""Radius: "" + ""test speaker"" radius";
+            using (var test = new ScriptTest(script)) {
+                var mockSpeaker = new Mock<IMySoundBlock>();
+                test.MockBlocksOfType("test speaker", mockSpeaker);
+
+                mockSpeaker.Setup(b => b.Range).Returns(100);
+
+                test.RunOnce();
+
+                Assert.AreEqual("Radius: 100", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetSpeakerRadius() {
+            string script = @"set the ""test speaker"" radius to 200";
+            using (var test = new ScriptTest(script)) {
+                var mockSpeaker = new Mock<IMySoundBlock>();
+                test.MockBlocksOfType("test speaker", mockSpeaker);
 
                 test.RunOnce();
 

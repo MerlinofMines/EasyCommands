@@ -139,6 +139,32 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheHeatVentRange() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Heat Vent Range: "" + the ""test heatVent"" range")) {
+                Mock<IMyHeatVent> mockHeatVent = new Mock<IMyHeatVent>();
+                test.MockBlocksOfType("test heatVent", mockHeatVent);
+                MockGetProperty(mockHeatVent, "Radius", 10f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Heat Vent Range: 10", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheHeatVentRange() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test heatVent"" range to 5")) {
+                Mock<IMyHeatVent> mockHeatVent = new Mock<IMyHeatVent>();
+                test.MockBlocksOfType("test heatVent", mockHeatVent);
+                var mockProperty = MockProperty<IMyHeatVent, float>(mockHeatVent, "Radius");
+
+                test.RunUntilDone();
+
+                mockProperty.Verify(p => p.SetValue(mockHeatVent.Object, 5f));
+            }
+        }
+
+        [TestMethod]
         public void GetTheHeatVentIntensity() {
             using (ScriptTest test = new ScriptTest(@"Print ""Heat Vent Intensity: "" + the ""test heatVent"" intensity")) {
                 Mock<IMyHeatVent> mockHeatVent = new Mock<IMyHeatVent>();

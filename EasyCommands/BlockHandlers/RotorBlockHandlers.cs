@@ -19,11 +19,8 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        static Func<IMyMotorStator, bool> IsHinge = b => b.BlockDefinition.SubtypeId.Contains("Hinge");
-
-        public class RotorBlockHandler : FunctionalBlockHandler<IMyMotorStator> {
-            Func<IMyMotorStator, bool> blockFilter;
-            public RotorBlockHandler(Func<IMyMotorStator, bool> filter) {
+        public class RotorBlockHandler : SubTypedBlockHandler<IMyMotorStator> {
+            public RotorBlockHandler(Func<IMyFunctionalBlock, bool> filter) : base(filter) {
                 AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
                 AddDirectionHandlers(Property.RANGE, Direction.UP,
                     TypeHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
@@ -39,11 +36,7 @@ namespace IngameScript {
                 defaultPropertiesByDirection.Add(Direction.CLOCKWISE, Property.ANGLE);
                 defaultPropertiesByDirection.Add(Direction.COUNTERCLOCKWISE, Property.ANGLE);
                 defaultDirection = Direction.CLOCKWISE;
-                blockFilter = filter;
             }
-
-            public override IEnumerable<IMyMotorStator> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                base.SelectBlocksByType(blocks, selector).Where(blockFilter);
         }
 
         public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {

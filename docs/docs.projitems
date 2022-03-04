@@ -12,6 +12,7 @@
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\gravitySphere.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\heatVent.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\hinge.md" />
+    <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\searchlight.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\rotor.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\solar.md" />
     <Content Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\piston.md" />

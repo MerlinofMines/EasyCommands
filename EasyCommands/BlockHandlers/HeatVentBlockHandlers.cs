@@ -24,7 +24,9 @@ namespace IngameScript {
                 AddDirectionHandlers(Property.COLOR, Direction.UP,
                     TypeHandler(TerminalPropertyHandler("ColorMax", Color.Black), Direction.UP),
                     TypeHandler(TerminalPropertyHandler("ColorMin", Color.Black), Direction.DOWN));
-                AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("Radius", 1));
+                var radiusHandler = TerminalPropertyHandler("Radius", 1);
+                AddPropertyHandler(Property.RANGE, radiusHandler);
+                AddPropertyHandler(Property.RADIUS, radiusHandler);
                 AddPropertyHandler(Property.VOLUME, TerminalPropertyHandler("Intensity", 1));
                 AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.3));
                 AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Offset", 0.5));

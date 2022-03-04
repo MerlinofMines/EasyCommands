@@ -286,6 +286,18 @@ if "My Cockpit" left rotation > 0
   Print "I guess the boss wants to look left"
 ```
 
+## "Target" Property
+* Primitive Type: Bool
+* Keywords: ```target, targeting```
+
+Gets/Sets whether the cockpit has Target Locking enabled.
+
+```
+Print "Target Locking Enabled: " + "My Cockpit" targeting is on
+
+turn on "My Cockpit" targeting
+```
+
 ## Examples
 
 Here's a full example to print out user input to the Cockpit display:

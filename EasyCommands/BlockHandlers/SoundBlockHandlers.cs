@@ -22,7 +22,9 @@ namespace IngameScript {
         public class SoundBlockHandler : FunctionalBlockHandler<IMySoundBlock> {
             public SoundBlockHandler() {
                 AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v, 0.1f);
-                AddNumericHandler(Property.RANGE, b => b.Range, (b, v) => b.Range = v, 50);
+                var rangeHandler = NumericHandler(b => b.Range, (b, v) => b.Range = v, 50);
+                AddPropertyHandler(Property.RANGE, rangeHandler);
+                AddPropertyHandler(Property.RADIUS, rangeHandler);
                 AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 10);
                 AddPropertyHandler(Property.MEDIA, ReturnTypedHandler(Return.STRING,
                     TypeHandler(BooleanHandler((b) => b.DetailedInfo.Contains("Loop timer"), (b, v) => { if (v) b.Play(); else b.Stop(); }), Return.BOOLEAN),

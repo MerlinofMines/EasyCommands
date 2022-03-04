@@ -35,6 +35,31 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheOreDetectorRadius() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ore Detector Radius: "" + the ""test ore detector"" radius")) {
+                Mock<IMyOreDetector> mockOreDetector = new Mock<IMyOreDetector>();
+                test.MockBlocksOfType("test ore detector", mockOreDetector);
+                MockGetProperty(mockOreDetector, "Range", 1000f);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Ore Detector Radius: 1000"));
+            }
+        }
+
+        [TestMethod]
+        public void SetTheOreDetectorRadius() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test ore detector"" radius to 5000")) {
+                Mock<IMyOreDetector> mockOreDetector = new Mock<IMyOreDetector>();
+                test.MockBlocksOfType("test ore detector", mockOreDetector);
+                var rangeProperty = MockProperty<IMyOreDetector, float>(mockOreDetector, "Range");
+                test.RunUntilDone();
+
+                rangeProperty.Verify(b => b.SetValue(mockOreDetector.Object, 5000));
+            }
+        }
+
+        [TestMethod]
         public void GetTheOreDetectorRange() {
             using (ScriptTest test = new ScriptTest(@"Print ""Ore Detector Range: "" + the ""test ore detector"" range")) {
                 Mock<IMyOreDetector> mockOreDetector = new Mock<IMyOreDetector>();
