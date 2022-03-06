@@ -242,6 +242,35 @@ set myList to myList + [[4,5,6]]
 Print myList
 ```
 
+### Adding Strings to lists
+
+By default, adding anything to a string will convert that thing to a string and then output the resulting strings concatenated.
+
+As such, the following won't work as you expect:
+```
+set myList to ["one","two"]
+myList+="three"
+
+print myList
+#[one,two]three
+
+print myList type
+#string, not what you expected eh?
+```
+
+To add a string to a list, you'll need to wrap the string in brackets:
+
+```
+set myList to ["one","two"]
+myList+=["three"]
+print myList
+#[one,two,three]
+
+print myList type
+#list, that's better
+```
+
+
 ### Merging Keyed Lists
 
 A special case for merging two lists is when you merge two keyed lists and the two lists contain an item with the same key.
