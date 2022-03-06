@@ -197,6 +197,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Thrusters](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/thruster "Thruster Block Handler")
 * [Timer Blocks](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/timer "Timer Block Handler")
 * [Turrets](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turret "Turret Handler")
+* [Turret Controllers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turretController "Turret Controller Handler")
 * [Warheads](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/warhead "Warhead Handler")
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
 * [Wheel Suspension](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/suspension "Wheel Suspension Handler")

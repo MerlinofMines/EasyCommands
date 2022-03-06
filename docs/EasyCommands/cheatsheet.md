@@ -69,6 +69,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Timer Block - ```timer```, ```timers```
 * Thruster - ```thruster```, ```thrusters```
 * Turret - ```turret```, ```turrets```
+* TurretController - ```turretcontroller```, ```turretcontrollers```
 * Warhead - ```warhead, bomb```, ```warheads, bombs```
 * Welder - ```welder```, ```welders```
 * Wheel Suspension - ```wheel```, ```wheels, suspension```
@@ -77,7 +78,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 ## Properties (Inverse in Parentheses, if present)
 * Actions - ```actions```
 * Altitude - ```altitude, altitudes, elevation, elevations```
-* Angle - ```angle, angles```
+* Angle - ```angle, angles, azimuth, azimuths```
 * Artificial Gravity - ```artificialGravity, artificialGravities```
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```

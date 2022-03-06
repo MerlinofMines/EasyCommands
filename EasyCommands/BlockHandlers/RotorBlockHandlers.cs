@@ -41,7 +41,7 @@ namespace IngameScript {
 
         public class RotorAngleHandler : PropertyHandler<IMyMotorStator> {
             public RotorAngleHandler() {
-                Get = (b, p) => ResolvePrimitive(b.Angle * (float)(180 / Math.PI));
+                Get = (b, p) => ResolvePrimitive(b.Angle * RadiansToDegrees);
                 GetDirection = (b, p, d) => Get(b, p);
                 Set = (b, p, v) => RotateToValue(b, v);
                 SetDirection = (b, p, d, v) => RotateToValue(b, v, d);
@@ -68,7 +68,7 @@ namespace IngameScript {
             float newValue = GetCorrectedAngle(value);
 
             //TODO: We might find that in some cases, it's faster to go the other way.
-            if (rotor.Angle * (180 / Math.PI) < value) {
+            if (rotor.Angle * RadiansToDegrees < value) {
                 rotor.UpperLimitDeg = newValue;
                 rotor.TargetVelocityRPM = Math.Abs(rotor.TargetVelocityRPM);
             } else {
@@ -83,7 +83,7 @@ namespace IngameScript {
             }
 
             float value = GetCorrectedAngle(CastNumber(primitive));
-            float currentAngle = rotor.Angle * (180 / (float)Math.PI);
+            float currentAngle = rotor.Angle * DegreesToRadians;
 
             switch (direction) {
                 case Direction.CLOCKWISE:

@@ -20,42 +20,26 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void GetTheGunRange() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Range: "" + the ""test gun"" range")) {
-                var mockGun = new Mock<IMyUserControllableGun>();
-                test.MockBlocksOfType("test gun", mockGun);
-                MockGetProperty(mockGun, "Range", 100f);
-
-                test.RunUntilDone();
-
-                Assert.AreEqual("Range: 100", test.Logger[0]);
-            }
-        }
-
-        [TestMethod]
-        public void SetTheGunRange() {
-            using (ScriptTest test = new ScriptTest(@"set the ""test gun"" range to 300")) {
-                var mockGun = new Mock<IMyUserControllableGun>();
-                test.MockBlocksOfType("test gun", mockGun);
-                var mockRange = MockProperty<IMyUserControllableGun, float>(mockGun, "Range");
-
-                test.RunUntilDone();
-
-                mockRange.Verify(b => b.SetValue(mockGun.Object, 300));
-            }
-        }
-
-        [TestMethod]
         public void FireTheGuns() {
             using (ScriptTest test = new ScriptTest(@"tell the ""guns"" to fire")) {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("guns", mockGun);
 
-                var turretFire = MockAction(mockGun, "Shoot_On");
+                test.RunUntilDone();
+
+                mockGun.VerifySet(b => b.Shoot = true);
+            }
+        }
+
+        [TestMethod]
+        public void StopFiringTheGuns() {
+            using (ScriptTest test = new ScriptTest(@"stop firing the ""guns""")) {
+                var mockGun = new Mock<IMyUserControllableGun>();
+                test.MockBlocksInGroup("guns", mockGun);
 
                 test.RunUntilDone();
 
-                turretFire.Verify(b => b.Apply(mockGun.Object));
+                mockGun.VerifySet(b => b.Shoot = false);
             }
         }
 
@@ -65,11 +49,9 @@ namespace EasyCommands.Tests.ScriptTests {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("railguns", mockGun);
 
-                var turretFire = MockAction(mockGun, "Shoot_On");
-
                 test.RunUntilDone();
 
-                turretFire.Verify(b => b.Apply(mockGun.Object));
+                mockGun.VerifySet(b => b.Shoot = true);
             }
         }
 
@@ -79,11 +61,9 @@ namespace EasyCommands.Tests.ScriptTests {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("cannons", mockGun);
 
-                var turretFire = MockAction(mockGun, "Shoot_On");
-
                 test.RunUntilDone();
 
-                turretFire.Verify(b => b.Apply(mockGun.Object));
+                mockGun.VerifySet(b => b.Shoot = true);
             }
         }
 
@@ -93,11 +73,9 @@ namespace EasyCommands.Tests.ScriptTests {
                 var mockGun = new Mock<IMyUserControllableGun>();
                 test.MockBlocksInGroup("autocannons", mockGun);
 
-                var turretFire = MockAction(mockGun, "Shoot_On");
-
                 test.RunUntilDone();
 
-                turretFire.Verify(b => b.Apply(mockGun.Object));
+                mockGun.VerifySet(b => b.Shoot = true);
             }
         }
 

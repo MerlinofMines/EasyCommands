@@ -46,77 +46,74 @@ goto ""fireLoop""
                 var mockRocket1 = new Mock<IMyUserControllableGun>();
                 var mockRocket2 = new Mock<IMyUserControllableGun>();
 
-                var rocketOff = MockAction(mockRocket1, "Shoot_Off");
-                var rocketOn = MockAction(mockRocket1, "Shoot_On");
-
                 test.MockBlocksInGroup("Rockets", mockRocket1, mockRocket2);
 
                 test.RunOnce(); //Setup but no firing yet
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunWithArgument("call startFiring"); //Fire Rocket 1
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOn.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket1.VerifySet(b => b.Shoot = true);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Wait 1 tick
 
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Fire Rocket 2
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOn.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = true);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Wait 1 tick
 
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 //Should restart the loop!
                 test.RunOnce(); //Fire Rocket 1
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOn.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket1.VerifySet(b => b.Shoot = true);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Wait 1 tick
 
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Fire Rocket 2
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOn.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = true);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunOnce(); //Wait 1 tick
 
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
 
                 test.RunWithArgument("call stopFiring"); //Fire Rocket 1
 
-                rocketOff.Verify(b => b.Apply(mockRocket1.Object));
-                rocketOff.Verify(b => b.Apply(mockRocket2.Object));
-                rocketOff.VerifyNoOtherCalls();
-                rocketOn.VerifyNoOtherCalls();
+                mockRocket1.VerifySet(b => b.Shoot = false);
+                mockRocket2.VerifySet(b => b.Shoot = false);
+                mockRocket1.VerifyNoOtherCalls();
+                mockRocket2.VerifyNoOtherCalls();
             }
         }
     }
