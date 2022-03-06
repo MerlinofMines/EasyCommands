@@ -212,6 +212,7 @@ if any ""turrets"" target is true
 
                 mockTurret.Verify(b => b.ResetTargetingToDefault());
                 mockTurret.VerifySet(b => b.EnableIdleRotation = true);
+                mockTurret.Verify(b => b.SyncEnableIdleRotation());
             }
         }
 
@@ -313,6 +314,7 @@ if any ""turrets"" target is true
                 test.RunUntilDone();
 
                 mockTurret.VerifySet(b => b.EnableIdleRotation = true);
+                mockTurret.Verify(b => b.SyncEnableIdleRotation());
             }
         }
 
@@ -351,6 +353,7 @@ if any ""turrets"" target is true
                 test.RunUntilDone();
 
                 mockTurret.VerifySet(b => b.Azimuth = (float)Math.PI/2);
+                mockTurret.Verify(b => b.SyncAzimuth());
             }
         }
 
@@ -376,6 +379,7 @@ if any ""turrets"" target is true
                 test.RunUntilDone();
 
                 mockTurret.VerifySet(b => b.Elevation = (float)Math.PI / 2);
+                mockTurret.Verify(b => b.SyncElevation());
             }
         }
     }
