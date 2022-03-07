@@ -192,8 +192,8 @@ namespace IngameScript {
             };
 
             PropertyHandler<T> TypedHandler<U>(U defaultType, Func<PropertySupplier, U> Resolver, params TypeHandler<T, U>[] handlers) {
-                var typeHandlers = handlers.SelectMany(handler => handler.supportedTypes, (handler, type) => new { handler.handler, type })
-                    .ToDictionary(o => o.type, o => o.handler);
+                var typeHandlers = NewDictionary<U, PropertyHandler<T>>();
+                foreach (TypeHandler<T, U> handler in handlers) foreach (U type in handler.supportedTypes) typeHandlers.Add(type, handler.handler);
                 return new SimplePropertySupplierBasedHandler<T>(p => typeHandlers.GetValueOrDefault(Resolver(p), typeHandlers[defaultType]));
             }
 
