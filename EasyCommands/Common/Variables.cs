@@ -70,7 +70,7 @@ namespace IngameScript {
                 a = v;
             }
 
-            public Primitive GetValue() => PROGRAM.PerformOperation(operand, a.GetValue());
+            public Primitive GetValue() => PerformOperation(operand, a.GetValue());
         }
 
         public class BiOperandVariable : IVariable {
@@ -83,7 +83,7 @@ namespace IngameScript {
                 b = right;
             }
 
-            public Primitive GetValue() => PROGRAM.PerformOperation(operand, a.GetValue(), b.GetValue());
+            public Primitive GetValue() => PerformOperation(operand, a.GetValue(), b.GetValue());
         }
 
         public class ListAggregateConditionVariable : IVariable {

@@ -29,7 +29,6 @@ namespace IngameScript {
                     })
                     .ToList();
 
-
                 functions.Clear();
                 parsingTasks.Clear();
 
@@ -53,6 +52,7 @@ namespace IngameScript {
                             defaultFunction = functionName;
                         }).GetTask());
                     }).GetTask());
+
                     commandStrings.RemoveRange(i, commandStrings.Count - i);
                 }
                 parsedAmount++;
@@ -67,6 +67,10 @@ namespace IngameScript {
             return parsingTasks.Count == 0;
         }
 
+        /// <summary>
+        /// Creates a task for transforming a list of lines into a list of CommandLine objects.
+        /// After all lines have been transformed an action is invoked on the list of CommandLine objects.
+        /// </summary>
         public class ParseCommandLineTask {
             int startingIndex;
             List<String> commandStrings;
@@ -84,19 +88,20 @@ namespace IngameScript {
                 while (i < PROGRAM.commandParameterParseAmount && commandStrings.Count > 0) {
                     CommandLine newLine = new CommandLine(commandStrings[0], startingIndex++);
                     commandStrings.RemoveAt(0);
-                    i+=newLine.commandParameters.Count;
-                    if(newLine.commandParameters.Count > 0) commandLines.Add(newLine);
+                    i += newLine.commandParameters.Count;
+                    if (newLine.commandParameters.Count > 0) commandLines.Add(newLine);
                 }
-                if (commandStrings.Count == 0) {
-                    action(commandLines);
-                    return true;
-                } else return false;
+                if (commandStrings.Count > 0)
+                    return false;
+
+                action(commandLines);
+                return true;
             };
         }
 
         public class ParseCommmandTask {
             List<Command> resolvedCommands = NewList<Command>();
-            List<CommandLine> commandStrings = NewList<CommandLine>();
+            List<CommandLine> commandStrings;
             int index;
             bool parseSiblings;
             Action<Command> action;
@@ -122,15 +127,14 @@ namespace IngameScript {
                     CommandLine next = commandStrings[index + 1];
                     if (current.depth > next.depth) break; //End, break
                     if (current.depth < next.depth) { //I'm a parent of next line
-                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index + 1, true, myCommand => current.commandParameters.Add(new CommandReferenceParameter(myCommand))).GetTask());
+                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index+1, true, myCommand => current.commandParameters.Add(new CommandReferenceParameter(myCommand))).GetTask());
                         return false;
                     }
+
                     if (next.commandParameters.Count > 0 && next.commandParameters[0] is ElseCommandParameter) {//Handle Otherwise
                         current.commandParameters.Add(next.commandParameters[0]);
                         next.commandParameters.RemoveAt(0);
-                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index + 1, false, myCommand => {
-                            current.commandParameters.Add(new CommandReferenceParameter(myCommand));
-                        }).GetTask());
+                        PROGRAM.parsingTasks.Insert(0, new ParseCommmandTask(commandStrings, index+1, false, myCommand => current.commandParameters.Add(new CommandReferenceParameter(myCommand))).GetTask());
                         return false;
                     }
 
