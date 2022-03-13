@@ -185,11 +185,11 @@ namespace IngameScript {
             AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
 
             //ValueProperty Words
-            AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(ValueProperty.AMOUNT));
-            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(ValueProperty.PROPERTY));
-            AddWords(Words("action"), new ValuePropertyCommandParameter(ValueProperty.ACTION));
-            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new ValuePropertyCommandParameter(ValueProperty.CREATE));
-            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(ValueProperty.DESTROY));
+            AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));
+            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(Property.PROPERTY));
+            AddWords(Words("action"), new ValuePropertyCommandParameter(Property.ACTION));
+            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new ValuePropertyCommandParameter(Property.CREATE));
+            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(Property.DESTROY));
 
             //Special Command Words
             AddWords(Words("times", "iterations"), new RepeatCommandParameter());
