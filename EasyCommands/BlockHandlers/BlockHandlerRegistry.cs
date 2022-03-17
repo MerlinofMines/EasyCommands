@@ -84,7 +84,7 @@ namespace IngameScript {
             };
 
             public static IBlockHandler GetBlockHandler(Block blockType) {
-                if (!blockHandlers.ContainsKey(blockType)) throw new Exception("Unsupported Block Type: " + blockType);
+                if (!blockHandlers.ContainsKey(blockType)) throw new RuntimeException("Unsupported Block Type: " + blockType);
                 return blockHandlers[blockType];
             }
 

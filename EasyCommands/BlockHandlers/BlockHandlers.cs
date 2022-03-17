@@ -111,7 +111,7 @@ namespace IngameScript {
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 if (propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
-                throw new Exception(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
+                throw new RuntimeException(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
             }
 
             public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock =>

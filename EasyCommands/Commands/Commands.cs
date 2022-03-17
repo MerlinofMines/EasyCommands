@@ -19,15 +19,6 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-
-        public class InterruptException : Exception {
-            public ProgramState ProgramState;
-
-            public InterruptException(ProgramState programState) {
-                ProgramState = programState;
-            }
-        }
-
         public interface IInterruptableCommand {
             void Break();
             void Continue();
@@ -100,9 +91,9 @@ namespace IngameScript {
                 if (function == null) {
                     var name = functionName();
                     FunctionDefinition definition;
-                    if (!PROGRAM.functions.TryGetValue(name, out definition)) throw new Exception("Invalid Function Name: " + name);
+                    if (!PROGRAM.functions.TryGetValue(name, out definition)) throw new RuntimeException("Invalid Function Name: " + name);
                     var parameterCount = definition.parameterNames.Count;
-                    if (inputParameters.Count != parameterCount) throw new Exception("Function " + name + " expects " + parameterCount + " parameters");
+                    if (inputParameters.Count != parameterCount) throw new RuntimeException($"Function {name} expects {parameterCount} parameters");
 
                     function = definition.function.Clone();
 
@@ -193,7 +184,7 @@ namespace IngameScript {
 
         public IInterruptableCommand GetInterrupableCommand(string controlStatement) {
             IInterruptableCommand breakCommand = GetCurrentThread().GetCurrentCommand<IInterruptableCommand>(command => (command as ConditionalCommand)?.alwaysEvaluate ?? true);
-            if (breakCommand == null) throw new Exception("Invalid use of " + controlStatement + " command");
+            if (breakCommand == null) throw new RuntimeException($"Invalid use of {controlStatement} command");
             return breakCommand;
         }
 
@@ -286,7 +277,7 @@ namespace IngameScript {
             }
 
             public override bool Execute() {
-                if (from.GetBlockType() != Block.CARGO || to.GetBlockType() != Block.CARGO) throw new Exception("Transfers can only be executed on cargo block types");
+                if (from.GetBlockType() != Block.CARGO || to.GetBlockType() != Block.CARGO) throw new RuntimeException("Transfers can only be executed on cargo block types");
 
                 var filter = PROGRAM.AnyItem(PROGRAM.GetItemFilters(CastString((second ?? first).GetValue())));
                 var items = NewList<MyInventoryItem>();

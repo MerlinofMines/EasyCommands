@@ -62,7 +62,7 @@ namespace IngameScript {
                 float amount = GetRequestedAmount(p);
                 foreach(MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p))) {
                     try { b.AddQueueItem(bp, (MyFixedPoint)amount); } catch (Exception) {
-                        throw new Exception("Unknown BlueprintId: " + bp.SubtypeId);
+                        throw new RuntimeException("Unknown BlueprintId: " + bp.SubtypeId);
                     }
                 }
             }

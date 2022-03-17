@@ -85,12 +85,12 @@ namespace IngameScript {
 
         public void QueueThread(Thread thread) {
             threadQueue.Add(thread);
-            if (threadQueue.Count > maxQueuedThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxQueuedThreads + " queued commands");
+            if (threadQueue.Count > maxQueuedThreads) throw new RuntimeException($"Cannot have more than {maxQueuedThreads} queued commands");
         }
 
         public void QueueAsyncThread(Thread thread) {
             asyncThreadQueue.Add(thread);
-            if (asyncThreadQueue.Count > maxAsyncThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxAsyncThreads + "concurrent async commands");
+            if (asyncThreadQueue.Count > maxAsyncThreads) throw new RuntimeException($"Cannot have more than {maxAsyncThreads} concurrent async commands");
         }
 
         public void SetGlobalVariable(String variableName, IVariable variable) {
@@ -104,7 +104,7 @@ namespace IngameScript {
             } else if (globalVariables.ContainsKey(variableName)) {
                 return globalVariables[variableName];
             } else {
-                throw new Exception("No Variable Exists for name: " + variableName);
+                throw new RuntimeException("No Variable Exists for name: " + variableName);
             }
         }
 

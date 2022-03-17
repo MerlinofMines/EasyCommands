@@ -301,7 +301,7 @@ namespace IngameScript {
             });
             AddControlWords(Words("return"), thread => {
                 FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>(command => true);
-                if (currentFunction == null) throw new Exception("Invalid use of return command");
+                if (currentFunction == null) throw new RuntimeException("Invalid use of return command");
                 currentFunction.function = new NullCommand();
                 return false;
             });
