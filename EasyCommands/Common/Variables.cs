@@ -238,7 +238,7 @@ namespace IngameScript {
 
             public KeyedVariable DeepCopy() => new KeyedVariable(Key == null ? null : GetStaticVariable(Key.GetValue().DeepCopy().value), GetStaticVariable(Value.GetValue().DeepCopy().value));
 
-            String Wrap(String value) => value.Contains(" ") ? "\"" + value + "\"" : value;
+            String Wrap(String value) => value.Contains(" ") ? $"\"{value}\"" : value;
 
             public bool Equals(KeyedVariable variable) => GetKey() == variable.GetKey() && GetValue().value.Equals(variable.GetValue().value);
             public int CompareTo(KeyedVariable other) => GetValue().CompareTo(other.GetValue());

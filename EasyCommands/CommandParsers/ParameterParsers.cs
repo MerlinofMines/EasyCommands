@@ -461,7 +461,7 @@ namespace IngameScript {
 
         IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
             var newCommand = command;
-            foreach (var s in separators) newCommand = newCommand.Replace(s, " " + s + " ");
+            foreach (var s in separators) newCommand = newCommand.Replace(s, $" {s} ");
             return newCommand
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .SelectMany(token => separators.Contains(token) || nextPass == null ? Once(token) : nextPass(token));

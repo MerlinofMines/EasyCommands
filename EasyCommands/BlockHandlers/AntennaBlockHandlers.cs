@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class LaserAntennaBlockHandler : FunctionalBlockHandler<IMyLaserAntenna> {
             public LaserAntennaBlockHandler() {
-                AddVectorHandler(Property.TARGET, b => b.TargetCoords, (b, v) => b.SetTargetCoords("GPS:Target:" + VectorToString(v) + ":"));
+                AddVectorHandler(Property.TARGET, b => b.TargetCoords, (b, v) => b.SetTargetCoords($"GPS:Target:{VectorToString(v)}:"));
                 AddBooleanHandler(Property.LOCKED, b => b.IsPermanent, (b,v) => b.IsPermanent = v);
                 var rangeHandler = NumericHandler(b => b.Range, (b, v) => b.Range = v, 1000);
                 AddPropertyHandler(Property.RANGE, rangeHandler);

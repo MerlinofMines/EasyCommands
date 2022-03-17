@@ -73,7 +73,7 @@ namespace IngameScript {
             public KeyedList Keys() => NewKeyedList(keyedValues.Where(v => v.HasKey()).Select(v => GetStaticVariable(v.GetKey())));
             public KeyedList Values() => NewKeyedList(keyedValues.Select(v => v.Value));
             public KeyedList DeepCopy() => NewKeyedList(keyedValues.Select(k => k.DeepCopy()));
-            public String Print() => "[" + string.Join(",", keyedValues.Select(k => k.Print())) + "]";
+            public String Print() => $"[{string.Join(",", keyedValues.Select(k => k.Print()))}]";
         }
     }
 }

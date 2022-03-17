@@ -224,7 +224,7 @@ namespace IngameScript {
                 name = n;
             }
 
-            public String GetName() => "[" + prefix + "] " + name;
+            public String GetName() => $"[{prefix}] {name}";
             public void SetName(String s) => name = s;
         }
 
