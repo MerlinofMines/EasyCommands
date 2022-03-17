@@ -33,7 +33,12 @@ namespace IngameScript {
         public int maxItemTransfers = 10;
         #endregion
 
+
         public static Program PROGRAM;
+        static void Print(String str) { PROGRAM?.Echo(str); }
+        static void Info(String str) { if (PROGRAM?.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
+
+
         public ProgramState state = ProgramState.STOPPED;
         public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
         public Thread currentThread;
@@ -109,34 +114,30 @@ namespace IngameScript {
         }
 
         public Program() {
-            PROGRAM = this;
-            InitializeParsers();
-            InitializeProcessors();
-            InitializeOperators();
-            InitializeItems();
-            Runtime.UpdateFrequency = updateFrequency;
+            try {
+                PROGRAM = this;
+                InitializeParsers();
+                InitializeProcessors();
+                InitializeOperators();
+                InitializeItems();
+                Runtime.UpdateFrequency = updateFrequency;
+            } finally {
+                PROGRAM = null;
+            }
         }
-
-        static void Print(String str) { PROGRAM.Echo(str); }
-        static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
 
         public void Main(string argument) {
             try {
+                PROGRAM = this;
+
                 if (!ParseCommands()) {
                     Runtime.UpdateFrequency = updateFrequency;
                     return;
                 }
-            } catch (Exception e) {
-                Print("Exception Occurred During Parsing:");
-                Print(e.Message);
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                return;
-            }
 
-            var messages = NewList<MyIGCMessage>();
-            BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
+                var messages = NewList<MyIGCMessage>();
+                BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
 
-            try {
                 if (messages.Count > 0) {
                     var messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag));
                     threadQueue.InsertRange(0, messageCommands);
@@ -149,10 +150,13 @@ namespace IngameScript {
                 var stateTuple = programStateMap[state];
                 Info(stateTuple.Key);
                 Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
-            } catch(Exception e) {
-                Print("Exception Occurred:");
+            } catch (Exception e) {
+                Print($"{(e is ParserException ? "Parser Exception" : e is RuntimeException ? "Runtime Exception" : "System Exception")} Occured:");
                 Print(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
+                return;
+            } finally {
+                PROGRAM = null;
             }
         }
 
