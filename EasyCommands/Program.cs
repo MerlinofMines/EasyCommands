@@ -151,7 +151,7 @@ namespace IngameScript {
                 Info(stateTuple.Key);
                 Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
             } catch (Exception e) {
-                Print($"{(e is ParserException ? "Parser Exception" : e is RuntimeException ? "Runtime Exception" : "System Exception")} Occured:");
+                Print($"{(e is ParserException ? "Parser Exception" : e is RuntimeException ? "Runtime Exception" : "System Exception")} Occurred:");
                 Print(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;

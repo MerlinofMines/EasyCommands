@@ -395,7 +395,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
             }
         }
@@ -410,7 +410,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
             }
         }
@@ -424,7 +424,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("IMyBeacon does not have property: attach", test.Logger[1]);
             }
         }
@@ -450,7 +450,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
             }
         }
@@ -465,7 +465,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
             }
         }

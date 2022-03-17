@@ -418,7 +418,7 @@ Print ""0:0:0"" as bool
                 Assert.AreEqual("False", test.Logger[5]);
                 Assert.AreEqual("True", test.Logger[6]);
                 Assert.AreEqual("False", test.Logger[7]);
-                Assert.AreEqual("Exception Occurred:", test.Logger[8]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[8]);
                 Assert.AreEqual("Cannot convert vector 0:0:0 to boolean", test.Logger[9]);
             }
         }
@@ -428,7 +428,7 @@ Print ""0:0:0"" as bool
             using (var test = new ScriptTest(@"Print 0:0:1 as bool")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert vector 0:0:1 to boolean", test.Logger[1]);
             }
         }
@@ -438,7 +438,7 @@ Print ""0:0:0"" as bool
             using (var test = new ScriptTest(@"Print #ffffff as bool")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert color #FFFFFF to boolean", test.Logger[1]);
             }
         }
@@ -448,7 +448,7 @@ Print ""0:0:0"" as bool
             using (var test = new ScriptTest(@"Print [0, 1, 2] as bool")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert list [0,1,2] to boolean", test.Logger[1]);
             }
         }
@@ -500,7 +500,7 @@ Print ""abc"" as number
                 Assert.AreEqual("1", test.Logger[0]);
                 Assert.AreEqual("0", test.Logger[1]);
                 Assert.AreEqual("1.5", test.Logger[2]);
-                Assert.AreEqual("Exception Occurred:", test.Logger[3]);
+                Assert.AreEqual("System Exception Occurred:", test.Logger[3]);
             }
         }
 
@@ -518,7 +518,7 @@ Print ""abc"" as number
             using (var test = new ScriptTest(@"Print #ffffff as number")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert color #FFFFFF to number", test.Logger[1]);
             }
         }
@@ -530,7 +530,7 @@ Print ""abc"" as number
             {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert list [0,1,2] to number", test.Logger[1]);
             }
         }
@@ -610,7 +610,7 @@ Print ""abc"" as number
             using (var test = new ScriptTest(@"Print true as vector")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert boolean True to vector", test.Logger[1]);
             }
         }
@@ -621,7 +621,7 @@ Print ""abc"" as number
             {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert number 1 to vector", test.Logger[1]);
             }
         }
@@ -637,7 +637,7 @@ Print ""abc"" as vector
                 test.RunOnce();
 
                 Assert.AreEqual("0:0:7", test.Logger[0]);
-                Assert.AreEqual("Exception Occurred:", test.Logger[1]);
+                Assert.AreEqual("System Exception Occurred:", test.Logger[1]);
 
             }
         }
@@ -676,7 +676,7 @@ Print ""abc"" as vector
             using (var test = new ScriptTest(@"Print [0, 1, 2] as vector")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert list [0,1,2] to vector", test.Logger[1]);
             }
         }
@@ -688,7 +688,7 @@ Print ""abc"" as vector
             using (var test = new ScriptTest(@"Print true as color")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert boolean True to color", test.Logger[1]);
             }
         }
@@ -756,7 +756,7 @@ Print -128:128:356 as color
             using (var test = new ScriptTest(@"Print [0, 1, 2] as color")) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot convert list [0,1,2] to color", test.Logger[1]);
             }
         }

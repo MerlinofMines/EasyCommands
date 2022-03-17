@@ -97,7 +97,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot perform operation: round on type: string", test.Logger[1]);
             }
         }
@@ -108,7 +108,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot perform operation: round on types: string, number", test.Logger[1]);
             }
         }
@@ -119,7 +119,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot perform operation: round on types: number, string", test.Logger[1]);
             }
         }
