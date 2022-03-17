@@ -159,7 +159,7 @@ namespace IngameScript {
             public Primitive GetValue() {
                 try {
                     return PROGRAM.GetVariable(value).GetValue();
-                } catch(RuntimeException) {
+                } catch(Exception) {
                     return ResolvePrimitive(value);
                 }
             }

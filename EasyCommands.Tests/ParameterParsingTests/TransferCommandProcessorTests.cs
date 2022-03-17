@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class TransferCommandProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleTransfer() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("transfer \"gold ingot\" from \"source cargo\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -25,7 +25,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleTransferWithAmount() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("transfer 50 \"gold ingot\" from \"source cargo\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -41,7 +41,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void TransferAfterSource() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("\"source cargo\" transfer \"gold ingot\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -57,7 +57,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void TransferAfterSourceWithAmount() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("\"source cargo\" transfer 50 \"gold ingot\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -73,7 +73,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleTake() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("take \"gold ingot\" from \"source cargo\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -89,7 +89,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleTakeWithAmount() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("take 50 \"gold ingot\" from \"source cargo\" to \"destination cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -105,7 +105,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void TakeAfterDestination() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("\"destination cargo\" take \"gold ingot\" from \"source cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;
@@ -121,7 +121,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void TakeAfterDestinationWithAmount() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("\"destination cargo\" take 50 \"gold ingot\" from \"source cargo\"");
             Assert.IsTrue(command is TransferItemCommand);
             TransferItemCommand transferCommand = (TransferItemCommand)command;

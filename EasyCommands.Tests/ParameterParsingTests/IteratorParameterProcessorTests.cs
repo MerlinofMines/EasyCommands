@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class IteratorParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleIteration() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("for each item in myItems print \"Item: \" + item");
             Assert.IsTrue(command is ForEachCommand);
             ForEachCommand forEachCommand = (ForEachCommand)command;
@@ -21,7 +21,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleIterationWithPrecedingCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("print \"Item: \" + item for each item in myItems");
             Assert.IsTrue(command is ForEachCommand);
             ForEachCommand forEachCommand = (ForEachCommand)command;

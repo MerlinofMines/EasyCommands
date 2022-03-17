@@ -1,14 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Sandbox.Common.ObjectBuilders.Definitions;
-using Malware.MDKUtilities;
 using IngameScript;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.TokenizeTests {
     [TestClass]
     public class BlueprintParsingTests : ForceLocale {
-        Program program = MDKFactory.CreateProgram<Program>();
+        Program program = CreateProgram();
 
         [TestInitialize]
         public void testInit() {

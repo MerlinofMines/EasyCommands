@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
 using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
@@ -10,70 +9,70 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     public class BooleanLogicParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AndSimpleVariableCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if true and false turn on the \"pistons\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void AndBlockCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if the \"batteries\" are on but are not recharging turn on the \"generators\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void AndAggregateConditions() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if the \"batteries\" are on but none of the \"batteries\" is recharging turn on the \"generators\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void OrSimpleVariableCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if true or false turn on the \"pistons\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void OrBlockCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if any of the \"batteries\" ratio is less than 0.5 or is recharging turn on the \"pistons\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void OrAggregateConditions() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if the \"batteries\" are off or any of the \"batteries\" ratio is less than 0.25 turn on the \"generators\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void NotVariableCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if not true turn on the \"pistons\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void NotBlockCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if not true turn on the \"pistons\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void NotAggregateBlockCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if not all of the \"batteries\" ratio > 0.75 turn on the \"generators\"");
             Assert.IsTrue(command is ConditionalCommand);
         }
 
         [TestMethod]
         public void ImplicitSelectorUsedInAggregateCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if any battery ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
@@ -93,7 +92,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImplicitSelectorUsedInAggregateConditionWithNot() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if not all of the batteries ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;

@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class SimpleCommandProcessorTests : ForceLocale {
         [TestMethod]
         public void PrintCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("print 'Hello World'");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
@@ -21,7 +21,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void PrintCommandVariable() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("print a");
             Assert.IsTrue(command is PrintCommand);
             PrintCommand printCommand = (PrintCommand)command;
@@ -32,7 +32,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ListenCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("listen \"garageDoors\"");
             Assert.IsTrue(command is ListenCommand);
             ListenCommand listenCommand = (ListenCommand)command;
@@ -41,7 +41,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SendCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("send \"goto openDoors\" to \"garageDoors\"");
             Assert.IsTrue(command is SendCommand);
             SendCommand sendCommand = (SendCommand)command;
@@ -51,7 +51,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = program.ParseCommand("goto \"listen\"");
             Assert.IsTrue(command is FunctionCommand);
@@ -62,7 +62,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImpliciitFunctionCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = program.ParseCommand("\"listen\"");
             Assert.IsTrue(command is FunctionCommand);
@@ -73,7 +73,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandFromExplicitString() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>());
             var command = program.ParseCommand("goto 'listen'");
             Assert.IsTrue(command is FunctionCommand);
@@ -84,7 +84,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void FunctionCommandWithParameters() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
             var command = program.ParseCommand("goto \"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
@@ -97,7 +97,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void ImplicitFunctionCommandWithParameters() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["listen"] = new FunctionDefinition("listen", new List<string>() { "a", "b" });
             var command = program.ParseCommand("\"listen\" 2 3");
             Assert.IsTrue(command is FunctionCommand);
@@ -110,7 +110,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SetVariableWithSameNameAsFunction() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             program.functions["function"] = new FunctionDefinition("function", new List<string>() { "a", "b" });
             var command = program.ParseCommand("set function to \"myFunction\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
@@ -121,7 +121,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandNoArguments() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("wait");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
@@ -130,7 +130,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandInterval() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("wait 3");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
@@ -139,7 +139,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void WaitCommandIntervalTicks() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("wait 3 ticks");
             Assert.IsTrue(command is WaitCommand);
             WaitCommand waitCommand = (WaitCommand)command;
@@ -148,7 +148,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void IterateSimpleCommand() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("print \"hello world\" 3 times");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
@@ -162,7 +162,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void IterateSimpleCommandAfter() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("for 3 times print \"hello world\"");
             Assert.IsTrue(command is MultiActionCommand);
             MultiActionCommand iterateCommand = (MultiActionCommand)command;
