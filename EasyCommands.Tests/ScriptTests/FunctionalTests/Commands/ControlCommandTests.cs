@@ -172,19 +172,53 @@ continue
         }
 
         [TestMethod]
-        public void incorrectReturnUsage() {
+        public void returnOutsideOfCalledFunctionEndsCurrentThreadAndContinues() {
             String script = @"
 :main
 queue
-  set j to 0
-  set i to 1
+  print ""Done 1""
   return
+  print ""Not Printed""
+queue
+  print ""Done 2""
+  return
+  print ""Not Printed""
+print ""Done Main""
+return
+print ""Not Printed""
 ";
             using (var test = new ScriptTest(script)) {
                 test.RunUntilDone();
 
-                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("Invalid use of return command", test.Logger[1]);
+                Assert.AreEqual(3, test.Logger.Count);
+                Assert.AreEqual("Done Main", test.Logger[0]);
+                Assert.AreEqual("Done 1", test.Logger[1]);
+                Assert.AreEqual("Done 2", test.Logger[2]);
+            }
+        }
+
+        [TestMethod]
+        public void returnFromSwitchedToFunctionEndsCurrentThreadAndContinues() {
+            String script = @"
+:main
+queue
+  print ""Done 1""
+  return
+  print ""Not Printed""
+goto switchFunction
+print ""Not Printed""
+
+:switchFunction
+print ""Done Switched""
+return
+print ""Not Printed""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Done Switched", test.Logger[0]);
+                Assert.AreEqual("Done 1", test.Logger[1]);
             }
         }
 
@@ -435,6 +469,28 @@ print ""Done""
                 Assert.AreEqual("i is: 3", test.Logger[7]);
                 Assert.AreEqual("item is: 3", test.Logger[8]);
                 Assert.AreEqual("Done", test.Logger[9]);
+            }
+        }
+
+        [TestMethod]
+        public void returnFromMainExitsScript() {
+            String script = @"
+:main
+print ""Done""
+return
+print ""Not Printed""
+";
+            using (var test = new ScriptTest(script)) {
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Done", test.Logger[0]);
+
+                test.Logger.Clear();
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Done", test.Logger[0]);
             }
         }
 
