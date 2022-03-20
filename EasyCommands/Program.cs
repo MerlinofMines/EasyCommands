@@ -132,6 +132,8 @@ namespace IngameScript {
 
                 if (!ParseCommands()) {
                     Runtime.UpdateFrequency = updateFrequency;
+                    state = ProgramState.RUNNING;
+                    QueueRequest(argument);
                     return;
                 }
 
@@ -142,7 +144,7 @@ namespace IngameScript {
                     var messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag));
                     threadQueue.InsertRange(0, messageCommands);
                 }
-                if (!String.IsNullOrEmpty(argument)) { threadQueue.Insert(0, new Thread(ParseCommand(argument), "Request", argument)); }
+                QueueRequest(argument);
 
                 RunThreads();
 
@@ -207,6 +209,10 @@ namespace IngameScript {
             } catch(InterruptException interrupt) {
                 state = interrupt.ProgramState;
             }
+        }
+
+        public void QueueRequest(String argument) {
+            if (!String.IsNullOrEmpty(argument)) threadQueue.Insert(0, new Thread(ParseCommand(argument), "Request", argument));
         }
 
         public class Thread {

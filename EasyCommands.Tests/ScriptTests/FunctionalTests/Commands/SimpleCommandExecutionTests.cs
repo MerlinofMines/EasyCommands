@@ -219,5 +219,36 @@ print myValue";
                 Assert.AreEqual("myValue", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void updatedScriptRunsRequestedFunctionUponCompletion() {
+            String script = @"
+:main
+print ""Hello""
+";
+
+            String newScript = @"
+:main
+wait 1
+
+:myFunction
+print ""Hello World!""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.commandParseAmount = 1;
+                test.RunUntilDone();
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello", test.Logger[0]);
+
+                test.SetScript(newScript);
+                test.Logger.Clear();
+                test.RunWithArgument("myFunction");
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Hello World!", test.Logger[0]);
+            }
+        }
     }
 }
