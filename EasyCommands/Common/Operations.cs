@@ -27,12 +27,12 @@ namespace IngameScript {
 
         public static Primitive PerformOperation(UniOperand type, Primitive a) =>
             PROGRAM.UniOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType), p => {
-                throw new Exception("Cannot perform operation: " + uniOperandToString[type] + " on type: " + returnToString[p.returnType]);
+                throw new RuntimeException($"Cannot perform operation: {uniOperandToString[type]} on type: {returnToString[p.returnType]}");
             })(a);
 
         public static Primitive PerformOperation(BiOperand type, Primitive a, Primitive b) =>
             PROGRAM.BiOperations.GetValueOrDefault(MyTuple.Create(type, a.returnType, b.returnType), (p, q) => {
-                throw new Exception("Cannot perform operation: " + biOperandToString[type] + " on types: " + returnToString[p.returnType] + ", " + returnToString[q.returnType]);
+                throw new RuntimeException($"Cannot perform operation: {biOperandToString[type]} on types: {returnToString[p.returnType]}, {returnToString[q.returnType]}");
             })(a, b);
 
         void AddUniOperation<T>(UniOperand type, Func<T,object> resolver) {

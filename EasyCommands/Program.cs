@@ -33,7 +33,12 @@ namespace IngameScript {
         public int maxItemTransfers = 10;
         #endregion
 
+
         public static Program PROGRAM;
+        static void Print(String str) { PROGRAM?.Echo(str); }
+        static void Info(String str) { if (PROGRAM?.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
+
+
         public ProgramState state = ProgramState.STOPPED;
         public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
         public Thread currentThread;
@@ -85,12 +90,12 @@ namespace IngameScript {
 
         public void QueueThread(Thread thread) {
             threadQueue.Add(thread);
-            if (threadQueue.Count > maxQueuedThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxQueuedThreads + " queued commands");
+            if (threadQueue.Count > maxQueuedThreads) throw new RuntimeException($"Cannot have more than {maxQueuedThreads} queued commands");
         }
 
         public void QueueAsyncThread(Thread thread) {
             asyncThreadQueue.Add(thread);
-            if (asyncThreadQueue.Count > maxAsyncThreads) throw new Exception("Stack Overflow Exception! Cannot have more than " + maxAsyncThreads + "concurrent async commands");
+            if (asyncThreadQueue.Count > maxAsyncThreads) throw new RuntimeException($"Cannot have more than {maxAsyncThreads} concurrent async commands");
         }
 
         public void SetGlobalVariable(String variableName, IVariable variable) {
@@ -104,39 +109,35 @@ namespace IngameScript {
             } else if (globalVariables.ContainsKey(variableName)) {
                 return globalVariables[variableName];
             } else {
-                throw new Exception("No Variable Exists for name: " + variableName);
+                throw new RuntimeException("No Variable Exists for name: " + variableName);
             }
         }
 
         public Program() {
-            PROGRAM = this;
-            InitializeParsers();
-            InitializeProcessors();
-            InitializeOperators();
-            InitializeItems();
-            Runtime.UpdateFrequency = updateFrequency;
+            try {
+                PROGRAM = this;
+                InitializeParsers();
+                InitializeProcessors();
+                InitializeOperators();
+                InitializeItems();
+                Runtime.UpdateFrequency = updateFrequency;
+            } finally {
+                PROGRAM = null;
+            }
         }
-
-        static void Print(String str) { PROGRAM.Echo(str); }
-        static void Info(String str) { if (PROGRAM.logLevel != LogLevel.SCRIPT_ONLY) Print(str); }
 
         public void Main(string argument) {
             try {
+                PROGRAM = this;
+
                 if (!ParseCommands()) {
                     Runtime.UpdateFrequency = updateFrequency;
                     return;
                 }
-            } catch (Exception e) {
-                Print("Exception Occurred During Parsing:");
-                Print(e.Message);
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                return;
-            }
 
-            var messages = NewList<MyIGCMessage>();
-            BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
+                var messages = NewList<MyIGCMessage>();
+                BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
 
-            try {
                 if (messages.Count > 0) {
                     var messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag));
                     threadQueue.InsertRange(0, messageCommands);
@@ -149,10 +150,13 @@ namespace IngameScript {
                 var stateTuple = programStateMap[state];
                 Info(stateTuple.Key);
                 Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
-            } catch(Exception e) {
-                Print("Exception Occurred:");
+            } catch (Exception e) {
+                Print($"{(e is ParserException ? "Parser Exception" : e is RuntimeException ? "Runtime Exception" : "System Exception")} Occurred:");
                 Print(e.Message);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
+                return;
+            } finally {
+                PROGRAM = null;
             }
         }
 
@@ -220,7 +224,7 @@ namespace IngameScript {
                 name = n;
             }
 
-            public String GetName() => "[" + prefix + "] " + name;
+            public String GetName() => $"[{prefix}] {name}";
             public void SetName(String s) => name = s;
         }
 

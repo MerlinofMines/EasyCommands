@@ -150,7 +150,7 @@ break
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Invalid use of break command", test.Logger[1]);
             }
         }
@@ -166,7 +166,7 @@ continue
             using (var test = new ScriptTest(script)) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Invalid use of continue command", test.Logger[1]);
             }
         }
@@ -183,7 +183,7 @@ queue
             using (var test = new ScriptTest(script)) {
                 test.RunUntilDone();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Invalid use of return command", test.Logger[1]);
             }
         }
@@ -317,7 +317,7 @@ until i > 5
   if i % 2 is 0
     continue
   Print ""i is: "" + i
-  
+
   set k to 0
   until k > 5
     k++

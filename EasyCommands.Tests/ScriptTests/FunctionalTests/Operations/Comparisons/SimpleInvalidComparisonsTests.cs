@@ -61,7 +61,7 @@ namespace EasyCommands.Tests.ScriptTests {
             using (var test = new ScriptTest("print " + value1 + " = " + value2)) {
                 test.RunOnce();
 
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Cannot perform operation: compare on types: " + type1 + ", " + type2, test.Logger[1]);
             }
 

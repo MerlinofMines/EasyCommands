@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class ListParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void AssignVariableToBasicStaticList() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList to [\"one\", \"two\", \"three\"]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -30,7 +30,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToBasicStaticListWithBlockType() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList to [\"reactor component\"]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -46,7 +46,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableIndexToVariable() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList[0] to \"value\"");
             Assert.IsTrue(command is ListVariableAssignmentCommand);
             ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
@@ -62,7 +62,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableIndexToStaticList() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList[0] to [\"one\", \"two\", \"three\"]");
             Assert.IsTrue(command is ListVariableAssignmentCommand);
             ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
@@ -83,7 +83,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignMultipleVariableIndexesToStaticValue() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList[(0 .. 2) + [4]] to \"value\"");
             Assert.IsTrue(command is ListVariableAssignmentCommand);
             ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
@@ -101,7 +101,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToListIndexValue() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myValue to [1, 2, 3][0]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -112,7 +112,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToListSubRange() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myValue to (3..10)[2..4]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -126,7 +126,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignListAtIndexValuesToAnotherList() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList[1, 2, 3] to [0]");
             Assert.IsTrue(command is ListVariableAssignmentCommand);
             ListVariableAssignmentCommand assignmentCommand = (ListVariableAssignmentCommand)command;
@@ -145,7 +145,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToMultiDimensionalArray() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myList to [ [0,1,2] , [3,4,5] ]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -166,7 +166,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToMultiDimensionalArrayValue() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myValue to [ [0,1,2] , [3,4,5] ][1][2]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -176,7 +176,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void AssignVariableToMultiDimensionalArraySubList() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("assign myValue to [ [0,1,2] , [3,4,5] ][1]");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignmentCommand = (VariableAssignmentCommand)command;
@@ -190,7 +190,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void CountOfListAsCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if count of shipRoute[] > 0 wait");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;

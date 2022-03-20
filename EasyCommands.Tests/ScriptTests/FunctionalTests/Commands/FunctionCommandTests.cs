@@ -271,7 +271,7 @@ print ""Done""
                 test.RunOnce();
 
                 Assert.AreEqual(2, test.Logger.Count);
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Invalid Function Name: myFunction", test.Logger[1]);
             }
         }
@@ -290,7 +290,7 @@ print ""Done""
                 test.RunOnce();
 
                 Assert.AreEqual(2, test.Logger.Count);
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Invalid Function Name: myFunction", test.Logger[1]);
             }
         }
@@ -310,7 +310,7 @@ print ""Hello World""
                 test.RunOnce();
 
                 Assert.AreEqual(2, test.Logger.Count);
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Function myFunction expects 2 parameters", test.Logger[1]);
             }
         }
@@ -332,7 +332,7 @@ print ""Hello World""
                 test.RunOnce();
 
                 Assert.AreEqual(2, test.Logger.Count);
-                Assert.AreEqual("Exception Occurred:", test.Logger[0]);
+                Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
                 Assert.AreEqual("Function myFunction expects 2 parameters", test.Logger[1]);
             }
         }

@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.TokenizeTests {
     [TestClass]
     public class StringTests : ForceLocale {
         [TestMethod]
         public void BasicStrings() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("turn on the rotors");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("turn", tokens[0].original);
@@ -20,7 +20,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void StringWithDoubleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("turn on the \"test rotors\"");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("turn", tokens[0].original);
@@ -31,7 +31,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void MultipleDoubleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("tell the \"test program\" to \"run gotoTest\"");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
@@ -43,7 +43,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void SingleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("tell the program to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
@@ -55,7 +55,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void MultipleSingleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("tell the 'test program' to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
@@ -67,7 +67,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void SingleQuotesAndDoubleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("tell the \"test program\" to 'run gotoTest'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
@@ -79,7 +79,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void EscapedSingleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("print `It's awesome!`");
             Assert.AreEqual(2, tokens.Count);
             Assert.AreEqual("print", tokens[0].original);
@@ -88,7 +88,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void DoubleQuotesInsideSingleQuotes() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("tell the \"test program\" to 'run \"goto testFunction\"'");
             Assert.AreEqual(5, tokens.Count);
             Assert.AreEqual("tell", tokens[0].original);
@@ -124,7 +124,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void SubtractionMissingSpaces() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("assign a to b-c");
             Assert.AreEqual(6, tokens.Count);
             Assert.AreEqual("assign", tokens[0].original);
@@ -137,7 +137,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void NegativeNumbersAreLeftAlone() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("assign a to -3");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("assign", tokens[0].original);
@@ -148,7 +148,7 @@ namespace EasyCommands.Tests.TokenizeTests {
 
         [TestMethod]
         public void VectorsAreLeftAlone() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("assign a to -345.34:-3452.34:-35343.345");
             Assert.AreEqual(4, tokens.Count);
             Assert.AreEqual("assign", tokens[0].original);
@@ -158,7 +158,7 @@ namespace EasyCommands.Tests.TokenizeTests {
         }
 
         void VerifyTokensSplit(string token) {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("assign a to b" + token + "c");
             Assert.AreEqual(6, tokens.Count);
             Assert.AreEqual("assign", tokens[0].original);

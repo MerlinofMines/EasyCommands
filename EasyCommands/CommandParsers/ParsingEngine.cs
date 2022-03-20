@@ -159,7 +159,7 @@ namespace IngameScript {
         Command ParseCommand(List<ICommandParameter> parameters, int lineNumber) {
             CommandReferenceParameter command = ParseParameters<CommandReferenceParameter>(parameters);
 
-            if (command == null) throw new Exception("Unable to parse command from command parameters at line number: " + lineNumber);
+            if (command == null) throw new ParserException("Unable to parse command from command parameters at line number: " + lineNumber);
             return command.value;
         }
 

@@ -52,7 +52,7 @@ namespace IngameScript {
             PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.propertyType, s => {
                 var property = block.GetProperty(s);
                 if (property == null)
-                    throw new Exception(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
+                    throw new RuntimeException(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
                 return property;
         });
 
@@ -98,7 +98,7 @@ namespace IngameScript {
             public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 try {
                     return base.GetPropertyHandler(property);
-                } catch (Exception) {
+                } catch (RuntimeException) {
                     return new TerminalPropertyHandler<T>(property, ResolvePrimitive(1));
                 }
             }
@@ -149,7 +149,7 @@ namespace IngameScript {
                 base.SelectBlocksByType(blocks, selector).Where(SubType);
         }
 
-        public static Func<IMyFunctionalBlock, bool> IsSubType(string subType) => 
+        public static Func<IMyFunctionalBlock, bool> IsSubType(string subType) =>
             b => subType.Length == 0 || b.BlockDefinition.SubtypeId.Contains(subType);
 
         /// <summary>

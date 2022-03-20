@@ -94,7 +94,7 @@ namespace IngameScript {
                 var parameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(selector));
                 var blockType = findLast<BlockTypeCommandParameter>(parameters);
                 isGroup = findLast<GroupCommandParameter>(parameters) != null;
-                if (blockType == null) throw new Exception("Cannot parse block type from selector: " + selector);
+                if (blockType == null) throw new RuntimeException("Cannot parse block type from selector: " + selector);
                 return blockType.value;
             }
         }

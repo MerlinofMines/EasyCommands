@@ -301,7 +301,7 @@ namespace IngameScript {
             });
             AddControlWords(Words("return"), thread => {
                 FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>(command => true);
-                if (currentFunction == null) throw new Exception("Invalid use of return command");
+                if (currentFunction == null) throw new RuntimeException("Invalid use of return command");
                 currentFunction.function = new NullCommand();
                 return false;
             });
@@ -461,7 +461,7 @@ namespace IngameScript {
 
         IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
             var newCommand = command;
-            foreach (var s in separators) newCommand = newCommand.Replace(s, " " + s + " ");
+            foreach (var s in separators) newCommand = newCommand.Replace(s, $" {s} ");
             return newCommand
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .SelectMany(token => separators.Contains(token) || nextPass == null ? Once(token) : nextPass(token));

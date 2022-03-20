@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
 using static IngameScript.Program;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class ConditionalParameterProcessorTests : ForceLocale {
         [TestMethod]
         public void SimpleBooleanCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if true set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
@@ -21,7 +21,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void SimpleVariableCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if a set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
@@ -32,7 +32,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void VariableComparisonCondition() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if 3 > 2 set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
@@ -46,7 +46,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
 
         [TestMethod]
         public void BlockConditionWithProperty() {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var command = program.ParseCommand("if the \"batteries\" are recharging set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;

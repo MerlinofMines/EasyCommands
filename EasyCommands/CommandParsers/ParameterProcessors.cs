@@ -63,7 +63,7 @@ namespace IngameScript {
                         return true;
                     }
                 }
-                throw new Exception("Missing Closing Parenthesis for Command");
+                throw new ParserException("Missing Closing Parenthesis for Command");
             }
         }
 
@@ -85,7 +85,7 @@ namespace IngameScript {
                         return true;
                     }
                 }
-                throw new Exception("Missing Closing Bracket for List");
+                throw new ParserException("Missing Closing Bracket for List");
             }
 
             IVariable ParseVariable(List<ICommandParameter> p, int startIndex, int endIndex) {

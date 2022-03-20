@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Malware.MDKUtilities;
 using IngameScript;
+using static EasyCommands.Tests.ParameterParsingTests.ParsingTestUtility;
 
 namespace EasyCommands.Tests.TokenizeTests {
     [TestClass]
@@ -32,7 +32,7 @@ namespace EasyCommands.Tests.TokenizeTests {
         }
 
         void VerifyTokensSplit(string token) {
-            var program = MDKFactory.CreateProgram<Program>();
+            var program = CreateProgram();
             var tokens = program.Tokenize("assign a to 2.0" + token + ".5");
             Assert.AreEqual(6, tokens.Count);
             Assert.AreEqual("assign", tokens[0].original);

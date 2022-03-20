@@ -57,7 +57,7 @@ namespace IngameScript {
             public Primitive GetValue() {
                 if (NewList(X, Y, Z).All(v => v.GetValue().returnType == Return.NUMERIC))
                     return ResolvePrimitive(Vector(CastNumber(X.GetValue()), CastNumber(Y.GetValue()), CastNumber(Z.GetValue())));
-                throw new Exception("Invalid Variable in Vector");
+                throw new RuntimeException("Invalid Variable in Vector");
             }
         }
 
@@ -127,7 +127,7 @@ namespace IngameScript {
                 case AggregationMode.ALL: return count > 0 && matches == count;
                 case AggregationMode.ANY: return matches > 0;
                 case AggregationMode.NONE: return matches == 0;
-                default: throw new Exception("Unsupported Aggregation Mode");
+                default: throw new RuntimeException("Unsupported Aggregation Mode");
             }
         }
 
@@ -238,7 +238,7 @@ namespace IngameScript {
 
             public KeyedVariable DeepCopy() => new KeyedVariable(Key == null ? null : GetStaticVariable(Key.GetValue().DeepCopy().value), GetStaticVariable(Value.GetValue().DeepCopy().value));
 
-            String Wrap(String value) => value.Contains(" ") ? "\"" + value + "\"" : value;
+            String Wrap(String value) => value.Contains(" ") ? $"\"{value}\"" : value;
 
             public bool Equals(KeyedVariable variable) => GetKey() == variable.GetKey() && GetValue().value.Equals(variable.GetValue().value);
             public int CompareTo(KeyedVariable other) => GetValue().CompareTo(other.GetValue());

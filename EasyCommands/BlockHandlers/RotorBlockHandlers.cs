@@ -61,7 +61,7 @@ namespace IngameScript {
 
         static void RotateToValue(IMyMotorStator rotor, Primitive primitive) {
             if(primitive.returnType!=Return.NUMERIC) {
-                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
+                throw new RuntimeException("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 
             float value = CastNumber(primitive);
@@ -79,7 +79,7 @@ namespace IngameScript {
 
         static void RotateToValue(IMyMotorStator rotor, Primitive primitive, Direction direction) {
             if (primitive.returnType != Return.NUMERIC) {
-                throw new Exception("Cannot rotate rotor to non-numeric value: " + primitive);
+                throw new RuntimeException("Cannot rotate rotor to non-numeric value: " + primitive);
             }
 
             float value = GetCorrectedAngle(CastNumber(primitive));
