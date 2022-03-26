@@ -64,6 +64,9 @@ namespace IngameScript {
             OneValueRule(Type<ListCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (list, variable) => new ListIndexCommandParameter(new ListIndexVariable(variable.value, list.value))),
 
+            OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<AssignmentCommandParameter>(),
+                (index, assignment) => new ListIndexAssignmentCommandParameter(index.value, assignment.value)),
+
             //SelfSelectorProcessor
             TwoValueRule(Type<SelfCommandParameter>, optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
                 (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType?.value))),
@@ -298,9 +301,8 @@ namespace IngameScript {
             NoValueRule(Type<RelativeCommandParameter>, b => NewList<ICommandParameter>()),
 
             //ListIndexAssignmentProcessor
-            TwoValueRule(Type<AssignmentCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, list, value) => AllSatisfied(list, value) && list.GetValue().value is ListIndexVariable,
-                (p, list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand((ListIndexVariable)list.value, value.value, p.value))),
+            OneValueRule(Type<ListIndexAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),
+                (list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.listIndex, value.value, list.useReference))),
 
             //PrintCommandProcessor
             OneValueRule(Type<PrintCommandParameter>, requiredRight<VariableCommandParameter>(),
