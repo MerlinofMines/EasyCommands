@@ -246,6 +246,11 @@ namespace IngameScript {
             }
         }
 
+        public class AmbiguousSelectorCommandParameter : SelectorCommandParameter { 
+            public AmbiguousSelectorCommandParameter(BlockSelector value) : base(value) {
+            }
+        }
+
         public class BlockTypeCommandParameter : ValueCommandParameter<Block> {
             public BlockTypeCommandParameter(Block value) : base(value) {}
         }

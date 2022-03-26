@@ -32,19 +32,20 @@ namespace IngameScript {
                 (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType?.value, group != null, selector.value))),
 
             //SelectorProcessor
+            TwoValueRule(Type<AmbiguousStringCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+
+            //AmbiguousStringProcessor
             new BranchingProcessor<AmbiguousStringCommandParameter>(
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     p => p.subTokens.Count > 0 && p.subTokens[0] is AmbiguousCommandParameter,
                     p => p.subTokens),
-                TwoValueRule(Type<AmbiguousStringCommandParameter>, optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                        (p, blockType, group) => {
-                            if (blockType.GetValue() == null) {
-                                blockType.SetValue(findLast<BlockTypeCommandParameter>(p.subTokens));
-                                group.SetValue(findLast<GroupCommandParameter>(p.subTokens));
-                            }
-                            return blockType.GetValue() != null;
-                        },
-                        (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                OneValueRule(Type<AmbiguousStringCommandParameter>, optionalRight<GroupCommandParameter>(),
+                        (p, g) => findLast<BlockTypeCommandParameter>(p.subTokens) != null,
+                        (p, g) => new AmbiguousSelectorCommandParameter(
+                                    new BlockSelector(findLast<BlockTypeCommandParameter>(p.subTokens).value,
+                                        (g ?? findLast<GroupCommandParameter>(p.subTokens)) != null,
+                                        p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
@@ -282,6 +283,11 @@ namespace IngameScript {
             //IfProcessor
             OneValueRule(Type<IfCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.REVERSE, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
+
+            new BranchingProcessor<AmbiguousSelectorCommandParameter>(
+                NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new VariableCommandParameter(((BlockSelector)p.value).selector)),
+                NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new SelectorCommandParameter(p.value))
+            ),
 
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(
