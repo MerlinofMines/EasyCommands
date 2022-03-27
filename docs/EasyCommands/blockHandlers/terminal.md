@@ -8,7 +8,6 @@ The most basic block handler is the Terminal Block Handler, which supports any b
 Default Primitive Properties:
 * Bool - enabled
 * Vector - position
-* String - name
 
 ### "Names" property
 * Read-only

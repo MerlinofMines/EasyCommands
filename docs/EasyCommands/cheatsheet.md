@@ -37,6 +37,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Ejector - ```ejector```, ```ejectors```
 * Gravity Generator - ```gravitygenerator```, ```gravitygenerators```
 * Gravity Sphere Generator - ```gravitysphere```, ```gravityspheres```
+* Grid - ```grid, grids``` (no group keywords)
 * Grinder - ```grinder```, ```grinders```
 * Gun - ```gun, railgun, cannon, autocannon, rocket, missile, launcher```, ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
 * Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
@@ -98,7 +99,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Interval - ```interval```
 * Level - ```height, heights, length, lengths, level, levels, size, sizes, weight, mass```
 * Locked - 
-  * ```lock, locked, freeze, frozen, brake, braking, handbrake, permanenet```
+  * ```lock, locked, freeze, frozen, brake, braking, handbrake, permanent, static```
   * (```unlock, unlocked, unfreeze```)
 * Media - ```sound, music, song, track, image, play, playing, unsilence``` (```silent, silence, quiet```)
 * Media List - ```sounds, songs, images, tracks```

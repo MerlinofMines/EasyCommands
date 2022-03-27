@@ -5,7 +5,6 @@ This Block Handler handles Drills, which can be used to gather ores and other ra
 * Block Type Group Keywords: ```drills```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property

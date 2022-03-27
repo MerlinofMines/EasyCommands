@@ -5,7 +5,6 @@ This Block Handler handles Decoys, which will automatically attract enemy fire w
 * Block Type Group Keywords: ```decoys```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property

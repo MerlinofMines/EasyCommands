@@ -48,6 +48,7 @@ namespace IngameScript {
                 { Block.GENERATOR, new GasGeneratorHandler()},
                 { Block.GRAVITY_GENERATOR, new GravityGeneratorBlockHandler() },
                 { Block.GRAVITY_SPHERE, new SphericalGravityGeneratorBlockHandler() },
+                { Block.GRID, new GridBlockHandler() },
                 { Block.GRINDER, new FunctionalBlockHandler<IMyShipGrinder>() },
                 { Block.GUN, new GunBlockHandler<IMyUserControllableGun>() },
                 { Block.GYROSCOPE, new GyroscopeBlockHandler<IMyGyro>() },
@@ -89,7 +90,7 @@ namespace IngameScript {
             }
 
             public static List<Object> GetSelf(Block? blockType) =>
-                blockType == null || blockType == Block.DISPLAY
+                blockType == null || blockType == Block.DISPLAY || blockType == Block.GRID
                     ? blockHandlers[blockType ?? Block.PROGRAM].SelectBlocks(NewList(PROGRAM.Me))
                     : null;
 

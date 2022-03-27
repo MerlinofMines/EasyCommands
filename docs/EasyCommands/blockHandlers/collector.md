@@ -5,7 +5,6 @@ This Block Handler handles Collectors which can automatically grab floating obje
 * Block Type Group Keywords: ```collectors```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property

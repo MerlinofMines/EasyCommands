@@ -97,7 +97,7 @@ set "My Laser" range to 3000
 
 ## "Locked" Property
 * Primitive Type: Bool
-* Keywords: ```lock, locked, permanent```
+* Keywords: ```lock, locked, permanent, static```
 * Inverse Keywords: ```unlock, unlocked```
 
 Get/Sets whether the laser is permanent, meaning the laser will automatically try to re-connect if/when a connection is lost.

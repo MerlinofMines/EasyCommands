@@ -13,7 +13,6 @@ Reference: [Items](https://spaceengineers.merlinofmines.com/EasyCommands/blockHa
 Note that "inventories" is a keyword for Block Type, not Block Group Type.  This is because individual blocks often have more than 1 inventory (refineries, assemblers).  If you want to get all inventories from a group of items that aren't "Containers", use ```"My Block Group" group inventories```
 
 Default Primitive Properties:
-* String - Name
 * Boolean - Show
 * Numeric - Ratio
 

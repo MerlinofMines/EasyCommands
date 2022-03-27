@@ -5,7 +5,6 @@ This Block Handler handles Grinders, which can be used to grind down ships and o
 * Block Type Group Keywords: ```grinders```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property

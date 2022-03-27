@@ -5,7 +5,6 @@ This Block Handler handles Grinders, which can be used to create ships, bases, a
 * Block Type Group Keywords: ```welders```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property

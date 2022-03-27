@@ -163,6 +163,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Drills](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/drill "Drill Handler")
 * [Ejectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/ejector "Ejector Handler")
 * [Gravity Generators](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gravityGenerator "Gravity Generator Handler")
+* [Grids](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grid "Grid Handler")
 * [Grinders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/grinder "Grinder Handler")
 * [Guns](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gun "Gun Handler")
 * [Gyroscopes](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/gyroscope "Gyroscope Handler")

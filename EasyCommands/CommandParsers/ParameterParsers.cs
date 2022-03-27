@@ -107,7 +107,7 @@ namespace IngameScript {
             AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
             AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
             AddPropertyWords(Words("disconnect", "detach", "disconnected", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "locking", "freeze", "frozen", "brake", "braking", "handbrake", "permanent"), Property.LOCKED);
+            AddPropertyWords(Words("lock", "locked", "locking", "freeze", "frozen", "brake", "braking", "handbrake", "permanent", "static"), Property.LOCKED);
             AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
             AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
@@ -361,6 +361,7 @@ namespace IngameScript {
             AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
             AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
             AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
+            AddBlockWords(PluralWords("grid"), Words(), Block.GRID);
         }
 
         String[] Words(params String[] words) => words;

@@ -89,7 +89,6 @@ namespace IngameScript {
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
-                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
             }
 
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
