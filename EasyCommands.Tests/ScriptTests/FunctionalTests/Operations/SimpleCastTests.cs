@@ -500,7 +500,7 @@ Print ""abc"" as number
                 Assert.AreEqual("1", test.Logger[0]);
                 Assert.AreEqual("0", test.Logger[1]);
                 Assert.AreEqual("1.5", test.Logger[2]);
-                Assert.AreEqual("System Exception Occurred:", test.Logger[3]);
+                Assert.AreEqual("Unknown Exception Occurred:", test.Logger[3]);
             }
         }
 
@@ -637,7 +637,7 @@ Print ""abc"" as vector
                 test.RunOnce();
 
                 Assert.AreEqual("0:0:7", test.Logger[0]);
-                Assert.AreEqual("System Exception Occurred:", test.Logger[1]);
+                Assert.AreEqual("Unknown Exception Occurred:", test.Logger[1]);
 
             }
         }

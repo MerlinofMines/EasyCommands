@@ -271,7 +271,7 @@ namespace EasyCommands.Tests.ScriptTests
         }
 
         public void GetBroadcastListeners(List<IMyBroadcastListener> broadcastListeners, Func<IMyBroadcastListener, bool> collect = null) {
-            broadcastListeners.AddRange(mockListeners.Select(listener => listener).Where(listener => collect == null || collect(listener)));
+            mockListeners.Select(listener => listener).Where(listener => collect == null || collect(listener)).ForEach(l => broadcastListeners?.Add(l));
         }
 
         public bool IsEndpointReachable(long address, TransmissionDistance transmissionDistance = TransmissionDistance.AntennaRelay) {

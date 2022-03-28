@@ -80,11 +80,11 @@ namespace IngameScript {
             );
         }
 
-        public void BroadCastListenerAction(Func<IMyBroadcastListener, bool> filter, Action<IMyBroadcastListener> action) {
-            var listeners = NewList<IMyBroadcastListener>();
-            IGC.GetBroadcastListeners(listeners);
-            foreach(IMyBroadcastListener listener in listeners.Where(filter)) action(listener);
-        }
+        public void BroadCastListenerAction(Func<IMyBroadcastListener, bool> filter, Action<IMyBroadcastListener> action) =>
+            IGC.GetBroadcastListeners(null, listener => {
+                if (filter(listener)) action(listener);
+                return false;
+            });
 
         public Thread GetCurrentThread() => currentThread;
 
@@ -131,33 +131,26 @@ namespace IngameScript {
                 PROGRAM = this;
 
                 if (!ParseCommands()) {
-                    Runtime.UpdateFrequency = updateFrequency;
-                    state = ProgramState.RUNNING;
                     QueueRequest(argument);
+                    state = ProgramState.RUNNING;
                     return;
                 }
 
                 var messages = NewList<MyIGCMessage>();
                 BroadCastListenerAction(listener => listener.HasPendingMessage, listener => messages.Add(listener.AcceptMessage()));
+                threadQueue.InsertRange(0, messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag)));
 
-                if (messages.Count > 0) {
-                    var messageCommands = messages.Select(message => new Thread(ParseCommand((String)message.Data), "Message", message.Tag));
-                    threadQueue.InsertRange(0, messageCommands);
-                }
                 QueueRequest(argument);
 
                 RunThreads();
 
-                //Update State
-                var stateTuple = programStateMap[state];
-                Info(stateTuple.Key);
-                Runtime.UpdateFrequency = stateTuple.Value ? updateFrequency : UpdateFrequency.None;
+                Info(programStateMap[state].Key);
             } catch (Exception e) {
-                Print($"{(e is ParserException ? "Parser Exception" : e is RuntimeException ? "Runtime Exception" : "System Exception")} Occurred:");
+                Print($"{(e is ParserException ? "Parsing Exception" : e is RuntimeException ? "Runtime Exception" : "Unknown Exception")} Occurred:");
                 Print(e.Message);
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                return;
+                state = ProgramState.STOPPED;
             } finally {
+                Runtime.UpdateFrequency = programStateMap[state].Value ? updateFrequency : UpdateFrequency.None;
                 PROGRAM = null;
             }
         }
