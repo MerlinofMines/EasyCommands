@@ -111,6 +111,16 @@ namespace IngameScript {
             }
         }
 
+        public class ListIndexAssignmentCommandParameter : SimpleCommandParameter {
+            public ListIndexVariable listIndex;
+            public bool useReference;
+
+            public ListIndexAssignmentCommandParameter(ListIndexVariable variable, bool reference) {
+                listIndex = variable;
+                useReference = reference;
+            }
+        }
+
         public class VariableIncrementCommandParameter : ValueCommandParameter<bool> {
             public string variableName;
             public VariableIncrementCommandParameter(string variable, bool increase = true) : base(increase) {
@@ -233,6 +243,11 @@ namespace IngameScript {
 
         public class SelectorCommandParameter : ValueCommandParameter<ISelector> {
             public SelectorCommandParameter(ISelector value) : base(value) {
+            }
+        }
+
+        public class AmbiguousSelectorCommandParameter : SelectorCommandParameter { 
+            public AmbiguousSelectorCommandParameter(BlockSelector value) : base(value) {
             }
         }
 

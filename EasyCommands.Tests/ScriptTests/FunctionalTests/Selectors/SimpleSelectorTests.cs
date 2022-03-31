@@ -71,6 +71,20 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void BasicImpliedSelectorWithExplicitGroup() {
+            using (var test = new ScriptTest(@"turn on the ""test piston"" group")) {
+                var mockPiston1 = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test piston", mockPiston1, mockPiston2);
+
+                test.RunOnce();
+
+                mockPiston1.VerifySet(p => p.Enabled = true);
+                mockPiston2.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
         public void AllSelector() {
             using (var test = new ScriptTest(@"turn on all the pistons")) {
                 var mockPiston1 = new Mock<IMyPistonBase>();
@@ -545,5 +559,28 @@ set myVariable to 1
             }
         }
 
+        [TestMethod]
+        public void SetExplicitSelectorPropertyValueToStringPropertyContainingSelectorName() {
+            using (var test = new ScriptTest(@"set ""test lighthouse"" beacon text to ""My Beacon Text""")) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test lighthouse", mockBeacon);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.HudText = "My Beacon Text");
+            }
+        }
+
+        [TestMethod]
+        public void SetImplicitSelectorPropertyValueToStringPropertyContainingSelectorName() {
+            using (var test = new ScriptTest(@"set ""test beacon"" text to ""My Beacon Text""")) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+
+                test.RunUntilDone();
+
+                mockBeacon.VerifySet(p => p.HudText = "My Beacon Text");
+            }
+        }
     }
 }
