@@ -108,22 +108,19 @@ namespace IngameScript {
 
             new MultiListProcessor(),
 
-            //IgnoreProcessor
-            NoValueRule(Type<IgnoreCommandParameter>, p => NewList<ICommandParameter>()),
-
             //FunctionProcessor
             OneValueRule(Type<VariableCommandParameter>, requiredLeft<FunctionCommandParameter>(),
                 (name, function) => new FunctionDefinitionCommandParameter(() => CastString(name.value.GetValue()), function.value)),
 
             //PropertyProcessor
-            NoValueRule(Type<PropertyCommandParameter>, p => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
+            OneValueRule(Type<PropertyCommandParameter>, optionalLeft<InCommandParameter>(), (p, _) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
-            OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
-            OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
+            TwoValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(), optionalRight<InCommandParameter>(),
+                (p, v, _) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
+            TwoValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<InCommandParameter>(),
+                (p, v, _) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -162,7 +159,7 @@ namespace IngameScript {
 
             //RoundProcessor
             new BranchingProcessor<RoundCommandParameter>(
-                NoValueRule(Type<RoundCommandParameter>, round => new BiOperandCommandParameter(BiOperand.ROUND, 1)),
+                OneValueRule(Type<RoundCommandParameter>, optionalRight<AbsoluteCommandParameter>(), (round, _) => new BiOperandCommandParameter(BiOperand.ROUND, 1)),
                 NoValueRule(Type<RoundCommandParameter>, round => new LeftUniOperationCommandParameter(UniOperand.ROUND)),
                 NoValueRule(Type<RoundCommandParameter>, round => new UniOperationCommandParameter(UniOperand.ROUND))
             ),
@@ -289,6 +286,9 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new SelectorCommandParameter(p.value))
             ),
 
+            //AbsoluteCommandParameter
+            NoValueRule(Type<AbsoluteCommandParameter>, p => NewList<ICommandParameter>()),
+
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(
                 BlockCommandProcessor(),
@@ -303,8 +303,6 @@ namespace IngameScript {
                         return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) =>
                             b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
                     })),
-
-            NoValueRule(Type<RelativeCommandParameter>, b => NewList<ICommandParameter>()),
 
             //ListIndexAssignmentProcessor
             OneValueRule(Type<ListIndexAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),
@@ -327,8 +325,8 @@ namespace IngameScript {
                 (p, var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.value, p.useReference, p.isGlobal))),
 
             //VariableIncrementProcessor
-            OneValueRule(Type<VariableIncrementCommandParameter>, optionalRight<VariableCommandParameter>(),
-                (increment, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable?.value ?? GetStaticVariable(1)))),
+            TwoValueRule(Type<VariableIncrementCommandParameter>, optionalRight<RelativeCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (increment, _, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable?.value ?? GetStaticVariable(1)))),
             //Handles --i
             OneValueRule(Type<IncrementCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
@@ -352,9 +350,9 @@ namespace IngameScript {
                 (p, command) => new CommandReferenceParameter(new QueueCommand(command.value, p.value))),
 
             //IteratorProcessor
-            ThreeValueRule(Type<IteratorCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredEither<CommandReferenceParameter>(),
-                (i, item, list, command) => AllSatisfied(list, command, item) && item.GetValue().value is AmbiguousStringVariable,
-                (i, item, list, command) => new CommandReferenceParameter(new ForEachCommand(((AmbiguousStringVariable)item.value).value, list.value, command.value))),
+            FourValueRule(Type<IteratorCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<InCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredEither<CommandReferenceParameter>(),
+                (i, item, _, list, command) => AllSatisfied(list, command, item) && item.GetValue().value is AmbiguousStringVariable,
+                (i, item, _, list, command) => new CommandReferenceParameter(new ForEachCommand(((AmbiguousStringVariable)item.value).value, list.value, command.value))),
 
             //ConditionalCommandProcessor
             //condition command

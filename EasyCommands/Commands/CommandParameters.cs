@@ -45,7 +45,6 @@ namespace IngameScript {
         public class PrintCommandParameter : SimpleCommandParameter { }
         public class SelfCommandParameter : SimpleCommandParameter { }
         public class GlobalCommandParameter : SimpleCommandParameter { }
-        public class IgnoreCommandParameter : SimpleCommandParameter { }
         public class ThatCommandParameter : SimpleCommandParameter { }
         public class KeyedVariableCommandParameter : SimpleCommandParameter { }
         public class TernaryConditionIndicatorParameter : SimpleCommandParameter { }
@@ -55,6 +54,8 @@ namespace IngameScript {
         public class RoundCommandParameter : SimpleCommandParameter { }
         public class CastCommandParameter : SimpleCommandParameter { }
         public class RelativeCommandParameter : SimpleCommandParameter { }
+        public class AbsoluteCommandParameter : SimpleCommandParameter { }
+        public class InCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;
@@ -246,7 +247,7 @@ namespace IngameScript {
             }
         }
 
-        public class AmbiguousSelectorCommandParameter : SelectorCommandParameter { 
+        public class AmbiguousSelectorCommandParameter : SelectorCommandParameter {
             public AmbiguousSelectorCommandParameter(BlockSelector value) : base(value) {
             }
         }

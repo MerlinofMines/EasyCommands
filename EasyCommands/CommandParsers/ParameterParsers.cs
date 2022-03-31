@@ -67,7 +67,7 @@ namespace IngameScript {
 
         public void InitializeParsers() {
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
+            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "from", "then", "of", "either", "for", "do", "does", "second", "seconds", "be", "being", "digits", "digit"));
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());
@@ -96,6 +96,7 @@ namespace IngameScript {
             AddWords(Words("--", "-="), new IncrementCommandParameter(false));
             AddWords(Words("global"), new GlobalCommandParameter());
             AddWords(Words("by"), new RelativeCommandParameter());
+            AddWords(Words("to"), new AbsoluteCommandParameter());
 
             //Value Words
             AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
@@ -187,6 +188,7 @@ namespace IngameScript {
             AddWords(Words("::"), new TernaryConditionSeparatorParameter());
             AddWords(Words(":"), new ColonSeparatorParameter());
             AddWords(Words("each", "every"), new IteratorCommandParameter());
+            AddWords(Words("in"), new InCommandParameter());
 
             //Conditional Words
             AddWords(Words("if"), new IfCommandParameter(false, false, false));
@@ -428,7 +430,8 @@ namespace IngameScript {
             else //If no property matches, must be a string
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
 
-            commandParameters[0].Token = token.original;
+            if (commandParameters.Count > 0)
+                commandParameters[0].Token = token.original;
             return commandParameters;
         }
 
