@@ -150,6 +150,10 @@ namespace IngameScript {
             }
         }
 
+        public class IdentifierCommandParameter : ValueCommandParameter<String> {
+            public IdentifierCommandParameter(string value) : base(value) { }
+        }
+
         public class BooleanCommandParameter : ValueCommandParameter<bool> {
             public BooleanCommandParameter(bool value) : base(value) {}
         }

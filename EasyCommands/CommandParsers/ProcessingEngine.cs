@@ -40,12 +40,15 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     p => p.subTokens.Count > 0 && p.subTokens[0] is AmbiguousCommandParameter,
                     p => p.subTokens),
+                NoValueRule(Type<AmbiguousStringCommandParameter>,
+                    s => s.isImplicit,
+                    s => new IdentifierCommandParameter(s.value)),
                 OneValueRule(Type<AmbiguousStringCommandParameter>, optionalRight<GroupCommandParameter>(),
                         (p, g) => findLast<BlockTypeCommandParameter>(p.subTokens) != null,
                         (p, g) => new AmbiguousSelectorCommandParameter(
                                     new BlockSelector(findLast<BlockTypeCommandParameter>(p.subTokens).value,
                                         (g ?? findLast<GroupCommandParameter>(p.subTokens)) != null,
-                                        p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                                        GetStaticVariable(p.value)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
@@ -118,19 +121,16 @@ namespace IngameScript {
                 (p, v, _) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
 
             //AssignmentProcessor
-            TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, g, name) => AllSatisfied(g, name) && (name.GetValue().value is AmbiguousStringVariable),
-                (p, g, name) => new VariableAssignmentCommandParameter(((AmbiguousStringVariable)name.value).value, p.value, g != null)),
+            TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<IdentifierCommandParameter>(),
+                (p, g, name) => new VariableAssignmentCommandParameter(name.value, p.value, g != null)),
 
             //IncreaseProcessor
-            OneValueRule(Type<IncreaseCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
-                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
+            OneValueRule(Type<IncreaseCommandParameter>, requiredRight<IdentifierCommandParameter>(),
+                (p, name) => new VariableIncrementCommandParameter(name.value, p.value)),
 
             //IncrementProcessor
-            OneValueRule(Type<IncrementCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
-                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
+            OneValueRule(Type<IncrementCommandParameter>, requiredLeft<IdentifierCommandParameter>(),
+                (p, name) => new VariableIncrementCommandParameter(name.value, p.value)),
 
             //Primitive Processor
             NoValueRule(Type<BooleanCommandParameter>, b => new VariableCommandParameter(GetStaticVariable(b.value))),
@@ -323,9 +323,8 @@ namespace IngameScript {
             TwoValueRule(Type<VariableIncrementCommandParameter>, optionalRight<RelativeCommandParameter>(), optionalRight<VariableCommandParameter>(),
                 (increment, _, variable) => new CommandReferenceParameter(new VariableIncrementCommand(increment.variableName, increment.value, variable?.value ?? GetStaticVariable(1)))),
             //Handles --i
-            OneValueRule(Type<IncrementCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
-                (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
+            OneValueRule(Type<IncrementCommandParameter>, requiredRight<IdentifierCommandParameter>(),
+                (p, name) => new VariableIncrementCommandParameter(name.value, p.value)),
 
             //SendCommandProcessor
             //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
