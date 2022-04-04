@@ -50,12 +50,7 @@ namespace IngameScript {
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
-                    s => {
-                        Primitive primitive;
-                        IVariable variable = s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value);
-                        if (s.isImplicit && ParsePrimitive(s.value, out primitive)) variable = GetStaticVariable(primitive.value);
-                        return new VariableCommandParameter(variable);
-                    })),
+                    s => new VariableCommandParameter(s.isImplicit ? new AmbiguousStringVariable(s.value) : GetStaticVariable(s.value)))),
 
             NoValueRule(Type<AmbiguousCommandParameter>, p => p.alternatives.Count > 0, p => p.alternatives),
 

@@ -420,6 +420,7 @@ namespace IngameScript {
         List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(ParseCommandParameters).ToList();
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
+            Primitive primitive;
             var commandParameters = NewList<ICommandParameter>();
             if (token.isExplicitString)
                 commandParameters.Add(new VariableCommandParameter(GetStaticVariable(token.original)));
@@ -427,6 +428,8 @@ namespace IngameScript {
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, false, ParseCommandParameters(Tokenize(token.token)).ToArray()));
             else if (propertyWords.ContainsKey(token.token))
                 commandParameters.AddList(propertyWords[token.token]);
+            else if (ParsePrimitive(token.original, out primitive))
+                commandParameters.Add(new VariableCommandParameter(GetStaticVariable(primitive.value)));
             else //If no property matches, must be a string
                 commandParameters.Add(new AmbiguousStringCommandParameter(token.original, true));
 
