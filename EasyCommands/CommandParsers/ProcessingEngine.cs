@@ -94,7 +94,9 @@ namespace IngameScript {
             OneValueRule(Type<ComparisonCommandParameter>, requiredEither<NotCommandParameter>(),
                 (p, left) => new ComparisonCommandParameter((a, b) => !p.value(a, b))),
             OneValueRule(Type<ComparisonCommandParameter>, requiredRight<ComparisonCommandParameter>(),
-                (p, right) => new ComparisonCommandParameter(right.value)),
+                (p, right) => right),
+            OneValueRule(Type<ComparisonCommandParameter>, requiredRight<AbsoluteCommandParameter>(),
+                (p, to) => p),
 
             //IndexSelectorProcessor
             OneValueRule(Type<IndexSelectorCommandParameter>, requiredLeft<SelectorCommandParameter>(),
@@ -256,10 +258,10 @@ namespace IngameScript {
                 (p, var) => new RepetitionCommandParameter(var.value)),
 
             //TransferCommandProcessor
-            FourValueRule(Type<TransferCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).value, (t.value ? s2 : s1).value, v1.value, v2?.value))),
-            FourValueRule(Type<TransferCommandParameter>, requiredRight<SelectorCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (t, s1, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2?.value))),
+            FiveValueRule(Type<TransferCommandParameter>, requiredLeft<SelectorCommandParameter>(), optionalRight<AbsoluteCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (t, s1, to, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand((t.value ? s1 : s2).value, (t.value ? s2 : s1).value, v1.value, v2?.value))),
+            FiveValueRule(Type<TransferCommandParameter>, requiredRight<SelectorCommandParameter>(), optionalRight<AbsoluteCommandParameter>(), requiredRight<SelectorCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (t, s1, to, s2, v1, v2) => new CommandReferenceParameter(new TransferItemCommand(s1.value, s2.value, v1.value, v2?.value))),
 
             //Convert Ambiguous Colon to Ternary Condition Separator
             NoValueRule(Type<ColonSeparatorParameter>, b => new TernaryConditionSeparatorParameter()),
@@ -281,9 +283,6 @@ namespace IngameScript {
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new SelectorCommandParameter(p.value))
             ),
 
-            //AbsoluteCommandParameter
-            NoValueRule(Type<AbsoluteCommandParameter>, p => NewList<ICommandParameter>()),
-
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorCommandParameter>(
                 BlockCommandProcessor(),
@@ -300,8 +299,8 @@ namespace IngameScript {
                     })),
 
             //ListIndexAssignmentProcessor
-            OneValueRule(Type<ListIndexAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (list, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.listIndex, value.value, list.useReference))),
+            TwoValueRule(Type<ListIndexAssignmentCommandParameter>, optionalRight<AbsoluteCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (list, to, value) => new CommandReferenceParameter(new ListVariableAssignmentCommand(list.listIndex, value.value, list.useReference))),
 
             //PrintCommandProcessor
             OneValueRule(Type<PrintCommandParameter>, requiredRight<VariableCommandParameter>(),
@@ -316,8 +315,8 @@ namespace IngameScript {
                 (p, variables) => new CommandReferenceParameter(new FunctionCommand(p.switchExecution, p.functionDefinition, variables.Select(v => v.value).ToList()))),
 
             //VariableAssignmentProcessor
-            OneValueRule(Type<VariableAssignmentCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.value, p.useReference, p.isGlobal))),
+            TwoValueRule(Type<VariableAssignmentCommandParameter>, optionalRight<AbsoluteCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, to, var) => new CommandReferenceParameter(new VariableAssignmentCommand(p.variableName, var.value, p.useReference, p.isGlobal))),
 
             //VariableIncrementProcessor
             TwoValueRule(Type<VariableIncrementCommandParameter>, optionalRight<RelativeCommandParameter>(), optionalRight<VariableCommandParameter>(),
@@ -328,8 +327,8 @@ namespace IngameScript {
 
             //SendCommandProcessor
             //Note: Message to send always comes first: "send <command> to <tag>" is only supported format
-            TwoValueRule(Type<SendCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, message, tag) => new CommandReferenceParameter(new SendCommand(message.value, tag.value))),
+            ThreeValueRule(Type<SendCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<AbsoluteCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (p, message, to, tag) => new CommandReferenceParameter(new SendCommand(message.value, tag.value))),
 
             //ListenCommandProcessor
             OneValueRule(Type<ListenCommandParameter>, requiredRight<VariableCommandParameter>(),

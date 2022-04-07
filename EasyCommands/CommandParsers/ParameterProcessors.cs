@@ -148,6 +148,7 @@ namespace IngameScript {
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
             var relativeProcessor = requiredRight<RelativeCommandParameter>();
+            var absoluteProcessor = requiredEither<AbsoluteCommandParameter>();
             var processors = NewList<IDataProcessor>(
                 assignmentProcessor,
                 increaseProcessor,
@@ -157,7 +158,8 @@ namespace IngameScript {
                 directionProcessor,
                 reverseProcessor,
                 notProcessor,
-                relativeProcessor);
+                relativeProcessor,
+                absoluteProcessor);
 
             CanConvert<SelectorCommandParameter> canConvert = p => processors.Exists(x => x.Satisfied() && x != directionProcessor && x != propertyProcessor);
             Convert<SelectorCommandParameter> convert = p => {
@@ -217,27 +219,19 @@ namespace IngameScript {
             public override bool Process(List<ICommandParameter> p, int i, out List<ICommandParameter> finalParameters, List<List<ICommandParameter>> branches) {
                 finalParameters = null;
                 processors.ForEach(dp => dp.Clear());
+
                 int j = i + 1;
-                while (j < p.Count) {
-                    if (processors.Exists(dp => dp.Right(p[j]))) j++;
-                    else break;
-                }
+                while (j < p.Count && processors.Exists(m => m.Right(p[j]))) j++;
 
                 int k = i;
-                while (k > 0) {
-                    if (processors.Exists(dp => dp.Left(p[k - 1]))) k--;
-                    else break;
-                }
+                while (k > 0 && processors.Exists(m => m.Left(p[k - 1]))) k--;
 
                 T hook = (T)p[i];
                 if (!canConvert(hook)) return false;
                 var converted = convert(hook);
 
-                if (converted is ICommandParameter)
-                    finalParameters = NewList((ICommandParameter)converted);
-                else if (converted is List<ICommandParameter>)
-                    finalParameters = (List<ICommandParameter>)converted;
-                else
+                finalParameters = converted as List<ICommandParameter> ?? (converted is ICommandParameter ? NewList((ICommandParameter)converted) : null);
+                if (finalParameters == null)
                     throw new Exception("Final parameters must be CommandParameter");
 
                 p.RemoveRange(k, j - k);
@@ -275,17 +269,25 @@ namespace IngameScript {
         static RuleProcessor<T> FourValueRule<T, U, V, W, X>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, FourValueCanConvert<T, U, V, W, X> canConvert, FourValueConvert<T, U, V, W, X> convert) where T : class, ICommandParameter =>
             new RuleProcessor<T>(NewList<IDataProcessor>(u, v, w, x), p => canConvert(p, u, v, w, x), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue(), x.GetValue()));
 
+        static RuleProcessor<T> FiveValueRule<T, U, V, W, X, Y>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, DataProcessor<Y> y, FiveValueConvert<T, U, V, W, X, Y> convert) where T : class, ICommandParameter =>
+            FiveValueRule(type, u, v, w, x, y, (p, a, b, c, d, e) => AllSatisfied(a, b, c, d, e), convert);
+
+        static RuleProcessor<T> FiveValueRule<T, U, V, W, X, Y>(Supplier<T> type, DataProcessor<U> u, DataProcessor<V> v, DataProcessor<W> w, DataProcessor<X> x, DataProcessor<Y> y, FiveValueCanConvert<T, U, V, W, X, Y> canConvert, FiveValueConvert<T, U, V, W, X, Y> convert) where T : class, ICommandParameter =>
+            new RuleProcessor<T>(NewList<IDataProcessor>(u, v, w, x, y), p => canConvert(p, u, v, w, x, y), p => convert(p, u.GetValue(), v.GetValue(), w.GetValue(), x.GetValue(), y.GetValue()));
+
         //Utility delegates to efficiently create Rule Processors
         delegate bool CanConvert<T>(T t);
         delegate bool OneValueCanConvert<T, U>(T t, DataProcessor<U> a);
         delegate bool TwoValueCanConvert<T, U, V>(T t, DataProcessor<U> a, DataProcessor<V> b);
         delegate bool ThreeValueCanConvert<T, U, V, W>(T t, DataProcessor<U> a, DataProcessor<V> b, DataProcessor<W> c);
         delegate bool FourValueCanConvert<T, U, V, W, X>(T t, DataProcessor<U> a, DataProcessor<V> b, DataProcessor<W> c, DataProcessor<X> d);
+        delegate bool FiveValueCanConvert<T, U, V, W, X, Y>(T t, DataProcessor<U> a, DataProcessor<V> b, DataProcessor<W> c, DataProcessor<X> d, DataProcessor<Y> e);
 
         delegate object Convert<T>(T t);
         delegate object OneValueConvert<T, U>(T t, U a);
         delegate object TwoValueConvert<T, U, V>(T t, U a, V b);
         delegate object ThreeValueConvert<T, U, V, W>(T t, U a, V b, W c);
         delegate object FourValueConvert<T, U, V, W, X>(T t, U a, V b, W c, X d);
+        delegate object FiveValueConvert<T, U, V, W, X, Y>(T t, U a, V b, W c, X d, Y e);
     }
 }
