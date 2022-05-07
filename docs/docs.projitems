@@ -69,6 +69,7 @@
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\cockpit.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\collector.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\connector.md" />
+    <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\grid.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\decoy.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\detector.md" />
     <None Include="$(MSBuildThisFileDirectory)EasyCommands\blockHandlers\display.md" />

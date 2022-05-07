@@ -5,7 +5,6 @@ This Block Handler handles Refineries, which are used to process ores quickly an
 * Block Type Group Keywords: ```refineries```
 
 Default Primitive Properties:
-* String - Name
 * Bool - Enabled
 
 ## "Enabled" Property
