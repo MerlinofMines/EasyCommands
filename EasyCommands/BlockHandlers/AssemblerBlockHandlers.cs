@@ -24,16 +24,16 @@ namespace IngameScript {
                 AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b,v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
-                AddPropertyHandler(ValueProperty.CREATE, new PropertyHandler<IMyAssembler>() {
+                AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p); }
                 }) ;
-                AddPropertyHandler(ValueProperty.DESTROY, new PropertyHandler<IMyAssembler>() {
+                AddPropertyHandler(Property.DESTROY, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
                 });
 
-                AddPropertyHandler(ValueProperty.AMOUNT, new PropertyHandler<IMyAssembler>() {
+                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyAssembler>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });

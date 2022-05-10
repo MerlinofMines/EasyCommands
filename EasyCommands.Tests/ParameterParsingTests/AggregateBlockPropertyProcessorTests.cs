@@ -100,7 +100,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
             AggregatePropertyVariable aggregate = (AggregatePropertyVariable)assignCommand.variable;
             VerifyAggregator(aggregate.aggregator, 6f); //Sum
-            Assert.AreEqual(ValueProperty.AMOUNT + "", aggregate.property.propertyType);
+            Assert.AreEqual(Property.AMOUNT + "", aggregate.property.propertyType);
             Assert.AreEqual("gold ingot", aggregate.property.attributeValue.GetValue().value);
         }
 

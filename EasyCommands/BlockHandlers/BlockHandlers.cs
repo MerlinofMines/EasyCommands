@@ -163,7 +163,6 @@ namespace IngameScript {
 
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) => GetPropertyHandler(property).Reverse((T)block, property);
             public void AddPropertyHandler(Property property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
-            public void AddPropertyHandler(ValueProperty property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
             public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) =>
                 AddPropertyHandler(property, BooleanHandler(Get, Set));
             public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) =>

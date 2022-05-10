@@ -34,7 +34,7 @@ namespace IngameScript {
             }
 
             public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) =>
-                (propertyType == ValueProperty.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
+                (propertyType == Property.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
 
             public PropertySupplier ResolveDynamicProperty() {
                 PropertySupplier supplier = WithAttributeValue(null);

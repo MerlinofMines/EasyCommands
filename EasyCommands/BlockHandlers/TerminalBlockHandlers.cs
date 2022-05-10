@@ -74,7 +74,7 @@ namespace IngameScript {
                     return NewKeyedList(actions.Select(p => GetStaticVariable(p.Id)));
                 });
 
-                AddPropertyHandler(ValueProperty.ACTION, new SimplePropertyHandler<T>(
+                AddPropertyHandler(Property.ACTION, new SimplePropertyHandler<T>(
                     (b, p) => p.attributeValue.GetValue(),
                     (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
                     ResolvePrimitive(0)));
