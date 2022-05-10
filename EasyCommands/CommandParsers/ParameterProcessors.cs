@@ -134,17 +134,16 @@ namespace IngameScript {
         }
 
         static RuleProcessor<BiOperandCommandParameter> BiOperandProcessor(int tier) =>
-            TwoValueRule(Type<BiOperandCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (operand, left, right) => operand.tier == tier && AllSatisfied(left, right),
-                (operand, left, right) => new VariableCommandParameter(new BiOperandVariable(operand.value, left.value, right.value)));
+            ThreeValueRule(Type<BiOperandCommandParameter>, requiredLeft<VariableCommandParameter>(), optionalRight<CommandSeparatorCommandParameter>(), requiredRight<VariableCommandParameter>(),
+                (operand, left, separator, right) => operand.tier == tier && AllSatisfied(left, right),
+                (operand, left, separator, right) => new VariableCommandParameter(new BiOperandVariable(operand.value, left.value, right.value)));
 
-        static RuleProcessor<SelectorCommandParameter> BlockCommandProcessor() {
+        static RuleProcessor<SelectorPropertyCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);
             var increaseProcessor = requiredLeft<IncreaseCommandParameter>();
             var incrementProcessor = requiredRight<IncrementCommandParameter>();
             var variableProcessor = requiredEither<VariableCommandParameter>();
             var propertyProcessor = requiredEither<PropertySupplierCommandParameter>();
-            var directionProcessor = requiredEither<DirectionCommandParameter>();
             var reverseProcessor = requiredEither<ReverseCommandParameter>();
             var notProcessor = requiredEither<NotCommandParameter>();
             var relativeProcessor = requiredRight<RelativeCommandParameter>();
@@ -154,16 +153,15 @@ namespace IngameScript {
                 incrementProcessor,
                 variableProcessor,
                 propertyProcessor,
-                directionProcessor,
                 reverseProcessor,
                 notProcessor,
                 relativeProcessor);
 
-            CanConvert<SelectorCommandParameter> canConvert = p => processors.Exists(x => x.Satisfied() && x != directionProcessor && x != propertyProcessor);
-            Convert<SelectorCommandParameter> convert = p => {
-                PropertySupplier propertySupplier = propertyProcessor.GetValue()?.value ?? new PropertySupplier();
-                if (directionProcessor.Satisfied())
-                    propertySupplier = propertySupplier.WithDirection(directionProcessor.GetValue().value);
+            CanConvert<SelectorPropertyCommandParameter> canConvert = p => processors.Exists(x => x.Satisfied());
+            Convert<SelectorPropertyCommandParameter> convert = p => {
+                PropertySupplier propertySupplier = p.propertySupplier;
+
+                if (propertyProcessor.Satisfied()) propertySupplier = propertySupplier.And(propertyProcessor.GetValue().value);
 
                 IVariable variableValue = variableProcessor.GetValue()?.value ?? GetStaticVariable(true);
                 if (notProcessor.Satisfied())
@@ -180,15 +178,15 @@ namespace IngameScript {
                     blockAction = (b, e) => b.ReverseNumericPropertyValue(e, propertySupplier.Resolve(b));
                 else if (AnySatisfied(increaseProcessor, incrementProcessor, relativeProcessor))
                     blockAction = (b, e) => b.IncrementPropertyValue(e, propertySupplier.Resolve(b));
-                else if (directionProcessor.Satisfied())
+                else if (propertySupplier.direction != null)
                     blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.Resolve(b));
                 else
                     blockAction = (b, e) => b.UpdatePropertyValue(e, propertySupplier.WithPropertyValue(variableValue).Resolve(b));
 
-                return new CommandReferenceParameter(new BlockCommand(p.value, blockAction));
+                return new CommandReferenceParameter(new BlockCommand(p.selector, blockAction));
             };
 
-            return new RuleProcessor<SelectorCommandParameter>(processors, canConvert, convert);
+            return new RuleProcessor<SelectorPropertyCommandParameter>(processors, canConvert, convert);
         }
 
         static ICommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, CommandReferenceParameter metFetcher, ElseCommandParameter otherwise, CommandReferenceParameter notMetFetcher) {

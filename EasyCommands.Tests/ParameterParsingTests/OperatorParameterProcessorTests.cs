@@ -670,7 +670,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
             AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
             PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
-            Assert.AreEqual(Property.ANGLE + "", property.propertyType);
+            Assert.AreEqual(Property.ANGLE + "", property.propertyValues[0].propertyType);
             BiOperandVariable comparisonValue = GetDelegateProperty<BiOperandVariable>("comparisonValue", condition.blockCondition);
             Assert.IsTrue(comparisonValue.a is AmbiguousStringVariable);
             Assert.IsTrue(comparisonValue.b is StaticVariable);

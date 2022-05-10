@@ -89,7 +89,8 @@ namespace IngameScript {
             );
 
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
+            AddWords(Words("in", "the", "than", "turned", "block", "panel", "chamber", "drive", "of", "either", "for", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
+            AddWords(Words("to", "from", "then"), new CommandSeparatorCommandParameter());
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());

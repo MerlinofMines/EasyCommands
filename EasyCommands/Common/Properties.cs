@@ -19,42 +19,58 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class PropertySupplier {
+        public class PropertyValue {
             public String propertyType, propertyWord;
-            public IVariable attributeValue, propertyValue;
+            public IVariable attributeValue;
+
+            public PropertyValue(string property, string word = null, IVariable attribute = null) {
+                propertyType = property;
+                propertyWord = word ?? property;
+                attributeValue = attribute;
+            }
+
+            //TODO: Needs support for multi-property (split by space?)
+            public PropertyValue Resolve(ref bool inverse) {
+                PropertyValue value = this;
+                if (propertyType == Property.PROPERTY + "") {
+                    value = new PropertyValue(CastString(attributeValue.GetValue()));
+                    if (PROGRAM.propertyWords.ContainsKey(value.propertyType.ToLower())) {
+                        var commandParameters = PROGRAM.propertyWords[value.propertyType.ToLower()];
+                        PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
+                        if (property != null) value.propertyType = property.value + "";
+                        inverse = inverse || !(findLast<BooleanCommandParameter>(commandParameters)?.value ?? true);
+                    }
+                }
+                return value;
+            }
+        }
+ 
+        public class PropertySupplier {
+            public List<PropertyValue> propertyValues;
+            public IVariable propertyValue;
             public Direction? direction;
             public bool? increment;
             public bool inverse;
 
-            public PropertySupplier() { }
-
-            public PropertySupplier(string property, String word = null) {
-                propertyType = property;
-                propertyWord = word;
+            public PropertySupplier(List<PropertyValue> values = null) {
+                propertyValues = values ?? NewList<PropertyValue>();
             }
 
-            public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) =>
-                (propertyType == Property.PROPERTY + "") ? ResolveDynamicProperty() : WithPropertyType(ResolvePropertyType(handler, defaultType).propertyType);
+            public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) {
+                var resolvedSupplier = WithProperties(ResolvePropertyType(handler, defaultType).propertyValues);
+                var inverse = false;
+                resolvedSupplier.propertyValues = resolvedSupplier.propertyValues.Select(p => p.Resolve(ref inverse)).ToList();
 
-            public PropertySupplier ResolveDynamicProperty() {
-                PropertySupplier supplier = WithAttributeValue(null);
-                var propertyString = CastString(attributeValue.GetValue());
-
-                if(PROGRAM.propertyWords.ContainsKey(propertyString)) {
-                    var commandParameters = PROGRAM.propertyWords[propertyString];
-                    PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
-                    BooleanCommandParameter booleanParameter = findLast<BooleanCommandParameter>(commandParameters);
-                    if (property != null) supplier = WithPropertyType(property.value+"");
-                    if (!booleanParameter?.value ?? false) supplier = supplier.Inverse(true).WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
-                } else {
-                    supplier = WithPropertyType(propertyString);
+                if (inverse) {
+                    resolvedSupplier = resolvedSupplier
+                        .Inverse(inverse)
+                        .WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                 }
-                supplier.propertyWord = propertyString;
-                return supplier;
-            }
+                return resolvedSupplier;
+             }
 
             PropertySupplier ResolvePropertyType(IBlockHandler blockHandler, Return? defaultType = null) {
-                if (propertyType != null) return this;
+                if (propertyValues.Count > 0) return this;
                 if (direction != null) return blockHandler.GetDefaultProperty(direction.Value);
                 var returnType = propertyValue?.GetValue().returnType ?? defaultType;
                 return returnType != null
@@ -68,21 +84,15 @@ namespace IngameScript {
                 return copy;
             }
 
-            public PropertySupplier WithPropertyType(String propertyType) {
+            public PropertySupplier WithProperties(List<PropertyValue> properties) {
                 PropertySupplier copy = Copy();
-                copy.propertyType = propertyType;
+                copy.propertyValues = properties;
                 return copy;
             }
 
             public PropertySupplier WithPropertyValue(IVariable propertyValue) {
                 PropertySupplier copy = Copy();
                 copy.propertyValue = propertyValue;
-                return copy;
-            }
-
-            public PropertySupplier WithAttributeValue(IVariable attributeValue) {
-                PropertySupplier copy = Copy();
-                copy.attributeValue = attributeValue;
                 return copy;
             }
 
@@ -98,15 +108,22 @@ namespace IngameScript {
                 return copy;
             }
 
+            public PropertySupplier And(PropertySupplier supplier) {
+                PropertySupplier copy = Copy();
+                copy.propertyValues.AddRange(supplier.propertyValues);
+                copy.direction = copy.direction ?? supplier.direction;
+                return copy;
+            }
+
             PropertySupplier Copy() => new PropertySupplier {
-                    propertyType = propertyType,
-                    propertyWord = propertyWord,
-                    attributeValue = attributeValue,
+                    propertyValues = propertyValues,
                     propertyValue = propertyValue,
                     direction = direction,
                     increment = increment,
                     inverse = inverse
                 };
+
+            public string GetPropertyString() => string.Join(",", propertyValues.Select(p => p.propertyWord));
         }
     }
 }
