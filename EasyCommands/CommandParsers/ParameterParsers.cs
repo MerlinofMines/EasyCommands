@@ -65,7 +65,29 @@ namespace IngameScript {
             KeyValuePair("black", Color.Black)
         );
 
+        delegate IEnumerable<Token> Pass(string s);
+        delegate Pass Generator(Pass p);
+
+        Pass drop = s => Empty<Token>();
+        Pass take = s => Once(new Token(s, false, false));
+        Pass tokenize;
+
         public void InitializeParsers() {
+            // build tokenizer stack
+            tokenize = Generate(
+                take,
+                ConditionalPass(s => !string.IsNullOrWhiteSpace(s) && !s.Trim().StartsWith("#")),
+                EnclosedPass('`'),
+                EnclosedPass('\''),
+                EnclosedPass('"', false),
+                ReplacePass(" : ", " :: "),
+                SymbolPass(firstPassTokens),
+                PrimitivePass(),
+                SymbolPass(secondPassTokens),
+                PrimitivePass(),
+                SymbolPass(thirdPassTokens)
+            );
+
             //Ignored words that have no command parameters
             AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
 
@@ -416,6 +438,8 @@ namespace IngameScript {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
         }
 
+        public List<Token> Tokenize(String commandString) => tokenize(commandString).ToList();
+
         List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(ParseCommandParameters).ToList();
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
@@ -433,41 +457,27 @@ namespace IngameScript {
             return commandParameters;
         }
 
-        delegate IEnumerable<String> Pass(String s);
-        public List<Token> Tokenize(String commandString) {
-            Pass thirdPass = v => SeperatorPass(v, thirdPassTokens);
-            Pass secondPass = v => SeperatorPass(v, secondPassTokens, w => PrimitivePass(w, thirdPass));
-            Pass firstPass = v => SeperatorPass(v, firstPassTokens, w => PrimitivePass(w, secondPass));
+        Pass Generate(Pass end, params Generator[] generators) =>
+            Generate(end, generators.Select(g => g));
+        Pass Generate(Pass end, IEnumerable<Generator> generators) =>
+            generators.Reverse().Aggregate(end ?? drop, (p, g) => g(p));
 
-            return (String.IsNullOrWhiteSpace(commandString) || commandString.Trim().StartsWith("#"))
-            ? NewList<Token>()
-            : TokenizeEnclosed(commandString, "`\'\"",
-                u => u.Replace(" : ", " :: ")
-                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(v => firstPass(v))
-                    .Select(v => new Token(v, false, false)))
-            .ToList();
-        }
-
-        IEnumerable<Token> TokenizeEnclosed(String token, string characters, Func<String, IEnumerable<Token>> parseSubTokens) =>
-            characters.Length == 0 ? parseSubTokens(token) :
-                token.Trim().Split(characters[0])
-                .SelectMany((element, index) => index % 2 == 0  // If even index
-                    ? TokenizeEnclosed(element, characters.Remove(0, 1), parseSubTokens)  // Split the item
-                    : Once(new Token(element, true, characters.Length > 1)));  // Keep the entire item
-
-        IEnumerable<String> PrimitivePass(String token, Pass nextPass = null) {
-            Primitive ignored;
-            return ParsePrimitive(token, out ignored) || nextPass == null ? Once(token) : nextPass(token);
-        }
-
-        IEnumerable<String> SeperatorPass(String command, string[] separators, Pass nextPass = null) {
-            var newCommand = command;
-            foreach (var s in separators) newCommand = newCommand.Replace(s, $" {s} ");
-            return newCommand
-                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(token => separators.Contains(token) || nextPass == null ? Once(token) : nextPass(token));
-        }
+        Generator ConditionalPass(Func<string, bool> pred) =>
+            pass => str => pred(str) ? pass(str) : drop(str);
+        Generator EnclosedPass(char encl, bool expl = true) =>
+            pass => str => str.Split(encl).SelectMany((e, i) => i % 2 != 0 ? Once(new Token(e, true, expl)) : pass(e));
+        Generator ReplacePass(string orig, string repl) =>
+            pass => str => pass(str.Replace(orig, repl));
+        Generator SymbolPass(string[] symbols) =>
+            pass => Generate(
+                str => str.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .SelectMany(tok => symbols.Contains(tok) ? take(tok) : pass(tok)),
+                symbols.Select(sym => ReplacePass(sym, $" {sym} ")));
+        Generator PrimitivePass() =>
+            pass => str => {
+                Primitive ignored;
+                return ParsePrimitive(str, out ignored) ? take(str) : pass(str);
+            };
 
         public static bool ParsePrimitive(String token, out Primitive primitive) {
             primitive = null;
