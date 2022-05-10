@@ -171,7 +171,7 @@
     <Compile Include="CommandParsers\ParsingEngine.cs" />
     <Compile Include="CommandParsers\ParameterParsers.cs" />
     <Compile Include="CommandParsers\ParameterProcessors.cs" />
-    <Compile Include="Commands\CommandParameters.cs" />
+    <Compile Include="CommandParsers\CommandParameters.cs" />
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\Selectors.cs" />
     <Compile Include="Common\Aggregators.cs" />
