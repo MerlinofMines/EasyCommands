@@ -293,21 +293,24 @@ namespace IngameScript {
             NoValueRule(Type<DirectionCommandParameter>, d => new PropertySupplierCommandParameter(new PropertySupplier().WithDirection(d.value))),
 
             new BranchingProcessor<AmbiguousSelectorCommandParameter>(
-                OneValueRule(Type<AmbiguousSelectorCommandParameter>, requiredEither<PropertySupplierCommandParameter>(),
-                    (s, p) => new SelectorPropertyCommandParameter(s.value, p.value)),
+                OneValueRule(Type<AmbiguousSelectorCommandParameter>, eitherList<PropertySupplierCommandParameter>(true),
+                    (s, p) => new SelectorPropertyCommandParameter(s.value, p.Aggregate(new PropertySupplier(), (a,b) => a.And(b.value)))),
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new VariableCommandParameter(((BlockSelector)p.value).selector)),
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new SelectorCommandParameter(p.value))
             ),
 
             //SelectorPropertyProcessor
-            OneValueRule(Type<SelectorCommandParameter>, requiredEither<PropertySupplierCommandParameter>(),
-                (s, p) => new SelectorPropertyCommandParameter(s.value, p.value)),
+            OneValueRule(Type<SelectorCommandParameter>, eitherList<PropertySupplierCommandParameter>(true),
+                (s, p) => new SelectorPropertyCommandParameter(s.value, p.Aggregate(new PropertySupplier(), (a, b) => a.And(b.value)))),
 
             //CommandSeparatorProcessor
             NoValueRule(Type<CommandSeparatorCommandParameter>, p => NewList<ICommandParameter>()),
 
             //ImplicitSelectorPropertyProcessor
-            NoValueRule(Type<SelectorCommandParameter>, s => new SelectorPropertyCommandParameter(s.value, new PropertySupplier())),
+            OneValueRule(Type<SelectorCommandParameter>, requiredLeft<ICommandParameter>(),
+                (s, c) => NewList(c, new SelectorPropertyCommandParameter(s.value, new PropertySupplier()))),
+            OneValueRule(Type<SelectorCommandParameter>, requiredRight<ICommandParameter>(),
+                (s, c) => NewList(new SelectorPropertyCommandParameter(s.value, new PropertySupplier()), c)),
 
             //AmbiguousSelectorPropertyProcessor
             new BranchingProcessor<SelectorPropertyCommandParameter>(

@@ -23,7 +23,7 @@ namespace IngameScript {
             public CameraBlockHandler() {
                 AddBooleanHandler(Property.TRIGGER, b => GetTarget(b) != Vector3D.Zero, (b, v) => b.EnableRaycast = v);
                 AddNumericHandler(Property.RANGE, GetRange, (b, v) => SetCustomProperty(b, "Range", "" + v), 100);
-                AddVectorHandler(Property.TARGET_VELOCITY, (b) => GetVector(GetCustomProperty(b, "Velocity")) ?? Vector3D.Zero);
+                AddPropertyHandler(NewList(Property.TARGET, Property.VELOCITY), VectorHandler(b => GetVector(GetCustomProperty(b, "Velocity")) ?? Vector3D.Zero));
                 //TODO: Use setter to scan specific vector?
                 AddVectorHandler(Property.TARGET, GetTarget);
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;

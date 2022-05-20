@@ -81,10 +81,10 @@ Print "Target Location: " + "My Sensor" target
 ## "Target Velocity" Property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```targetVelocity```
+* Keywords: ```target velocity```
 
 Gets the velocity of the sensor's last detected entity, in world coordinates.  If the sensor has no detected entity, it will return 0:0:0.
 
 ```
-Print "Target Velocity: " + "My Sensor" targetVelocity
+Print "Target Velocity: " + "My Sensor" target velocity
 ```

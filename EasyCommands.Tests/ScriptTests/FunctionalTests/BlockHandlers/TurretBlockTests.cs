@@ -106,6 +106,27 @@ print the ""turrets"" target
         }
 
         [TestMethod]
+        public void GetTurretTargetVelocityFromTargetedEntity() {
+            String script = @"
+print the ""turrets"" target velocity
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockTurret = new Mock<IMyLargeTurretBase>();
+                test.MockBlocksInGroup("turrets", mockTurret);
+
+                mockTurret.Setup(b => b.CustomData).Returns("");
+                mockTurret.Setup(b => b.HasTarget).Returns(true);
+                mockTurret.Setup(b => b.GetTargetedEntity()).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(4, 5, 6)));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("4:5:6", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetTurretNoTargetReturnsZeroVector() {
             String script = @"
 print the ""turrets"" target
@@ -144,7 +165,7 @@ print the ""turrets"" target
         [TestMethod]
         public void SetTurretTargetVelocityUsingCustomTarget() {
             String script = @"
-set the ""turrets"" targetVelocity to ""1:2:3""
+set the ""turrets"" target velocity to ""1:2:3""
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {
@@ -161,7 +182,7 @@ set the ""turrets"" targetVelocity to ""1:2:3""
         [TestMethod]
         public void SetTurretTargetVelocityUsingTargetedEntity() {
             String script = @"
-set the ""turrets"" targetVelocity to ""1:2:3""
+set the ""turrets"" target velocity to ""1:2:3""
 ";
 
             using (ScriptTest test = new ScriptTest(script)) {

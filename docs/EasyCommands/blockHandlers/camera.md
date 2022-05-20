@@ -73,7 +73,7 @@ set "My Camera" range to 2000
 when "My Camera" is triggered
   Print "Detected an Entity!"
   Print "Target Coords: " + "My Camera" target
-  Print "Target Velocity: " + "My Camera" targetVelocity
+  Print "Target Velocity: " + "My Camera" target velocity
 
 #Enable Raycast
 tell "My Camera" to detect
@@ -94,11 +94,12 @@ when "My Camera" is triggered
 ## "Target Velocity" Property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```targetVelocity```
+* Keywords: ```target velocity```
 
 Returns the target velocity, oriented in World Coordinates, of the last detected entity.  If no entity has been detected, returns 0:0:0.
 
 ```
 when "My Camera" is triggered
-  Print "Target Velocity: " + "My Camera" targetVelocity
+  Print "Target Velocity: " + "My Camera" target velocity
 ```
+

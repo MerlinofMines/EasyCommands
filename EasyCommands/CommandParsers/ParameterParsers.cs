@@ -168,10 +168,9 @@ namespace IngameScript {
             AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
             AddPropertyWords(Words("target", "targeting", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
-            AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
-            AddPropertyWords(Words("naturalgravity", "naturalgravities", "planetgravity", "planetgravities"), Property.NATURAL_GRAVITY);
-            AddPropertyWords(Words("artificialgravity", "artificialgravities"), Property.ARTIFICIAL_GRAVITY);
+            AddPropertyWords(Words("natural", "planet"), Property.NATURAL);
+            AddPropertyWords(Words("artificial", "fake"), Property.ARTIFICIAL);
             AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
             AddPropertyWords(Words("name", "label"), Property.NAME);
             AddPropertyWords(Words("names", "labels"), Property.NAMES);
@@ -184,6 +183,8 @@ namespace IngameScript {
             AddPropertyWords(Words("weight", "mass"), Property.WEIGHT);
             AddPropertyWords(Words("data", "customdata"), Property.DATA);
             AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
+            AddPropertyWords(Words("invert", "inverted", "inverting"), Property.INVERT);
+            AddPropertyWords(Words("steer", "steering"), Property.STEER);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));

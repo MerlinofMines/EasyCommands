@@ -240,7 +240,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetTheCockpitNaturalGravity() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Natural Gravity: "" + the ""test cockpit"" naturalGravity")) {
+            using (ScriptTest test = new ScriptTest(@"Print ""Natural Gravity: "" + the ""test cockpit"" natural gravity")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
                 mockCockpit.Setup(b => b.GetNaturalGravity()).Returns(new Vector3D(1, 2, 3));
@@ -253,7 +253,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetTheCockpitArtificialGravity() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Artificial Gravity: "" + the ""test cockpit"" artificialGravity")) {
+            using (ScriptTest test = new ScriptTest(@"Print ""Artificial Gravity: "" + the ""test cockpit"" artificial gravity")) {
                 Mock<IMyCockpit> mockCockpit = new Mock<IMyCockpit>();
                 test.MockBlocksOfType("test cockpit", mockCockpit);
                 mockCockpit.Setup(b => b.GetArtificialGravity()).Returns(new Vector3D(1, 2, 3));

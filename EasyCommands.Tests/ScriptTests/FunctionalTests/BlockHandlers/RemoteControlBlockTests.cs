@@ -253,7 +253,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetTheRemoteControlNaturalGravity() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Natural Gravity: "" + the ""test remote control"" naturalGravity")) {
+            using (ScriptTest test = new ScriptTest(@"Print ""Natural Gravity: "" + the ""test remote control"" natural gravity")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
                 mockRemoteControl.Setup(b => b.GetNaturalGravity()).Returns(new Vector3D(1, 2, 3));
@@ -266,7 +266,7 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetTheRemoteControlArtificialGravity() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Artificial Gravity: "" + the ""test remote control"" artificialGravity")) {
+            using (ScriptTest test = new ScriptTest(@"Print ""Artificial Gravity: "" + the ""test remote control"" artificial gravity")) {
                 Mock<IMyRemoteControl> mockRemoteControl = new Mock<IMyRemoteControl>();
                 test.MockBlocksOfType("test remote control", mockRemoteControl);
                 mockRemoteControl.Setup(b => b.GetArtificialGravity()).Returns(new Vector3D(1, 2, 3));

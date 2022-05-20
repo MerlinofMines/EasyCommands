@@ -143,8 +143,8 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void GetTheWheelLimit() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" limit")) {
+        public void GetTheWheelSpeedLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" speed limit")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
                 test.MockBlocksOfType("test wheel", mockWheel);
                 MockGetProperty(mockWheel, "Speed Limit", 50f);
@@ -156,21 +156,8 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void GetTheWheelUpperLimit() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Speed Limit: "" + the ""test wheel"" upper limit")) {
-                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
-                test.MockBlocksOfType("test wheel", mockWheel);
-                MockGetProperty(mockWheel, "Speed Limit", 50f);
-
-                test.RunUntilDone();
-
-                Assert.AreEqual("Speed Limit: 50", test.Logger[0]);
-            }
-        }
-
-        [TestMethod]
-        public void GetTheWheelLeftLimit() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Steering Limit: "" + the ""test wheel"" left limit")) {
+        public void GetTheWheelSteeringLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Limit: "" + the ""test wheel"" steering limit")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
                 test.MockBlocksOfType("test wheel", mockWheel);
                 mockWheel.Setup(b => b.MaxSteerAngle).Returns(20);
@@ -182,21 +169,8 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void GetTheWheelRightLimit() {
-            using (ScriptTest test = new ScriptTest(@"Print ""Steering Limit: "" + the ""test wheel"" right limit")) {
-                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
-                test.MockBlocksOfType("test wheel", mockWheel);
-                mockWheel.Setup(b => b.MaxSteerAngle).Returns(20);
-
-                test.RunUntilDone();
-
-                Assert.AreEqual("Steering Limit: 20", test.Logger[0]);
-            }
-        }
-
-        [TestMethod]
-        public void SetTheWheelLimit() {
-            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" limit to 50")) {
+        public void SetTheWheelSpeedLimit() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" speed limit to 50")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
                 test.MockBlocksOfType("test wheel", mockWheel);
                 var mockProperty = MockProperty<IMyMotorSuspension, float>(mockWheel, "Speed Limit");
@@ -204,6 +178,18 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockProperty.Verify(p => p.SetValue(mockWheel.Object, 50));
+            }
+        }
+
+        [TestMethod]
+        public void SetTheWheelSteeringLimit() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" steering limit to 30")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.MaxSteerAngle = 30);
             }
         }
 
@@ -303,6 +289,122 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 mockWheel.VerifySet(b => b.Friction = 20);
+            }
+        }
+
+        [TestMethod]
+        public void IsTheWheelSteeringInverted() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Inverted: "" + ""test wheel"" steering is inverted")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                mockWheel.Setup(b => b.InvertSteer).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Inverted: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void InvertTheWheelSteering() {
+            using (ScriptTest test = new ScriptTest(@"invert the ""test wheel"" steering")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.InvertSteer = true);
+            }
+        }
+
+        [TestMethod]
+        public void StopInvertingTheWheelSteering() {
+            using (ScriptTest test = new ScriptTest(@"stop inverting the ""test wheel"" steering")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.InvertSteer = false);
+            }
+        }
+
+        [TestMethod]
+        public void IsTheWheelVelocityInverted() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Velocity Inverted: "" + ""test wheel"" velocity is inverted")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                mockWheel.Setup(b => b.InvertPropulsion).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Velocity Inverted: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void InvertTheWheelVelocity() {
+            using (ScriptTest test = new ScriptTest(@"invert the ""test wheel"" velocity")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.InvertPropulsion = true);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheSteeringOverride() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Override: "" + ""test wheel"" steering override")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                mockWheel.Setup(b => b.SteeringOverride).Returns(0.4f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Override: 0.4", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void SetTheSteeringOverride() {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" steering override to 0.5")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.SteeringOverride = 0.5f);
+            }
+        }
+
+        [TestMethod]
+        public void IsSteeringOff() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Steering Disabled: "" + ""test wheel"" steering is off")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                mockWheel.Setup(b => b.Steering).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Disabled: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void TurnOffSteering() {
+            using (ScriptTest test = new ScriptTest(@"turn off the ""test wheel"" steering")) {
+                Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                test.RunUntilDone();
+
+                mockWheel.VerifySet(b => b.Steering = false);
             }
         }
     }

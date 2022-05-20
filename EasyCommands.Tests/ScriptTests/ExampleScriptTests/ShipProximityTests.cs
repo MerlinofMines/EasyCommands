@@ -25,7 +25,7 @@ when $LASER_CAMERA camera is triggered
 
 :calculateClosestDistance
 assign distanceVector to avg $LASER_CAMERA camera position - avg $LASER_CAMERA camera target
-assign velocityVector to avg $LASER_CAMERA camera targetVelocity
+assign velocityVector to avg $LASER_CAMERA camera target velocity
 if abs velocityVector < 0.0001
   assign closestDistance to abs distanceVector
 else

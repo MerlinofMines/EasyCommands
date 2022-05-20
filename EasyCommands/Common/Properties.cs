@@ -29,19 +29,24 @@ namespace IngameScript {
                 attributeValue = attribute;
             }
 
-            //TODO: Needs support for multi-property (split by space?)
-            public PropertyValue Resolve(ref bool inverse) {
-                PropertyValue value = this;
+            public List<PropertyValue> Resolve(ref bool inverse) {
+                var values = NewList(this);
                 if (propertyType == Property.PROPERTY + "") {
-                    value = new PropertyValue(CastString(attributeValue.GetValue()));
-                    if (PROGRAM.propertyWords.ContainsKey(value.propertyType.ToLower())) {
-                        var commandParameters = PROGRAM.propertyWords[value.propertyType.ToLower()];
+                    values = NewList<PropertyValue>();
+                    var replaceValues = true;
+                    foreach (string s in CastString(attributeValue.GetValue()).ToLower().Split(' ')) {
+                        var commandParameters = PROGRAM.propertyWords.GetValueOrDefault(s, NewList<ICommandParameter>());
                         PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
-                        if (property != null) value.propertyType = property.value + "";
-                        inverse = inverse || !(findLast<BooleanCommandParameter>(commandParameters)?.value ?? true);
-                    }
+                        if (property != null) {
+                            values.Add(new PropertyValue(property.value + "", property.Token));
+                            inverse = inverse || !(findLast<BooleanCommandParameter>(commandParameters)?.value ?? true);
+                        } else
+                            replaceValues = false;
+                    };
+
+                    if (!replaceValues) values = NewList(new PropertyValue(CastString(attributeValue.GetValue())));
                 }
-                return value;
+                return values;
             }
         }
  
@@ -59,7 +64,7 @@ namespace IngameScript {
             public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) {
                 var resolvedSupplier = WithProperties(ResolvePropertyType(handler, defaultType).propertyValues);
                 var inverse = false;
-                resolvedSupplier.propertyValues = resolvedSupplier.propertyValues.Select(p => p.Resolve(ref inverse)).ToList();
+                resolvedSupplier.propertyValues = resolvedSupplier.propertyValues.SelectMany(p => p.Resolve(ref inverse)).ToList();
 
                 if (inverse) {
                     resolvedSupplier = resolvedSupplier
@@ -123,7 +128,7 @@ namespace IngameScript {
                     inverse = inverse
                 };
 
-            public string GetPropertyString() => string.Join(",", propertyValues.Select(p => p.propertyWord));
+            public string GetPropertyString() => string.Join(" ", propertyValues.Select(p => p.propertyWord));
         }
     }
 }

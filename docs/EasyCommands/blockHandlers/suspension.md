@@ -20,14 +20,14 @@ Enables or Disables the given block
 
 ```
 #Enable Block
-enable "My Beacon"
-set "My Beacon" to enabled
-turn on "My Beacon"
+enable "My Wheel"
+set "My Wheel" to enabled
+turn on "My Wheel"
 
 #Disable Block
-disable "My Beacon"
-set "My Beacon" to disabled
-turn off "My Beacon"
+disable "My Wheel"
+set "My Wheel" to disabled
+turn off "My Wheel"
 ```
 
 ## "Height" Property
@@ -82,26 +82,66 @@ set "My Wheel" velocity to 0
 set "My Wheel" velocity to -1
 ```
 
-## "Limit" Property
+## "Speed Limit" Property
 * Primitive Type: Numeric
-* Supports Directions (Up/Down/Left/Right)
-* Keywords: ```limit, limits, range, ranges```
+* Keywords: ```speed limit, speed limits```
 
-If no direction is passed, or the direction passed is Up/Down, this sets the Speed Limit of the wheels in m/s.
-
-If Left/Right directions are passed, this sets the Maximum Steer Angle (which affects both left & right equally).  Expected values are between 0 - 1 (0 = no steering, 1 = maximum steering)
-
+Gets/Sets the Speed Limit of the wheels in km/h.
 
 ```
-Print "Speed Limit" + "My Wheel" limit
+Print "Speed Limit" + "My Wheel" speed limit
 
 #50 m/s Speed Limit
-set "My Wheel" limit to 50
+set "My Wheel" speed limit to 50
+```
 
-Print "Max Steering: " + "My Wheel" left limit
+## "Velocity Override" Property
+* Primitive Type: Numeric
+* Keywords: ```velocity override, speed override```
+
+Gets/Sets the propulsion override of the given wheel(s), as a value from -1 to 1.
+
+```
+Print "Propulsion Override: " + "My Wheel" velocity override
+
+set "My Wheel" velocity override to 0.5
+```
+
+## "Steering" Property
+* Primitive Type: Bool
+* Keywords: ```steer, steering```
+
+Gets/Sets whether steering is enabled on the selected wheel(s).
+
+```
+Print "Steering Enabled: " + "My Wheel" steering is on
+
+turn off "My Wheel" steering
+```
+
+## "Steering Limit" Property
+* Primitive Type: Numeric
+* Keywords: ```steering limit, steer limit```
+
+Sets the Maximum Steer Angle (which affects both left & right equally).  Expected values are between 0 - 1 (0 = no steering, 1 = maximum steering)
+
+```
+Print "Steering Limit: " + "My Wheel" steering limit
 
 #Only steering turning up to 50%
-set "My Wheel" left limit to 0.5
+set "My Wheel" steering limit to 0.5
+```
+
+## "Steering Override" Property
+* Primitive Type: Numeric
+* Keywords: ```steer override, steering override```
+
+Gets/Sets the Steering Override, as a value from -1 to 1
+
+```
+Print "Steering Override: " + "My Wheel" steering override
+
+set "My Wheel" steering override to -0.5
 ```
 
 ## "Locked" Property

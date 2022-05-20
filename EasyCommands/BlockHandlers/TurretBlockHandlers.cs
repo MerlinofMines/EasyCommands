@@ -60,7 +60,7 @@ namespace IngameScript {
                     TypeHandler(VectorHandler(GetTarget, SetTarget), Return.VECTOR),
                     TypeHandler(BooleanHandler(b => b.HasTarget, (b, v) => { if (!v) ResetTarget(b); }), Return.BOOLEAN),
                     TypeHandler(StringHandler(b => b.GetTargetingGroup(), (b, v) => b.SetTargetingGroup(v)), Return.STRING));
-                AddVectorHandler(Property.TARGET_VELOCITY, b => b.GetTargetedEntity().Velocity, (b, v) => b.TrackTarget(GetTarget(b), v));
+                AddPropertyHandler(NewList(Property.TARGET, Property.VELOCITY), VectorHandler(b => b.GetTargetedEntity().Velocity, (b, v) => b.TrackTarget(GetTarget(b), v)));
                 AddNumericHandler(Property.ANGLE, b => b.Azimuth * RadiansToDegrees, (b, v) => {
                     b.Azimuth = v * DegreesToRadians;
                     b.SyncAzimuth();

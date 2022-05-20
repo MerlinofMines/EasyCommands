@@ -97,6 +97,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheParachuteRatio() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Parachute Ratio: "" + the ""test parachute"" ratio")) {
+                Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
+                 test.MockBlocksOfType("test parachute", mockParachute);
+
+                mockParachute.Setup(b => b.OpenRatio).Returns(0.75f);
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Parachute Ratio: 0.25"));
+            }
+        }
+
+        [TestMethod]
         public void GetTheParachuteRange() {
             using (ScriptTest test = new ScriptTest(@"Print ""Parachute Range: "" + the ""test parachute"" range")) {
                 Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
@@ -145,6 +158,32 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunUntilDone();
 
                 Assert.IsTrue(test.Logger.Contains("Parachute Gravity: 1:2:3"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheParachuteNaturalGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Parachute Natural Gravity: "" + the ""test parachute"" natural gravity")) {
+                Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
+                test.MockBlocksOfType("test parachute", mockParachute);
+                mockParachute.Setup(b => b.GetNaturalGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Parachute Natural Gravity: 1:2:3"));
+            }
+        }
+
+        [TestMethod]
+        public void GetTheParachuteArtificialGravity() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Parachute Artificial Gravity: "" + the ""test parachute"" artificial gravity")) {
+                Mock<IMyParachute> mockParachute = new Mock<IMyParachute>();
+                test.MockBlocksOfType("test parachute", mockParachute);
+                mockParachute.Setup(b => b.GetArtificialGravity()).Returns(new Vector3D(1, 2, 3));
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Parachute Artificial Gravity: 1:2:3"));
             }
         }
 
