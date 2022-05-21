@@ -357,6 +357,23 @@ if the ""test thruster"" output > 10000
         }
 
         [TestMethod]
+        public void CheckBlockPropertyWithPropertyInFront() {
+            using (ScriptTest test = new ScriptTest(@"
+if the range of the ""test beacon"" > 5000
+  print ""Long Range Beacon!""
+            ")) {
+                var mockBeacon = new Mock<IMyBeacon>();
+                test.MockBlocksOfType("test beacon", mockBeacon);
+
+                mockBeacon.Setup(b => b.Radius).Returns(10000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Long Range Beacon!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void ImplicitBlockPropertyAggregation() {
             using (ScriptTest test = new ScriptTest(@"
 if any ""test thrusters"" output < 10000

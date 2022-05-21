@@ -241,6 +241,11 @@ namespace IngameScript {
             TwoValueRule(Type<ThatCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p, selector, condition) => new SelectorCommandParameter(new ConditionalSelector(selector.value, condition.value))),
 
+            //Re-arrange PropertyValueCommandParameters
+            TwoValueRule(Type<PropertyValueCommandParameter>, optionalRight<AggregationModeCommandParameter>(), optionalRight<SelectorCommandParameter>(),
+                (p, a, s) => AnyNotNull(a.GetValue(), s.GetValue()),
+                (p, a, s) => NewList<ICommandParameter>(a, s, p).Where(c => c != null).ToList()),
+
             //PropertyAggregationProcessor
             ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),
                 (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value)))),

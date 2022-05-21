@@ -12,24 +12,6 @@ Block Types define a mapping between specific keywords and a specific type of bl
 ### Block Properties
 Block Properties allow you to interact with properties of a given set of blocks, based on the [Selector's](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") block type.  Many blocks share the same properties, but the behavior is different for that block type.  For example, the "Range" property on a Gatling Turret will set the Gatling Turret's firing range, whereas "Range" on an antenna will set it's broadcasting distance.
 
-#### Multi-Word Block Properties
-Some Block Properties require multiple words to be specified, such as the "target velocity" property of a Sensor, Camera or Turret.  In the list of properties for each BlockHandler, these multi-word properties will be denoted by multiple words separated by a space.
-
-In general, I recommend specifying all words of a multi-word property consecutively, but you can technically get away with splitting them up in some cases.  For example, to invert the steering of a wheel, you can specify this multiple ways:
-
-```
-#These are equivalent
-set the "Test Wheel" invert steering to true
-invert the "Test Wheel" steering
-```
-
-Similarly, to get the target velocity of a turret, you can do the either of the following:
-```
-#These are equivalent
-Print "Target Velocity: " + "Test Turret" target velocity
-Print "Target Velocity: " + the velocity of the "Test Turret" target
-```
-
 ## Getting and Setting Block Properties
 
 Before I get into the supported Block Handlers, let's go over some basics of Block Properties.  These basics apply to all Block Handlers, so as you are reading through specific BlockHandlers, keep the behavior described below in mind.  The BlockHandler descriptions reference these concepts without explaining them in detail.
@@ -51,7 +33,32 @@ increase the "Base Antenna" range by 1000
 #Decrease a property value
 ```
 
-## Read-only Properties
+You can also specify the property words in front of the selector, such as:
+
+```
+print "Range: " + the range of my beacon
+print "Average: " + the average height of my pistons
+```
+
+### Multi-Word Block Properties
+Some Block Properties require multiple words to be specified, such as the "target velocity" property of a Sensor, Camera or Turret.  In the list of properties for each BlockHandler, these multi-word properties will be denoted by multiple words separated by a space.
+
+In general, I recommend specifying all words of a multi-word property consecutively, but you can technically get away with splitting them up in some cases.  For example, to invert the steering of a wheel, you can specify this multiple ways:
+
+```
+#These are equivalent
+set the "Test Wheel" invert steering to true
+invert the "Test Wheel" steering
+```
+
+Similarly, to get the target velocity of a turret, you can do the either of the following:
+```
+#These are equivalent
+Print "Target Velocity: " + "Test Turret" target velocity
+Print "Target Velocity: " + the velocity of the "Test Turret" target
+```
+
+### Read-only Properties
 Not all properties can be updated.  These properties will be labeled "Read-only" and can only be retrieved.  Examples include be "Position", "Direction", "Properties", etc.
 
 ## Moving Properties

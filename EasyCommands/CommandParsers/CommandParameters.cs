@@ -150,10 +150,6 @@ namespace IngameScript {
             }
         }
 
-        public class BooleanCommandParameter : ValueCommandParameter<bool> {
-            public BooleanCommandParameter(bool value) : base(value) {}
-        }
-
         public class DirectionCommandParameter : ValueCommandParameter<Direction> {
             public DirectionCommandParameter(Direction value) : base(value) {}
         }
