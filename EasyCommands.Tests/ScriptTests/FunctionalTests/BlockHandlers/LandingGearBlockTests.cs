@@ -129,5 +129,57 @@ namespace EasyCommands.Tests.ScriptTests {
                 mockLandingGear.VerifySet(b => b.AutoLock = true);
             }
         }
+
+        [TestMethod]
+        public void IsLandingGearReady() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready To Lock: "" + the ""test landing gear"" is ready")) {
+                Mock<IMyLandingGear> mockLandingGear = new Mock<IMyLandingGear>();
+                test.MockBlocksOfType("test landing gear", mockLandingGear);
+                mockLandingGear.Setup(b => b.LockMode).Returns(LandingGearMode.ReadyToLock);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Ready To Lock: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsLandingGearReadyWhenConnectedReturnFalse() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready To Lock: "" + the ""test landing gear"" is ready")) {
+                Mock<IMyLandingGear> mockLandingGear = new Mock<IMyLandingGear>();
+                test.MockBlocksOfType("test landing gear", mockLandingGear);
+                mockLandingGear.Setup(b => b.LockMode).Returns(LandingGearMode.Locked);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Ready To Lock: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsLandingGearReadyToLock() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready To Lock: "" + the ""test landing gear"" is ready to lock")) {
+                Mock<IMyLandingGear> mockLandingGear = new Mock<IMyLandingGear>();
+                test.MockBlocksOfType("test landing gear", mockLandingGear);
+                mockLandingGear.Setup(b => b.LockMode).Returns(LandingGearMode.ReadyToLock);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Ready To Lock: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsLandingGearReadyToConnect() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready to Connect: "" + the ""test landing gear"" is ready to connect")) {
+                Mock<IMyLandingGear> mockLandingGear = new Mock<IMyLandingGear>();
+                test.MockBlocksOfType("test landing gear", mockLandingGear);
+                mockLandingGear.Setup(b => b.LockMode).Returns(LandingGearMode.ReadyToLock);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Ready to Connect: True", test.Logger[0]);
+            }
+        }
     }
 }

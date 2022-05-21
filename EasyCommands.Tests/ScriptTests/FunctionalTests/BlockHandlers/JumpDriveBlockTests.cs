@@ -91,6 +91,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void IsJumpDriveComplete() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Jump Drive Ready: "" + ""test jumpdrive"" is complete")) {
+                Mock<IMyJumpDrive> mockJumpDrive = new Mock<IMyJumpDrive>();
+                test.MockBlocksOfType("test jumpdrive", mockJumpDrive);
+                mockJumpDrive.Setup(b => b.Status).Returns(MyJumpDriveStatus.Ready);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Jump Drive Ready: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void IsJumpDriveReady() {
             using (ScriptTest test = new ScriptTest(@"Print ""Jump Drive Ready: "" + ""test jumpdrive"" is ready")) {
                 Mock<IMyJumpDrive> mockJumpDrive = new Mock<IMyJumpDrive>();

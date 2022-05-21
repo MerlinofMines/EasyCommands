@@ -91,11 +91,23 @@ set "My Jump Drive" length to 10000
 ```
 
 ## "Complete" Property
-* Read-only
 * Primitive Type: Bool
-* Keywords: ```complete, ready, done, finished```
+* Read-only
+* Keywords: ```complete, done, finished```
 
 Returns whether the Jump Drive is ready to jump.  Specifically, whether the Jump Drive's status is READY.
+
+```
+if "My Jump Drive" is finished
+  Print "Ready to Jump!"
+```
+
+## "Ready" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready, able```
+* Inverse Keywords: ```unable```
+Same as Complete. Returns whether the Jump Drive is ready to jump.  Specifically, whether the Jump Drive's status is READY.
 
 ```
 if "My Jump Drive" is ready

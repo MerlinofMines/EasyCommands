@@ -151,5 +151,58 @@ namespace EasyCommands.Tests.ScriptTests {
                 mockConnector.Verify(b => b.Disconnect());
             }
         }
+
+        [TestMethod]
+        public void IsTheConnectorReady() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready: "" + ""test connector"" is ready")) {
+                Mock<IMyShipConnector> mockConnector = new Mock<IMyShipConnector>();
+                test.MockBlocksOfType("test connector", mockConnector);
+                mockConnector.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connectable);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Ready: True"));
+            }
+        }
+
+        [TestMethod]
+        public void IsTheConnectorReadyWhenNotReady() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready: "" + ""test connector"" is ready")) {
+                Mock<IMyShipConnector> mockConnector = new Mock<IMyShipConnector>();
+                test.MockBlocksOfType("test connector", mockConnector);
+                mockConnector.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connected);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Ready: False"));
+            }
+        }
+
+        [TestMethod]
+        public void IsTheConnectorReadyToConnect() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready: "" + ""test connector"" is able to be connected")) {
+                Mock<IMyShipConnector> mockConnector = new Mock<IMyShipConnector>();
+                test.MockBlocksOfType("test connector", mockConnector);
+                mockConnector.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connectable);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Ready: True"));
+            }
+        }
+
+        [TestMethod]
+        public void TheConnectorCanBeLocked() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Ready: "" + ""test connector"" can be locked")) {
+                Mock<IMyShipConnector> mockConnector = new Mock<IMyShipConnector>();
+                test.MockBlocksOfType("test connector", mockConnector);
+                mockConnector.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connectable);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Ready: True"));
+            }
+        }
+
     }
 }

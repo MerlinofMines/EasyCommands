@@ -83,6 +83,7 @@ namespace IngameScript {
 
         public enum Property {
             //Simple Properties
+            ABLE,
             ACTIONS,
             ALTITUDE,
             ANGLE,

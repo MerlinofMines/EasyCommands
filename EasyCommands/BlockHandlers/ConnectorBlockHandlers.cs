@@ -21,16 +21,18 @@ namespace IngameScript {
     partial class Program {
         public class ConnectorBlockHandler : EjectorBlockHandler {
             public ConnectorBlockHandler() {
-                AddBooleanHandler(Property.LOCKED, Connected, Connect);
-                AddBooleanHandler(Property.CONNECTED, Connected, Connect);
+                var connectedHandler = BooleanHandler(b => b.Status == MyShipConnectorStatus.Connected, (b, v) => { if (v) b.Connect(); else b.Disconnect(); });
+
+                AddPropertyHandler(Property.LOCKED, connectedHandler);
+                AddPropertyHandler(Property.CONNECTED, connectedHandler);
                 AddNumericHandler(Property.STRENGTH, b => b.PullStrength, (b, v) => b.PullStrength = v, 0.01f);
+
+                var readyHandler = BooleanHandler(b => b.Status == MyShipConnectorStatus.Connectable);
+                AddPropertyHandler(Property.ABLE, readyHandler);
+                AddPropertyHandler(NewList(Property.ABLE, Property.LOCKED), readyHandler);
+                AddPropertyHandler(NewList(Property.ABLE, Property.CONNECTED), readyHandler);
+
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
-            }
-
-            static bool Connected(IMyShipConnector connector) => connector.Status == MyShipConnectorStatus.Connected;
-
-            static void Connect(IMyShipConnector connector, bool value) {
-                if (value) { connector.Connect(); } else { connector.Disconnect(); }
             }
         }
 

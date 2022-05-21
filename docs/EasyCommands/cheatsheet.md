@@ -19,7 +19,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Self Selector - ```my, self, this``` 
 * Variable Selector - ```$```
 
-### Block Types (Single, Group)
+### Block Types (Single, Group) 
 * Air Vent - ```airvent, vent```, ```airvents, vents```
 * Antenna - ```antenna```, ```antennas```
 * Assembler - ```assembler```, ```assemblers```
@@ -77,6 +77,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Wind Turbine - ```turbine```, ```turbines```
 
 ## Properties (Inverse in Parentheses, if present)
+* Able - ```able, can, ready```, (```unable, cannot```)
 * Actions - ```actions```
 * Altitude - ```altitude, altitudes, elevation, elevations```
 * Angle - ```angle, angles, azimuth, azimuths```
@@ -85,7 +86,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Background - ```background```
 * Color - ```color, foreground```
 * Complete - 
-  * ```done, ready, complete, finished, built, finish, pressurized, depressurized```
+  * ```done, complete, finished, built, finish, pressurized, depressurized```
   * (```clear, wipe, erase```)
 * Connected -
   * ```connect, connected, attach, attached, dock, docked, docking```

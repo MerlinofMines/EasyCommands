@@ -74,6 +74,45 @@ until "My Landing Gear" is connected
 disconnect "My Landing Gear"
 ```
 
+## "Ready" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready, able```
+* Inverse Keywords: ```unable```
+
+Returns true if the landing gear is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Landing Gear" is ready
+  Print "Ready to Connect!"
+```
+
+## "Ready Connect" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready to connect, able to connect, can connect```
+* Inverse Keywords: ```unable to connect, cannot connect```
+
+Same as Ready. Returns true if the landing gear is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Landing Gear" is ready to connect
+  Print "Ready to Connect!"
+```
+
+## "Ready Lock" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready to lock, able to lock, can lock```
+* Inverse Keywords: ```unable to lock, cannot lock```
+
+Same as Ready. Returns true if the landing gear is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Landing Gear" is ready to lock
+  Print "Ready to Connect!"
+```
+
 ## "Auto" Property
 * Primitive Type: Bool
 * Keywords: ```auto```
