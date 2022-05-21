@@ -22,6 +22,7 @@ namespace IngameScript {
         public class PropertyValue {
             public String propertyType, propertyWord;
             public IVariable attributeValue;
+            public bool inverse = false;
 
             public PropertyValue(string property, string word = null, IVariable attribute = null) {
                 propertyType = property;
@@ -29,7 +30,12 @@ namespace IngameScript {
                 attributeValue = attribute;
             }
 
-            public List<PropertyValue> Resolve(ref bool inverse) {
+            public PropertyValue Inverse(bool Inverse) {
+                inverse = Inverse;
+                return this;
+            }
+
+            public List<PropertyValue> Resolve() {
                 var values = NewList(this);
                 if (propertyType == Property.PROPERTY + "") {
                     values = NewList<PropertyValue>();
@@ -37,10 +43,9 @@ namespace IngameScript {
                     foreach (string s in CastString(attributeValue.GetValue()).ToLower().Split(' ')) {
                         var commandParameters = PROGRAM.propertyWords.GetValueOrDefault(s, NewList<ICommandParameter>());
                         PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
-                        if (property != null) {
-                            values.Add(new PropertyValue(property.value + "", property.Token));
-                            inverse = inverse || !(findLast<BooleanCommandParameter>(commandParameters)?.value ?? true);
-                        } else
+                        if (property != null)
+                            values.Add(new PropertyValue(property.value + "", property.Token).Inverse(property.inverse));
+                        else
                             replaceValues = false;
                     };
 
@@ -63,16 +68,15 @@ namespace IngameScript {
 
             public PropertySupplier Resolve(IBlockHandler handler, Return? defaultType = null) {
                 var resolvedSupplier = WithProperties(ResolvePropertyType(handler, defaultType).propertyValues);
-                var inverse = false;
-                resolvedSupplier.propertyValues = resolvedSupplier.propertyValues.SelectMany(p => p.Resolve(ref inverse)).ToList();
+                resolvedSupplier.propertyValues = resolvedSupplier.propertyValues.SelectMany(p => p.Resolve()).ToList();
 
-                if (inverse) {
+                if (resolvedSupplier.propertyValues.Any(p => p.inverse)) {
                     resolvedSupplier = resolvedSupplier
-                        .Inverse(inverse)
                         .WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
+                    resolvedSupplier.inverse = true;
                 }
                 return resolvedSupplier;
-             }
+            }
 
             PropertySupplier ResolvePropertyType(IBlockHandler blockHandler, Return? defaultType = null) {
                 if (propertyValues.Count > 0) return this;
@@ -104,12 +108,6 @@ namespace IngameScript {
             public PropertySupplier WithIncrement(bool increment) {
                 PropertySupplier copy = Copy();
                 copy.increment= increment;
-                return copy;
-            }
-
-            public PropertySupplier Inverse(bool inverse) {
-                PropertySupplier copy = Copy();
-                copy.inverse = inverse;
                 return copy;
             }
 

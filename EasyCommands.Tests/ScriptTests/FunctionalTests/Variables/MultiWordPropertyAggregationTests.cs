@@ -104,9 +104,74 @@ if the ""test turret"" target velocity > 50
         }
 
         [TestMethod]
+        public void CheckPropertyWithPropertyWordsSplitAcrossSelectorAndComparison() {
+            using (ScriptTest test = new ScriptTest(@"
+if the steering of the ""test wheel"" is inverted
+  print ""Steering Is Inverted""
+")) {
+                var mockWheel = new Mock<IMyMotorSuspension>();
+                test.MockBlocksOfType("test wheel", mockWheel);
+
+                mockWheel.Setup(b => b.InvertSteer).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Steering Is Inverted", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void CheckAnyMultiWordBlockProperty() {
             using (ScriptTest test = new ScriptTest(@"
 if any ""test turrets"" target velocity > 50
+  print ""Some are retreating!""
+            ")) {
+                var mockTurret = new Mock<IMyLargeTurretBase>();
+                var mockTurret2 = new Mock<IMyLargeTurretBase>();
+                test.MockBlocksInGroup("test turrets", mockTurret, mockTurret2);
+
+                mockTurret.Setup(b => b.CustomData).Returns("");
+                mockTurret.Setup(b => b.HasTarget).Returns(true);
+                mockTurret.Setup(b => b.GetTargetedEntity()).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(30, 30, 30)));
+
+                mockTurret2.Setup(b => b.CustomData).Returns("");
+                mockTurret2.Setup(b => b.HasTarget).Returns(true);
+                mockTurret2.Setup(b => b.GetTargetedEntity()).Returns(MockDetectedEntity(new Vector3D(1, 2, 3)));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Some are retreating!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void CheckAnyMultiWordBlockPropertyWithSplitPropertyWords() {
+            using (ScriptTest test = new ScriptTest(@"
+if the velocity of any ""test turrets"" target > 50
+  print ""Some are retreating!""
+            ")) {
+                var mockTurret = new Mock<IMyLargeTurretBase>();
+                var mockTurret2 = new Mock<IMyLargeTurretBase>();
+                test.MockBlocksInGroup("test turrets", mockTurret, mockTurret2);
+
+                mockTurret.Setup(b => b.CustomData).Returns("");
+                mockTurret.Setup(b => b.HasTarget).Returns(true);
+                mockTurret.Setup(b => b.GetTargetedEntity()).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(30, 30, 30)));
+
+                mockTurret2.Setup(b => b.CustomData).Returns("");
+                mockTurret2.Setup(b => b.HasTarget).Returns(true);
+                mockTurret2.Setup(b => b.GetTargetedEntity()).Returns(MockDetectedEntity(new Vector3D(1, 2, 3)));
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Some are retreating!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void CheckAnyMultiWordBlockPropertyWithPropertyWordsInFront() {
+            using (ScriptTest test = new ScriptTest(@"
+if the target velocity of any ""test turrets"" > 50
   print ""Some are retreating!""
             ")) {
                 var mockTurret = new Mock<IMyLargeTurretBase>();

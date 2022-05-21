@@ -150,10 +150,6 @@ namespace IngameScript {
             }
         }
 
-        public class BooleanCommandParameter : ValueCommandParameter<bool> {
-            public BooleanCommandParameter(bool value) : base(value) {}
-        }
-
         public class DirectionCommandParameter : ValueCommandParameter<Direction> {
             public DirectionCommandParameter(Direction value) : base(value) {}
         }
@@ -163,7 +159,10 @@ namespace IngameScript {
         }
 
         public class PropertyCommandParameter : ValueCommandParameter<Property> {
-            public PropertyCommandParameter(Property value) : base(value) { }
+            public bool inverse;
+            public PropertyCommandParameter(Property value, bool Inverse = false) : base(value) {
+                inverse = Inverse;
+            }
         }
 
         public class PropertyValueCommandParameter : ValueCommandParameter<PropertyValue> {

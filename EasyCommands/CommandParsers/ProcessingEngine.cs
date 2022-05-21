@@ -119,7 +119,7 @@ namespace IngameScript {
                 (name, function) => new FunctionDefinitionCommandParameter(() => CastString(name.value.GetValue()), function.value)),
 
             //PropertyProcessor
-            NoValueRule(Type<PropertyCommandParameter>, p => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token))),
+            NoValueRule(Type<PropertyCommandParameter>, p => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token).Inverse(p.inverse))),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
@@ -142,9 +142,6 @@ namespace IngameScript {
             OneValueRule(Type<IncrementCommandParameter>, requiredLeft<VariableCommandParameter>(),
                 (p, name) => name.Satisfied() && (name.GetValue().value is AmbiguousStringVariable),
                 (p, name) => new VariableIncrementCommandParameter(((AmbiguousStringVariable)name.value).value, p.value)),
-
-            //Primitive Processor
-            NoValueRule(Type<BooleanCommandParameter>, b => new VariableCommandParameter(GetStaticVariable(b.value))),
 
             //ListPropertyAggregationProcessor
             OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<PropertyAggregationCommandParameter>(),
@@ -243,6 +240,11 @@ namespace IngameScript {
             //ConditionalSelectorProcessor
             TwoValueRule(Type<ThatCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p, selector, condition) => new SelectorCommandParameter(new ConditionalSelector(selector.value, condition.value))),
+
+            //Re-arrange PropertyValueCommandParameters
+            TwoValueRule(Type<PropertyValueCommandParameter>, optionalRight<AggregationModeCommandParameter>(), optionalRight<SelectorCommandParameter>(),
+                (p, a, s) => AnyNotNull(a.GetValue(), s.GetValue()),
+                (p, a, s) => NewList<ICommandParameter>(a, s, p).Where(c => c != null).ToList()),
 
             //PropertyAggregationProcessor
             ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),

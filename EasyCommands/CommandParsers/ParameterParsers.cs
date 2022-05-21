@@ -121,8 +121,8 @@ namespace IngameScript {
             AddWords(Words("by"), new RelativeCommandParameter());
 
             //Value Words
-            AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new BooleanCommandParameter(true));
-            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new BooleanCommandParameter(false));
+            AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new VariableCommandParameter(GetStaticVariable(true)));
+            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new VariableCommandParameter(GetStaticVariable(false)));
 
             //Property Words
             AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale")), Property.LEVEL);
@@ -399,10 +399,8 @@ namespace IngameScript {
             AddWords(words, new CommandReferenceParameter(new ControlCommand { controlFunction = function }));
         }
 
-        void AddPropertyWords(String[] words, Property property, bool nonNegative = true) {
-            if (!nonNegative) AddWords(words, new PropertyCommandParameter(property), new BooleanCommandParameter(false));
-            else AddWords(words, new PropertyCommandParameter(property));
-        }
+        void AddPropertyWords(String[] words, Property property, bool nonNegative = true) =>
+            AddWords(words, new PropertyCommandParameter(property, !nonNegative));
 
         void AddDirectionWords(String[] words, Direction direction) {
             AddWords(words, new DirectionCommandParameter(direction));

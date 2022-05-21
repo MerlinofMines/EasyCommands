@@ -80,5 +80,51 @@ namespace EasyCommands.Tests.ScriptTests {
                 mockPiston2.Verify(b => b.Retract());
             }
         }
+
+        [TestMethod]
+        public void RearrangePropertyOfBlockConditionWithConditionalSelector() {
+            using (ScriptTest test = new ScriptTest(@"
+if the ratio of all batteries that are recharging < 0.5
+  Print ""Sound the alarm!""")) {
+                var mockBattery = new Mock<IMyBatteryBlock>();
+                var mockBattery2 = new Mock<IMyBatteryBlock>();
+                test.MockBlocksInGroup("My Batteries", mockBattery, mockBattery2);
+
+                mockBattery.Setup(b => b.ChargeMode).Returns(ChargeMode.Recharge);
+                mockBattery.Setup(b => b.CurrentStoredPower).Returns(10f);
+                mockBattery.Setup(b => b.MaxStoredPower).Returns(40f);
+
+                mockBattery2.Setup(b => b.ChargeMode).Returns(ChargeMode.Auto);
+                mockBattery2.Setup(b => b.CurrentStoredPower).Returns(30f);
+                mockBattery2.Setup(b => b.MaxStoredPower).Returns(40f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Sound the alarm!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void RearrangePropertyOfBlockConditionWithConditionalSelectorInParentheses() {
+            using (ScriptTest test = new ScriptTest(@"
+if the ratio of all (batteries that are recharging) < 0.5
+  Print ""Sound the alarm!""")) {
+                var mockBattery = new Mock<IMyBatteryBlock>();
+                var mockBattery2 = new Mock<IMyBatteryBlock>();
+                test.MockBlocksInGroup("My Batteries", mockBattery, mockBattery2);
+
+                mockBattery.Setup(b => b.ChargeMode).Returns(ChargeMode.Recharge);
+                mockBattery.Setup(b => b.CurrentStoredPower).Returns(10f);
+                mockBattery.Setup(b => b.MaxStoredPower).Returns(40f);
+
+                mockBattery2.Setup(b => b.ChargeMode).Returns(ChargeMode.Auto);
+                mockBattery2.Setup(b => b.CurrentStoredPower).Returns(30f);
+                mockBattery2.Setup(b => b.MaxStoredPower).Returns(40f);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Sound the alarm!", test.Logger[0]);
+            }
+        }
     }
 }
