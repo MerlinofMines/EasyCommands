@@ -118,7 +118,10 @@ namespace IngameScript {
             OneValueRule(Type<VariableCommandParameter>, requiredLeft<FunctionCommandParameter>(),
                 (name, function) => new FunctionDefinitionCommandParameter(() => CastString(name.value.GetValue()), function.value)),
 
-            //PropertyProcessor
+            //PropertyProcessors
+            TwoValueRule(Type<PropertyCommandParameter>, requiredRight<CommandSeparatorCommandParameter>(), requiredRight<PropertyCommandParameter>(),
+                (ready, to, p) => AllSatisfied(to, p) && ready.value == Property.ABLE,
+                (ready, to, p) => NewList<ICommandParameter>(ready, p)),
             NoValueRule(Type<PropertyCommandParameter>, p => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token).Inverse(p.inverse))),
 
             //ValuePropertyProcessor

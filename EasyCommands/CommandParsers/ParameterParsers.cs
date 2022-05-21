@@ -135,7 +135,7 @@ namespace IngameScript {
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
             AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
             AddPropertyWords(Words("unused", "unoccupied", "vacant", "available"), Property.USE, false);
-            AddPropertyWords(Words("done", "ready", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
+            AddPropertyWords(Words("done", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
             AddPropertyWords(Words("clear", "wipe", "erase"), Property.COMPLETE, false);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
@@ -185,6 +185,8 @@ namespace IngameScript {
             AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
             AddPropertyWords(Words("invert", "inverted", "inverting"), Property.INVERT);
             AddPropertyWords(Words("steer", "steering"), Property.STEER);
+            AddPropertyWords(Words("able", "ready"), Property.ABLE);
+            AddPropertyWords(Words("unable"), Property.ABLE, false);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));
@@ -387,6 +389,9 @@ namespace IngameScript {
             AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
             AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
             AddBlockWords(PluralWords("grid"), Words(), Block.GRID);
+
+            AddAliasWords(Words("can"), "is able");
+            AddAliasWords(Words("cannot"), "is not able");
         }
 
         String[] Words(params String[] words) => words;
@@ -436,6 +441,10 @@ namespace IngameScript {
 
         void AddWords(String[] words, params ICommandParameter[] commandParameters) {
             foreach (String word in words) propertyWords.Add(word, commandParameters.ToList());
+        }
+
+        void AddAliasWords(String[] words, string aliasWords) {
+            AddWords(words, PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(aliasWords)).ToArray());
         }
 
         public List<Token> Tokenize(String commandString) => tokenize(commandString).ToList();

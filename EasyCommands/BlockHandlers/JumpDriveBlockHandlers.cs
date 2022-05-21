@@ -23,7 +23,9 @@ namespace IngameScript {
             public JumpDriveBlockHandler() {
                 AddNumericHandler(Property.POWER, b => b.CurrentStoredPower);
                 AddNumericHandler(Property.RATIO, b => b.CurrentStoredPower / b.MaxStoredPower);
-                AddBooleanHandler(Property.COMPLETE, b => b.Status == MyJumpDriveStatus.Ready);
+                var readyHandler = BooleanHandler(b => b.Status == MyJumpDriveStatus.Ready);
+                AddPropertyHandler(Property.COMPLETE, readyHandler);
+                AddPropertyHandler(Property.ABLE, readyHandler);
                 AddBooleanHandler(Property.SUPPLY, b => !b.Recharge, (b, v) => b.Recharge = !v);
 
                 var jumpDistanceHandler = DirectionalTypedHandler(Direction.NONE,

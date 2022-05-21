@@ -72,6 +72,45 @@ disconnect "My Connector"
 
 Identical to the Connect Property
 
+## "Ready" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready, able```
+* Inverse Keywords: ```unable```
+
+Returns true if the connector is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Connector" is ready
+  Print "Ready to Connect!"
+```
+
+## "Ready Connect" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready to connect, able to connect, can connect```
+* Inverse Keywords: ```unable to connect, cannot connect```
+
+Same as Ready. Returns true if the connector is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Connector" is ready to connect
+  Print "Ready to Connect!"
+```
+
+## "Ready Lock" Property
+* Primitive Type: Bool
+* Read-only
+* Keywords: ```ready to lock, able to lock, can lock```
+* Inverse Keywords: ```unable to lock, cannot lock```
+
+Same as Ready. Returns true if the connector is ready to connect, false if already connected or not ready to connect.
+
+```
+if "My Connector" is ready to lock
+  Print "Ready to Connect!"
+```
+
 ## "Strength" Property
 * Primitive Type: Numeric
 * Keywords: ```strength, strengths, force, forces```

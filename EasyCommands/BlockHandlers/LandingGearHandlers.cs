@@ -25,6 +25,11 @@ namespace IngameScript {
                 var lockHandler = BooleanHandler(b => b.IsLocked, (b, v) => { if (v) b.Lock(); else b.Unlock(); });
                 AddPropertyHandler(Property.LOCKED, lockHandler);
                 AddPropertyHandler(Property.CONNECTED, lockHandler);
+
+                var readyHandler = BooleanHandler(b => b.LockMode == LandingGearMode.ReadyToLock);
+                AddPropertyHandler(Property.ABLE, readyHandler);
+                AddPropertyHandler(NewList(Property.ABLE, Property.LOCKED), readyHandler);
+                AddPropertyHandler(NewList(Property.ABLE, Property.CONNECTED), readyHandler);
             }
         }
     }
