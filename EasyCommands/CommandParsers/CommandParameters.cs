@@ -55,6 +55,7 @@ namespace IngameScript {
         public class RoundCommandParameter : SimpleCommandParameter { }
         public class CastCommandParameter : SimpleCommandParameter { }
         public class RelativeCommandParameter : SimpleCommandParameter { }
+        public class CommandSeparatorCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;
@@ -165,8 +166,22 @@ namespace IngameScript {
             public PropertyCommandParameter(Property value) : base(value) { }
         }
 
+        public class PropertyValueCommandParameter : ValueCommandParameter<PropertyValue> {
+            public PropertyValueCommandParameter(PropertyValue value) : base(value) {}
+        }
+
         public class PropertySupplierCommandParameter : ValueCommandParameter<PropertySupplier> {
-            public PropertySupplierCommandParameter(PropertySupplier value) : base(value) {}
+            public PropertySupplierCommandParameter(PropertySupplier value) : base(value) { }
+        }
+
+        public class SelectorPropertyCommandParameter : SimpleCommandParameter {
+            public ISelector selector;
+            public PropertySupplier propertySupplier;
+
+            public SelectorPropertyCommandParameter(ISelector Selector, PropertySupplier PropertySupplier) {
+                selector = Selector;
+                propertySupplier = PropertySupplier;
+            }
         }
 
         public class ListCommandParameter : ValueCommandParameter<IVariable> {

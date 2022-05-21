@@ -8,7 +8,7 @@ There a few different kinds of Selectors that you can choose from, which are des
 
 ## Block Selector
 
-The most commonly used Selector is a BLock Selector.  This selector is useful when you want to interact with a specific block, or group of blocks.
+The most commonly used Selector is a Block Selector.  This selector is useful when you want to interact with a specific block, or group of blocks.
 
 There are a few forms a Selector can take, but the general form is ```<selector> <blockType>```, where ```selector``` represents the name of the block or block group, and ```blockType``` is one of the reserved [Block Types](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers "Block Handlers").  Note that most blockTypes have a corresponding "blocktype + group" keyword meaning "this selector is a block group".  Typically the plural form of the block type indicates it is a block group, though there are a couple of exceptions to this (like displays).  
 

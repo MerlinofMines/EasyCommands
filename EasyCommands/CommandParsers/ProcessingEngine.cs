@@ -91,12 +91,15 @@ namespace IngameScript {
             //RedundantComparisonProcessor
             //"is not <" => "!<"
             //"is <" => "<"
-            //"is not" => !=
-            // "not greater than" => <
+            //"is not" => "!="
+            // "not greater than" => "<"
+            //"is equal to" => "="
             OneValueRule(Type<ComparisonCommandParameter>, requiredEither<NotCommandParameter>(),
                 (p, left) => new ComparisonCommandParameter((a, b) => !p.value(a, b))),
             OneValueRule(Type<ComparisonCommandParameter>, requiredRight<ComparisonCommandParameter>(),
                 (p, right) => new ComparisonCommandParameter(right.value)),
+            OneValueRule(Type<ComparisonCommandParameter>, requiredRight<CommandSeparatorCommandParameter>(),
+                (p, right) => p),
 
             //IndexSelectorProcessor
             OneValueRule(Type<IndexSelectorCommandParameter>, requiredLeft<SelectorCommandParameter>(),
@@ -116,14 +119,14 @@ namespace IngameScript {
                 (name, function) => new FunctionDefinitionCommandParameter(() => CastString(name.value.GetValue()), function.value)),
 
             //PropertyProcessor
-            NoValueRule(Type<PropertyCommandParameter>, p => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token))),
+            NoValueRule(Type<PropertyCommandParameter>, p => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token))),
 
             //ValuePropertyProcessor
             //Needs to check left, then right, which is opposite the typical checks.
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
+                (p, v) => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token, v.value))),
             OneValueRule(Type<ValuePropertyCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, v) => new PropertySupplierCommandParameter(new PropertySupplier(p.value + "", p.Token).WithAttributeValue(v.value))),
+                (p, v) => new PropertyValueCommandParameter(new PropertyValue(p.value + "", p.Token, v.value))),
 
             //AssignmentProcessor
             TwoValueRule(Type<AssignmentCommandParameter>, optionalRight<GlobalCommandParameter>(), requiredRight<VariableCommandParameter>(),
@@ -233,22 +236,22 @@ namespace IngameScript {
                 (p, left, with, right) => new BlockConditionCommandParameter(PROGRAM.OrCondition(left.value, right.value))),
 
             //ThatBlockConditionProcessor
-            FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), optionalRight<PropertySupplierCommandParameter>(), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (with, p, prop, dir, var) => p.Satisfied() && AnyNotNull(var.GetValue(), prop.GetValue()),
-                (with, p, prop, dir, var) => NewList<ICommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition((prop?.value ?? new PropertySupplier()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true))))),
+            FourValueRule(Type<ThatCommandParameter>, requiredRight<ComparisonCommandParameter>(), rightList<PropertyValueCommandParameter>(true), optionalRight<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (with, p, prop, dir, var) => p.Satisfied() && AnySatisfied(var, prop),
+                (with, p, prop, dir, var) => NewList<ICommandParameter>(new ThatCommandParameter(), new BlockConditionCommandParameter(BlockPropertyCondition(new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true))))),
 
             //ConditionalSelectorProcessor
             TwoValueRule(Type<ThatCommandParameter>, requiredLeft<SelectorCommandParameter>(), requiredRight<BlockConditionCommandParameter>(),
                 (p, selector, condition) => new SelectorCommandParameter(new ConditionalSelector(selector.value, condition.value))),
 
             //PropertyAggregationProcessor
-            ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, (prop?.value ?? new PropertySupplier()).WithDirection(dir?.value)))),
+            ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),
+                (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value)))),
 
             //BlockComparisonProcessor
-            ThreeValueRule(Type<ComparisonCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
-                (p, prop, dir, var) => AnyNotNull(var.GetValue(), prop.GetValue()),
-                (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition((prop?.value ?? new PropertySupplier()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true)))),
+            ThreeValueRule(Type<ComparisonCommandParameter>, eitherList<PropertyValueCommandParameter>(true), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
+                (p, prop, dir, var) => AnySatisfied(var, prop),
+                (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition(new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true)))),
 
             //AggregateConditionProcessor
             TwoValueRule(Type<BlockConditionCommandParameter>, optionalLeft<AggregationModeCommandParameter>(), requiredLeft<SelectorCommandParameter>(),
@@ -284,24 +287,42 @@ namespace IngameScript {
             OneValueRule(Type<IfCommandParameter>, requiredRight<VariableCommandParameter>(),
                 (p, var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.REVERSE, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
 
+            //PropertySupplierProcessor
+            TwoValueRule(Type<PropertyValueCommandParameter>, eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),
+                (s, p, d) => new PropertySupplierCommandParameter(new PropertySupplier(p.Select(v => v.value).Concat(NewList(s.value)).ToList()).WithDirection(d?.value))),
+            NoValueRule(Type<DirectionCommandParameter>, d => new PropertySupplierCommandParameter(new PropertySupplier().WithDirection(d.value))),
+
             new BranchingProcessor<AmbiguousSelectorCommandParameter>(
+                OneValueRule(Type<AmbiguousSelectorCommandParameter>, eitherList<PropertySupplierCommandParameter>(true),
+                    (s, p) => new SelectorPropertyCommandParameter(s.value, p.Aggregate(new PropertySupplier(), (a,b) => a.And(b.value)))),
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new VariableCommandParameter(((BlockSelector)p.value).selector)),
                 NoValueRule(Type<AmbiguousSelectorCommandParameter>, p => new SelectorCommandParameter(p.value))
             ),
 
+            //SelectorPropertyProcessor
+            OneValueRule(Type<SelectorCommandParameter>, eitherList<PropertySupplierCommandParameter>(true),
+                (s, p) => new SelectorPropertyCommandParameter(s.value, p.Aggregate(new PropertySupplier(), (a, b) => a.And(b.value)))),
+
+            //CommandSeparatorProcessor
+            NoValueRule(Type<CommandSeparatorCommandParameter>, p => NewList<ICommandParameter>()),
+
+            //ImplicitSelectorPropertyProcessor
+            OneValueRule(Type<SelectorCommandParameter>, requiredLeft<ICommandParameter>(),
+                (s, c) => NewList(c, new SelectorPropertyCommandParameter(s.value, new PropertySupplier()))),
+            OneValueRule(Type<SelectorCommandParameter>, requiredRight<ICommandParameter>(),
+                (s, c) => NewList(new SelectorPropertyCommandParameter(s.value, new PropertySupplier()), c)),
+
             //AmbiguousSelectorPropertyProcessor
-            new BranchingProcessor<SelectorCommandParameter>(
+            new BranchingProcessor<SelectorPropertyCommandParameter>(
                 BlockCommandProcessor(),
-                TwoValueRule(Type<SelectorCommandParameter>, requiredEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s, p, d) => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.value, p.value.WithDirection(d?.value)))),
-                TwoValueRule(Type<SelectorCommandParameter>, optionalEither<PropertySupplierCommandParameter>(), optionalEither<DirectionCommandParameter>(),
-                    (s, p, d) => AnyNotNull(p.GetValue(), d.GetValue()),
-                    (s, p, d) => {
-                        PropertySupplier property = p?.value ?? new PropertySupplier();
-                        Direction? direction = d?.value;
-                        if (direction == null) property = property.WithPropertyValue(GetStaticVariable(true));
-                        return new CommandReferenceParameter(new BlockCommand(s.value, (b, e) =>
-                            b.UpdatePropertyValue(e, property.WithDirection(direction).Resolve(b))));
+                NoValueRule(Type<SelectorPropertyCommandParameter>,
+                    s => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.selector, s.propertySupplier))),
+                NoValueRule(Type<SelectorPropertyCommandParameter>,
+                    s => {
+                        var property = s.propertySupplier;
+                        if (property.direction == null) property = property.WithPropertyValue(GetStaticVariable(true));
+                        return new CommandReferenceParameter(new BlockCommand(s.selector, (b, e) =>
+                            b.UpdatePropertyValue(e, property.Resolve(b))));
                     })),
 
             NoValueRule(Type<RelativeCommandParameter>, b => NewList<ICommandParameter>()),

@@ -33,7 +33,7 @@ namespace IngameScript {
         };
 
         public class TerminalPropertyHandler<T> : SimplePropertyHandler<T> where T : class, IMyTerminalBlock {
-            public TerminalPropertyHandler(String propertyId, Primitive delta) : this(new PropertySupplier(propertyId), delta) { }
+            public TerminalPropertyHandler(String propertyId, Primitive delta) : this(new PropertySupplier(NewList(new PropertyValue(propertyId))), delta) { }
             public TerminalPropertyHandler(PropertySupplier propertySupplier, Primitive delta) : base(
                 (b, p) => { var property = GetTerminalProperty(b, propertySupplier); return ResolvePrimitive(TerminalPropertyConversions[property.TypeName].GetValue(property, b));  },
                 (b, p, v) => { var property = GetTerminalProperty(b, propertySupplier); TerminalPropertyConversions[property.TypeName].SetValue(property, b, v); },
@@ -49,10 +49,10 @@ namespace IngameScript {
         }
 
         public static ITerminalProperty GetTerminalProperty(IMyTerminalBlock block, PropertySupplier propertySupplier) =>
-            PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.propertyType, s => {
+            PROGRAM.propertyCache.GetOrCreate(block.GetType(), propertySupplier.GetPropertyString(), s => {
                 var property = block.GetProperty(s);
                 if (property == null)
-                    throw new RuntimeException(block.BlockDefinition.SubtypeName + " does not have property: " + (propertySupplier.propertyWord ?? s));
+                    throw new RuntimeException(block.BlockDefinition.SubtypeName + " does not have property support for: " + s);
                 return property;
         });
 
@@ -75,8 +75,8 @@ namespace IngameScript {
                 });
 
                 AddPropertyHandler(Property.ACTION, new SimplePropertyHandler<T>(
-                    (b, p) => p.attributeValue.GetValue(),
-                    (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
+                    (b, p) => p.propertyValues[0].attributeValue.GetValue(),
+                    (b, p, v) => PROGRAM.actionCache.GetOrCreate(b.GetType(), CastString(p.propertyValues[0].attributeValue.GetValue()), s => b.GetActionWithName(s)).Apply(b),
                     ResolvePrimitive(0)));
 
                 AddDirectionHandlers(Property.DIRECTION, Direction.FORWARD,

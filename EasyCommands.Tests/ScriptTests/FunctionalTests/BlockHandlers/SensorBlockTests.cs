@@ -102,5 +102,63 @@ when ""mock sensor"" is triggered
                 Assert.AreEqual("Target: 1:2:3", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void TriggerTheSensorAndGetTargetVelocity() {
+            String script = @"
+when ""mock sensor"" is triggered
+  print ""Target Velocity: "" + ""mock sensor"" target velocity
+";
+            using (var test = new ScriptTest(script)) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                mockSensor.Setup(b => b.CustomData).Returns("");
+                mockSensor.Setup(b => b.IsActive).Returns(false);
+
+                test.MockBlocksOfType("mock sensor", mockSensor);
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+
+                mockSensor.Setup(b => b.IsActive).Returns(true);
+                mockSensor.Setup(b => b.LastDetectedEntity).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(4, 5, 6)));
+                test.RunOnce();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Target Velocity: 4:5:6", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetVelocityOfSensorTarget() {
+            String script = @"
+when ""mock sensor"" is triggered
+  print ""Target Velocity: "" + the velocity of the 'mock sensor' sensor target
+";
+            using (var test = new ScriptTest(script)) {
+                var mockSensor = new Mock<IMySensorBlock>();
+                mockSensor.Setup(b => b.CustomData).Returns("");
+                mockSensor.Setup(b => b.IsActive).Returns(false);
+
+                test.MockBlocksOfType("mock sensor", mockSensor);
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+
+                mockSensor.Setup(b => b.IsActive).Returns(true);
+                mockSensor.Setup(b => b.LastDetectedEntity).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(4, 5, 6)));
+                test.RunOnce();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Target Velocity: 4:5:6", test.Logger[0]);
+            }
+        }
     }
 }

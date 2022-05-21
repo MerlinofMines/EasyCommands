@@ -22,14 +22,14 @@ namespace IngameScript {
         public class AssemblerBlockHandler : FunctionalBlockHandler<IMyAssembler> {
             public AssemblerBlockHandler() {
                 AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
-                AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b,v) => { if (!v) b.ClearQueue(); });
+                AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
                 AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p); }
-                }) ;
+                });
                 AddPropertyHandler(Property.DESTROY, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAmount(p)),
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
                 });
 
@@ -45,22 +45,34 @@ namespace IngameScript {
                 });
             }
 
-            float GetRequestedAmount(PropertySupplier p) => CastNumber(NewList(p.attributeValue.GetValue(), (p.propertyValue ?? GetStaticVariable(1)).GetValue()).Find(v => v.returnType == Return.NUMERIC) ?? ResolvePrimitive(1));
-            string GetRequestedItemFilter(PropertySupplier p) => CastString(NewList(p.attributeValue.GetValue(), (p.propertyValue ?? GetStaticVariable("*")).GetValue()).Find(v => v.returnType == Return.STRING) ?? ResolvePrimitive("*"));
+            //Returns the value of first attribute or property variable with the same return type as default value,
+            //otherwise the default value. Attributes are checked first.
+            T GetRequestedAttributeOrPropertyValue<T>(PropertySupplier supplier, T defaultValue) {
+                Object value = supplier.propertyValues.Where(p => p.attributeValue != null)
+                    .Select(p => p.attributeValue.GetValue())
+                    .Concat(NewList(supplier.propertyValue?.GetValue() ?? ResolvePrimitive(defaultValue)))
+                    .Concat(NewList(ResolvePrimitive(defaultValue)))
+                    .FirstOrDefault(v => v.returnType == ResolvePrimitive(defaultValue).returnType).value;
+
+                return (T)value;
+            }
+
 
             float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
-                var definitions = PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p));
+                var definitions = PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"));
                 var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
-                return (float)currentItems
+                MyFixedPoint value = currentItems
                     .Where(item => definitions.Contains(item.BlueprintId))
                     .Select(item => item.Amount)
-                    .Aggregate(MyFixedPoint.Zero, (sum, val) => sum + val);
+                    .DefaultIfEmpty(MyFixedPoint.Zero)
+                    .Aggregate((sum, val) => sum + val);
+                return (float)value;
             }
 
             void AddQueueItem(IMyAssembler b, PropertySupplier p) {
-                float amount = GetRequestedAmount(p);
-                foreach(MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedItemFilter(p))) {
+                float amount = GetRequestedAttributeOrPropertyValue(p, 1f);
+                foreach (MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"))) {
                     try { b.AddQueueItem(bp, (MyFixedPoint)amount); } catch (Exception) {
                         throw new RuntimeException("Unknown BlueprintId: " + bp.SubtypeId);
                     }

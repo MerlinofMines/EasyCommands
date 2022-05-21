@@ -29,8 +29,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
                 AddVectorHandler(Property.VELOCITY, b => b.GetVelocity());
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
-                AddVectorHandler(Property.NATURAL_GRAVITY, b => b.GetNaturalGravity());
-                AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());
+                AddPropertyHandler(NewList(Property.NATURAL, Property.STRENGTH), VectorHandler(b => b.GetNaturalGravity()));
+                AddPropertyHandler(NewList(Property.ARTIFICIAL, Property.STRENGTH), VectorHandler(b => b.GetArtificialGravity()));
                 AddNumericHandler(Property.LEVEL, b => {
                     Vector3D? closestPoint;
                     return (float)(b.TryGetClosestPoint(out closestPoint) ? (closestPoint.Value - b.GetPosition()).Length() : -1);

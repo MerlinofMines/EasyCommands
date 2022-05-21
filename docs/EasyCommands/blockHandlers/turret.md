@@ -108,18 +108,18 @@ tell "My Turret" to target "Weapons"
 
 ## "Target Velocity" Property
 * Primitive Type: Vector
-* Keywords: ```targetVelocity```
+* Keywords: ```target velocity, target velocities```
 
 Gets/Sets the velocity of the turret's current target, in world coordinates.  If the turret has no target, it will return 0:0:0.
 
 When setting this property, the turret will be set to track the target assuming it maintains the velocity vector you've specified.  This is intended to be used in combination with the target property for manually tracking targets.
 
 ```
-Print "Target Velocity: " + "My Turret" targetVelocity
+Print "Target Velocity: " + "My Turret" target velocity
 
 #Definitely not a good idea!
 set "My Turret" target to my position
-set "My Turret" targetVelocity to my ship velocity
+set "My Turret" target velocity to my ship velocity
 ```
 
 ## "Angle" Property

@@ -110,9 +110,13 @@ namespace IngameScript {
             public string GetName(object block) => Name((T)block);
 
             public virtual PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
-                if (propertyHandlers.ContainsKey(property.propertyType)) return propertyHandlers[property.propertyType];
-                throw new RuntimeException(typeof(T).Name + " does not have property: " + (property.propertyWord ?? property.propertyType));
+                var propertyString = GetPropertyHash(property);
+                if (propertyHandlers.ContainsKey(propertyString)) return propertyHandlers[propertyString];
+                throw new RuntimeException(typeof(T).Name + " does not have property support for: " + property.GetPropertyString());
             }
+
+            public string GetPropertyHash(PropertySupplier propertySupplier) =>
+                propertySupplier.propertyValues.OrderBy(p => p.propertyType).Aggregate("", (a, b) => a + b.propertyType);
 
             public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock =>
                 SelectBlocksByType(blocks, selector).OfType<Object>().ToList();
@@ -123,10 +127,10 @@ namespace IngameScript {
             public Direction GetDefaultDirection() => defaultDirection;
 
             public PropertySupplier GetDefaultProperty(Direction direction) =>
-                new PropertySupplier(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "");
+                new PropertySupplier(NewList(new PropertyValue(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "")));
 
             public PropertySupplier GetDefaultProperty(Return type) =>
-                new PropertySupplier(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]) + "");
+                new PropertySupplier(NewList(new PropertyValue(defaultPropertiesByPrimitive.GetValueOrDefault(type, defaultPropertiesByPrimitive[Return.STRING]) + "")));
 
             public Primitive GetPropertyValue(object block, PropertySupplier property) {
                 Primitive value = property.direction.HasValue ?
@@ -162,6 +166,7 @@ namespace IngameScript {
             }
 
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) => GetPropertyHandler(property).Reverse((T)block, property);
+            public void AddPropertyHandler(List<Property> properties, PropertyHandler<T> handler) => propertyHandlers[GetPropertyHash(new PropertySupplier(properties.Select(p => new PropertyValue(p + "")).ToList()))] = handler;
             public void AddPropertyHandler(Property property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
             public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) =>
                 AddPropertyHandler(property, BooleanHandler(Get, Set));

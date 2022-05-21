@@ -116,6 +116,40 @@ when ""mock camera"" is triggered
         }
 
         [TestMethod]
+        public void cameraIsTriggeredGetTargetVelocity() {
+            String script = @"
+when ""mock camera"" is triggered
+  print ""Target Velocity: "" + ""mock camera"" target velocity
+";
+            using (var test = new ScriptTest(script)) {
+                var mockCamera = new Mock<IMyCameraBlock>();
+                mockCamera.Setup(b => b.CustomData).Returns("");
+                mockCamera.Setup(b => b.CanScan(1000)).Returns(false);
+
+                test.MockBlocksOfType("mock camera", mockCamera);
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+                mockCamera.VerifySet(b => b.EnableRaycast = true);
+                mockCamera.Verify(b => b.CanScan(1000));
+
+                test.RunOnce();
+
+                Assert.AreEqual(0, test.Logger.Count);
+                mockCamera.Verify(b => b.CanScan(1000));
+
+                mockCamera.Setup(b => b.CanScan(1000)).Returns(true);
+                mockCamera.Setup(b => b.Raycast(1000, 0, 0)).Returns(MockDetectedEntity(new Vector3D(1, 2, 3), new Vector3D(4, 5, 6)));
+                mockCamera.Setup(b => b.CustomData).Returns("Target=1:2:3\nVelocity=4:5:6");
+                test.RunOnce();
+
+                mockCamera.VerifySet(b => b.CustomData = "Target=1:2:3\nVelocity=4:5:6");
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Target Velocity: 4:5:6", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void LastTargetIsStillAvailableWhenCannotScan() {
             String script = @"
 print ""Target: "" + ""mock camera"" target

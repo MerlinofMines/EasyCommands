@@ -66,8 +66,8 @@ namespace IngameScript {
                 AddPropertyHandler(Property.AUTO, dampenerHandler);
                 AddBooleanHandler(Property.LOCKED, b => b.HandBrake, (b, v) => b.HandBrake = v);
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
-                AddVectorHandler(Property.NATURAL_GRAVITY, b => b.GetNaturalGravity());
-                AddVectorHandler(Property.ARTIFICIAL_GRAVITY, b => b.GetArtificialGravity());
+                AddPropertyHandler(NewList(Property.NATURAL, Property.STRENGTH), VectorHandler(b => b.GetNaturalGravity()));
+                AddPropertyHandler(NewList(Property.ARTIFICIAL, Property.STRENGTH), VectorHandler(b => b.GetArtificialGravity()));
                 AddNumericHandler(Property.WEIGHT, b => b.CalculateShipMass().TotalMass);
                 AddNumericHandler(Property.LEVEL, b => GetPlanetElevation(b, MyPlanetElevation.Surface));
                 AddNumericHandler(Property.ALTITUDE, b => GetPlanetElevation(b, MyPlanetElevation.Sealevel));

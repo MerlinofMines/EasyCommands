@@ -10,7 +10,7 @@ using VRage.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
-    public class BlockCommandTests {
+    public class SimpleBlockCommandTests {
         [TestMethod]
         public void ReverseWithProperty() {
             using (ScriptTest test = new ScriptTest(@"reverse the ""test piston"" velocity")) {
@@ -396,7 +396,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
+                Assert.AreEqual("IMyBeacon does not have property support for: angle", test.Logger[1]);
             }
         }
 
@@ -411,7 +411,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
+                Assert.AreEqual("IMyInventory does not have property support for: angle", test.Logger[1]);
             }
         }
 
@@ -425,7 +425,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("IMyBeacon does not have property: attach", test.Logger[1]);
+                Assert.AreEqual("IMyBeacon does not have property support for: attach", test.Logger[1]);
             }
         }
 
@@ -451,7 +451,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("IMyBeacon does not have property: angle", test.Logger[1]);
+                Assert.AreEqual("IMyBeacon does not have property support for: angle", test.Logger[1]);
             }
         }
 
@@ -466,7 +466,7 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("Runtime Exception Occurred:", test.Logger[0]);
-                Assert.AreEqual("IMyInventory does not have property: angle", test.Logger[1]);
+                Assert.AreEqual("IMyInventory does not have property support for: angle", test.Logger[1]);
             }
         }
 
@@ -486,10 +486,10 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void SetDynamicTerminalBlockProperty() {
-            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" ""Speed Limit"" property to 50")) {
+            using (ScriptTest test = new ScriptTest(@"set the ""test wheel"" ""SpeedLimit"" property to 50")) {
                 Mock<IMyMotorSuspension> mockWheel = new Mock<IMyMotorSuspension>();
                 test.MockBlocksOfType("test wheel", mockWheel);
-                var mockProperty = MockProperty<IMyMotorSuspension, float>(mockWheel, "Speed Limit");
+                var mockProperty = MockProperty<IMyMotorSuspension, float>(mockWheel, "SpeedLimit");
 
                 test.RunUntilDone();
 

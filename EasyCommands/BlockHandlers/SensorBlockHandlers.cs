@@ -27,10 +27,10 @@ namespace IngameScript {
                     var lastDetectedEntity = b.LastDetectedEntity;
                     return lastDetectedEntity.IsEmpty() ? Vector3D.Zero : GetPosition(lastDetectedEntity);
                 });
-                AddVectorHandler(Property.TARGET_VELOCITY, b => {
+                AddPropertyHandler(NewList(Property.TARGET, Property.VELOCITY), VectorHandler(b => {
                     var lastDetectedEntity = b.LastDetectedEntity;
                     return lastDetectedEntity.IsEmpty() ? Vector3.Zero : lastDetectedEntity.Velocity;
-                });
+                }));
 
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
             }

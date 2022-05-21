@@ -151,10 +151,10 @@ Print "Gravity: " + "My Parachute" gravity
 Print "Gravity Strength: " + abs "My Parachute" gravity
 ```
 
-## "NaturalGravity" Property
+## "Natural Gravity" Property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```naturalGravity, naturalGravities, planetGravity, planetGravities```
+* Keywords: ```natural gravity, natural gravities, planet gravity, planet gravities```
 
 Gets the current Natural (i.e., Planet's) Gravity force on the parachute as a Vector, in World Coordinates. 
 
@@ -163,14 +163,14 @@ Returns 0:0:0 if not within a planet's gravity well.
 Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Natural Gravity Strength.
 
 ```
-Print "Natural Gravity: " + "My Parachute" naturalGravity
-Print "Natural Gravity Strength: " + abs "My Parachute" naturalGravity
+Print "Natural Gravity: " + "My Parachute" natural gravity
+Print "Natural Gravity Strength: " + abs "My Parachute" natural gravity
 ```
 
-## "ArtificialGravity" Property
+## "Artificial Gravity" Property
 * Read-only
 * Primitive Type: Vector
-* Keywords: ```artificialGravity, artificialGravities```
+* Keywords: ```artificial gravity, artificial gravities```
 
 Gets the current Artificial Gravity force on the parachute as a Vector, in World Coordinates.
 
@@ -179,6 +179,6 @@ Returns 0:0:0 if no artifical gravity is currently active.
 Use the "abs" [Operation](https://spaceengineers.merlinofmines.com/EasyCommands/operations "Operations") to get the Artificial Gravity Strength.
 
 ```
-Print "Artificial Gravity: " + "My Parachute" artificialGravity
-Print "Artificial Gravity Strength: " + abs "My Parachute" artificialGravity
+Print "Artificial Gravity: " + "My Parachute" artificial gravity
+Print "Artificial Gravity Strength: " + abs "My Parachute" artificial gravity
 ```

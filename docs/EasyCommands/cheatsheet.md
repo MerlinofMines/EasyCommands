@@ -80,7 +80,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Actions - ```actions```
 * Altitude - ```altitude, altitudes, elevation, elevations```
 * Angle - ```angle, angles, azimuth, azimuths```
-* Artificial Gravity - ```artificialGravity, artificialGravities```
+* Artificial - ```artificial, fake```
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```
 * Color - ```color, foreground```
@@ -97,6 +97,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Font - ```font```
 * Input - ```input, inputs, pilot, pilots, user, users```
 * Interval - ```interval```
+* Invert - ```invert, inverted, inverting```
 * Level - ```height, heights, length, lengths, level, levels, size, sizes, weight, mass```
 * Locked - 
   * ```lock, locked, freeze, frozen, brake, braking, handbrake, permanent, static```
@@ -105,7 +106,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Media List - ```sounds, songs, images, tracks```
 * Name - ```name, label```
 * Names - ```names, labels```
-* Natural Gravity - ```naturalGravity, naturalGravities, planetGravity, planetGravities
+* Natural - ```natural, planet```
 * Offset (also Padding)- ```offset, padding```
 * Open - ```open, opened``` ```(close, closed, shut)```
 * Override - ```override, overrides, overridden, dampener, dampeners```
@@ -118,6 +119,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Roll Input - ```roll, rolls, rollInput, rollInputs, rotation, rotations```
 * Run - ```run, running, execute, executing, script```
 * Show - ```show, showing```, (```hide, hiding```)
+* Steering - ```steer, steering```
 * Strength - ```strength, strengths, force, forces, torque, torques, gravity, gravities```
 * Supply - 
   * ```pressure, pressurize, pressurizing, supply, supplying, generate, generating, discharge, discharging, broadcast, broadcasting, assemble, assembling```

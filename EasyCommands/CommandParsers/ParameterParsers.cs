@@ -89,7 +89,8 @@ namespace IngameScript {
             );
 
             //Ignored words that have no command parameters
-            AddWords(Words("the", "than", "turned", "block", "panel", "chamber", "drive", "to", "from", "then", "of", "either", "for", "in", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
+            AddWords(Words("in", "the", "than", "turned", "block", "panel", "chamber", "drive", "of", "either", "for", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
+            AddWords(Words("to", "from", "then"), new CommandSeparatorCommandParameter());
 
             //Selector Related Words
             AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());
@@ -167,10 +168,9 @@ namespace IngameScript {
             AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
             AddPropertyWords(Words("target", "targeting", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
             AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
-            AddPropertyWords(Words("targetvelocity"), Property.TARGET_VELOCITY);
             AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
-            AddPropertyWords(Words("naturalgravity", "naturalgravities", "planetgravity", "planetgravities"), Property.NATURAL_GRAVITY);
-            AddPropertyWords(Words("artificialgravity", "artificialgravities"), Property.ARTIFICIAL_GRAVITY);
+            AddPropertyWords(Words("natural", "planet"), Property.NATURAL);
+            AddPropertyWords(Words("artificial", "fake"), Property.ARTIFICIAL);
             AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
             AddPropertyWords(Words("name", "label"), Property.NAME);
             AddPropertyWords(Words("names", "labels"), Property.NAMES);
@@ -183,6 +183,8 @@ namespace IngameScript {
             AddPropertyWords(Words("weight", "mass"), Property.WEIGHT);
             AddPropertyWords(Words("data", "customdata"), Property.DATA);
             AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
+            AddPropertyWords(Words("invert", "inverted", "inverting"), Property.INVERT);
+            AddPropertyWords(Words("steer", "steering"), Property.STEER);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));

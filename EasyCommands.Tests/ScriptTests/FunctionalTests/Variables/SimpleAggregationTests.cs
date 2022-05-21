@@ -61,10 +61,10 @@ namespace EasyCommands.Tests.ScriptTests {
 
         [TestMethod]
         public void GetValueofDynamicTerminalBlockProperty() {
-            using (var test = new ScriptTest(@"Print ""My Value: "" + ""test wheel"" ""Speed Limit"" property")) {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + ""test wheel"" ""SpeedLimit"" property")) {
                 var mockWheel = new Mock<IMyMotorSuspension>();
                 test.MockBlocksOfType("test wheel", mockWheel);
-                MockGetProperty(mockWheel, "Speed Limit", 50f);
+                MockGetProperty(mockWheel, "SpeedLimit", 50f);
 
                 test.RunOnce();
 
@@ -336,6 +336,61 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("My Value: 9", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void CheckBlockProperty() {
+            using (ScriptTest test = new ScriptTest(@"
+if the ""test thruster"" output > 10000
+  print ""Full Power!""
+            ")) {
+                var mockThruster = new Mock<IMyThrust>();
+                test.MockBlocksOfType("test thruster", mockThruster);
+
+                mockThruster.Setup(b => b.CurrentThrust).Returns(20000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Full Power!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ImplicitBlockPropertyAggregation() {
+            using (ScriptTest test = new ScriptTest(@"
+if any ""test thrusters"" output < 10000
+  print ""Losing Thrust!""
+            ")) {
+                var mockThruster = new Mock<IMyThrust>();
+                var mockThruster2 = new Mock<IMyThrust>();
+                test.MockBlocksInGroup("test thrusters", mockThruster, mockThruster2);
+
+                mockThruster.Setup(b => b.CurrentThrust).Returns(20000);
+                mockThruster2.Setup(b => b.CurrentThrust).Returns(5000);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Losing Thrust!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ImplicitBlockPropertyAggregationWithoutProperty() {
+            using (ScriptTest test = new ScriptTest(@"
+if the ""test thrusters"" are on
+  print ""Thrusters On!""
+            ")) {
+                var mockThruster = new Mock<IMyThrust>();
+                var mockThruster2 = new Mock<IMyThrust>();
+                test.MockBlocksInGroup("test thrusters", mockThruster, mockThruster2);
+
+                mockThruster.Setup(b => b.Enabled).Returns(true);
+                mockThruster2.Setup(b => b.Enabled).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Thrusters On!", test.Logger[0]);
             }
         }
     }
