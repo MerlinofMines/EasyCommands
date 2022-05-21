@@ -126,5 +126,22 @@ if the ratio of all (batteries that are recharging) < 0.5
                 Assert.AreEqual("Sound the alarm!", test.Logger[0]);
             }
         }
+
+        [TestMethod]
+        public void RearrangeReadyPropertyOfBlockConditionWithConditionalSelector() {
+            using (ScriptTest test = new ScriptTest(@"set the strength of any connectors that are ready to connect to 0")) {
+                var mockConnector = new Mock<IMyShipConnector>();
+                var mockConnector2 = new Mock<IMyShipConnector>();
+                test.MockBlocksInGroup("My Connectors", mockConnector, mockConnector2);
+
+                mockConnector.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connectable);
+                mockConnector2.Setup(b => b.Status).Returns(MyShipConnectorStatus.Connected);
+
+                test.RunUntilDone();
+
+                mockConnector.VerifySet(b => b.PullStrength = 0f);
+                mockConnector2.VerifySet(b => b.PullStrength = 0f, Times.Never);
+            }
+        }
     }
 }
