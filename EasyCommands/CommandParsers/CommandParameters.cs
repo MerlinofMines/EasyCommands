@@ -163,7 +163,10 @@ namespace IngameScript {
         }
 
         public class PropertyCommandParameter : ValueCommandParameter<Property> {
-            public PropertyCommandParameter(Property value) : base(value) { }
+            public bool inverse;
+            public PropertyCommandParameter(Property value, bool Inverse = false) : base(value) {
+                inverse = Inverse;
+            }
         }
 
         public class PropertyValueCommandParameter : ValueCommandParameter<PropertyValue> {
