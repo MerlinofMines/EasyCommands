@@ -108,7 +108,6 @@ namespace IngameScript {
             MEDIA_LIST,
             MEDIA,
             NAME,
-            NAMES,
             NATURAL,
             OFFSET,
             OPEN,

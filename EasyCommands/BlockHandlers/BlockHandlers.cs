@@ -103,8 +103,8 @@ namespace IngameScript {
             public Direction defaultDirection = Direction.UP;
 
             public BlockHandler() {
-                AddListHandler(Property.NAMES, b => CastList(ResolvePrimitive(Name(b))));
-                defaultPropertiesByPrimitive[Return.STRING] = Property.NAMES;
+                AddStringHandler(Property.NAME, b => Name(b));
+                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
             }
 
             public string GetName(object block) => Name((T)block);

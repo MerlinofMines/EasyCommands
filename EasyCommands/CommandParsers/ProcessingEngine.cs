@@ -321,7 +321,7 @@ namespace IngameScript {
             new BranchingProcessor<SelectorPropertyCommandParameter>(
                 BlockCommandProcessor(),
                 NoValueRule(Type<SelectorPropertyCommandParameter>,
-                    s => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.SumAggregator, s.selector, s.propertySupplier))),
+                    s => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.DefaultAggregator, s.selector, s.propertySupplier))),
                 NoValueRule(Type<SelectorPropertyCommandParameter>,
                     s => {
                         var property = s.propertySupplier;

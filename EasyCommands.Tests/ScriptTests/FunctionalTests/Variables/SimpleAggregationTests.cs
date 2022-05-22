@@ -11,12 +11,12 @@ namespace EasyCommands.Tests.ScriptTests {
     public class SimpleAggregationTests {
 
         [TestMethod]
-        public void ValueOfEmptyListReturnsZero() {
+        public void ValueOfEmptyListReturnsEmptyList() {
             using (var test = new ScriptTest(@"Print ""My Value: "" + ""test piston"" height")) {
 
                 test.RunOnce();
 
-                Assert.AreEqual("My Value: 0", test.Logger[0]);
+                Assert.AreEqual("My Value: []", test.Logger[0]);
             }
         }
 
@@ -73,7 +73,7 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
-        public void ValueOfMultipleItemsReturnsSum() {
+        public void ValueOfMultipleNumericItemsReturnsSum() {
             using (var test = new ScriptTest(@"Print ""My Value: "" + ""test piston"" height")) {
                 var mockPiston = new Mock<IMyPistonBase>();
                 var mockPiston2 = new Mock<IMyPistonBase>();
@@ -84,6 +84,21 @@ namespace EasyCommands.Tests.ScriptTests {
                 test.RunOnce();
 
                 Assert.AreEqual("My Value: 8", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void ValueOfMultipleNonNumericItemsReturnsSum() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + piston names")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                var mockPiston2 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test pistons", mockPiston, mockPiston2);
+                mockPiston.Setup(b => b.CustomName).Returns("piston 1");
+                mockPiston2.Setup(b => b.CustomName).Returns("piston 2");
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: [\"piston 1\",\"piston 2\"]", test.Logger[0]);
             }
         }
 

@@ -105,8 +105,7 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * (```unlock, unlocked, unfreeze```)
 * Media - ```sound, music, song, track, image, play, playing, unsilence``` (```silent, silence, quiet```)
 * Media List - ```sounds, songs, images, tracks```
-* Name - ```name, label```
-* Names - ```names, labels```
+* Name - ```name, names, label, labels```
 * Natural - ```natural, planet```
 * Offset (also Padding)- ```offset, padding```
 * Open - ```open, opened``` ```(close, closed, shut)```

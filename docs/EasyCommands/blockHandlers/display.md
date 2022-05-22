@@ -15,26 +15,19 @@ Default Directional Properties
 * Up - Text
 
 Note that there are no Display Block Group keywords.  This is because individual blocks often have more than 1 display (Cockpits, Programmable Blocks).  If you want to get all displays from a group of blocks, use ```"My Displays" group displays```
- 
-## "Names" Property
-* Primitive Type: Bool
-* Keywords: ```enable, enabled```
-
-* Primitive Type: Bool
-* Keywords: ```names, labels```
-
-Prints the Display Name for the given display, as a list.  This enables you to get back all Display Names for a given block by doing:
-
-```
-Print "Display names: " + "My Programmabl Block" display names
-```
 
 ## "Name" Property
 * Read-only
 * Primitive Type: Bool
-* Keywords: ```name, label```
+* Keywords: ```name, names, label, labels```
 
-Prints the Display Name for the given display.  
+Prints the Display Name for the given display.
+
+This property also enables you to get back all Display Names for a given block by doing:
+
+```
+Print "Display names: " + "My Programmable Block" display names
+```
 
 You can update a given block's displays by named index using the display name, as follows:
 
@@ -42,7 +35,7 @@ You can update a given block's displays by named index using the display name, a
 #Keyboard
 Print "My Program" display [1] name
 
-set "My Program" display ["Keyboard"] to "My Keyboard Text"
+set "My Program" display ["Keyboard"] text to "My Keyboard Text"
 ```
 
 ## "Enabled" Property

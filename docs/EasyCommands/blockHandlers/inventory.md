@@ -18,7 +18,7 @@ Default Primitive Properties:
 
 ## "Name" Property
 * Primitive Type: String
-* Keywords: ```name```
+* Keywords: ```name, names, label, labels```
 
 Gets/Sets the name of the block for which this container belongs.  Most useful for re-naming Cargo Container objects.
 

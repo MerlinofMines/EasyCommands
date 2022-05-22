@@ -9,12 +9,20 @@ Default Primitive Properties:
 * Bool - enabled
 * Vector - position
 
-### "Names" property
-* Read-only
+### "Name" property
 * Primitive Type: String
-* Keywords: ```names```
+* Keywords: ```name, names, label, labels```
 
-Returns a list of names for all of the blocks in the given selector.  Useful for getting a list of all block's names in a given group so that you can print out or iterate through each one to do something.  Good use cases for this might be for re-naming a group of blocks according to some pattern.  A cool script might prefix all of the blocks on your grid with some value so that later you know that those blocks belong to that ship. Example for doing this:
+Gets or sets the CustomName of the given Terminal Block (the name you see in the Terminal menu).
+
+This property can also be useful for getting a list of names for all blocks in a given selector:
+
+```
+set nameList to "My Turret" names
+print "My Turret Names: " + nameList
+```
+
+You can also use this to rename all blocks in your grid with a unique prefix, like so:
 
 ```
 set prefix to "[Base] "
@@ -27,12 +35,6 @@ for each turretName in the turret names
 ```
 
 Careful using this, as if you have too many blocks you can easily get the Script Too Complex issue.  If this happens, try getting block names for individual block types instead.
-
-### "Name" property
-* Primitive Type: String
-* Keywords: ```name```
-
-Gets or sets the CustomName of the given Terminal Block (the name you see in the Terminal menu).  
 
 ### "Show" property
 * Primitive Type: Bool

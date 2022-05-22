@@ -21,5 +21,14 @@ namespace IngameScript {
     partial class Program {
         public delegate Primitive Aggregator(IEnumerable<object> blocks, Func<object,Primitive> primitiveSupplier);
         public Aggregator SumAggregator = (blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Aggregate((Primitive)null, (a, b) => a?.Plus(b) ?? b) ?? ResolvePrimitive(0);
+        public Aggregator DefaultAggregator = (blocks, primitiveSupplier) => {
+            var blockValues = blocks
+                .Select(primitiveSupplier)
+                .DefaultIfEmpty(ResolvePrimitive(NewKeyedList()));
+
+            return (blockValues.Count() == 1) ? blockValues.First() :
+                blockValues.All(v => v.returnType == Return.NUMERIC) ? blockValues.Aggregate((a, b) => a.Plus(b)) :
+                ResolvePrimitive(NewKeyedList(blockValues.Select(v => new StaticVariable(v))));
+        };
     }
 }
