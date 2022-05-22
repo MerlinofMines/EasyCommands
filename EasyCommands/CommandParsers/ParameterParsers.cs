@@ -135,7 +135,7 @@ namespace IngameScript {
             AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
             AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
             AddPropertyWords(Words("unused", "unoccupied", "vacant", "available"), Property.USE, false);
-            AddPropertyWords(Words("done", "complete", "finished", "built", "finish", "pressurized", "depressurized"), Property.COMPLETE);
+            AddPropertyWords(Words("done", "complete", "finished", "finish", "pressurized", "depressurized"), Property.COMPLETE);
             AddPropertyWords(Words("clear", "wipe", "erase"), Property.COMPLETE, false);
             AddPropertyWords(Words("open", "opened"), Property.OPEN);
             AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
@@ -186,12 +186,14 @@ namespace IngameScript {
             AddPropertyWords(Words("steer", "steering"), Property.STEER);
             AddPropertyWords(Words("able", "ready"), Property.ABLE);
             AddPropertyWords(Words("unable"), Property.ABLE, false);
+            AddPropertyWords(Words("build", "building", "built"), Property.BUILD);
+            AddPropertyWords(Words("damage", "damaged"), Property.DAMAGE);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));
             AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(Property.PROPERTY));
             AddWords(Words("action"), new ValuePropertyCommandParameter(Property.ACTION));
-            AddWords(Words("produce", "producing", "create", "creating", "build", "building", "make", "making"), new ValuePropertyCommandParameter(Property.CREATE));
+            AddWords(Words("produce", "producing", "create", "creating", "make", "making"), new ValuePropertyCommandParameter(Property.CREATE));
             AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(Property.DESTROY));
 
             //Special Command Words

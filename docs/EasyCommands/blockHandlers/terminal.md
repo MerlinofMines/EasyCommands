@@ -9,188 +9,7 @@ Default Primitive Properties:
 * Bool - enabled
 * Vector - position
 
-### "Name" property
-* Primitive Type: String
-* Keywords: ```name, names, label, labels```
-
-Gets or sets the CustomName of the given Terminal Block (the name you see in the Terminal menu).
-
-This property can also be useful for getting a list of names for all blocks in a given selector:
-
-```
-set nameList to "My Turret" names
-print "My Turret Names: " + nameList
-```
-
-You can also use this to rename all blocks in your grid with a unique prefix, like so:
-
-```
-set prefix to "[Base] "
-set myTurrets to the turret names
-
-#For each turret, if it isn't prefixed with my prefix, then add it
-for each turretName in the turret names
-  if turretName does not contain prefix
-    set $turretName turret name to prefix + turretName
-```
-
-Careful using this, as if you have too many blocks you can easily get the Script Too Complex issue.  If this happens, try getting block names for individual block types instead.
-
-### "Show" property
-* Primitive Type: Bool
-* Keywords: ```show, showing```
-* Inverse Keywords: ```hide, hiding```
-
-Gets or sets whether the given block is shown by default in the terminal menu.  Useful for hiding individual blocks after you have created groups for them.
-
-```
-if any of "My Doors" are showing
-  hide "My Doors"
-```
-### "Enabled" property
-* Primitive Type: Bool
-* Keywords ```enable, enabled```
-* Inverse Keywords: ```disable, disabled```
-
-Sets whether the block is turned on or off.  This property is present for any block that you can enable or disable from the terminal block menu.
-
-```
-if "My Remote Control" is disabled
-  enable "My Remote Control"
-```
-
-### "Power" property
-* Primitive Type: Bool
-* Keywords: ```power, powered```
-
-Identical to "enabled" unless overridden by the specific block handler.
-
-```
-power on the "Hydrogen Thrusters"
-turn on the "Exterior Lights"
-```
-
-### "CustomData" property
-* Primitive Type: String
-* Keywords: ```data, customdata```
-
-Gets or Sets the blocks `CustomData` field. 
-
-```
-#Output your current program
-print my data
-
-#Delete your current program (do not actually do this).
-set my data to ""
-```
-
-
-### "DetailedInfo" property
-* Read-only
-* Primitive Type: String
-* Keywords: ```info, details, detailedinfo```
-
-Returns the detailed info of the block. `DetailedInfo` contains the text on the right hand site of the terminal menu.
-
-```
-set myInfo to "Battery" details split "\n"
-
-#Output stored power
-Print myInfo[6]
-```
-
-### "Position" property
-* Read-only
-* Primitive Type: Vector
-* Keywords: ```position, positions, location, locations```
-
-Returns the current position of the given block, in World Coordinates.
-
-```
-#Gets the current position of the programmable block
-Print "Block Position: " + my position
-
-#Gets the current position of the remote control block
-Print "Remote Control Position: " + "My Remote Control" position
-```
-
-### "Direction" property
-* Read-only
-* Primitive Type: Vector
-* Keywords: ```direction, directions```
-
-This directional property returns a normalized vector representing the requested "direction" with respect to the block, in World Coordinates.  In other words, if you add "my position" and "my forwards direction" together, you get a coordinate that is 1 meter in front of the block's position.
-
-This property is really useful for creating things like target coordinates, which can then be sent to other grids.  Useful for "follow me" scripts or defining paths for other ships to follow.
-
-Supported Directions:
-* Up, Down, Left, Right, Forwards, Backwards
-
-```
-set myPosition to my position
-set myForwardsDirection to my forwards direction
-set myDownwardsDirection to my downwards direction
-
-set targetLocation to myPosition + 10 * myForwardsDirection + 20 * myDownwardsDirection
-
-Print "Target Location: " + targetLocation
-```
-
-### "Properties" Property
-* Read-only
-* Primitive Type: List
-* Keywords: ```properties, attributes```
-Returns a list of property names for the given block(s).  May contain duplicates if specified selector has more than 1 terminal block.  I recommend only using on a single block at a time. 
-
-```
-Print "My Properties: " + the "Test Piston" properties
-```
-
-### "Property" Property
-* String attribute for the property name is required.
-* Primitive type: Depends on the property.
-* Keywords: ```property, attribute```
-
-This property can get or set a given Terminal Property for the block.  The attribute is expected to be a String representing the name of the property to be updated.  When resolving what property to get or set, the resolved value is first compared against known reserved keywords which represent other properties.  So, you can dynamically set Terminal Properties using this feature:
-
-```
-#These two commands are equivalent
-set the "Base Antenna" range to 2000
-set the "Base Antenna" "range" property to 2000
-```
-
-If the given block type does not have a property for the given keywords, then the block attempts to look up the SpaceEngineers property for that block by name.  This enables you to get or set properties even if they do not have explicit property mappings.  See "Controlling Unsupported Block Types" for more information.
-
-### "Actions" property
-* Read-only
-* Primitive type: List
-* Keywords: ```actions```
-Returns a list of action names for the given block(s).  May contain duplicates if specified selector has more than 1 terminal block.  I recommend only using on a single block at a time.
-
-```
-Print "My Actions: " + the "Test Piston" actions
-```
-
-### "Action" Attribute Property
-* Update-only
-* Primitive Type: String
-* Keywords: ```action```
-
-Applies the given action on all blocks in the given Selector.  Actions do not have return values, so this is an update-only property.
-
-```
-#All of the following will work
-tell the "Gatling Turrets" to apply the "ShootOnce" action
-apply the "ShootOnce" action on the "Gatling Turrets"
-apply the "Gatling Turrets" "ShootOnce" action
-
-set myAction to "ShootOnce"
-tell the "Gatling Turrets" to apply myAction action
-apply myAction action on the "Gatling Turrets"
-apply the "Gatling Turrets" myAction action
-```
-
-### Controlling Unsupported Block Types
+## Controlling Unsupported Block Types
 It's impossible to model all Block Types in Space Engineers, since you might have mods installed that add new block types that EasyCommands doesn't know about.  Luckily, since almost all blocks inherit from Terminal Block, you can control most of those block's even if they don't have an explicit handler of their own.  So, if you find there's a block type (which is a Terminal Block) without a block handler (including 3P block types from mods), you can get some control over it's properties with this Block Handler. 
 
 Here's a script to print out properties & values for an unsupported block:
@@ -227,4 +46,299 @@ for each i in 0 .. count of myActions[] - 1
    myOutput+= "Action: " + myActions[i] + "\n\n"
 
 print myOutput
+```
+
+## "Name" property
+* Primitive Type: String
+* Keywords: ```name, names, label, labels```
+
+Gets or sets the CustomName of the given Terminal Block (the name you see in the Terminal menu).
+
+This property can also be useful for getting a list of names for all blocks in a given selector:
+
+```
+set nameList to "My Turret" names
+print "My Turret Names: " + nameList
+```
+
+You can also use this to rename all blocks in your grid with a unique prefix, like so:
+
+```
+set prefix to "[Base] "
+set myTurrets to the turret names
+
+#For each turret, if it isn't prefixed with my prefix, then add it
+for each turretName in the turret names
+  if turretName does not contain prefix
+    set $turretName turret name to prefix + turretName
+```
+
+Careful using this, as if you have too many blocks you can easily get the Script Too Complex issue.  If this happens, try getting block names for individual block types instead.
+
+## "Show" property
+* Primitive Type: Bool
+* Keywords: ```show, showing```
+* Inverse Keywords: ```hide, hiding```
+
+Gets or sets whether the given block is shown by default in the terminal menu.  Useful for hiding individual blocks after you have created groups for them.
+
+```
+if any of "My Doors" are showing
+  hide "My Doors"
+```
+## "Enabled" property
+* Primitive Type: Bool
+* Keywords ```enable, enabled```
+* Inverse Keywords: ```disable, disabled```
+
+Sets whether the block is turned on or off.  This property is present for any block that you can enable or disable from the terminal block menu.
+
+```
+if "My Remote Control" is disabled
+  enable "My Remote Control"
+```
+
+## "Power" property
+* Primitive Type: Bool
+* Keywords: ```power, powered```
+
+Identical to "enabled" unless overridden by the specific block handler.
+
+```
+power on the "Hydrogen Thrusters"
+turn on the "Exterior Lights"
+```
+
+## "CustomData" property
+* Primitive Type: String
+* Keywords: ```data, customdata```
+
+Gets or Sets the blocks `CustomData` field. 
+
+```
+#Output your current program
+print my data
+
+#Delete your current program (do not actually do this).
+set my data to ""
+```
+
+## "DetailedInfo" property
+* Read-only
+* Primitive Type: String
+* Keywords: ```info, details, detailedinfo```
+
+Returns the detailed info of the block. `DetailedInfo` contains the text on the right hand site of the terminal menu.
+
+```
+set myInfo to "Battery" details split "\n"
+
+#Output stored power
+Print myInfo[6]
+```
+
+## "Position" property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```position, positions, location, locations```
+
+Returns the current position of the given block, in World Coordinates.
+
+```
+#Gets the current position of the programmable block
+Print "Block Position: " + my position
+
+#Gets the current position of the remote control block
+Print "Remote Control Position: " + "My Remote Control" position
+```
+
+## "Direction" property
+* Read-only
+* Primitive Type: Vector
+* Keywords: ```direction, directions```
+
+This directional property returns a normalized vector representing the requested "direction" with respect to the block, in World Coordinates.  In other words, if you add "my position" and "my forwards direction" together, you get a coordinate that is 1 meter in front of the block's position.
+
+This property is really useful for creating things like target coordinates, which can then be sent to other grids.  Useful for "follow me" scripts or defining paths for other ships to follow.
+
+Supported Directions:
+* Up, Down, Left, Right, Forwards, Backwards
+
+```
+set myPosition to my position
+set myForwardsDirection to my forwards direction
+set myDownwardsDirection to my downwards direction
+
+set targetLocation to myPosition + 10 * myForwardsDirection + 20 * myDownwardsDirection
+
+Print "Target Location: " + targetLocation
+```
+
+## "Properties" Property
+* Read-only
+* Primitive Type: List
+* Keywords: ```properties, attributes```
+Returns a list of property names for the given block(s).  May contain duplicates if specified selector has more than 1 terminal block.  I recommend only using on a single block at a time. 
+
+```
+Print "My Properties: " + the "Test Piston" properties
+```
+
+## "Property" Property
+* String attribute for the property name is required.
+* Primitive type: Depends on the property.
+* Keywords: ```property, attribute```
+
+This property can get or set a given Terminal Property for the block.  The attribute is expected to be a String representing the name of the property to be updated.  When resolving what property to get or set, the resolved value is first compared against known reserved keywords which represent other properties.  So, you can dynamically set Terminal Properties using this feature:
+
+```
+#These two commands are equivalent
+set the "Base Antenna" range to 2000
+set the "Base Antenna" "range" property to 2000
+```
+
+If the given block type does not have a property for the given keywords, then the block attempts to look up the SpaceEngineers property for that block by name.  This enables you to get or set properties even if they do not have explicit property mappings.  See "Controlling Unsupported Block Types" for more information.
+
+## "Actions" property
+* Read-only
+* Primitive type: List
+* Keywords: ```actions```
+Returns a list of action names for the given block(s).  May contain duplicates if specified selector has more than 1 terminal block.  I recommend only using on a single block at a time.
+
+```
+Print "My Actions: " + the "Test Piston" actions
+```
+
+## "Action" Attribute Property
+* Update-only
+* Primitive Type: String
+* Keywords: ```action```
+
+Applies the given action on all blocks in the given Selector.  Actions do not have return values, so this is an update-only property.
+
+```
+#All of the following will work
+tell the "Gatling Turrets" to apply the "ShootOnce" action
+apply the "ShootOnce" action on the "Gatling Turrets"
+apply the "Gatling Turrets" "ShootOnce" action
+
+set myAction to "ShootOnce"
+tell the "Gatling Turrets" to apply myAction action
+apply myAction action on the "Gatling Turrets"
+apply the "Gatling Turrets" myAction action
+```
+
+## "Build" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```build, building, built```
+
+Returns true if the terminal block is at full integrity, meaning it has all required components and is not damaged.
+
+```
+when "My Turret" is built
+  print "Construction complete"
+```
+
+## "Complete" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```done, complete, finished, finish```
+
+Same as Build. Returns true if the terminal block is at full integrity, meaning it has all required components and is not damaged.
+
+```
+when "My Turret" is finished
+  print "Construction complete"
+```
+
+## "Build Complete" Property
+* Read-only
+* Primitive Type: Bool
+* Keywords: ```done building, building is complete, finished being built```
+
+Same as Build. Returns true if the terminal block is at full integrity, meaning it has all required components and is not damaged.
+
+```
+when "My Turret" is finished being built
+  print "Construction complete"
+```
+
+## "Build Level" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```build level, build height```
+
+Returns the effective build integrity of the block by returning the current build integrity of the block minus any damage the block has taken.
+
+```
+Print "Build Integrity: " + "My Turret" build level
+```
+
+## "Build Limit" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```build limit```
+
+Returns the maximum integrity of the block.
+
+```
+print "Max Integrity: " + "My Turret" build limit
+```
+
+## "Build Ratio" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```built ratio, build percentage```
+
+Returns the effective built ratio of the block as a value between 0 and 1 by returning the current build integrity of the block minus any damage the block has taken and then dividing by the blocks maximum integrity.  This property is useful for getting the % built of any block.
+
+```
+Print "Build Ratio: " + "My Turret" build ratio
+```
+
+## "Damage" Property
+* Read-only
+* Primitive Type: Bool/Numeric
+* Keywords: ```damage, damaged```
+
+Returns the amount of damage a block has currently taken, including any Build Integrity that is currently missing.  Effectively the damage will be the maximum integrity minus the current build level.  If compared to a boolean, will return true if the damage is greater than 0.
+
+```
+if "My Turret" is damaged
+  print "You shot at me!"
+
+Print "Turret Damage: " + "My Turret" damage
+```
+
+## "Damage Level" Property
+* Primitive Type: Numeric
+* Keywords: ```damage level```
+
+Similar to Damage.  Returns the amount of damage a block has currently taken, including any Build Integrity that is currently missing.  Effectively the damage will be the maximum integrity minus the current build level.  If compared to a boolean, will return true if the damage is greater than 0.
+
+```
+Print "Turret Damage: " + "My Turret" damage level
+```
+
+## "Damage Limit" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```damage limit```
+
+Same as Build Limit. Returns the maximum integrity of the block, which is effectively the maximum amount of damage that the block can sustain before being destroyed.
+
+```
+print "Max Integrity: " + "My Turret" damage limit
+```
+
+## "Damage Ratio" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```damage ratio, damage percentage```
+
+Returns the effective damage ratio of the block as a value between 0 and 1, which is 1 - Build Ratio.  This property is useful for getting the damage % of any block.
+
+```
+Print "Damage Ratio: " + "My Turret" damage ratio
 ```

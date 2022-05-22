@@ -77,6 +77,26 @@ namespace EasyCommands.Tests.ScriptTests {
             mockBlock.Setup(b => b.CubeGrid).Returns(mockGrid.Object);
         }
 
+        public static void MockBuildIntegrity<T>(Mock<T> mockBlock, float maxIntegrity, float currentIntegrity, float currentDamage) where T : class, IMyTerminalBlock {
+            var slimBlock = MockSlimBlock(mockBlock);
+            slimBlock.Setup(b => b.MaxIntegrity).Returns(maxIntegrity);
+            slimBlock.Setup(b => b.BuildIntegrity).Returns(currentIntegrity);
+            slimBlock.Setup(b => b.CurrentDamage).Returns(currentDamage);
+        }
+
+        public static Mock<IMySlimBlock> MockSlimBlock<T>(Mock<T> mockBlock) where T : class, IMyTerminalBlock {
+            var slimBlock = new Mock<IMySlimBlock>();
+            var cubeGrid = new Mock<IMyCubeGrid>();
+            MockCubeGrid(mockBlock, cubeGrid);
+            mockBlock.Setup(b => b.Position).Returns(Vector3I.Zero);
+            cubeGrid.Setup(b => b.GetCubeBlock(Vector3I.Zero)).Returns(slimBlock.Object);
+            return slimBlock;
+        }
+
+        public static void MockBlockDefinition<T>(Mock<T> mockBlock, String subtypeId) where T : class, IMyCubeBlock {
+            mockBlock.Setup(b => b.BlockDefinition).Returns(new SerializableDefinitionId(new MyObjectBuilderType(typeof(T)), subtypeId));
+        }
+
         public static void MockTextSurfaces<T>(Mock<T> surfaceProvider, params Mock<IMyTextSurface>[] mockSurfaces) where T : class, IMyTextSurfaceProvider {
             surfaceProvider.Setup(x => x.SurfaceCount).Returns(mockSurfaces.Length);
             for(int i = 0; i < mockSurfaces.Length; i++) {
@@ -106,10 +126,6 @@ namespace EasyCommands.Tests.ScriptTests {
         public static MyProductionItem MockProductionItem(String itemId, int amount = 1) {
             var item = new MyProductionItem(0, MockBlueprint(itemId), amount);
             return item;
-        }
-
-        public static void MockBlockDefinition<T>(Mock<T> mockBlock, String subtypeId) where T : class, IMyCubeBlock {
-            mockBlock.Setup(b => b.BlockDefinition).Returns(new SerializableDefinitionId(new MyObjectBuilderType(typeof(T)), subtypeId));
         }
 
         public static MyInventoryItem MockOre(String subType, float amount = 1) {

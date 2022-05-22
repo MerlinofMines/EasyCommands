@@ -87,9 +87,32 @@ namespace IngameScript {
                     TypeHandler(VectorHandler(b => b.WorldMatrix.Left), Direction.LEFT),
                     TypeHandler(VectorHandler(b => b.WorldMatrix.Right), Direction.RIGHT));
 
+                var maxIntegrityHandler = NumericHandler(b => MaxIntegrity(GetSlimBlock(b)));
+                AddPropertyHandler(NewList(Property.BUILD, Property.RANGE), maxIntegrityHandler);
+                AddPropertyHandler(NewList(Property.DAMAGE, Property.RANGE), maxIntegrityHandler);
+
+                var isBuiltHandler = BooleanHandler(b => BuildRatio(GetSlimBlock(b)) == 1);
+                AddPropertyHandler(Property.BUILD, isBuiltHandler);
+                AddPropertyHandler(Property.COMPLETE, isBuiltHandler);
+                AddPropertyHandler(NewList(Property.BUILD, Property.COMPLETE), isBuiltHandler);
+                AddPropertyHandler(NewList(Property.BUILD, Property.LEVEL), NumericHandler(b => BuildIntegrity(GetSlimBlock(b))));
+                AddPropertyHandler(NewList(Property.BUILD, Property.RATIO), NumericHandler(b => BuildRatio(GetSlimBlock(b))));
+
+                var damageHandler = ReturnTypedHandler(Return.NUMERIC,
+                    TypeHandler(NumericHandler(b => MaxIntegrity(GetSlimBlock(b)) - BuildIntegrity(GetSlimBlock(b))), Return.NUMERIC),
+                    TypeHandler(BooleanHandler(b => BuildRatio(GetSlimBlock(b)) < 1), Return.BOOLEAN));
+                AddPropertyHandler(Property.DAMAGE, damageHandler);
+                AddPropertyHandler(NewList(Property.DAMAGE, Property.LEVEL), damageHandler);
+                AddPropertyHandler(NewList(Property.DAMAGE, Property.RATIO), NumericHandler(b => 1 - BuildRatio(GetSlimBlock(b))));
+
                 defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
                 defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
             }
+
+            IMySlimBlock GetSlimBlock(T b) => b.CubeGrid.GetCubeBlock(b.Position);
+            float BuildIntegrity(IMySlimBlock block) => block.BuildIntegrity - block.CurrentDamage;
+            float MaxIntegrity(IMySlimBlock block) => block.MaxIntegrity;
+            float BuildRatio(IMySlimBlock block) => BuildIntegrity(block) / MaxIntegrity(block);
 
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
                 blocks.Where(selector ?? (b => true)).OfType<T>();

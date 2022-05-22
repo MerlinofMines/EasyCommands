@@ -277,7 +277,7 @@ print ""Detailed Info: "" + ""test terminal"" info
                 var property2 = MockProperty<IMyTerminalBlock, StringBuilder>(mockBlock, "Property2");
                 List<ITerminalProperty> expectedProperties = new List<ITerminalProperty> { property1.Object, property2.Object };
                 mockBlock.Setup(b => b.GetProperties(It.IsAny<List<ITerminalProperty>>(), null))
-                    .Callback<List<ITerminalProperty>, Func<ITerminalProperty,bool>>((list,collect)=> list.AddRange(expectedProperties));
+                    .Callback<List<ITerminalProperty>, Func<ITerminalProperty, bool>>((list, collect) => list.AddRange(expectedProperties));
                 test.RunUntilDone();
 
                 Assert.AreEqual("Properties: [Property1,Property2]", test.Logger[0]);
@@ -424,6 +424,188 @@ tell the ""test terminal"" to apply the myAction action";
                 test.RunUntilDone();
 
                 action.Verify(p => p.Apply(mockBlock.Object));
+            }
+        }
+
+        [TestMethod]
+        public void IsBuilt() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Is Built: "" + ""test terminal"" is built")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 0);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Is Built: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsBuiltWhenNotBuilt() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Is Built: "" + ""test terminal"" is built")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 2000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Is Built: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsComplete() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Complete: "" + ""test terminal"" is complete")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 0);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Complete: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsFinishedBuilding() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Complete: "" + ""test terminal"" is finished building")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 0);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Complete: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsFinishedBeingBuilt() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Complete: "" + ""test terminal"" is finished being built")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 0);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Complete: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void BuildLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Build Limit: "" + ""test terminal"" build limit")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 2000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Build Limit: 4000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void BuildLevel() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Build Level: "" + ""test terminal"" build level")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 2200, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Build Level: 2000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void BuildRatio() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Build Ratio: "" + ""test terminal"" build ratio")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 3200, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Build Ratio: 0.75", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsDamaged() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Is Damaged: "" + ""test terminal"" is damaged")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Is Damaged: True", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void IsDamagedWhenNotDamaged() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Is Damaged: "" + ""test terminal"" is damaged")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 4000, 0);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Is Damaged: False", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetDamage() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Damage: "" + ""test terminal"" damage")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 3000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Damage: 1200", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetDamageLevel() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Damage: "" + ""test terminal"" damage level")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 3000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Damage: 1200", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void DamageLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Build Limit: "" + ""test terminal"" damage limit")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 2000, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Build Limit: 4000", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void DamageRatio() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Damage Ratio: "" + ""test terminal"" damage ratio")) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockBuildIntegrity(mockBlock, 4000, 1200, 200);
+
+                test.RunUntilDone();
+
+                Assert.AreEqual("Damage Ratio: 0.75", test.Logger[0]);
             }
         }
     }
