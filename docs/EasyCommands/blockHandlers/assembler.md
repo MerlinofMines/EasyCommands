@@ -57,24 +57,41 @@ tell the "Base Assembler" to assemble
 
 ## "Complete" Property
 * Primitive Type: Bool
-* Keywords: ```done, ready, complete, finish, finished, built```
+* Keywords: ```done, ready, complete, finish, finished```
 * Inverse Keywords: ```clear, wipe, erase```
 
-The Complete property can get, or clear, the current item queue from the assembler.  Returns false if there are any items in the queue.  Clears the queue if updating with a false boolean value.
+Returns false if there are any items in the queue.  Clears the queue if updating with a false boolean value.
 Even though there are no inverse complete keywords, you can clear the queue easily using "stop", "false" since the default boolean property is Complete.
 
 ```
 #Check if the assembler is finished
 if the "Base Assembler" is finished
-  Print "Finished building stuff!"
+  Print "Finished creating stuff!"
 
 #All of the below will clear the assembler queue
 clear the "Base Assembler"
 tell the "Base Assembler" not to finish
-tell the "Base Assembler" to stop building
 
 #Does nothing
 tell the "Base Assembler" to finish
+```
+
+## "Build" Property
+* Primitive Type: Bool
+* Keywords: ```build, building```
+
+Returns true if there are any items in the queue.  Clears the queue if updating with a false boolean value.
+
+```
+#Check if the assembler is building
+if the "Base Assembler" is building
+  Print "Still creating stuff!"
+
+#All of the below will clear the assembler queue
+tell the "Base Assembler" not to stop building
+
+#Does nothing
+tell the "Base Assembler" to build
 ```
 
 ## "Auto" Property
@@ -102,7 +119,7 @@ if count of $myAssemblers > 1
 ## "Create" Property
 * Requires a String Attribute indicating the [Item(s)](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") to produce.
 * Primitive Type: Bool (read) / Numeric (update)
-* Keywords: ```create, creating, produce, producing, build, building, make, making```
+* Keywords: ```create, creating, produce, producing, make, making```
 
 This property enables you to automatically queue up items to be built on the given assembler(s).  This property requires a String attribute representing the items(s) to create.
 If the items to create represent more than 1 resolved blueprint, the assembler will produce the indicated amount of each item.
@@ -111,7 +128,7 @@ If the given selector has more than 1 assembler, the requested items are sent to
 
 When retrieving the property value, the result is a boolean representing whether the assembler is creating the given item(s).  If any of the requested items are being built, it will return true.
 
-So if you are building steel plate and interior plate and ask for "components" it'll tell you the total amount of steel plate + interior plate, not separated out individually.
+So if you are creating steel plate and interior plate and ask for "components" it'll tell you the total amount of steel plate + interior plate, not separated out individually.
 
 ```
 #Check if the assembler is creating steel plate

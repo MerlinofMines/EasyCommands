@@ -84,14 +84,17 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Artificial - ```artificial, fake```
 * Auto - ```auto, autopilot, refill, drain, draining, cooperate, cooperating```
 * Background - ```background```
+* Build - ```build, building, built```
 * Color - ```color, foreground```
 * Complete - 
-  * ```done, complete, finished, built, finish, pressurized, depressurized```
+  * ```done, complete, finished, finish, pressurized, depressurized```
   * (```clear, wipe, erase```)
 * Connected -
   * ```connect, connected, attach, attached, dock, docked, docking```
   * (```disconnect, disconnected, detach, detached, undock, undocked```)
 * Countdown - ```countdown, countdowns```
+* Damage - ```damage, damaged```
+* Data - ```data, customdata```
 * Direction - ```direction, directions```
 * Enable - ```enable, enabled, arm, armed```, (```disable, disabled, disarm, disarmed```)
 * Falloff - ```falloff```
@@ -141,7 +144,7 @@ These properties require a Variable value as part of the property
 * Amount - ```amount, amounts```
 * Action - ```action```
 * Property - ```property, attribute```
-* Create - ```create, creating, produce, producing, build, building, make, making```
+* Create - ```create, creating, produce, producing, make, making```
 * Destroy -```destroy, destroying, recycle, recycling```
 
 ## Commands 

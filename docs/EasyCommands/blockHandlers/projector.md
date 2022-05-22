@@ -55,7 +55,7 @@ Print "Percentage Done: " + "My Projector" percentage
 ## "Complete" Property
 * Read-only
 * Primitive Type: Bool
-* Keywords: ```done, ready, finished, complete, built```
+* Keywords: ```done, ready, finished, complete```
 
 Gets whether the projector's blueprint is complete or not.
 

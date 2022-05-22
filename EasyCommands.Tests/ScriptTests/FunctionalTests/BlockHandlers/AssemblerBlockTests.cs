@@ -134,6 +134,44 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void IsAssemblerBuilding() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Building: "" + ""test assembler"" is building")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                mockAssembler.Setup(b => b.IsQueueEmpty).Returns(false);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Building: True"));
+            }
+        }
+
+        [TestMethod]
+        public void IsAssemblerBuildingWhenNotBuilding() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Building: "" + ""test assembler"" is building")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+                mockAssembler.Setup(b => b.IsQueueEmpty).Returns(true);
+
+                test.RunUntilDone();
+
+                Assert.IsTrue(test.Logger.Contains("Building: False"));
+            }
+        }
+
+        [TestMethod]
+        public void TellAssemblerToStopBuilding() {
+            using (ScriptTest test = new ScriptTest(@"tell the ""test assembler"" to stop building")) {
+                Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();
+                test.MockBlocksOfType("test assembler", mockAssembler);
+
+                test.RunUntilDone();
+
+                mockAssembler.Verify(b => b.ClearQueue());
+            }
+        }
+
+        [TestMethod]
         public void SetAssemblerToAuto() {
             using (ScriptTest test = new ScriptTest(@"set ""test assembler"" to auto")) {
                 Mock<IMyAssembler> mockAssembler = new Mock<IMyAssembler>();

@@ -23,6 +23,7 @@ namespace IngameScript {
             public AssemblerBlockHandler() {
                 AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
+                AddBooleanHandler(Property.BUILD, b => !b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
                 AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyAssembler>() {
                     Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
