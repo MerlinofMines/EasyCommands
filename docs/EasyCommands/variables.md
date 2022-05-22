@@ -236,15 +236,26 @@ Aggregate Variables typically take the form of ```<Aggregator> <Selector> <Prope
 If a property is not explicitly provided, the aggregation will attempt to use the default numeric property for the selector's [Block Type](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers "Block Handlers").
 
 ### Implicit Aggregation
+Whenever you request a selector's property, you are implicitly asking for an Aggregation.  When an explicit aggregation is not specified, a special default aggregator is used, with the returned value as follows:
+* If there are no blocks in the given selector, returns an empty list (```[]```).
+* If there is only 1 block in the given selector, returns the selector's property directly.
+* If there are more than 1 blocks in the given selector and all property values are numeric, returns the total sum of all block property values.
+* If there are more than 1 blocks in the given selector and not all property values are numeric, returns a list containing the property values of all the given blocks.
 
-Whenever you request a selector's property, you are implicitly asking for an Aggregation.  When an explicit aggregation is not specified, SUM is used.  As such, requesting a selector for a single block property has the effect of getting the block's property since it's a sum of 1 block.
+Therefore, if you only have 1 block in your selector and ask for a property value, that value will be returned directly.  If your selector has no blocks you will get back an empty list.  Otherwise, you will get either a sum of the selector block's property values (if numeric) or a list of the selector block's property values otherwise.
 
 ```
 #Implicit Aggregation since "my" will be a selector for the current Programmable Block
 set myName to my name
 Print "My name is: " + myName
 
-#Implicit Aggregation assuming there is only 1 block named "My Piston".  Will return a SUM of both if there are more than 1 blocks named "My Piston"
+#Implicit Aggregation for a selector with no blocks in it.  Will return an empty list.
+set myValue to "Invalid BlockName" terminal names
+
+#Implicit Aggregation for a list of blocks (assuming you have multiple turrets).  Since names is a string property, will return a list of names for your turruts.
+set myNames to the turret names
+
+#Implicit Aggregation assuming there is only 1 block named "My Piston".  Since height is a numeric property, will return a SUM of both if there are more than 1 blocks named "My Piston"
 set pistonHeight to "My Piston" height
 ```
 

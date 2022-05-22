@@ -172,8 +172,7 @@ namespace IngameScript {
             AddPropertyWords(Words("natural", "planet"), Property.NATURAL);
             AddPropertyWords(Words("artificial", "fake"), Property.ARTIFICIAL);
             AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
-            AddPropertyWords(Words("name", "label"), Property.NAME);
-            AddPropertyWords(Words("names", "labels"), Property.NAMES);
+            AddPropertyWords(PluralWords("name", "label"), Property.NAME);
             AddPropertyWords(Words("show", "showing"), Property.SHOW);
             AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
             AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
