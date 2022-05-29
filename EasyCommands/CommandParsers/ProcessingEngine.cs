@@ -108,8 +108,9 @@ namespace IngameScript {
             //ListProcessors
             OneValueRule(Type<ListCommandParameter>, requiredLeft<SelectorCommandParameter>(),
                 (list, selector) => new SelectorCommandParameter(new IndexSelector(selector.value, new IndexVariable(list.value)))),
-
-            new MultiListProcessor(),
+            TwoValueRule(Type<ListCommandParameter>, optionalRight<ListCommandParameter>(), requiredLeft<ListCommandParameter>(),
+                (p, right, left) => !left.Satisfied(),
+                (p, right, left) => new ListIndexCommandParameter(new ListIndexVariable(p.value, right?.value ?? EmptyList()))),
 
             //IgnoreProcessor
             NoValueRule(Type<IgnoreCommandParameter>, p => NewList<ICommandParameter>()),
