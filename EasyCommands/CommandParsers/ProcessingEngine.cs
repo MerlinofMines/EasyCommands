@@ -386,12 +386,13 @@ namespace IngameScript {
             //ConditionalCommandProcessor
             //condition command
             //condition command otherwise command
-            ThreeValueRule(Type<ConditionCommandParameter>, requiredRight<CommandReferenceParameter>(), optionalRight<ElseCommandParameter>(), optionalRight<CommandReferenceParameter>(),
-                ConvertConditionalCommand),
             //command condition
             //command condition otherwise command
-            ThreeValueRule(Type<ConditionCommandParameter>, requiredLeft<CommandReferenceParameter>(), optionalRight<ElseCommandParameter>(), optionalRight<CommandReferenceParameter>(),
-                ConvertConditionalCommand)
+            ThreeValueRule(Type<ConditionCommandParameter>, requiredEither<CommandReferenceParameter>(), optionalRight<ElseCommandParameter>(), optionalRight<CommandReferenceParameter>(),
+                (condition, metFetcher, otherwise, notMetFetcher) => {
+                    Command notMetCommand = otherwise != null ? notMetFetcher.value : new NullCommand();
+                    return new CommandReferenceParameter(new ConditionalCommand(condition.value, condition.swapCommands ? notMetCommand : metFetcher.value, condition.swapCommands ? metFetcher.value : notMetCommand, condition.alwaysEvaluate));
+                })
         );
 
         /// <summary>

@@ -180,17 +180,6 @@ namespace IngameScript {
             return new RuleProcessor<SelectorPropertyCommandParameter>(processors, canConvert, convert);
         }
 
-        static ICommandParameter ConvertConditionalCommand(ConditionCommandParameter condition, CommandReferenceParameter metFetcher, ElseCommandParameter otherwise, CommandReferenceParameter notMetFetcher) {
-            Command metCommand = metFetcher.value;
-            Command notMetCommand = otherwise != null ? notMetFetcher.value : new NullCommand();
-            if (condition.swapCommands) {
-                var temp = metCommand;
-                metCommand = notMetCommand;
-                notMetCommand = temp;
-            }
-            return new CommandReferenceParameter(new ConditionalCommand(condition.value, metCommand, notMetCommand, condition.alwaysEvaluate));
-        }
-
         //Rule Processors
         class RuleProcessor<T> : ParameterProcessor<T> where T : class, ICommandParameter {
             List<IDataProcessor> processors;
