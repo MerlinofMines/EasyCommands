@@ -80,11 +80,11 @@ namespace IngameScript {
             );
         }
 
-        public void BroadCastListenerAction(Func<IMyBroadcastListener, bool> filter, Action<IMyBroadcastListener> action) =>
-            IGC.GetBroadcastListeners(null, listener => {
-                if (filter(listener)) action(listener);
-                return false;
-            });
+        public void BroadCastListenerAction(Func<IMyBroadcastListener, bool> filter, Action<IMyBroadcastListener> action) {
+            var listeners = NewList<IMyBroadcastListener>();
+            IGC.GetBroadcastListeners(listeners, filter);
+            listeners.ForEach(action);
+        }
 
         public Thread GetCurrentThread() => currentThread;
 
