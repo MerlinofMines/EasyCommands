@@ -67,37 +67,48 @@ namespace IngameScript {
             }
         }
 
-        public class BlockSelector : ISelector {
+        public class SelectorType {
             public Block? blockType;
-            public bool isGroup;
+            public bool? isGroup;
+        }
+
+        public class BlockSelector : ISelector {
+            public SelectorType selectorType;
             public IVariable selector;
 
-            public BlockSelector(Block? type, bool group, IVariable sel) {
-                blockType = type;
-                isGroup = group;
-                selector = sel;
+            public BlockSelector(SelectorType SelectorType, IVariable Selector) {
+                selectorType = SelectorType;
+                selector = Selector;
             }
 
             public List<Object> GetEntities() {
                 var selectorString = CastString(selector.GetValue());
-                var resolvedIsGroup = false;
-                Block bt = blockType ?? ResolveType(selectorString, out resolvedIsGroup);
-                return isGroup || resolvedIsGroup ? BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString) : BlockHandlerRegistry.GetBlocks(bt, selectorString);
+                var resolvedSelector = ResolveTypeIfMissing();
+                var bt = resolvedSelector.blockType.Value;
+                var entities = NewList<Object>();
+                if (!(resolvedSelector.isGroup ?? false))
+                    entities = BlockHandlerRegistry.GetBlocks(bt, selectorString);
+
+                if (resolvedSelector.isGroup ?? entities.Count == 0)
+                    entities = BlockHandlerRegistry.GetBlocksInGroup(bt, selectorString);
+
+                return entities;
             }
 
-            public Block GetBlockType() {
-                bool ignored;
-                return blockType ?? ResolveType(CastString(selector.GetValue()), out ignored);
-            }
+            public Block GetBlockType() => ResolveTypeIfMissing().blockType.Value;
 
-            Block ResolveType(String selector, out bool isGroup) {
-                var parameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(selector));
-                var blockType = findLast<BlockTypeCommandParameter>(parameters);
-                isGroup = findLast<GroupCommandParameter>(parameters) != null;
-                if (blockType == null) throw new RuntimeException("Cannot parse block type from selector: " + selector);
-                return blockType.value;
+            SelectorType ResolveTypeIfMissing() {
+                if (selectorType.blockType != null) return selectorType;
+                var selectorString = CastString(selector.GetValue());
+                var parameters = PROGRAM.ParseCommandParameters(PROGRAM.Tokenize(selectorString));
+                var blockType = findLast<SelectorTypeCommandParameter>(parameters);
+                if (blockType == null) throw new RuntimeException("Cannot parse block type from selector: " + selectorString);
+                return ResolveSelectorType(blockType.value, findLast<GroupCommandParameter>(parameters));
             }
         }
+
+        public static SelectorType ResolveSelectorType(SelectorType selector, GroupCommandParameter isGroup) =>
+            new SelectorType { blockType = selector?.blockType, isGroup = isGroup != null ? true : selector?.isGroup };
 
         public class SelfSelector : ISelector {
             public Block? blockType;

@@ -265,8 +265,8 @@ namespace IngameScript {
             }
         }
 
-        public class BlockTypeCommandParameter : ValueCommandParameter<Block> {
-            public BlockTypeCommandParameter(Block value) : base(value) {}
+        public class SelectorTypeCommandParameter : ValueCommandParameter<SelectorType> {
+            public SelectorTypeCommandParameter(SelectorType value) : base(value) {}
         }
     }
 }

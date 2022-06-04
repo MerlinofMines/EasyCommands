@@ -4,6 +4,7 @@ using IngameScript;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
+using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -81,6 +82,56 @@ namespace EasyCommands.Tests.ScriptTests {
 
                 mockPiston1.VerifySet(p => p.Enabled = true);
                 mockPiston2.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void NonAmbiugousImpliedSelectorDoesNotUseGroup() {
+            using (var test = new ScriptTest(@"turn on the ""test piston""")) {
+                var mockPiston1 = new Mock<IMyPistonBase>();
+                test.MockBlocksInGroup("test piston", mockPiston1);
+
+                test.RunOnce();
+
+                mockPiston1.VerifySet(p => p.Enabled = true, Times.Never);
+            }
+        }
+
+        [TestMethod]
+        public void AmbiguousImpliedSelectorUsesGroupIfNoBlocksFound() {
+            using (var test = new ScriptTest(@"turn on the ""test landing gear""")) {
+                var mockLandingGear1 = new Mock<IMyLandingGear>();
+                var mockLandingGear2 = new Mock<IMyLandingGear>();
+                test.MockBlocksInGroup("test landing gear", mockLandingGear1, mockLandingGear2);
+
+                test.RunOnce();
+
+                mockLandingGear1.VerifySet(p => p.Enabled = true);
+                mockLandingGear2.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void AmbiguousExplicitSelectorUsesGroupIfNoBlocksFound() {
+            using (var test = new ScriptTest(@"turn on the ""test landing gear"" gear")) {
+                var mockLandingGear1 = new Mock<IMyLandingGear>();
+                var mockLandingGear2 = new Mock<IMyLandingGear>();
+                test.MockBlocksInGroup("test landing gear", mockLandingGear1, mockLandingGear2);
+
+                test.RunOnce();
+
+                mockLandingGear1.VerifySet(p => p.Enabled = true);
+                mockLandingGear2.VerifySet(p => p.Enabled = true);
+            }
+        }
+
+        [TestMethod]
+        public void AmbiguousSelectorReturnsEmptyIfNeitherBlockNorGroupIsFound() {
+            using (var test = new ScriptTest(@"print the count of the ""test landing gear""")) {
+
+                test.RunOnce();
+
+                Assert.AreEqual("0", test.Logger[0]);
             }
         }
 

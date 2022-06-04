@@ -20,61 +20,179 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Variable Selector - ```$```
 
 ### Block Types (Single, Group) 
-* Air Vent - ```airvent, vent```, ```airvents, vents```
-* Antenna - ```antenna```, ```antennas```
-* Assembler - ```assembler```, ```assemblers```
-* Battery - ```battery```, ```batteries```
-* Beacon - ```beacon```, ```beacons```
-* Camera - ```camera```, ```cameras```
-* Cockpit - ```cockpit, ship, rover, seat, station```, ```cockpits, ships, rovers, seats, stations```
-* Collector - ```collector```, ```collectors```
-* Connector - ```connector```, ```connectors```
-* Cryo Chamber - ```cryo```, ```cryos```
-* Decoy - ```decoy```, ```decoys```
-* Display - ```display, displays, screen, screens, lcd, lcds``` (no group keywords)
-* Door - ```door, hangar, bay, gate```, ```doors, hangars, bays, gates```
-* Drill - ```drill```, ```drills```
-* Ejector - ```ejector```, ```ejectors```
-* Gravity Generator - ```gravitygenerator```, ```gravitygenerators```
-* Gravity Sphere Generator - ```gravitysphere```, ```gravityspheres```
-* Grid - ```grid, grids``` (no group keywords)
-* Grinder - ```grinder```, ```grinders```
-* Gun - ```gun, railgun, cannon, autocannon, rocket, missile, launcher```, ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
-* Gyroscope - ```gyro, gyroscope```, ```gyros, gyroscopes```
-* HeatVent - ```heatVent```, ```heatVents```
-* Hinge - ```hinge```, ```hinges```
-* Hydrogen Engine - ```engine```, ```engines```
-* Inventory - ```cargo, container, inventory, inventories```, ```cargos, containers```
-* Jump Drive - ```jump, jumpdrive```, ```jumps, jumpdrives```
-* Laser Antenna - ```laser, laserantenna```, ```lasers, laserantennas```
-* Light - ```light, spotlight```, ```lights, spotlights```
-* Landing Gear - ```gear, magnet```, ```gears, magnets``` (also Magnets)
-* Merge Block - ```merge``` (no group keywords)
-* O2/H2 Generator - ```generator```, ```generators```
-* Ore Detector - ```detector```, ```detectors```
-* Parachute - ```chute, parachute```, ```chutes, parachutes```
-* Programmable Block - ```program, programmable```, ```programs```
-* Piston - ```piston```, ```pistons```
-* Projector - ```projector```, ```projectors``` 
-* Reactor - ```reactor```, ```reactors```
-* Remote Control - ```remote, drone, robot```, ```remotes, drones, robots```
-* Refinery - ```refinery```, ```refineries```
-* Rotor - ```rotor```, ```rotors```
-* Searchlight - ```searchlight```, ```searchlights```
-* Sensor - ```sensor```, ```sensors```
-* Solar Panel - ```solar```, ```solars```
-* Sorter - ```sorter```, ```sorters```
-* Sound Block - ```speaker, alarm, siren```, ```speakers, alarms, sirens```
-* Tank (Oxygen or Hydrogen) - ```tank```, ```tanks```
-* Terminal Block - ```terminal```, ```terminals```
-* Timer Block - ```timer```, ```timers```
-* Thruster - ```thruster```, ```thrusters```
-* Turret - ```turret```, ```turrets```
-* TurretController - ```turretcontroller```, ```turretcontrollers```
-* Warhead - ```warhead, bomb```, ```warheads, bombs```
-* Welder - ```welder```, ```welders```
-* Wheel Suspension - ```wheel```, ```wheels, suspension```
-* Wind Turbine - ```turbine```, ```turbines```
+* Air Vent
+  * ```airvent, vent```
+  *  ```airvents, vents```
+* Antenna
+  * ```antenna```
+  * ```antennas```
+* Assembler
+  * ```assembler```
+  * ```assemblers```
+* Battery
+  * ```battery```
+  * ```batteries```
+* Beacon
+  * ```beacon```
+  * ```beacons```
+* Camera
+  * ```camera```
+  * ```cameras```
+* Cockpit
+  * ```cockpit, ship, rover, seat, station```
+  * ```cockpits, ships, rovers, seats, stations```
+* Collector
+  * ```collector```
+  * ```collectors```
+* Connector
+  * ```connector```
+  * ```connectors```
+* Cryo Chamber
+  * ```cryo```
+  * ```cryos```
+  * Note: ```chambers``` can be used to indicate a block group
+* Decoy
+  * ```decoy```
+  * ```decoys```
+* Display
+  * ```display, displays, screen, screens, lcd, lcds```
+  * ```display, displays, screen, screens, lcd, lcds```
+  * Note: All keywords for displays are ambiguous, so they work for either a block or a block group
+* Door
+  * ```door, hangar, bay, gate```
+  * ```doors, hangars, bays, gates```
+* Drill
+  * ```drill```
+  * ```drills```
+* Ejector
+  * ```ejector```
+  * ```ejectors```
+* Gravity Generator
+  * ```gravitygenerator```
+  * ```gravitygenerators```
+* Gravity Sphere Generator
+  * ```gravitysphere```
+  * ```gravityspheres```
+* Grid
+  * ```grid, grids```
+  * ```grid, grids```
+  * Note: All keywords for grids are ambiguous, so they work for either a block or a block group
+* Grinder
+  * ```grinder```
+  * ```grinders```
+* Gun
+  * ```gun, railgun, cannon, autocannon, rocket, missile, launcher```
+  * ```guns, railguns, cannons, autocannons, rockets, missiles, launchers```
+* Gyroscope
+  * ```gyro, gyroscope```
+  * ```gyros, gyroscopes```
+* HeatVent
+  * ```heatVent```
+  * ```heatVents```
+* Hinge
+  * ```hinge```
+  * ```hinges```
+* Hydrogen Engine
+  * ```engine```
+  * ```engines```
+* Inventory
+  * ```cargo, container, inventory, inventories```
+  * ```cargo, cargos, containers, inventory, inventories```
+  * Note: ```cargo, inventory, inventories``` are ambiguous and can work for either a block or a group
+* Jump Drive
+  * ```jump, jumpdrive```
+  * ```jumps, jumpdrives```
+  * Note: ```drives``` can be used to indicate a block group
+* Laser Antenna
+  * ```laser, laserantenna```
+  * ```lasers, laserantennas```
+* Light
+  * ```light, spotlight```
+  * ```lights, spotlights```
+* Landing Gear (also Magnets)
+  * ```gear, magnet```
+  * ```gear, gears, magnets```
+  * Note: ```gear``` is ambiguous and can work for either a block or a group
+* Merge Block
+  * ```merge```
+  * (no group keywords)
+* O2/H2 Generator
+  * ```generator```
+  * ```generators```
+* Ore Detector
+  * ```detector```
+  * ```detectors```
+* Parachute
+  * ```chute, parachute```
+  * ```chutes, parachutes```
+* Programmable Block
+  * ```program, programmable```
+  * ```programs```
+* Piston
+  * ```piston```
+  * ```pistons```
+* Projector
+  * ```projector```
+  * ```projectors``` 
+* Reactor
+  * ```reactor```
+  * ```reactors```
+* Remote Control
+  * ```remote, drone, robot```
+  * ```remotes, drones, robots```
+* Refinery
+  * ```refinery```
+  * ```refineries```
+* Rotor
+  * ```rotor```
+  * ```rotors```
+* Searchlight
+  * ```searchlight```
+  * ```searchlights```
+* Sensor
+  * ```sensor``
+  * ```sensors```
+* Solar Panel
+  * ```solar```
+  * ```solars```
+  * Note: ```panels``` can be used to indicate a block group
+* Sorter
+  * ```sorter```
+  * ```sorters```
+* Sound Block
+  * ```speaker, alarm, siren```
+  * ```speakers, alarms, sirens```
+* Tank (Oxygen or Hydrogen)
+  * ```tank```
+  * ```tanks```
+* Terminal Block
+  * ```terminal```
+  * ```terminals```
+* Timer Block
+  * ```timer```
+  * ```timers```
+* Thruster
+  * ```thruster```
+  * ```thrusters```
+* Turret 
+  * ```turret```
+  * ```turrets```
+* TurretController
+  * ```turretcontroller```
+  * ```turretcontrollers```
+* Warhead
+  * ```warhead, bomb```
+  * ```warheads, bombs```
+* Welder
+  * ```welder```
+  * ```welders```
+* Wheel Suspension
+  * ```wheel, suspension```
+  * ```wheels, suspension```
+  * Note: ```suspension``` is ambiguous and can work for either a block or a group
+* Wind Turbine
+  * ```turbine```
+  * ```turbines```
 
 ## Properties (Inverse in Parentheses, if present)
 * Able - ```able, can, ready```, (```unable, cannot```)

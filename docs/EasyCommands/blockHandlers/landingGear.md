@@ -2,7 +2,8 @@
 This Block Handler handles Landing Gear and Magnets.  It can be used to connect/disconnect them, and set/unset them to auto lock.
 
 * Block Type Keywords: ```gear, magnet```
-* Block Type Group Keywords: ```gears, magnets```
+* Block Type Group Keywords: ```gear, gears, magnets```
+* Note: ```gear``` is ambiguous and can work for either a block or a group
 
 Default Primitive Properties:
 * Bool - Enabled

@@ -4,6 +4,8 @@ This Block Handler handles Grids, giving you access to a few of the properties o
 Note that this block handler does not extend from Terminal Block, so this Block Handler *does not* have properties defined in the Reference: [Terminal Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler").
 
 * Block Type Keywords: ```grid, grids```
+* Block Type Group Keywords: ```grid, grids```
+* Note: All keywords for grids are ambiguous, so they work for either a block or a block group
 
 ## "Name" Property
 * Primitive Type: String

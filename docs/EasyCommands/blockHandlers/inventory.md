@@ -8,7 +8,8 @@ Also note that many blocks have multiple inventories, so make sure you are query
 Reference: [Items](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/items "Items and Blueprints")
 
 * Block Type Keywords: ```cargo, container, inventory, inventories```
-* Block Type Group Keywords: ```containers```
+* Block Type Group Keywords: ```cargo, cargos, containers, inventory, inventories```
+* Note: ```cargo, inventory, inventories``` are ambiguous and can work for either a block or a group
 
 Note that "inventories" is a keyword for Block Type, not Block Group Type.  This is because individual blocks often have more than 1 inventory (refineries, assemblers).  If you want to get all inventories from a group of items that aren't "Containers", use ```"My Block Group" group inventories```
 

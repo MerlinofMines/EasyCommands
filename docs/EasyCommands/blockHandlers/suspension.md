@@ -1,8 +1,9 @@
 ﻿# Wheel Suspension Block Handler
 This Block Handler handles Wheel Suspension (not wheels directly, but still controls them).  It can control most properties of Wheel Suspension including auto steering & propulsion (anyone else thinking remote control rovers??).
 
-* Block Type Keywords: ```wheel```
+* Block Type Keywords: ```wheel, suspension```
 * Block Type Group Keywords: ```wheels, suspension```
+* Note: ```suspension``` is ambiguous and can work for either a block or a group
 
 Default Primitive Properties:
 * Numeric - Height

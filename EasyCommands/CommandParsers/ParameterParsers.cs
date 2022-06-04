@@ -347,7 +347,7 @@ namespace IngameScript {
             AddBlockWords(Words("welder"), Block.WELDER);
             AddBlockWords(Words("grinder"), Block.GRINDER);
             AddBlockWords(Words("door", "hangar", "bay", "gate"), Block.DOOR);
-            AddBlockWords(PluralWords("display", "screen", "lcd"), Words(), Block.DISPLAY);
+            AddBlockWords(Words(), Words(), Block.DISPLAY, PluralWords("display", "screen", "lcd"));
             AddBlockWords(Words("speaker", "alarm", "siren"), Block.SOUND);
             AddBlockWords(Words("camera"), Block.CAMERA);
             AddBlockWords(Words("sensor"), Block.SENSOR);
@@ -362,10 +362,10 @@ namespace IngameScript {
             AddBlockWords(Words("turret"), Block.TURRET);
             AddBlockWords(Words("generator"), Block.GENERATOR);
             AddBlockWords(Words("tank"), Block.TANK);
-            AddBlockWords(Words("magnet", "gear"), Block.MAGNET);
+            AddBlockWords(Words("magnet"), Words("magnets", "gears"), Block.MAGNET, Words("gear"));
             AddBlockWords(Words("battery"), Words("batteries"), Block.BATTERY);
             AddBlockWords(Words("chute", "parachute"), Block.PARACHUTE);
-            AddBlockWords(Words("wheel"), Words("wheels", "suspension"), Block.SUSPENSION);
+            AddBlockWords(Words("wheel"), Words("wheels"), Block.SUSPENSION, Words("suspension"));
             AddBlockWords(Words("detector"), Block.DETECTOR);
             AddBlockWords(Words("drill"), Block.DRILL);
             AddBlockWords(Words("engine"), Block.ENGINE);
@@ -376,7 +376,7 @@ namespace IngameScript {
             AddBlockWords(Words("gyro", "gyroscope"), Block.GYROSCOPE);
             AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
             AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
-            AddBlockWords(Words("cargo", "container", "inventory", "inventories"), Words("cargos", "containers"), Block.CARGO);
+            AddBlockWords(Words("container"), Words("cargos", "containers"), Block.CARGO, Words("cargo", "inventory", "inventories"));
             AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
             AddBlockWords(Words("assembler"), Block.ASSEMBLER);
             AddBlockWords(Words("collector"), Block.COLLECTOR);
@@ -389,7 +389,7 @@ namespace IngameScript {
             AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
             AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
             AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
-            AddBlockWords(PluralWords("grid"), Words(), Block.GRID);
+            AddBlockWords(Words(), Words(), Block.GRID, PluralWords("grid"));
 
             AddAliasWords(Words("can"), "is able");
             AddAliasWords(Words("cannot"), "is not able");
@@ -430,9 +430,10 @@ namespace IngameScript {
         //Assume group words are just blockWords with "s" added to the end
         void AddBlockWords(String[] blockWords, Block blockType) => AddBlockWords(blockWords, blockWords.Select(b => b + "s").ToArray(), blockType);
 
-        void AddBlockWords(String[] blockWords, String[] groupWords, Block blockType) {
-            AddWords(blockWords, new BlockTypeCommandParameter(blockType));
-            AddWords(groupWords, new BlockTypeCommandParameter(blockType), new GroupCommandParameter());
+        void AddBlockWords(String[] blockWords, String[] groupWords, Block blockType, String[] ambiguousWords = null) {
+            AddWords(blockWords, new SelectorTypeCommandParameter(new SelectorType { blockType = blockType, isGroup = false}));
+            AddWords(groupWords, new SelectorTypeCommandParameter(new SelectorType { blockType = blockType, isGroup = true }));
+            AddWords(ambiguousWords ?? new String[0], new SelectorTypeCommandParameter(new SelectorType { blockType = blockType }));
         }
 
         void AddAmbiguousWords(String[] words, params ICommandParameter[] commandParameters) {
