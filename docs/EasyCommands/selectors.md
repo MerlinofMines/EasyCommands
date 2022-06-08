@@ -4,15 +4,22 @@ Selectors are used to specify when you want to retrieve a value from, or act on,
 
 Selectors are used in several [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands") and [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables").  In general, if you ware interacting with a block, you'll need to specify a Selector to indicate which blocks.
 
-There a few different kinds of Selectors that you can choose from, which are described below.  
+There a few different kinds of Selectors that you can choose from, which are described below.
 
 ## Block Selector
 
 The most commonly used Selector is a Block Selector.  This selector is useful when you want to interact with a specific block, or group of blocks.
 
-There are a few forms a Selector can take, but the general form is ```<selector> <blockType>```, where ```selector``` represents the name of the block or block group, and ```blockType``` is one of the reserved [Block Types](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers "Block Handlers").  Note that most blockTypes have a corresponding "blocktype + group" keyword meaning "this selector is a block group".  Typically the plural form of the block type indicates it is a block group, though there are a couple of exceptions to this (like displays).  
+There are a few forms a Selector can take, but the general form is ```<selector> <blockType>```, where ```selector``` represents the name of the block or block group, and ```blockType``` is one of the reserved [Block Types](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers "Block Handlers").
 
-Supported ways to specify a Selector include:
+### Group Blocks
+
+Most blockTypes have a corresponding "blocktype + group" keyword meaning "this selector is a block group".  Typically the plural form of the block type indicates it is a block group (like ```pistons``` or ```rotors```), though there are a couple of exceptions to this.
+
+Additionally, some block type words can indicate either a single block or a group of blocks.  For these block types, EasyCommands will first check if there is a block for the given name.  If none are found, it will then look for a group of blocks for the given name.  A Block Type is ambiguous if it is included in the list of block type as well as block group type names.
+
+### Examples
+Some example supported ways to specify a Selector include:
 
 ```
 #Explicit blocktype

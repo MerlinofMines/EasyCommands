@@ -4,6 +4,8 @@ This handler is used to control diplays on any block containing one or more disp
 Note that this block handler does not extend from Terminal Block, so this Block Handler *does not* have properties defined in [Terminal Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler").
 
 * Block Type Keywords: ```display, displays, screen, screens, lcd, lcds```
+* Block Type Group Keywords: ```display, displays, screen, screens, lcd, lcds```
+* Note: All keywords for displays are ambiguous, so they work for either a block or a block group
 
 Default Primitive Properties:
 * Boolean - Enable

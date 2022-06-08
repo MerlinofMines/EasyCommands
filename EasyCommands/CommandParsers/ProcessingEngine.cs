@@ -26,14 +26,14 @@ namespace IngameScript {
             new ListProcessor(),
 
             //SelectorVariableSelectorProcessor
-            ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<AmbiguousStringCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType?.value, group != null, new AmbiguousStringVariable(selector.value)))),
-            ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType?.value, group != null, selector.value))),
+            ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<AmbiguousStringCommandParameter>(), optionalRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType?.value, group), new AmbiguousStringVariable(selector.value)))),
+            ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType?.value, group), selector.value))),
 
             //SelectorProcessor
-            TwoValueRule(Type<AmbiguousStringCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+            TwoValueRule(Type<AmbiguousStringCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
 
             //AmbiguousStringProcessor
             new BranchingProcessor<AmbiguousStringCommandParameter>(
@@ -41,10 +41,10 @@ namespace IngameScript {
                     p => p.subTokens.Count > 0 && p.subTokens[0] is AmbiguousCommandParameter,
                     p => p.subTokens),
                 OneValueRule(Type<AmbiguousStringCommandParameter>, optionalRight<GroupCommandParameter>(),
-                        (p, g) => findLast<BlockTypeCommandParameter>(p.subTokens) != null,
+                        (p, g) => findLast<SelectorTypeCommandParameter>(p.subTokens) != null,
                         (p, g) => new AmbiguousSelectorCommandParameter(
-                                    new BlockSelector(findLast<BlockTypeCommandParameter>(p.subTokens).value,
-                                        (g ?? findLast<GroupCommandParameter>(p.subTokens)) != null,
+                                    new BlockSelector(
+                                        ResolveSelectorType(findLast<SelectorTypeCommandParameter>(p.subTokens).value, g ?? findLast<GroupCommandParameter>(p.subTokens)),
                                         p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
@@ -69,20 +69,20 @@ namespace IngameScript {
                 (index, assignment) => new ListIndexAssignmentCommandParameter(index.value, assignment.value)),
 
             //SelfSelectorProcessor
-            TwoValueRule(Type<SelfCommandParameter>, optionalRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType?.value))),
+            TwoValueRule(Type<SelfCommandParameter>, optionalRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new SelfSelector(blockType?.value?.blockType))),
 
             //VariableSelectorProcessor
-            TwoValueRule(Type<VariableCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.value))),
+            TwoValueRule(Type<VariableCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.value))),
 
             //ListSelectorProcessor
-            TwoValueRule(Type<ListIndexCommandParameter>, requiredRight<BlockTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(blockType.value, group != null, p.value))),
+            TwoValueRule(Type<ListIndexCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
+                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.value))),
 
             //ImplicitAllSelectorProcessor
-            OneValueRule(Type<BlockTypeCommandParameter>, optionalRight<GroupCommandParameter>(),
-                (blockType, group) => new SelectorCommandParameter(new BlockTypeSelector(blockType.value))),
+            OneValueRule(Type<SelectorTypeCommandParameter>, optionalRight<GroupCommandParameter>(),
+                (blockType, group) => new SelectorCommandParameter(new BlockTypeSelector(blockType.value.blockType.Value))),
 
             //IndexProcessor
             OneValueRule(Type<IndexCommandParameter>, requiredRight<VariableCommandParameter>(),
