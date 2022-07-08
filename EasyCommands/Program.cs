@@ -33,6 +33,7 @@ namespace IngameScript {
         public int maxItemTransfers = 10;
         #endregion
 
+        public static string NUMBER_FORMAT = "NUMBER_FORMAT";
 
         public static Program PROGRAM;
         static void Print(String str) { PROGRAM?.Echo(str); }
@@ -71,12 +72,13 @@ namespace IngameScript {
                 KeyValuePair("pi", GetStaticVariable(Math.PI)),
                 KeyValuePair("e", GetStaticVariable(Math.E)),
                 KeyValuePair("empty", EmptyList()),
-                KeyValuePair("x", GetStaticVariable(Vector(1 ,0, 0))),
+                KeyValuePair("x", GetStaticVariable(Vector(1, 0, 0))),
                 KeyValuePair("y", GetStaticVariable(Vector(0, 1, 0))),
                 KeyValuePair("z", GetStaticVariable(Vector(0, 0, 1))),
-                KeyValuePair("r", GetStaticVariable(Vector(1 ,0, 0))),
+                KeyValuePair("r", GetStaticVariable(Vector(1, 0, 0))),
                 KeyValuePair("g", GetStaticVariable(Vector(0, 1, 0))),
-                KeyValuePair("b", GetStaticVariable(Vector(0, 0, 1)))
+                KeyValuePair("b", GetStaticVariable(Vector(0, 0, 1))),
+                KeyValuePair(NUMBER_FORMAT, GetStaticVariable("#0.########"))
             );
         }
 

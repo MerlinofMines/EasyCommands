@@ -16,6 +16,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         public static Program CreateProgram() {
             Program program = MDKFactory.CreateProgram<Program>();
             Program.PROGRAM = program;
+            program.SetGlobalVariable(Program.NUMBER_FORMAT, Program.GetStaticVariable("#0.########"));
             return program;
         }
     }

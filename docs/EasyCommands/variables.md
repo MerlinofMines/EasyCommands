@@ -63,6 +63,7 @@ Supported Variables:
 * ```pi``` - Pi
 * ```e``` - Euler's number, useful for e^(myValue)
 * ```empty``` - An empty list, useful for comparison (if myList is empty)
+* ```NUMBER_FORMAT``` - The number format used when outputting numerical values. See [Numbers](https://spaceengineers.merlinofmines.com/EasyCommands/primitives#numbers "Numbers") for more information.
 
 ```
 #x = 1:0:0

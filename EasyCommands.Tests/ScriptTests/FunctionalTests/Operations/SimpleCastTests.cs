@@ -475,6 +475,7 @@ Print false as number
             var script = @"
 Print 1 as number
 Print 0.0 as number
+Print 1000000000000000 as number
 ";
 
             using (var test = new ScriptTest(script)) {
@@ -482,6 +483,39 @@ Print 0.0 as number
 
                 Assert.AreEqual("1", test.Logger[0]);
                 Assert.AreEqual("0", test.Logger[1]);
+                Assert.AreEqual("1000000000000000", test.Logger[2]);
+            }
+        }
+
+        [TestMethod]
+        public void CastNumberWithRoundedFormatting() {
+            var script = @"
+set global NUMBER_FORMAT to ""#0.##""
+Print 1 as number
+Print 0.006 as number
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.AreEqual("1", test.Logger[0]);
+                Assert.AreEqual("0.01", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void CastNumberWithSpecialFormatting() {
+            var script = @"
+set global NUMBER_FORMAT to ""$#0.00""
+Print 1 as number
+Print 0.0 as number
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.RunOnce();
+
+                Assert.AreEqual("$1.00", test.Logger[0]);
+                Assert.AreEqual("$0.00", test.Logger[1]);
             }
         }
 
