@@ -135,6 +135,36 @@ if the "Gatling Turret" range < 600
 
 Internally numbers are stored using floating point precision (as is most of EasyCommands) so keep this in mind when trying to set really precise values.
 
+### Formatting Numbers In Your Output
+By default, the number format used to display numbers is "#0.########".  This means that numbers are rounded to the nearest 8 decimal places, and any values < 1 always include a 0 in front of the decimal:
+
+```
+set myNumber to .1
+print myNumber
+#0.1
+```
+
+You can change the number format used when displaying numbers by setting the global NUMBER_FORMAT variable.  Note that this will affect the format of all numbers output afterwards.
+
+```
+set global NUMBER_FORMAT to "$#0.00"
+set myNumber to .1
+print myNumber
+#$0.10
+
+set myNumber to 0.006
+print myNumber
+#$0.01
+
+set myNumber to 0.004
+print myNumber
+#$0.00
+```
+
+See the C# docs on [Standard](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings "Standard") and [Custom](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings "Custom") Number Formats for more information on available number formats.
+
+Note that the NUMBER_FORMAT is reverted back to the default if the script is restarted or re-parsed.
+
 ## Vectors
 
 Vectors represent 3D coordinates and are used for a variety of purposes, such as for positions, directions, target locations, detected entity locations, and some other interesting properties.  They take the form ```x:y:z``` where x,y,z represent the x,y,z coordinates, respectively.

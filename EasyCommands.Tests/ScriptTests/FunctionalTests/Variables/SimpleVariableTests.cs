@@ -101,6 +101,21 @@ Print ""e is: "" + e
         }
 
         [TestMethod]
+        public void NumberFormatIsAvailable() {
+            var script = @"
+Print ""NUMBER_FORMAT is: "" + NUMBER_FORMAT
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = Program.LogLevel.INFO;
+
+                test.RunOnce();
+
+                Assert.IsTrue(test.Logger.Contains("NUMBER_FORMAT is: #0.########"));
+            }
+        }
+
+        [TestMethod]
         public void ReverseBoolean() {
             var script = @"
 set a to true

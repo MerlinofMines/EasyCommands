@@ -60,6 +60,7 @@ namespace IngameScript {
                 CastFunction(Return.DEFAULT, Failure(Return.NUMERIC))
             )),
             KeyValuePair(typeof(string), NewDictionary(
+                CastFunction(Return.NUMERIC, p => CastNumber(p).ToString(PROGRAM.globalVariables[NUMBER_FORMAT].GetValue().value + "")),
                 CastFunction(Return.VECTOR, p => VectorToString(CastVector(p))),
                 CastFunction(Return.COLOR, p => ColorToString(CastColor(p))),
                 CastFunction(Return.LIST, p => CastList(p).Print()),
