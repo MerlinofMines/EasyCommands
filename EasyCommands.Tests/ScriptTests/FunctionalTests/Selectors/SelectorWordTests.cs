@@ -63,8 +63,8 @@ namespace EasyCommands.Tests.ScriptTests {
         [TestMethod]
         public void CockpitSelector() {
             TestExpectedSelectorWords<IMyCockpit>(
-                Words("cockpit", "ship", "rover", "seat", "station"),
-                Words("cockpits", "ships", "rovers", "seats", "stations")
+                Words("cockpit", "ship", "rover", "seat", "station", "helm"),
+                Words("cockpits", "ships", "rovers", "seats", "stations", "helms")
             );
         }
 

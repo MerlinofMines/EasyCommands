@@ -28,6 +28,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.INPUT, b => b.CurrentInput);
                 AddNumericHandler(Property.VOLUME, b => b.CurrentOutput);
                 AddNumericHandler(Property.LEVEL, b => b.CurrentStoredPower);
+                AddPropertyHandler(NewList(Property.VOLUME, Property.RANGE), NumericHandler(b => b.MaxOutput));
+                AddPropertyHandler(NewList(Property.INPUT, Property.RANGE), NumericHandler(b => b.MaxInput));
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
                 defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
              }

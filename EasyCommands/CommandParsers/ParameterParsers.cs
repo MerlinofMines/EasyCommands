@@ -353,7 +353,7 @@ namespace IngameScript {
             AddBlockWords(Words("sensor"), Block.SENSOR);
             AddBlockWords(Words("beacon"), Block.BEACON);
             AddBlockWords(Words("antenna"), Block.ANTENNA);
-            AddBlockWords(Words("ship", "rover", "cockpit", "seat", "station"), Block.COCKPIT);
+            AddBlockWords(Words("ship", "rover", "cockpit", "seat", "station", "helm"), Block.COCKPIT);
             AddBlockWords(Words("cryo"), Block.CRYO_CHAMBER);
             AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
             AddBlockWords(Words("thruster"), Block.THRUSTER);
