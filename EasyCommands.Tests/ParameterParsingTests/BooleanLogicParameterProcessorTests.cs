@@ -80,7 +80,6 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
             Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
-            Assert.AreEqual(AggregationMode.ANY, condition.aggregationMode);
             PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
             Assert.AreEqual(Property.RATIO + "", property.propertyValues[0].propertyType);
 
@@ -103,7 +102,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;
             Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
             Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
-            Assert.AreEqual(AggregationMode.ALL, condition.aggregationMode);
+            Assert.AreEqual(program.AllCondition, condition.aggregateCondition);
             PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
             Assert.AreEqual(Property.RATIO + "", property.propertyValues[0].propertyType);
 

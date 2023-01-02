@@ -147,7 +147,9 @@
     <Compile Include="ScriptTests\FunctionalTests\Commands\MultiWordPropertyBlockCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Commands\ComplexBlockCommandTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Selectors\SelectorWordTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Variables\SelectorAggregateConditionTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\Variables\MultiWordPropertyAggregationTests.cs" />
+    <Compile Include="ScriptTests\FunctionalTests\Variables\ListAggregateConditionTests.cs" />
     <Compile Include="ScriptTests\MockGridTerminalSystem.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\SearchlightBlockTests.cs" />
     <Compile Include="ScriptTests\FunctionalTests\BlockHandlers\HeatVentBlockTests.cs" />

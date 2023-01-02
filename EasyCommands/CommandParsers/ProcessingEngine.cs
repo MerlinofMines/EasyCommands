@@ -152,8 +152,8 @@ namespace IngameScript {
                 (list, aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.value))),
 
             //ListComparisonProcessor
-            ThreeValueRule(Type<ListIndexCommandParameter>, requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregationModeCommandParameter>(),
-                (list, comparison, value, aggregation) => new VariableCommandParameter(new ListAggregateConditionVariable(aggregation?.value ?? AggregationMode.ALL, list.value, comparison.value, value.value))),
+            ThreeValueRule(Type<ListIndexCommandParameter>, requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregateConditionCommandParameter>(),
+                (list, comparison, value, aggregation) => new VariableCommandParameter(new ListAggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, list.value, comparison.value, value.value))),
 
             //ListIndexAsVariableProcessor
             NoValueRule(Type<ListIndexCommandParameter>, list => new VariableCommandParameter(list.value)),
@@ -246,7 +246,7 @@ namespace IngameScript {
                 (p, selector, condition) => new SelectorCommandParameter(new ConditionalSelector(selector.value, condition.value))),
 
             //Re-arrange PropertyValueCommandParameters
-            TwoValueRule(Type<PropertyValueCommandParameter>, optionalRight<AggregationModeCommandParameter>(), optionalRight<SelectorCommandParameter>(),
+            TwoValueRule(Type<PropertyValueCommandParameter>, optionalRight<AggregateConditionCommandParameter>(), optionalRight<SelectorCommandParameter>(),
                 (p, a, s) => AnyNotNull(a.GetValue(), s.GetValue()),
                 (p, a, s) => NewList<ICommandParameter>(a, s, p).Where(c => c != null).ToList()),
 
@@ -260,12 +260,12 @@ namespace IngameScript {
                 (p, prop, dir, var) => new BlockConditionCommandParameter(BlockPropertyCondition(new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value), new PrimitiveComparator(p.value), var?.value ?? GetStaticVariable(true)))),
 
             //AggregateConditionProcessor
-            TwoValueRule(Type<BlockConditionCommandParameter>, optionalLeft<AggregationModeCommandParameter>(), requiredLeft<SelectorCommandParameter>(),
-                (p, aggregation, selector) => new VariableCommandParameter(new AggregateConditionVariable(aggregation?.value ?? AggregationMode.ALL, p.value, selector.value))),
+            TwoValueRule(Type<BlockConditionCommandParameter>, optionalLeft<AggregateConditionCommandParameter>(), requiredLeft<SelectorCommandParameter>(),
+                (p, aggregation, selector) => new VariableCommandParameter(new AggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, p.value, selector.value))),
 
             //AggregateSelectorProcessor
-            OneValueRule(Type<AggregationModeCommandParameter>, requiredRight<SelectorCommandParameter>(),
-                (aggregation, selector) => aggregation.value != AggregationMode.NONE && selector.Satisfied(),
+            OneValueRule(Type<AggregateConditionCommandParameter>, requiredRight<SelectorCommandParameter>(),
+                (aggregation, selector) => aggregation.value != PROGRAM.NoneCondition && selector.Satisfied(),
                 (aggregation, selector) => selector),
 
             //RepetitionProcessor

@@ -30,5 +30,9 @@ namespace IngameScript {
                 blockValues.All(v => v.returnType == Return.NUMERIC) ? blockValues.Aggregate((a, b) => a.Plus(b)) :
                 ResolvePrimitive(NewKeyedList(blockValues.Select(v => new StaticVariable(v))));
         };
+
+        public delegate bool AggregateCondition(int count, int matches);
+        public AggregateCondition AllCondition = (count, matches) => count == matches;
+        public AggregateCondition NoneCondition = (count, matches) => matches == 0;
     }
 }

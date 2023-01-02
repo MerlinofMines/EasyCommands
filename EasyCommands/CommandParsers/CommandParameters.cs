@@ -240,8 +240,8 @@ namespace IngameScript {
             public RepetitionCommandParameter(IVariable value) : base(value) {}
         }
 
-        public class AggregationModeCommandParameter : ValueCommandParameter<AggregationMode> {
-            public AggregationModeCommandParameter(AggregationMode value) : base(value) {
+        public class AggregateConditionCommandParameter : ValueCommandParameter<AggregateCondition> {
+            public AggregateConditionCommandParameter(AggregateCondition value) : base(value) {
             }
         }
 
