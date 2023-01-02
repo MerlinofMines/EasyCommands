@@ -92,6 +92,30 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetTheBatteryOutputLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Battery Output Limit: "" + the ""test battery"" output limit")) {
+                Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();
+                test.MockBlocksOfType("test battery", mockBattery);
+                mockBattery.Setup(b => b.MaxOutput).Returns(12f);
+                test.RunUntilDone();
+
+                Assert.AreEqual("Battery Output Limit: 12", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void GetTheBatteryInputLimit() {
+            using (ScriptTest test = new ScriptTest(@"Print ""Battery Input Limit: "" + the ""test battery"" input limit")) {
+                Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();
+                test.MockBlocksOfType("test battery", mockBattery);
+                mockBattery.Setup(b => b.MaxInput).Returns(2f);
+                test.RunUntilDone();
+
+                Assert.AreEqual("Battery Input Limit: 2", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void IsTheBatteryRecharging() {
             using (ScriptTest test = new ScriptTest(@"Print ""Charging: "" + the ""test battery"" is recharging")) {
                 Mock<IMyBatteryBlock> mockBattery = new Mock<IMyBatteryBlock>();

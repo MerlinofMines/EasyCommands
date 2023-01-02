@@ -6,8 +6,8 @@ This handler enables you to listen for user input, which has all kinds of potent
 
 This Block Handler will only briefly touch on handling user input.  For much more information, see [Handling User Input](https://spaceengineers.merlinofmines.com/EasyCommands/input "Handling User Input")
 
-* Block Type Keywords: ```ship, rover, cockpit, seat, station```
-* Block Type Group Keywords: ```ships, rovers, cockpits, seats, stations```
+* Block Type Keywords: ```ship, rover, cockpit, seat, station, helm```
+* Block Type Group Keywords: ```ships, rovers, cockpits, seats, stations, helms```
 
 Default Primitive Properties:
 * Boolean - Enabled

@@ -98,10 +98,10 @@ set the "Ship Batteries" to auto
 * Primitive Type: Numeric
 * Keywords: ```limit, limits```
 
-Gets the maximum amount of power that the given battery is able to store.
+Gets the maximum amount of power that the given battery is able to store, in MW.
 
 ```
-Print "Max Stored Power: " + the "Ship Batteries" limit, in MW
+Print "Max Stored Power: " + the "Ship Batteries" limit
 ```
 
 ## "Ratio" Property
@@ -140,6 +140,17 @@ Returns a value representing the current input power to the battery, in MW / s.
 Print "Current Power Input: " + "Ship Batteries" input
 ```
 
+## "Input Limit" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```input limit, input limits```
+
+Gets the maximum amount of power that the given battery can receive as input, in MW.
+
+```
+Print "Max Power Input: " + the "Ship Batteries" input limit
+```
+
 ## "Output" Property
 * Read-only
 * Primitive Type: Numeric
@@ -149,4 +160,15 @@ Returns a value representing the current output power from the battery, in MW / 
 
 ```
 Print "Current Power Output: " + "Ship Batteries" output
+```
+
+## "Output Limit" Property
+* Read-only
+* Primitive Type: Numeric
+* Keywords: ```output limit, output limits```
+
+Gets the maximum amount of power that the given battery is able to output, in MW.
+
+```
+Print "Max Power Output: " + the "Ship Batteries" output limit
 ```

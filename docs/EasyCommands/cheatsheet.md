@@ -39,8 +39,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```camera```
   * ```cameras```
 * Cockpit
-  * ```cockpit, ship, rover, seat, station```
-  * ```cockpits, ships, rovers, seats, stations```
+  * ```cockpit, ship, rover, seat, station, helm```
+  * ```cockpits, ships, rovers, seats, stations, helms```
 * Collector
   * ```collector```
   * ```collectors```
