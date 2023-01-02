@@ -87,13 +87,13 @@ namespace IngameScript {
         }
 
         public class ListAggregateConditionVariable : IVariable {
-            public AggregationMode aggregationMode;
+            public AggregateCondition aggregateCondition;
             public IVariable expectedList;
             public PrimitiveComparator comparator;
             public IVariable comparisonValue;
 
-            public ListAggregateConditionVariable(AggregationMode aggregation, IVariable list, PrimitiveComparator comp, IVariable value) {
-                aggregationMode = aggregation;
+            public ListAggregateConditionVariable(AggregateCondition aggregation, IVariable list, PrimitiveComparator comp, IVariable value) {
+                aggregateCondition = aggregation;
                 expectedList = list;
                 comparator = comp;
                 comparisonValue = value;
@@ -101,33 +101,24 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 var list = CastList(expectedList.GetValue());
-                return ResolvePrimitive(Evaluate(list.keyedValues.Count, list.keyedValues.Count(v => comparator(v.GetValue(), comparisonValue.GetValue())), aggregationMode));
+                return ResolvePrimitive(aggregateCondition(list.keyedValues.Count, list.keyedValues.Count(v => comparator(v.GetValue(), comparisonValue.GetValue()))));
             }
         }
 
         public class AggregateConditionVariable : IVariable {
-            public AggregationMode aggregationMode;
+            public AggregateCondition aggregateCondition;
             public BlockCondition blockCondition;
             public ISelector entityProvider;
 
-            public AggregateConditionVariable(AggregationMode aggregation, BlockCondition condition, ISelector provider) {
-                aggregationMode = aggregation;
+            public AggregateConditionVariable(AggregateCondition aggregation, BlockCondition condition, ISelector provider) {
+                aggregateCondition = aggregation;
                 blockCondition = condition;
                 entityProvider = provider;
             }
 
             public Primitive GetValue() {
                 var blocks = entityProvider.GetEntities();
-                return ResolvePrimitive(Evaluate(blocks.Count, blocks.Count(block => blockCondition(block, entityProvider.GetBlockType())), aggregationMode));
-            }
-        }
-
-        public static bool Evaluate(int count, int matches, AggregationMode aggregation) {
-            switch (aggregation) {
-                case AggregationMode.ALL: return count > 0 && matches == count;
-                case AggregationMode.ANY: return matches > 0;
-                case AggregationMode.NONE: return matches == 0;
-                default: throw new RuntimeException("Unsupported Aggregation Mode");
+                return ResolvePrimitive(aggregateCondition(blocks.Count, blocks.Count(block => blockCondition(block, entityProvider.GetBlockType()))));
             }
         }
 

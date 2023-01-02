@@ -233,9 +233,9 @@ namespace IngameScript {
             AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
-            AddWords(Words("any"), new AggregationModeCommandParameter(AggregationMode.ANY));
-            AddWords(Words("all"), new AggregationModeCommandParameter(AggregationMode.ALL));
-            AddWords(Words("none"), new AggregationModeCommandParameter(AggregationMode.NONE));
+            AddWords(Words("any"), new AggregateConditionCommandParameter((count, matches) => matches > 0));
+            AddWords(Words("all"), new AggregateConditionCommandParameter(AllCondition));
+            AddWords(Words("none"), new AggregateConditionCommandParameter(NoneCondition));
             AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
             AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Min() ?? ResolvePrimitive(0)));
             AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Max() ?? ResolvePrimitive(0)));
