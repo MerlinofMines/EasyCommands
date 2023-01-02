@@ -35,18 +35,15 @@ namespace IngameScript {
 
         public class QueueCommand : Command {
             public Command command;
-            bool async;
-
-            public QueueCommand(Command Command, bool Async) {
-                command = Command;
-                async = Async;
-            }
+            public bool async;
 
             public override bool Execute() {
                 Thread thread;
                 if (async) {
                     thread = new Thread(command.Clone(), "Async", "Unknown");
+                    thread.parentThread = PROGRAM.currentThread;
                     PROGRAM.QueueAsyncThread(thread);
+                    PROGRAM.currentThread.GetCurrentCommand<AwaitCommand>()?.blockingThreads?.Add(thread);
                 } else {
                     thread = new Thread(command.Clone(), "Queued", "Unknown");
                     PROGRAM.QueueThread(thread);
@@ -191,6 +188,37 @@ namespace IngameScript {
         public class ControlCommand : Command {
             public ControlFunction controlFunction;
             public override bool Execute() => controlFunction(PROGRAM.currentThread);
+        }
+
+        public class AwaitCommand : Command, IInterruptableCommand {
+            public List<Thread> blockingThreads = NewList<Thread>();
+            public Command subCommands;
+            bool completedSubCommands = false;
+
+            public override bool Execute() => 
+                (completedSubCommands = completedSubCommands || subCommands.Execute()) 
+                && !PROGRAM.asyncThreadQueue.Intersect(blockingThreads).Any();
+
+            public override Command SearchCurrentCommand(Func<Command, bool> filter) {
+                return subCommands.SearchCurrentCommand(filter) ?? base.SearchCurrentCommand(filter);
+            }
+
+            public override Command Clone() => new AwaitCommand { subCommands = subCommands};
+
+            public override void Reset() {
+                blockingThreads.Clear();
+                subCommands.Reset();
+                completedSubCommands = false;
+            }
+
+            public void Break() {
+                Reset();
+                completedSubCommands = true;
+            }
+
+            public void Continue() {
+                Break();
+            }
         }
 
         public class WaitCommand : Command {

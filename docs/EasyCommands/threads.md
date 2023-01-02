@@ -76,6 +76,23 @@ Print "Managing Inventories"
 replay
 ```
 
+You can also spawn async threads and then wait for them all to complete:
+```
+:main
+await
+  async task1
+  async task2
+Print "Done with all my tasks!"
+
+:task1
+wait 1 second
+
+:task2
+wait 2 seconds
+```
+
+See the [Await Command](https://spaceengineers.merlinofmines.com/EasyCommands/commands#await-command) for more information.
+
 ## Thread Variables
 
 Each thread maintains its own set of variables, which are only accessible from commands / functions called within that thread.  This allows threads to operate independently and not stomp on each other's variables.  The drawback is that you can't share variables across threads, unless you explicitly make those variables global when setting them.  Global variables are shared across all threads.
@@ -133,4 +150,62 @@ Print "Opening " + myDoors
 
 :closeDoors
 Print "Closing " +  myDoors
+```
+
+## Thread Management
+You can directly interact with threads, similar to [Block Handlers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers), either by name or using some special keywords as described below.
+
+These commands will allow you to get or set thread names, and to terminate threads.  Thread names appear in the Detailed Info of the Programmable Block, so it can sometimes be useful to manually set the thread name to help distinguish currently running threads.
+
+Special Keywords:
+```all``` - all running and queued threads, including the currently running thread
+```current``` - the currently running thread, which could be one of the concurrently running async threads.
+```queued``` - currently queued threads, which does not include any async threads or the currently running main thread. 
+```async``` - all currently running async threads, which might include the currently running thread if the current thread is also an async thread.
+```child``` - all async threads that were created by the currently running thread.  Does not include any async threads spawned by children of this thread.
+
+
+### Getting and Set Thread Names
+You can get/set the name of the current running thread using the following commands.  
+
+```
+#Current Thread
+Print "Current Thread" + the current thread name
+set the current thread name to "My Running Task"  
+
+#Queued Threads
+print the list of queued thread names
+
+#Async Threads
+print the list of async thread names
+
+#Child Threads
+print the list of child thread names
+```
+
+You can also rename other threads:
+```
+set asyncThread to my async thread names
+for each asyncThread in my asyncThreads
+  set asyncThread thread name to "Async Thread"
+```
+
+### Terminate Threads
+You can also terminate any thread, including the currently running thread.
+
+```
+#Immediately terminates the current thread
+terminate the current thread
+
+#Terminate all async threads, which may also include the currently running thread.
+terminate async threads
+
+#Terminate queued threads, effectively clearing the thread queue.
+terminate queued threads
+
+#Terminate async threads spawned by the current thread
+terminate child threads
+
+#Terminate a thread by name
+terminate "My Thread" thread
 ```

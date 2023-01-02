@@ -128,6 +128,7 @@
   <ItemGroup>
     <Compile Include="BlockHandlers\GridBlockHandlers.cs" />
     <Compile Include="BlockHandlers\BlockHandlerRegistry.cs" />
+    <Compile Include="BlockHandlers\ThreadBlockHandlers.cs" />
     <Compile Include="BlockHandlers\TurretBlockHandlers.cs" />
     <Compile Include="BlockHandlers\HeatVentBlockHandlers.cs" />
     <Compile Include="BlockHandlers\TerminalBlockHandlers.cs" />

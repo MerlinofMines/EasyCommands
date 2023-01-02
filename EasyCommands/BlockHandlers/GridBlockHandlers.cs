@@ -28,7 +28,7 @@ namespace IngameScript {
 
             public override string Name(IMyCubeGrid block) => block.CustomName;
             public override IEnumerable<IMyCubeGrid> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(selector ?? (b => true)).Select(b => b.CubeGrid).Distinct();
+                blocks.Where(selector ?? (b => true)).Select(b => ((IMyTerminalBlock)b).CubeGrid).Distinct();
         }
     }
 }

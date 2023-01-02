@@ -76,6 +76,7 @@ namespace IngameScript {
                 { Block.TANK, new GasTankBlockHandler() },
                 { Block.TERMINAL, new TerminalBlockHandler<IMyTerminalBlock>() },
                 { Block.TIMER, new TimerBlockHandler() },
+                { Block.THREAD, new ThreadBlockHandler() },
                 { Block.THRUSTER, new ThrusterBlockHandler()},
                 { Block.TURBINE, new EngineBlockHandler<IMyPowerProducer>("WindTurbine") },
                 { Block.TURRET, new TurretBlockHandler<IMyLargeTurretBase>()},
@@ -95,6 +96,14 @@ namespace IngameScript {
                     : null;
 
             public static List<Object> GetBlocks(Block blockType, string selector = null) {
+                if (blockType == Block.THREAD)
+                    return blockHandlers[blockType].SelectBlocks(GetActiveThreads(), t => selector?.Equals(t.customName ?? t.name) ?? true)
+                        .Select(t => ((Thread)t).originalThread)
+                        .Distinct()
+                        .OrderBy(t => t == PROGRAM.currentThread)
+                        .OfType<Object>()
+                        .ToList();
+
                 if (PROGRAM.blockCache.Count == 0)
                     PROGRAM.GridTerminalSystem.GetBlocks(PROGRAM.blockCache);
 
@@ -108,6 +117,23 @@ namespace IngameScript {
                     PROGRAM.GridTerminalSystem.GetBlockGroupWithName(s)?.GetBlocks(blocks);
                     return blockHandlers[blockType].SelectBlocks(blocks);
                 });
+
+            static List<Thread> GetActiveThreads() {
+                var asyncThreads = PROGRAM.asyncThreadQueue.Select(t => t.WithName("async")).ToList();
+                var queuedThreads = PROGRAM.threadQueue.Skip(1).Select(t => t.WithName("queued")).ToList();
+                var currentThread = PROGRAM.currentThread.WithName("current");
+                var programCurrentThread = PROGRAM.currentThread;
+                var childrenThreads = PROGRAM.asyncThreadQueue.Where(t => PROGRAM.currentThread == t.parentThread).Select(t => t.WithName("child")).ToList();
+
+                return Combine(
+                    Once(currentThread),
+                    PROGRAM.asyncThreadQueue,
+                    PROGRAM.threadQueue,
+                    asyncThreads,
+                    queuedThreads,
+                    childrenThreads
+                ).ToList();
+            }
         }
     }
 }

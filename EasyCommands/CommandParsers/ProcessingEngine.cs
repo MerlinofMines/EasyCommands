@@ -376,7 +376,11 @@ namespace IngameScript {
 
             //QueueProcessor
             OneValueRule(Type<QueueCommandParameter>, requiredRight<CommandReferenceParameter>(),
-                (p, command) => new CommandReferenceParameter(new QueueCommand(command.value, p.value))),
+                (p, command) => new CommandReferenceParameter(new QueueCommand { command = command.value, async = p.value })),
+
+            //AwaitProcessor
+            OneValueRule(Type<AwaitCommandParameter>, requiredRight<CommandReferenceParameter>(),
+                (p, command) => new CommandReferenceParameter(new AwaitCommand { subCommands = command.value })),
 
             //IteratorProcessor
             ThreeValueRule(Type<IteratorCommandParameter>, requiredRight<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredEither<CommandReferenceParameter>(),

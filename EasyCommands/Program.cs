@@ -41,7 +41,8 @@ namespace IngameScript {
 
 
         public ProgramState state = ProgramState.STOPPED;
-        public Dictionary<String, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
+        public Dictionary<string, FunctionDefinition> functions = NewDictionary<string, FunctionDefinition>();
+
         public Thread currentThread;
         public Random randomGenerator = new Random();
 
@@ -165,44 +166,41 @@ namespace IngameScript {
                 selectorCache.Clear();
 
                 //If no current commands, we've been asked to restart.  start at the top.
-                if (threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
+                if (threadQueue.Count + asyncThreadQueue.Count == 0) {
                     FunctionDefinition defaultFunctionDefinition = functions[defaultFunction];
                     threadQueue.Add(new Thread(defaultFunctionDefinition.function.Clone(), "Main", defaultFunctionDefinition.functionName));
                 }
 
-                Info("Queued Threads: " + threadQueue.Count());
-                Info("Async Threads: " + asyncThreadQueue.Count());
+                Info("Queued Threads: " + threadQueue.Count);
+                Info("Async Threads: " + asyncThreadQueue.Count);
                 //Run first command in the queue.  Could be from a message, program run request, or request to start the main program.
-                if (threadQueue.Count > 0 ) {
-                    currentThread = threadQueue[0];
-                    Info(currentThread.GetName());
-                    if(currentThread.Command.Execute()) {
-                        threadQueue.RemoveAt(0);
-                    }
-                }
+                int threadIndex = 0;
+
+                if (threadQueue.Count > 0) RunThread(threadQueue, ref threadIndex);
 
                 //Process 1 iteration of all async commands, removing from queue if processed.
-                int asyncThreadQueueIndex = 0;
+                threadIndex = 0;
 
-                while (asyncThreadQueueIndex < asyncThreadQueue.Count) {
-                    currentThread = asyncThreadQueue[asyncThreadQueueIndex];
-                    Info(currentThread.GetName());
-                    if (currentThread.Command.Execute()) {
-                        asyncThreadQueue.RemoveAt(asyncThreadQueueIndex);
-                    } else {
-                        asyncThreadQueueIndex++;
-                    }
-                }
+                while (threadIndex < asyncThreadQueue.Count) RunThread(asyncThreadQueue, ref threadIndex);
 
-                if(threadQueue.Count == 0 && asyncThreadQueue.Count == 0) {
-                    state = ProgramState.COMPLETE;
-                } else {
-                    state = ProgramState.RUNNING;
-                }
+                state = (threadQueue.Count + asyncThreadQueue.Count == 0) ? ProgramState.COMPLETE : ProgramState.RUNNING;
+
             //InterruptException is thrown by control commands to interrupt execution (stop, pause, restart).
             //The command itself has set the correct state of the command queues, we just need to set the program state.
             } catch(InterruptException interrupt) {
                 state = interrupt.ProgramState;
+            }
+        }
+
+        public void RunThread(List<Thread> threadQueue, ref int index) {
+            currentThread = threadQueue[index];
+            try {
+                Info(currentThread.GetName());
+                if (currentThread.Command.Execute())
+                    threadQueue.RemoveAt(index);
+                else index++;
+            } catch(ThreadInterruptException) {
+                threadQueue.RemoveAt(index);
             }
         }
 
@@ -213,20 +211,24 @@ namespace IngameScript {
         public class Thread {
             public Command Command { get; set; }
             public Dictionary<String, IVariable> threadVariables = NewDictionary<string, IVariable>();
-            String prefix;
-            String name;
+            public string customName, name, prefix;
+            public Thread parentThread, originalThread;
 
-            public T GetCurrentCommand<T>(Func<Command, bool> filter) where T : class =>
-                Command.SearchCurrentCommand(command => command is T && filter(command)) as T;
+            public T GetCurrentCommand<T>(Func<Command, bool> filter = null) where T : class =>
+                Command.SearchCurrentCommand(command => command is T && (filter == null || filter(command))) as T;
 
-            public Thread(Command command, string p, string n) {
+            public Thread(Command command, string Prefix, string Name, string CustomName = null, Thread OriginalThread = null) {
                 Command = command;
-                prefix = p;
-                name = n;
+                prefix = Prefix;
+                name = Name;
+                customName = CustomName;
+                originalThread = OriginalThread ?? this;
             }
 
-            public String GetName() => $"[{prefix}] {name}";
+            public String GetName() => $"[{prefix}] {customName ?? name}";
             public void SetName(String s) => name = s;
+
+            public Thread WithName(string customName) => new Thread(Command, prefix, name, customName, this);
         }
 
         public class FunctionDefinition {

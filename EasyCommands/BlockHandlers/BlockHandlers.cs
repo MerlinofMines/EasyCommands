@@ -87,7 +87,7 @@ namespace IngameScript {
             PropertySupplier GetDefaultProperty(Return type);
             PropertySupplier GetDefaultProperty(Direction direction);
             Direction GetDefaultDirection();
-            List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
+            List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null);
             String GetName(Object block);
 
             Primitive GetPropertyValue(Object block, PropertySupplier property);
@@ -118,10 +118,12 @@ namespace IngameScript {
             public string GetPropertyHash(PropertySupplier propertySupplier) =>
                 propertySupplier.propertyValues.OrderBy(p => p.propertyType).Aggregate("", (a, b) => a + b.propertyType);
 
-            public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock =>
+            public List<Object> SelectBlocks<U>(List<U> blocks, Func<U, bool> selector = null) =>
                 SelectBlocksByType(blocks, selector).OfType<Object>().ToList();
 
-            public abstract IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) where U : IMyTerminalBlock;
+            public virtual IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
+                blocks.Where(selector ?? (b => true)).OfType<T>();
+
             public abstract string Name(T block);
 
             public Direction GetDefaultDirection() => defaultDirection;
@@ -212,7 +214,7 @@ namespace IngameScript {
 
         public abstract class MultiInstanceBlockHandler<T> : BlockHandler<T> where T : class {
             public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(selector ?? (b => true)).SelectMany(b => GetInstances(b));
+                blocks.Where(selector ?? (b => true)).SelectMany(b => GetInstances((IMyTerminalBlock)b));
             public abstract IEnumerable<T> GetInstances(IMyTerminalBlock block);
         }
     }
