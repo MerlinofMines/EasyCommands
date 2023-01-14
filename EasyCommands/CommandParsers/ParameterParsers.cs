@@ -206,7 +206,8 @@ namespace IngameScript {
             AddWords(Words("send"), new SendCommandParameter());
             AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
             AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
-            AddWords(Words("async", "parallel"), new QueueCommandParameter(true));
+            AddAmbiguousWords(Words("async", "parallel"), new QueueCommandParameter(true));
+            AddWords(Words("await", "blocking"), new AwaitCommandParameter());
             AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
             AddWords(Words("take"), new TransferCommandParameter(false));
             AddWords(Words("->"), new KeyedVariableCommandParameter());
@@ -327,7 +328,7 @@ namespace IngameScript {
                 return false;
             });
             AddControlWords(Words("return"), thread => {
-                FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>(command => true);
+                FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>();
                 Command nullCommand = new NullCommand();
                 if (currentFunction == null) thread.Command = nullCommand;
                 else currentFunction.function = nullCommand;
@@ -390,6 +391,7 @@ namespace IngameScript {
             AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
             AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
             AddBlockWords(Words(), Words(), Block.GRID, PluralWords("grid"));
+            AddBlockWords(PluralWords("thread"), Words(), Block.THREAD);
 
             AddAliasWords(Words("can"), "is able");
             AddAliasWords(Words("cannot"), "is not able");

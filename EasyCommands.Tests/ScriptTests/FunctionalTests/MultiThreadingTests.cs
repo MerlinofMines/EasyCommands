@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static IngameScript.Program;
 
 namespace EasyCommands.Tests.ScriptTests {
@@ -338,6 +340,234 @@ Print ""Message""
                 Assert.IsTrue(test.Logger.Contains("[Request] call handleMessage"));
             }
         }
+
+        [TestMethod]
+        public void asyncVariableIsNotAffectedByMainThread() {
+            String script = @"
+:main
+set a to 1
+async call runAsync
+set a to 2
+
+:runAsync
+print 'Variable is: ' + a
+wait 1
+print 'Variable is: ' + a
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Variable is: 1", test.Logger[0]);
+                Assert.AreEqual("Variable is: 1", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void awaitCommandExecutesButBlocksOnAsyncThreads() {
+            String script = @"
+:main
+await
+  async
+    Print ""Async Thread""
+    wait 1
+    Print ""Async Thread Done""
+  print ""Main Thread""
+  async
+    Print ""Async Thread 2""
+    wait 0.5
+    Print ""Async Thread 2 Done""
+print ""Main Thread Done""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(6, test.Logger.Count);
+                Assert.AreEqual("Main Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread", test.Logger[1]);
+                Assert.AreEqual("Async Thread 2", test.Logger[2]);
+                Assert.AreEqual("Async Thread 2 Done", test.Logger[3]);
+                Assert.AreEqual("Async Thread Done", test.Logger[4]);
+                Assert.AreEqual("Main Thread Done", test.Logger[5]);
+            }
+        }
+
+        [TestMethod]
+        public void awaitCommandWaitsForAsyncThreadSpawnedInSubFunction() {
+            String script = @"
+:main
+await
+  callAsync ""Async Thread"" 1
+  print ""Main Thread""
+  callAsync ""Async Thread 2"" 0.5
+print ""Main Thread Done""
+
+:callAsync threadName timeout
+async
+  Print threadName
+  wait timeout
+  Print threadName + "" Done""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(6, test.Logger.Count);
+                Assert.AreEqual("Main Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread", test.Logger[1]);
+                Assert.AreEqual("Async Thread 2", test.Logger[2]);
+                Assert.AreEqual("Async Thread 2 Done", test.Logger[3]);
+                Assert.AreEqual("Async Thread Done", test.Logger[4]);
+                Assert.AreEqual("Main Thread Done", test.Logger[5]);
+            }
+        }
+
+        [TestMethod]
+        public void nestedAwaitCommandsProperlyBlocks() {
+            String script = @"
+:main
+await
+  callAsync ""Async Thread 2"" 1
+  await 
+    callAsync ""Async Thread"" 0.5
+  print ""Main Thread""
+print ""Main Thread Done""
+
+:callAsync threadName timeout
+async
+  Print threadName
+  wait timeout
+  Print threadName + "" Done""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(6, test.Logger.Count);
+                Assert.AreEqual("Async Thread 2", test.Logger[0]);
+                Assert.AreEqual("Async Thread", test.Logger[1]);
+                Assert.AreEqual("Async Thread Done", test.Logger[2]);
+                Assert.AreEqual("Main Thread", test.Logger[3]);
+                Assert.AreEqual("Async Thread 2 Done", test.Logger[4]);
+                Assert.AreEqual("Main Thread Done", test.Logger[5]);
+            }
+        }
+
+        [TestMethod]
+        public void awaitCommandCanBeBrokenOutOf() {
+            String script = @"
+:main
+await
+  print ""Main Thread""
+  async
+    Print ""Async Thread""
+    wait 1
+    Print ""Async Thread Done""
+  wait 0.5
+  break
+print ""Main Thread Done""
+  
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(4, test.Logger.Count);
+                Assert.AreEqual("Main Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread", test.Logger[1]);
+                Assert.AreEqual("Main Thread Done", test.Logger[2]);
+                Assert.AreEqual("Async Thread Done", test.Logger[3]);
+            }
+        }
+
+        [TestMethod]
+        public void awaitCommandContinueActsAsBreak() {
+            String script = @"
+:main
+await
+  print ""Main Thread""
+  async
+    Print ""Async Thread""
+    wait 1
+    Print ""Async Thread Done""
+  wait 0.5
+  continue
+print ""Main Thread Done""
+  
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(4, test.Logger.Count);
+                Assert.AreEqual("Main Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread", test.Logger[1]);
+                Assert.AreEqual("Main Thread Done", test.Logger[2]);
+                Assert.AreEqual("Async Thread Done", test.Logger[3]);
+            }
+        }
+
+        [TestMethod]
+        public void awaitCommandResetsCorrectly() {
+            String script = @"
+:main
+await
+  async
+    Print ""Async Thread""
+    Print ""Async Thread Done""
+print ""Main Thread Done""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(3, test.Logger.Count);
+                Assert.AreEqual("Async Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread Done", test.Logger[1]);
+                Assert.AreEqual("Main Thread Done", test.Logger[2]);
+
+                test.Logger.Clear();
+                test.RunUntilDone();
+
+                Assert.AreEqual(3, test.Logger.Count);
+                Assert.AreEqual("Async Thread", test.Logger[0]);
+                Assert.AreEqual("Async Thread Done", test.Logger[1]);
+                Assert.AreEqual("Main Thread Done", test.Logger[2]);
+            }
+        }
+
+
+        [TestMethod]
+        public void terminateAllThreadsFromAsyncThread() {
+            String script = @"
+await
+  async
+    set the current thread name to ""My Async Thread""
+    wait 1.25
+    print ""Terminating Threads!""
+    terminate all threads
+  wait 1
+print ""Done!""
+";
+
+            using (var test = new ScriptTest(script)) {
+                test.program.logLevel = LogLevel.SCRIPT_ONLY;
+                test.RunUntilDone();
+
+                Assert.AreEqual(1, test.Logger.Count);
+                Assert.AreEqual("Terminating Threads!", test.Logger[0]);
+            }
+        }
+
 
     }
 }

@@ -19,22 +19,14 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class InterruptException : Exception {
-            public ProgramState ProgramState;
-
-            public InterruptException(ProgramState programState) {
-                ProgramState = programState;
+        public class ThreadBlockHandler : BlockHandler<Thread> {
+            public ThreadBlockHandler() {
+                AddStringHandler(Property.NAME, t => t.customName ?? t.name, (t,s) => t.customName = s);
+                AddBooleanHandler(Property.COMPLETE, t => false, (t, b) => { t.Command = new NullCommand(); if(t==PROGRAM.currentThread) throw new ThreadInterruptException(); });
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
-        }
 
-        public class ThreadInterruptException : Exception { }
-
-        public class ParserException : Exception {
-            public ParserException(string msg) : base(msg) { }
-        }
-
-        public class RuntimeException : Exception {
-            public RuntimeException(string msg) : base(msg) { }
+            public override string Name(Thread thread) => thread.customName ?? thread.name;
         }
     }
 }

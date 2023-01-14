@@ -56,6 +56,7 @@ namespace IngameScript {
         public class CastCommandParameter : SimpleCommandParameter { }
         public class RelativeCommandParameter : SimpleCommandParameter { }
         public class CommandSeparatorCommandParameter : SimpleCommandParameter { }
+        public class AwaitCommandParameter : SimpleCommandParameter { }
 
         public abstract class ValueCommandParameter<T> : SimpleCommandParameter {
             public T value;

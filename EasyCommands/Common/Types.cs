@@ -72,6 +72,7 @@ namespace IngameScript {
             SUSPENSION,
             TANK,
             TERMINAL,
+            THREAD,
             THRUSTER,
             TIMER,
             TURBINE,

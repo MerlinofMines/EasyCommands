@@ -114,9 +114,6 @@ namespace IngameScript {
             float MaxIntegrity(IMySlimBlock block) => block.MaxIntegrity;
             float BuildRatio(IMySlimBlock block) => BuildIntegrity(block) / MaxIntegrity(block);
 
-            public override IEnumerable<T> SelectBlocksByType<U>(List<U> blocks, Func<U, bool> selector = null) =>
-                blocks.Where(selector ?? (b => true)).OfType<T>();
-
             public override PropertyHandler<T> GetPropertyHandler(PropertySupplier property) {
                 try {
                     return base.GetPropertyHandler(property);

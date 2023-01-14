@@ -605,12 +605,12 @@ print "Run away!"
 
 If you load the above script into a new EasyCommands instance, you'll notice "[Main] flee" in the list of running commands.  This is because EasyCommands has completely switched execution to the flee program.  
 
-## Queue & Async Commands
+## Queueing & Async Commands
 EasyCommands supports a concept for [Threads](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads"), which allows you to execute multiple programs in parallel, or to queue up commands to run after the initial command is finished executing.
 
 The general structure of this command is ```<queue/async> <command>```
 
-### Queuing Commands
+### Queuing Command
 
 You can "queue" commands to run after we've finished running the current script.  You might use this if you create a factory that builds different types of vehicles, and you want to queue up 2 of one type and 1 of another.
 
@@ -633,7 +633,7 @@ wait 2
 set my display text to "Idle..."
 ```
 
-### Async Commands
+### Async Command
 An asynchronous command is a command that you spin off to run on its own [Thread](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads").  Asynchronous commands run in the same tick as the main script, so effectively they run in parallel.  Async commands allow a single program to run multiple scripts simultaneously so that 1 EasyCommands script can manage multiple things.  This is useful and powerful, but be careful about trying to run too much in 1 script!  Async commands will automatically end once they complete their task.  
 
 See [Threads](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads") for more information on how parameters are passed from the caller to the asynchronous threads and other information.
@@ -661,8 +661,56 @@ Print "Running task: " + taskName
 repeat
 ```
 
+### Await Command
+The Await Command compliments the Async command by allowing you to start one or more asynchronous [Threads](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads") and then wait for all of them to complete before proceeding.
+
+Specifically, the Await Command will wait for all async commands executed within its scope to complete before proceeding to the next command.
+
+Keywords: ```await, blocking```
+
+The most common usage for this is to run multiple sub-commands in parallel but wait for all of them to finish before proceeding.  You can also continue to run commands within the calling thread while waiting for the asynchronous commands to complete.
+
+```
+:main
+#Await will not wait for this command to complete as it is outside the scope of the await command.
+async runTask1
+
+await
+  Print "Doing some thing in the main thread"
+  async runTask2
+  async runTask3
+  Print "Doing some other thing in the main thread"
+print "Done Running Async Tasks!"
+
+:runTask1
+#Some long running task
+Print "Running Task 1"
+wait 1 second
+
+:runTask2
+Print "Running Task 2"
+wait 2 seconds
+
+:runTask3
+Print "Running Task 3"
+wait 3 seconds
+```
+
+Make sure that any async commands you execute within the await command always complete or else you'll block the calling thread forever.  However, you can also stop waiting for asynchronous threads using either the "break" or "continue" keywords.
+
+```
+await
+  async
+    wait 10 seconds
+    print "This Takes Forever!"
+  wait 2 seconds
+  print "Im done waiting!"
+  break
+print "Done"
+```
+
 ## Control Commands
-As in the above example, you might find that sometimes you want to pause, stop, or restart your script
+You might find that sometimes you want to pause, stop, or restart your script entirely.
 
 Stopping or Restarting a script will clear all running & asynchronous threads, and clear all local and global variables.
 
@@ -680,8 +728,6 @@ pause
 ### The Repeat Command
 The "repeat" command is a special command often used for asynchronous threads to keep executing the given function.  The Repeat command effectively restarts the current "thread", rather than the whole program.
 
-
-
 ```
 set my display to "Tick"
 wait 1
@@ -690,7 +736,7 @@ wait 1
 repeat
 ```
 
-If you specify a "goto <function>" somewhere before calling "repeat", the script will repeat from the last "goto function".  Note that any previous parameters passed to that function are not passed when calling repeat.
+If you specify a "goto functionName" somewhere before calling "repeat", the script will repeat from the last "goto function".  Note that any previous parameters passed to that function are not passed when calling repeat.
 
 ## Send/Listen/Forget Commands
 

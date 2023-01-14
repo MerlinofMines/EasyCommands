@@ -37,6 +37,7 @@ namespace IngameScript {
         public static IEnumerable<int> Range(int start, int count) => Enumerable.Range(start, count);
         public static IEnumerable<T> Empty<T>() => Enumerable.Empty<T>();
         public static IEnumerable<T> Once<T>(T element) => Enumerable.Repeat(element, 1);
+        public static IEnumerable<T> Combine<T>(params IEnumerable<T>[] collections) => collections.Aggregate((a, b) => a.Concat(b));
 
         //Other useful utilities
         public static IVariable GetStaticVariable(object o) => new StaticVariable(ResolvePrimitive(o));

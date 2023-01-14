@@ -277,6 +277,7 @@ These properties require a Variable value as part of the property
 * Print - ```print, log, echo, write```
 * Queue - ```queue, schedule```
 * Async - ```async, parallel```
+* Await - ```await, blocking```
 * Transfer - ```transfer, give```(Source -> Destination)
 * Transfer - ```take``` (Destination -> Source)
 * For Each - ```each, every```
