@@ -402,23 +402,7 @@ if any "Base Batteries" level < 0.5
   turn on the "Base Generators"
 ```
 
-One major difference between Aggregate Conditions and Aggregate Variables is that an Aggregate Condition will return false for "any" and "all" if there are no blocks in the given selector.  So in the below script, the first method would turn on the generators if you don't have any batteries.  The second method will not turn on the "Base Generators" unless there is at least 1 battery whose level < 0.5 (vs 0).
-
-```
-Print "First Case:" 
-if the min "Base Batteries" level < 0.5
-  turn on the "Base Generators"
-  Print "Generators On"
-else
-  Print "No Charge Needed"
-
-Print "\nSecond Case"
-
-if any "Base Batteries" level < 0.5
-  turn on the "Base Generators"
-else
-  Print "No Charge Needed"
-```
+Note that an "all/none" block condition will always return true for a selector with no matching blocks.  Similarly, an "any" block condition will always return false for a selector with no matching blocks.
 
 ## Aggregate List Conditions
 
@@ -434,3 +418,5 @@ set myList to [1,2,3]
 if any of myList[] > 2
   Print "List contains an item > 2"
 ```
+
+Similarly to Aggregate Block conditions, the "all/none" checks will return true for an empty list and "any" will return false for an empty list.
