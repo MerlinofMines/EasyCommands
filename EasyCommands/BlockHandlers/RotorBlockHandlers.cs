@@ -22,9 +22,25 @@ namespace IngameScript {
         public class RotorBlockHandler : SubTypedBlockHandler<IMyMotorStator> {
             public RotorBlockHandler(Func<IMyFunctionalBlock, bool> filter) : base(filter) {
                 AddPropertyHandler(Property.ANGLE, new RotorAngleHandler());
-                AddDirectionHandlers(Property.RANGE, Direction.UP,
-                    TypeHandler(NumericHandler(b => b.UpperLimitDeg, (b,v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
-                    TypeHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg= v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
+                var directionEnableHandler = DirectionalTypedHandler(Direction.NONE,
+                    TypeHandler(BooleanHandler(b => b.UpperLimitDeg < 361 || b.LowerLimitDeg > -361, (b,v) => {
+                        if (!v) {
+                            b.UpperLimitDeg = 361;
+                            b.LowerLimitDeg = -361;
+                        };
+                    }), Direction.NONE),
+                    TypeHandler(BooleanHandler(b => b.UpperLimitDeg < 361, (b, v) => { if (!v) b.UpperLimitDeg = 361; }), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
+                    TypeHandler(BooleanHandler(b => b.LowerLimitDeg > -361, (b, v) => { if (!v) b.LowerLimitDeg = -361; }), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE));
+
+                AddReturnHandlers(Property.RANGE, Return.NUMERIC,
+                    TypeHandler(DirectionalTypedHandler(Direction.UP,
+                        TypeHandler(NumericHandler(b => b.UpperLimitDeg, (b, v) => b.UpperLimitDeg = v, 10), Direction.UP, Direction.FORWARD, Direction.CLOCKWISE),
+                        TypeHandler(NumericHandler(b => b.LowerLimitDeg, (b, v) => b.LowerLimitDeg = v, 10), Direction.DOWN, Direction.BACKWARD, Direction.COUNTERCLOCKWISE)),
+                        Return.NUMERIC),
+                    TypeHandler(directionEnableHandler, Return.BOOLEAN));
+
+                AddPropertyHandler(NewList(Property.RANGE, Property.ENABLE), directionEnableHandler);
+
                 AddNumericHandler(Property.VELOCITY, (b) => b.TargetVelocityRPM, (b, v) => b.TargetVelocityRPM = v, 1);
                 AddNumericHandler(Property.LEVEL, (b) => b.Displacement, (b, v) => b.Displacement = v, 0.1f);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });

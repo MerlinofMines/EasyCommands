@@ -119,6 +119,322 @@ set the ""rotor"" lower limit to 30
         }
 
         [TestMethod]
+        public void isUpperLimitEnabled() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" upper limit is enabled
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.UpperLimitDeg);
+
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.UpperLimitDeg);
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: False", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void isUpperLimitTurnedOn() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" upper limit is turned on
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.UpperLimitDeg);
+
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.UpperLimitDeg);
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: False", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void turnOffUpperLimit() {
+            String script = @"
+turn off the ""rotor"" upper limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 361);
+            }
+        }
+
+        [TestMethod]
+        public void disableUpperLimit() {
+            String script = @"
+disable the ""rotor"" upper limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 361);
+            }
+        }
+
+        [TestMethod]
+        public void enableUpperLimit() {
+            String script = @"
+enable the ""rotor"" upper limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(60);
+
+                test.RunUntilDone();
+
+                mockRotor.Verify(b => b.UpperLimitDeg);
+                mockRotor.Verify(b => b.CustomName);
+                mockRotor.Verify(b => b.BlockDefinition);
+                mockRotor.VerifyNoOtherCalls();
+            }
+        }
+
+        [TestMethod]
+        public void isLowerLimitEnabled() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" lower limit is enabled
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.LowerLimitDeg);
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.LowerLimitDeg);
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: False", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void isLowerLimitTurnedOn() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" lower limit is turned on
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.LowerLimitDeg);
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                test.RunUntilDone();
+                mockRotor.Verify(b => b.LowerLimitDeg);
+
+                Assert.AreEqual(2, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: False", test.Logger[1]);
+            }
+        }
+
+        [TestMethod]
+        public void turnOffLowerLimit() {
+            String script = @"
+turn off the ""rotor"" lower limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.LowerLimitDeg = -361);
+            }
+        }
+
+        [TestMethod]
+        public void disableLowerLimit() {
+            String script = @"
+disable the ""rotor"" lower limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.LowerLimitDeg = -361);
+            }
+        }
+
+        [TestMethod]
+        public void enableLowerLimit() {
+            String script = @"
+enable the ""rotor"" lower limit
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(60);
+
+                test.RunUntilDone();
+
+                mockRotor.Verify(b => b.LowerLimitDeg);
+                mockRotor.Verify(b => b.CustomName);
+                mockRotor.Verify(b => b.BlockDefinition);
+                mockRotor.VerifyNoOtherCalls();
+            }
+        }
+
+        [TestMethod]
+        public void areLimitsEnabled() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" limits are enabled
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+
+                Assert.AreEqual(4, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: True", test.Logger[1]);
+                Assert.AreEqual("Enabled: True", test.Logger[2]);
+                Assert.AreEqual("Enabled: False", test.Logger[3]);
+            }
+        }
+
+        [TestMethod]
+        public void areLimitsTurnedOn() {
+            String script = @"
+Print ""Enabled: "" + ""rotor"" limits are turned on
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-30);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(30);
+                test.RunUntilDone();
+
+                mockRotor.Setup(b => b.LowerLimitDeg).Returns(-3000);
+                mockRotor.Setup(b => b.UpperLimitDeg).Returns(3000);
+                test.RunUntilDone();
+
+                Assert.AreEqual(4, test.Logger.Count);
+                Assert.AreEqual("Enabled: True", test.Logger[0]);
+                Assert.AreEqual("Enabled: True", test.Logger[1]);
+                Assert.AreEqual("Enabled: True", test.Logger[2]);
+                Assert.AreEqual("Enabled: False", test.Logger[3]);
+            }
+        }
+
+        [TestMethod]
+        public void turnOffLimits() {
+            String script = @"
+turn off the ""rotor"" limits
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.LowerLimitDeg = -361);
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 361);
+            }
+        }
+
+        [TestMethod]
+        public void disableLimits() {
+            String script = @"
+disable the ""rotor"" limits
+";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockRotor = new Mock<IMyMotorStator>();
+                test.MockBlocksOfType("rotor", mockRotor);
+                MockBlockDefinition(mockRotor, "LargeStator");
+
+                test.RunUntilDone();
+
+                mockRotor.VerifySet(b => b.LowerLimitDeg = -361);
+                mockRotor.VerifySet(b => b.UpperLimitDeg = 361);
+            }
+        }
+
+        [TestMethod]
         public void rotateTheRotorClockwise() {
             String script = @"
 rotate the ""rotor"" clockwise

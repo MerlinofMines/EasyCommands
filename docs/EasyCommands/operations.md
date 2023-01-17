@@ -422,6 +422,7 @@ Keywords: ```plus, +```
 * **(Color, Color)**: Adds two colors together by adding together RGB values (capped at 255, of course)
 * **(List, Any)**: Adds the second item(s) to the first list, at the end
 * **(Any, List)**: Adds the first item(s) to the second list, inserted at the beginning
+* **(Boolean, Boolean)**: Same as Logical Or. Checks whether either boolean operand is true (a || b).
 
 ### And
 Checks whether both boolean operands are true (a && b)

@@ -97,11 +97,13 @@ set "My Rotor" velocity to 5
 ```
 
 ## "Limit" Property
-* Primitive Type: Numeric
+* Primitive Type: Numeric/Boolean
 * Takes an optional direction
 * Keywords: ```limit, limits, range, ranges, distance, distances```
 
 Get/Sets the Piston's upper/lower limits, in degrees.  Takes in an optional direction to indicate whether you are getting or setting the upper or lower limit.  If no direction is specified, the upper limit is used.
+
+You can also use this property to disable the upper/lower or both limits for the rotor.
 
 ### Supported Directions
 * Up - Upper Limit
@@ -123,6 +125,25 @@ set "My Rotor" upper limit to 6
 
 #Set the lower limit
 set "My Rotor" lower limit to 4
+
+#Get whether the rotor has a lower limit
+Print "Has Lower Limit: " + "My Rotor" lower limit is enabled
+
+#Get whether the rotor has an upper limit
+Print "Has Upper Limit: " + "My Rotor" upper limit is enabled
+
+#Get whether the rotor has either an upper or lower limit enabled
+#Note this will return true if either an upper or lower limit is set.
+Print "Has Limit: " + "My Rotor" limits are enabled
+
+#Disable the upper limit
+turn off "My Rotor" upper limit
+
+#Disable the lower limit
+turn off "My Rotor lower limit
+
+#Disable both limits
+turn off "My Rotor" limits
 ```
 
 ## "Height" Property
