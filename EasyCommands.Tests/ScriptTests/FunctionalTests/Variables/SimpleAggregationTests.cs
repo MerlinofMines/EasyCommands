@@ -47,6 +47,19 @@ namespace EasyCommands.Tests.ScriptTests {
         }
 
         [TestMethod]
+        public void GetValueofDynamicPropertyCapitalized() {
+            using (var test = new ScriptTest(@"Print ""My Value: "" + ""test piston"" ""Height"" property")) {
+                var mockPiston = new Mock<IMyPistonBase>();
+                test.MockBlocksOfType("test piston", mockPiston);
+                mockPiston.Setup(b => b.CurrentPosition).Returns(5f);
+
+                test.RunOnce();
+
+                Assert.AreEqual("My Value: 5", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void GetValueofDynamicImplicitNegativeProperty() {
             using (var test = new ScriptTest(@"Print ""My Value: "" + ""test tank"" ""stockpile"" property is on")) {
                 var mockTank = new Mock<IMyGasTank>();

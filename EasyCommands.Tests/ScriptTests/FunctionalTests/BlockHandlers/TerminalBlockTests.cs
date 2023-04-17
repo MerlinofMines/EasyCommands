@@ -299,6 +299,20 @@ print ""Detailed Info: "" + ""test terminal"" info
         }
 
         [TestMethod]
+        public void GetBlockPropertyWithReservedKeywordName() {
+            String script = @"print ""Font: "" + the ""test terminal"" ""Font"" property";
+
+            using (ScriptTest test = new ScriptTest(script)) {
+                var mockBlock = new Mock<IMyTerminalBlock>();
+                test.MockBlocksOfType("test terminal", mockBlock);
+                MockGetProperty(mockBlock, "Font", new StringBuilder("Hello World!"));
+                test.RunUntilDone();
+
+                Assert.AreEqual("Font: Hello World!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
         public void SetBlockProperty() {
             String script = @"set the ""test terminal"" ""Property1"" property to 4";
 

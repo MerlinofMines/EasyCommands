@@ -40,11 +40,11 @@ namespace IngameScript {
                 if (propertyType == Property.PROPERTY + "") {
                     values = NewList<PropertyValue>();
                     var replaceValues = true;
-                    foreach (string s in CastString(attributeValue.GetValue()).ToLower().Split(' ')) {
-                        var commandParameters = PROGRAM.propertyWords.GetValueOrDefault(s, NewList<ICommandParameter>());
+                    foreach (string s in CastString(attributeValue.GetValue()).Split(' ')) {
+                        var commandParameters = PROGRAM.propertyWords.GetValueOrDefault(s.ToLower(), NewList<ICommandParameter>());
                         PropertyCommandParameter property = findLast<PropertyCommandParameter>(commandParameters);
                         if (property != null)
-                            values.Add(new PropertyValue(property.value + "", property.Token).Inverse(property.inverse));
+                            values.Add(new PropertyValue(property.value + "", s).Inverse(property.inverse));
                         else
                             replaceValues = false;
                     };
