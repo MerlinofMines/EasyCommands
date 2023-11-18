@@ -5,6 +5,7 @@ using Moq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
 using static EasyCommands.Tests.ScriptTests.MockEntityUtility;
+using SpaceEngineers.Game.ModAPI.Ingame;
 
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
@@ -436,6 +437,39 @@ if the ""test thrusters"" are on
                 test.RunUntilDone();
 
                 Assert.AreEqual("Thrusters On!", test.Logger[0]);
+            }
+        }
+
+        [TestMethod]
+        public void BasicBlockAggregationWithNoDirectionOrProperty() {
+            using (var test = new ScriptTest(@"
+set myBatteries to ""My Batteries"" batteries
+turn off myBatteries[1] battery
+")) {
+                var mockBattery1 = new Mock<IMyBatteryBlock>();
+                var mockBattery2 = new Mock<IMyBatteryBlock>();
+                test.MockBlocksInGroup("My Batteries", mockBattery1, mockBattery2);
+
+                test.RunOnce();
+
+                mockBattery2.VerifySet(p => p.Enabled = false);
+            }
+        }
+
+        [TestMethod]
+        public void BlockAggregationWithNoDirectionOrPropertyWithNonNameStringDefault() {
+            using (var test = new ScriptTest(@"
+set mySpeakers to ""My Speakers"" speakers
+print mySpeakers
+turn off mySpeakers[1] speaker
+")) {
+                var mockSpeaker1 = new Mock<IMySoundBlock>();
+                var mockSpeaker2 = new Mock<IMySoundBlock>();
+                test.MockBlocksInGroup("My Speakers", mockSpeaker1, mockSpeaker2);
+
+                test.RunOnce();
+
+                mockSpeaker2.VerifySet(p => p.Enabled = false);
             }
         }
     }

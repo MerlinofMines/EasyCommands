@@ -135,7 +135,8 @@ namespace IngameScript {
 
             public Primitive GetValue() {
                 IBlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
-                PropertySupplier p = property.Resolve(handler, Return.NUMERIC);
+                if (property.propertyValues.Count == 0) property = property.WithProperties(NewList(new PropertyValue(Property.NAME + "")));
+                PropertySupplier p = property.Resolve(handler, Return.STRING);
                 return aggregator(entityProvider.GetEntities(), b => handler.GetPropertyValue(b, p));
             }
         }
