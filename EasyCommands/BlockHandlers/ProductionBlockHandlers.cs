@@ -22,7 +22,7 @@ using VRageMath;
 namespace IngameScript {
     partial class Program {
 
-        public class ProductionBlockHandler : FunctionalBlockHandler<IMyProductionBlock> {
+        public class ProductionBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyProductionBlock {
             public ProductionBlockHandler() {
 
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
