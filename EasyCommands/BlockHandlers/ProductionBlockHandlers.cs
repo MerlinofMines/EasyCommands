@@ -33,7 +33,7 @@ namespace IngameScript {
                     Get = (b, p) => ResolvePrimitive(GetProductingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
-                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyAssembler>() {
+                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyProductionBlock>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
