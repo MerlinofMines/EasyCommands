@@ -30,7 +30,7 @@ namespace IngameScript {
 
                 // if supplied with no argument, return <IMyProductionBlock>.IsProducing
                 AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyProductionBlock>() {
-                    Get = (b, p) => ResolvePrimitive(GetProductingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
+                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
                 AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyProductionBlock>() {
@@ -46,7 +46,7 @@ namespace IngameScript {
 
             //Returns the value of first attribute or property variable with the same return type as default value,
             //otherwise the default value. Attributes are checked first.
-            T GetRequestedAttributeOrPropertyValue<T>(PropertySupplier supplier, T defaultValue) {
+            protected T GetRequestedAttributeOrPropertyValue<T>(PropertySupplier supplier, T defaultValue) {
                 Object value = supplier.propertyValues.Where(p => p.attributeValue != null)
                     .Select(p => p.attributeValue.GetValue())
                     .Concat(NewList(supplier.propertyValue?.GetValue() ?? ResolvePrimitive(defaultValue)))
@@ -56,7 +56,7 @@ namespace IngameScript {
                 return (T)value;
             }
 
-            float GetProducingAmount(IMyProductionBlock b, PropertySupplier p) {
+            protected float GetProducingAmount(IMyProductionBlock b, PropertySupplier p) {
                 var definitions = PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"));
                 var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
@@ -68,7 +68,7 @@ namespace IngameScript {
                 return (float)value;
             }
 
-            void AddQueueItem(IMyMyProductionBlock b, PropertySupplier p) {
+            protected void AddQueueItem(IMyProductionBlock b, PropertySupplier p) {
                 float amount = GetRequestedAttributeOrPropertyValue(p, 1f);
                 foreach (MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"))) {
                     try { b.AddQueueItem(bp, (MyFixedPoint)amount); } catch (Exception) {
