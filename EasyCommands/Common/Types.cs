@@ -117,6 +117,7 @@ namespace IngameScript {
             OVERRIDE,
             POSITION,
             POWER,
+            PRODUCING,
             PROPERTIES,
             RADIUS,
             RANGE,
