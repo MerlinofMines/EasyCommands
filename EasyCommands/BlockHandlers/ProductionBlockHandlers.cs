@@ -28,7 +28,9 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.BUILD, b => !b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
 
-                // if supplied with no argument, return <IMyProductionBlock>.IsProducing
+		AddBooleanHandler(Property.PRODUCING, b => b.IsProducing)
+
+                // TODO: if supplied with no argument, return <IMyProductionBlock>.IsProducing
                 AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyProductionBlock>() {
                     Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => AddQueueItem(b, p)
