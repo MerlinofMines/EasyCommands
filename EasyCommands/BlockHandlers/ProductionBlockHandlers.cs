@@ -17,7 +17,7 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
-// ڙ (\u0699) is next symbol
+// ڙ (\u0699) is next symbol, for class ProductionBlockHandler
 
 namespace IngameScript {
     partial class Program {
