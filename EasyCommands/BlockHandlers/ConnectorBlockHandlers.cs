@@ -31,6 +31,7 @@ namespace IngameScript {
                 AddPropertyHandler(Property.ABLE, readyHandler);
                 AddPropertyHandler(NewList(Property.ABLE, Property.LOCKED), readyHandler);
                 AddPropertyHandler(NewList(Property.ABLE, Property.CONNECTED), readyHandler);
+                AddStringHandler(Property.COUNTERPART, b => b.OtherConnector?.CustomName ?? "");
 
                 defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
             }
