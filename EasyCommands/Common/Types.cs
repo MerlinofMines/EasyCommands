@@ -117,6 +117,7 @@ namespace IngameScript {
             OVERRIDE,
             POSITION,
             POWER,
+            PRODUCING,    // ښ (\u0669A) is next symbol
             PROPERTIES,
             RADIUS,
             RANGE,

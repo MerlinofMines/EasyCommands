@@ -17,28 +17,28 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
+// ڙ (\u0699) is next symbol, for class ProductionBlockHandler
+
 namespace IngameScript {
     partial class Program {
-        public class AssemblerBlockHandler : FunctionalBlockHandler<IMyAssembler> {
-            public AssemblerBlockHandler() {
-                AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
+
+        public class ProductionBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyProductionBlock {
+            public ProductionBlockHandler() {
+
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
                 AddBooleanHandler(Property.BUILD, b => !b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
-                AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
-                AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p); }
-                });
-                AddPropertyHandler(Property.DESTROY, new PropertyHandler<IMyAssembler>() {
-                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
-                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
-                });
 
-                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyAssembler>() {
+		AddBooleanHandler(Property.PRODUCING, b => b.IsProducing);
+
+                // TODO: if supplied with no argument, return <IMyProductionBlock>.IsProducing
+                AddPropertyHandler(Property.CREATE, new PropertyHandler<T>() {
+                    Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
+                    Set = (b, p, v) => AddQueueItem(b, p)
+                });
+                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<T>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
-
                 AddListHandler(Property.TYPES, b => {
                     var currentItems = NewList<MyProductionItem>();
                     b.GetQueue(currentItems);
@@ -48,7 +48,7 @@ namespace IngameScript {
 
             //Returns the value of first attribute or property variable with the same return type as default value,
             //otherwise the default value. Attributes are checked first.
-            T GetRequestedAttributeOrPropertyValue<T>(PropertySupplier supplier, T defaultValue) {
+            protected T GetRequestedAttributeOrPropertyValue<T>(PropertySupplier supplier, T defaultValue) {
                 Object value = supplier.propertyValues.Where(p => p.attributeValue != null)
                     .Select(p => p.attributeValue.GetValue())
                     .Concat(NewList(supplier.propertyValue?.GetValue() ?? ResolvePrimitive(defaultValue)))
@@ -58,8 +58,7 @@ namespace IngameScript {
                 return (T)value;
             }
 
-
-            float GetProducingAmount(IMyAssembler b, PropertySupplier p) {
+            protected float GetProducingAmount(IMyProductionBlock b, PropertySupplier p) {
                 var definitions = PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"));
                 var currentItems = NewList<MyProductionItem>();
                 b.GetQueue(currentItems);
@@ -71,13 +70,28 @@ namespace IngameScript {
                 return (float)value;
             }
 
-            void AddQueueItem(IMyAssembler b, PropertySupplier p) {
+            protected void AddQueueItem(IMyProductionBlock b, PropertySupplier p) {
                 float amount = GetRequestedAttributeOrPropertyValue(p, 1f);
                 foreach (MyDefinitionId bp in PROGRAM.GetItemBluePrints(GetRequestedAttributeOrPropertyValue(p, "*"))) {
                     try { b.AddQueueItem(bp, (MyFixedPoint)amount); } catch (Exception) {
                         throw new RuntimeException("Unknown BlueprintId: " + bp.SubtypeId);
                     }
                 }
+            }
+		}
+
+        public class AssemblerBlockHandler : ProductionBlockHandler<IMyAssembler> {
+            public AssemblerBlockHandler() {
+                AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
+                AddBooleanHandler(Property.AUTO, b => b.CooperativeMode, (b, v) => b.CooperativeMode = v);
+                AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyAssembler>() {
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Assembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Assembly; AddQueueItem(b, p); }
+                });
+                AddPropertyHandler(Property.DESTROY, new PropertyHandler<IMyAssembler>() {
+                    Get = (b, p) => ResolvePrimitive(b.Mode == MyAssemblerMode.Disassembly && GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
+                    Set = (b, p, v) => { b.Mode = MyAssemblerMode.Disassembly; AddQueueItem(b, p); }
+                });
             }
         }
     }
