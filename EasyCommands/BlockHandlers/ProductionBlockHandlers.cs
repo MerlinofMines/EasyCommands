@@ -31,11 +31,11 @@ namespace IngameScript {
 		AddBooleanHandler(Property.PRODUCING, b => b.IsProducing);
 
                 // TODO: if supplied with no argument, return <IMyProductionBlock>.IsProducing
-                AddPropertyHandler(Property.CREATE, new PropertyHandler<IMyProductionBlock>() {
+                AddPropertyHandler(Property.CREATE, new PropertyHandler<T>() {
                     Get = (b, p) => ResolvePrimitive(GetProducingAmount(b, p) >= GetRequestedAttributeOrPropertyValue(p, 1f)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
-                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<IMyProductionBlock>() {
+                AddPropertyHandler(Property.AMOUNT, new PropertyHandler<T>() {
                     Get = (b, v) => ResolvePrimitive(GetProducingAmount(b, v)),
                     Set = (b, p, v) => AddQueueItem(b, p)
                 });
