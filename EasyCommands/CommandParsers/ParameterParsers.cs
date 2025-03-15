@@ -188,6 +188,8 @@ namespace IngameScript {
             AddPropertyWords(Words("unable"), Property.ABLE, false);
             AddPropertyWords(Words("build", "building", "built"), Property.BUILD);
             AddPropertyWords(Words("damage", "damaged"), Property.DAMAGE);
+            AddPropertyWords(Words("working"), Property.PRODUCING);
+            AddPropertyWords(Words("idle", "idling"), Property.PRODUCING, false);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));

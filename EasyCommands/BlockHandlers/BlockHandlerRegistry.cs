@@ -65,7 +65,7 @@ namespace IngameScript {
                 { Block.PROJECTOR, new ProjectorBlockHandler() },
                 { Block.REACTOR, new EngineBlockHandler<IMyReactor>() },
                 { Block.REMOTE, new RemoteControlBlockHandler()},
-                { Block.REFINERY, new FunctionalBlockHandler<IMyRefinery>() },
+                { Block.REFINERY, new ProductionBlockHandler<IMyRefinery>() },
                 { Block.ROTOR, new RotorBlockHandler(b => !IsSubType("Hinge")(b)) },
                 { Block.SOLAR_PANEL, new EngineBlockHandler<IMySolarPanel>() },
                 { Block.SORTER, new SorterBlockerHandler() },

@@ -139,7 +139,7 @@
     <Compile Include="BlockHandlers\BlockHandlers.cs" />
     <Compile Include="BlockHandlers\CameraBlockHandlers.cs" />
     <Compile Include="BlockHandlers\CargoBlockHandlers.cs" />
-    <Compile Include="BlockHandlers\AssemblerBlockHandlers.cs" />
+    <Compile Include="BlockHandlers\ProductionBlockHandlers.cs" />
     <Compile Include="BlockHandlers\JumpDriveBlockHandlers.cs" />
     <Compile Include="BlockHandlers\TimerBlockHandlers.cs" />
     <Compile Include="BlockHandlers\SorterBlockHandlers.cs" />
