@@ -96,6 +96,7 @@ namespace IngameScript {
             COMPLETE,
             CONNECTED,
             COUNTDOWN,
+            COUNTERPART,
             DAMAGE,
             DATA,
             DIRECTION,
