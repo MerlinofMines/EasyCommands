@@ -346,3 +346,7 @@ healthchecksdb
 
 # lib/nuget
 lib/
+# Local game references and build tooling
+*.mdk.local.ini
+mdk.local.ini
+.build/
