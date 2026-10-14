@@ -40,7 +40,7 @@ namespace IngameScript {
                 delta) { }
 
             static Dictionary<String, TerminalPropertyConverter> TerminalPropertyConversions = NewDictionary(
-                KeyValuePair("StringBuilder", PropertyConverter((p, b) => p.As<StringBuilder>().GetValue(b).ToString(), (p, b, v) => p.As<StringBuilder>().SetValue(b, new StringBuilder(CastString(v))))),
+                KeyValuePair("StringBuilder", PropertyConverter((p, b) => b.GetValue<StringBuilder>(p.Id).ToString(), (p, b, v) => b.SetValue(p.Id, new StringBuilder(CastString(v))))),
                 KeyValuePair("Boolean", PropertyConverter((p, b) => p.AsBool().GetValue(b), (p, b, v) => p.AsBool().SetValue(b, CastBoolean(v)))),
                 KeyValuePair("Single", PropertyConverter((p, b) => p.AsFloat().GetValue(b), (p, b, v) => p.AsFloat().SetValue(b, CastNumber(v)))),
                 KeyValuePair("Int64", PropertyConverter((p, b) => (float)p.As<long>().GetValue(b), (p, b, v) => p.As<long>().SetValue(b, (long)CastNumber(v)))),

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35818.85 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C17AB031-FC83-4345-88B2-49960205B7F6}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,9 +16,6 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "docs", "docs\docs.shproj", "{CE8C102D-3998-414C-990D-92D4A2EDF4CE}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		docs\docs.projitems*{ce8c102d-3998-414c-990d-92d4a2edf4ce}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -38,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4492E44-B1FB-4F10-8FBE-996AFF5D81B4}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		docs\docs.projitems*{ce8c102d-3998-414c-990d-92d4a2edf4ce}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

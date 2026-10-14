@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using IngameScript;
-using Malware.MDKUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sandbox.ModAPI.Ingame;
