@@ -36,7 +36,7 @@ You can further nest spaces if you want to use nested commands inside of another
 ```
 if "outer door" is open
   turn on the "outer lights"
-  if the "inner door is open"
+  if the "inner door" is open
     turn on the "inner lights"
     turn on the generator
   else
@@ -52,7 +52,7 @@ The simplest thing you can do with EasyCommands is output text to the Programmab
 Print "Hello World!"
 ```
 
-You can print the result any [Variable](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") as well:
+You can print the result of any [Variable](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") as well:
 
 ```
 #The following would print "My Variable is: Hello World!"
@@ -177,14 +177,14 @@ retract the "test piston"
 There are plenty of use cases where you need to store the result of something so that you can use it later. EasyCommands allows you to store [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") which can be looked up later using the following syntax:
 
 ```
-#Either of these will work
+#Any of these will work
 set myVariable to "Some Value"
 assign myVariable to "Some Value"
-allocate myVarible to "Some Value"
+allocate myVariable to "Some Value"
 designate myVariable to "Some Value"
 ```
 
-Once a variable is created you can reference it later using it's name:
+Once a variable is created you can reference it later using its name:
 ```
 set myValue to 2
 print "My Value is: " + myValue
@@ -309,7 +309,7 @@ wait until the "Exterior Doors" are closed
 Print "Not High Enough" until the average "Elevator Piston" height > 5
 ```
 
-Here's are all the types of conditional commands and how you might use them:
+Here are all the types of conditional commands and how you might use them:
 
 ### If Command
 As the name suggests, this command checks for a condition and if the condition is true it begins running the requested command(s).  If the condition is not met, the script proceeds to the next command outside the if statement
@@ -323,7 +323,7 @@ print "This command would run immediately if the condition isn't met."
 ```
 
 ### If/Else
-If you want something else to happen when the command is not met, you can use the "else" or "otherwise" keywords.
+If you want something else to happen when the condition is not met, you can use the "else" or "otherwise" keywords.
 
 ```
 if the "Airlock Vent" is pressurized
@@ -353,7 +353,7 @@ if a > 5
   else
     print "A is not greater than b but more than 5"
 else
-  print "A is not greater than 5
+  print "A is not greater than 5"
 ```
 
 ### Unless
@@ -377,7 +377,7 @@ while the "Airlock Vent" is not pressurized
 Note that in the above command we are waiting for seconds as part of the requested command.  If a condition is met for any conditional command, the *entire* command will finish executing before the condition is checked again.  So the above script would always finish turning the "Warning Lights" off and on again before checking the condition again.  In addition, the condition *is not being checked* while the command is running.  So if the "Airlock Vent" happened to get pressurized, and then de-pressurized again, while the lights were blinking the while loop *would not* stop executing.
 
 ### Until
-The "until" keyword is the "while" equivalent for unless.  It will execute the requested command if the given condition is false, and will continue exeucting the command until the condition is true.
+The "until" keyword is the "while" equivalent for unless.  It will execute the requested command if the given condition is false, and will continue executing the command until the condition is true.
 
 ```
 #Keep trying to pressurize the Airlock Vent until it is pressurized!

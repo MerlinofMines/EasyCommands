@@ -2,7 +2,7 @@
 
 Try as I might, I'm not able to do everything which folks request including new features, fixing bugs, etc.  I only have so much time to dedicate to further improvements.
 
-Thanksfully, there are plenty of folks able and hopefully willing to contribute to EasyCommands.  These instructions will serve as a guideline for contributing to EasyCommands.
+Thankfully, there are plenty of folks able and hopefully willing to contribute to EasyCommands.  These instructions will serve as a guideline for contributing to EasyCommands.
 
 ## Ground Rules
 

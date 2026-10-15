@@ -51,16 +51,16 @@ power off "My Airvent"
 * Primitive Type: Bool
 * Keywords: ```done, ready, complete, finished, pressurized, depressurized```
 
-Returns true if the airvent is not actively pressurizing or depressuring, false otherwise.  Note the "pressurized" and "depressurized" both return true if the airvent is not in progress.
-To determine the full state of the air vent, use this property in combination with the "Pressurize" property.
+Returns true if the airvent is not actively pressurizing or depressurizing, false otherwise.  Note the "pressurized" and "depressurized" both return true if the airvent is not in progress.
+The keywords "pressurized" and "depressurized" both check completion, not the selected mode. Use "pressurizing" or "depressurizing" to check the mode. For an actual oxygen threshold, use Ratio: a stalled or unpressurizable vent can also report Complete.
 
-Due to a quark of Space Engineers, sometimes completely depressurized is not registered as "Complete" by Space Engineers.  As a work around, this property considers a pressurized ratio < 0.0001 as Complete.
+Due to a quirk of Space Engineers, sometimes completely depressurized is not registered as "Complete" by Space Engineers.  As a workaround, this property considers a pressurized ratio <= 0.0001 as Complete.
 
 ```
 #Pressurize Property to depressurize Air Lock Vent
 depressurize the "Air Lock Vent"
 
-#Complete Property to wait until we are finished depresssurizing
+#Complete Property to wait until we are finished depressurizing
 until the "Air Lock Vent" is depressurized
   Print "Please wait..."
 ```
@@ -70,7 +70,7 @@ until the "Air Lock Vent" is depressurized
 * Primitive Type: Bool
 * Keywords: ```run, running```
 
-The opposite of "complete".  Returns true if the airvent is actively pressuring or depressuring, false otherwise.
+The opposite of "complete".  Returns true if the airvent is actively pressurizing or depressurizing, false otherwise.
 
 ```
 while the "Air Lock Vent" is running
@@ -79,10 +79,10 @@ while the "Air Lock Vent" is running
 
 ## "Pressurize" property
 * Primitive Type: bool
-* Keywords: ```pressurize, pressurized```
-* Inverse Keywords: ```depressurize, depressurized```
+* Keywords: ```pressurize, pressurizing```
+* Inverse Keywords: ```depressurize, depressurizing```
 
-Gets or sets whether the air vent pressurizing mode (pressurizing or de-pressuring).  This property does not indicate the actual pressurization state, but rather the mode.  To get the
+Gets or sets the air vent mode (pressurizing or depressurizing).  This property does not indicate the actual pressurization state, but rather the mode.  To get the
 pressurization state, use this property in combination with either the "Complete" or "Run" property. 
 
 ```

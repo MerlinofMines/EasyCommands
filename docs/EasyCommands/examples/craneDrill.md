@@ -1,4 +1,4 @@
-﻿## Control a Crane-Like Drill Arm With Mouse and Keyboard
+## Control a Crane-Like Drill Arm With Mouse and Keyboard
 
 Imagine you want to build a ground-based vehicle with a crane-arm for drilling, and we want to be able to have a cockpit for the crane that lets the engineer rotate it, raise and lower the arm, and extend it. Something like this:
 
@@ -51,7 +51,7 @@ set the "[DB] Drill Front Piston" velocity to the $drillCockpit right input
 replay
 ```
 
-The controlDrill function is constantly replaying itself, so its always (every tick) updating the velocity of our rotor, hinges, and pistons based on the user's input. Note us using `roll` to indicate the camera (e.g. mouse, or arrow keys), and `input` to indicate movement (e.g. WASD). A rough breakdown of what this means specifically:
+The controlDrill function is constantly replaying itself, so it's always (every tick) updating the velocity of our rotor, hinges, and pistons based on the user's input. Note us using `roll` to indicate the camera (e.g. mouse, or arrow keys), and `input` to indicate movement (e.g. WASD). A rough breakdown of what this means specifically:
 * `right/left roll` - left and right on arrow keys or mouse
 * `downwards/upwards roll` - up and down on arrow keys or mouse
 * `clockwise roll` - q and e
@@ -61,6 +61,6 @@ The controlDrill function is constantly replaying itself, so its always (every t
 
 We can obviously mix and match these however we like!
 
-Note that the choice of which direction we specify (e.g. `forwards input` vs. `backwards input`) tells us the sign of the velocity. e.g. `forwards input` would mean that when we press `w`, we're increasinge velocity, and decreasing with `s`. If we specified `backwards input`, it'd behave in the reverse.
+Note that the choice of which direction we specify (e.g. `forwards input` vs. `backwards input`) tells us the sign of the velocity. e.g. `forwards input` would mean that when we press `w`, we're increasing velocity, and decreasing with `s`. If we specified `backwards input`, it'd behave in the reverse.
 
 Enjoy your new drill arm!

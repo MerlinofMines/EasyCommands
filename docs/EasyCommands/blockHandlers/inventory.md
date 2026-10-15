@@ -1,11 +1,11 @@
-﻿# Inventory Block Handler
+# Inventory Block Handler
 This block handler can be used to get information about inventories for any blocks or block groups.
 
 Note that this block handler does not extend from Terminal Block, so this Block Handler *does not* have properties defined in the Reference: [Terminal Block Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/terminal "Terminal Block Handler").
 
 Also note that many blocks have multiple inventories, so make sure you are querying the right inventory when looking for items/capacity.
 
-Reference: [Items](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/items "Items and Blueprints")
+Reference: [Items](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items and Blueprints")
 
 * Block Type Keywords: ```cargo, container, inventory, inventories```
 * Block Type Group Keywords: ```cargo, cargos, containers, inventory, inventories```
@@ -109,7 +109,7 @@ Gets a list of TypeIds & SubTypeIds for all items in the selected inventories.  
 The returned list will be a list of the TypeId and SubTypeId for all items in the given inventories, in the form ```TypeId.SubTypeId```.
 
 ```
-set myItemTypes to to "My Cargo" types
+set myItemTypes to "My Cargo" types
 
 set customItemAmounts to []
 

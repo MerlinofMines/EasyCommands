@@ -5,7 +5,7 @@ Functions allow you to bundle together a set of commands into a single command w
 
 Functions also break up your code into nice re-usable and readable sections.
 
-Lastly, functions help overcome some of the limitations with complexity with scripting.  If you find that your script is not able to compile and you are getting "script too complex" errors, try breaking up your changes using functions.  The command parser for EasyCommands is written to only parse 1 function per tick, so it will iteratively parse through your program until the full program is loaded up.  That way your complexity can run wild! There is no limit on the number of functions you can define in a program.  Beware of using reserved keywords for your function names as they might not always work.  
+Lastly, functions help overcome some of the limitations with complexity with scripting.  If you find that your script is not able to compile and you are getting "script too complex" errors, try breaking up your changes using functions.  EasyCommands parses scripts progressively across ticks, processing a limited amount of parsing work each tick until the full program is loaded.  That way your complexity can run wild! There is no limit on the number of functions you can define in a program.  Beware of using reserved keywords for your function names as they might not always work.
 
 ## Syntax 
 It's pretty easy to create functions.  begin a line with a colon (:) followed immediately by your function name (non case sensitive, no spaces).  
@@ -43,7 +43,7 @@ assign valueInput to valueInput + 1
 ## Calling a Function
 
 ### "call"
-You can invoke a function a couple different ways.  The most common is to simply make a blocking call to the function, wait for it to finish executing, and then proceed to the next command.  You can do this using the "call" or "gosub" commands, followed by the function name usually in parenthesis.
+You can invoke a function a couple of different ways.  The most common is to make a blocking call to the function, wait for it to finish executing, and then proceed to the next command.  Use the "call" or "gosub" command followed by the function name, optionally in quotes.
 
 ```
 call "myFunction"
@@ -104,14 +104,14 @@ doSomething 3
 if myInput is 2
   return
 
-Print "Input is: " + 3
+Print "Input is: " + myInput
 ```
 
 A more interesting example using this would be to end an asynchronous thread based on a condition checked elsewhere:
 
 ```
 set global stopListening to false
-async doSomething
+async doListen
 wait 3 seconds
 set global stopListening to true
 

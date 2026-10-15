@@ -1,4 +1,4 @@
-﻿# Hinge Block Handler
+# Hinge Block Handler
 
 * Block Type Keywords: ```hinge```
 * Block Type Group Keywords: ```hinges```
@@ -56,7 +56,7 @@ Gets or sets the hinge's angle.  When setting, takes an optional direction (Cloc
 
 Setting the hinge's angle is done by calculating the appropriate min/max angle, and then setting the hinge's velocity to +/- velocity to move the hinge to the desired angle.  If no direction is passed, the hinge uses the shortest angular distance to determine which direction to rotate.
 
-This property can also be moved in order to to rotate the hinge clockwise or counterclockwise without specifying the limits.
+This property can also be moved in order to rotate the hinge clockwise or counterclockwise without specifying the limits.
 
 ### Supported Directions
 * Clockwise - Rotate Clockwise

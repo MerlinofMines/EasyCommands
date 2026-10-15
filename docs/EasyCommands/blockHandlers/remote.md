@@ -1,4 +1,4 @@
-﻿# Remote Control Block Handler
+# Remote Control Block Handler
 This Block Handler handles Remote Controls.  It is an extension of the [Cockpit Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/cockpit "Cockpit Handler"), so all properties from that handler also work for Remote Control Blocks, except those that are overridden.
 
 Remote Control Blocks can be told where to go and how fast to go there, which makes them useful for remotely guiding ships using EasyCommands.
@@ -157,7 +157,7 @@ set "My Remote Control" docking to true
 
 Gets/Sets the AutoPilot's current waypoint, represented as a Vector in World Coordinates.  When set, this property will clear all existing waypoints and add the given waypoint as the first waypoint.
 
-Using a [Keyed Variable](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/collections "Collections"), you can optionally specify the name of the new waypoint.  The default name is "Waypoint 1"
+Using a [Keyed Variable](https://spaceengineers.merlinofmines.com/EasyCommands/collections "Collections"), you can optionally specify the name of the new waypoint.  The default name is "Waypoint 1"
 
 ```
 Print "Current Waypoint: " + "My Remote Control" waypoint
@@ -177,7 +177,7 @@ Gets/Sets the AutoPilot's current waypoints, where each item in the list represe
 
 When retrieving, the waypoints returned will be in the order specified according to the auto-pilot's configuration.  It does not filter or order them based on the "current waypoint", etc.  The returned list will be keyed by the Waypoint names.
 
-Using a [Keyed Variable](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/collections "Collections"), you can optionally specify the names of the new waypoints.  The default names are "Waypoint 1" .. "Waypoint x", where X is the size of the list.
+Using a [Keyed Variable](https://spaceengineers.merlinofmines.com/EasyCommands/collections "Collections"), you can optionally specify the names of the new waypoints.  The default names are "Waypoint 1" .. "Waypoint x", where X is the size of the list.
 
 ```
 #Current Waypoints: ["Waypoint 1"->1:2:3,"Waypoint 2"->4:5:6]

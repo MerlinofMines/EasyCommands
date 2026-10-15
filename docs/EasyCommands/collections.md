@@ -1,6 +1,6 @@
 # Collections
 
-EasyCommands supports a basic type of collection called a "KeyedList".  Effectively, this is a list of [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") which may or not be Keyed Variables.  A KeyedVariable is a variable that has a Key and a Value (both Variables).
+EasyCommands supports a basic type of collection called a "KeyedList".  Effectively, this is a list of [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables") which may or may not be Keyed Variables.  A KeyedVariable is a variable that has a Key and a Value (both Variables).
 
 Collections allow you to store lists of items so that you can iterate over, track, queue, you name it.  Some block properties also return collections, such as "properties", "actions", and "waypoints".  
 
@@ -20,7 +20,7 @@ set myLookup to ["one" -> 1, "two" -> 2, "three" -> 3]
 Print "My Value: " + myLookup["three"]
 ```
 
-While keyes can be specified using any type of [Primitive](https://spaceengineers.merlinofmines.com/EasyCommands/primitive "Primitive Types"), be warned that lookup of keys is always done by String.  So if you specify a non-string as a key, don't expect to look up your value by that key later.
+While keys can be specified using any type of [Primitive](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitive Types"), be warned that lookup of keys is always done by String.  So if you specify a non-string as a key, don't expect to look up your value by that key later.
 
 ## Creating a Collection
 
@@ -61,6 +61,8 @@ set myList to 0..10
 Print "myList: " + myList
 ```
 
+Ranges include both endpoints and run backwards when the start is greater than the end. For example, 2..0 produces [2,1,0]. When iterating by index, check that the collection is not empty first: 0..-1 is a descending range, not an empty list.
+
 The Range operation can take variable start & end points, making it useful for creating lists of arbitrary indexes.  This is especially useful for looping over a collection of unknown size:
 
 ```
@@ -76,7 +78,7 @@ for each i in 0 .. myCount - 1
 
 ## Retrieving Items From a List
 
-You can retrieve values from a list either by a numeric index, or by a string key value.  The returned value will be a Variable, so you can use the result in an expresssion as well.
+You can retrieve values from a list either by a numeric index, or by a string key value.  The returned value will be a Variable, so you can use the result in an expression as well.
 
 the general form is ```<list>[<index>]``` or ```<list>[<key>]```
 
@@ -124,13 +126,13 @@ set myValues to myList values
 Print "Values: " + myValues
 ```
 
-The "keys" and "values" keywords need to come after the intended list.  "keys" will return a collection containing all of the "keys".  It will not return an entry for items that do not have keys.  If no items in the list have keys, and empty list ([]) is returned. "values" will always return a collection of the same size as the original list, but none of the returned entries will be keyed.
+The "keys" and "values" keywords need to come after the intended list.  "keys" will return a collection containing all of the "keys".  It will not return an entry for items that do not have keys.  If no items in the list have keys, an empty list ([]) is returned. "values" will always return a collection of the same size as the original list, but none of the returned entries will be keyed.
 
 ## Iterating Over a List
 Often times you will want to iterate over a collection.  There are a few ways to do this.
 
 ### Iterating by each value
-The most direct way to iterate through a collection is to simply grab each item, give it a name, and then act on it, using the "for each" [Command](https://spaceengineers.merlinofmines.com/EasyCommands/command "Command").  The name you give to "item" will be used inside of the statement to determine what you do on each item.  Be careful of reserved keywords.
+The most direct way to iterate through a collection is to simply grab each item, give it a name, and then act on it, using the "for each" [Command](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Command").  The name you give to "item" will be used inside of the statement to determine what you do on each item.  Be careful of reserved keywords.
 
 ```
 set myList to ["one", "two", "three"]
@@ -199,7 +201,7 @@ set myList[] to 0
 print myList
 ```
 
-If you attempt to update an index that is < 0 or greater than the size of the collection, you will get a script halting exception.
+If you attempt to update an index that is < 0 or greater than or equal to the size of the collection, you will get a script halting exception.
 
 If you attempt to update an index by key for a key that does not exist in the collection, the effect is to add the item to the list instead of update.
 
@@ -320,7 +322,7 @@ set insertValue to 3
 
 set myList to myList[0..insertIndex - 1] + insertValue + myList[insertIndex..count of myList[] - 1]
 
-#[0,1,2,3,4,5]
+#[1,2,3,4,5]
 Print myList
 ```
 
@@ -398,7 +400,7 @@ set myList to myList - ["one", 2]
 print myList
 ```
 
-If you attempt to remove an item by an index that is < 0 or greater than the size of the list, you will get a script halting exception...so don't do this.
+If you attempt to remove an item by an index that is < 0 or greater than or equal to the size of the list, you will get a script halting exception.
 
 If you attempt to remove an item by a key that isn't in the list, the resulting list is returned, unmodified.
 
@@ -451,7 +453,7 @@ if myList is not ["one" -> 1, 2, 3]
   Print "Lists are not equal, because the keys are not the same"
 ```
 
-Fun fact, this is actually how "is empty" works.  It's comparing the list against a build in global variable called "empty" which is an empty list.
+Fun fact, this is actually how "is empty" works.  It's comparing the list against a built-in global variable called "empty" which is an empty list.
 
 ## Checking if a list contains a value or values
 
@@ -467,7 +469,7 @@ if myList does not contain 4
   Print "myList does not contain 4"
 ```
 
-If the supplied value is a list, contains will return true if and only if the given list contains all of the specified values.  "does not contain" will return false only if the list does not contain all of the specified values.  "does not contain" will return true if a list is supplied but the given list only contains some of the requested items.
+If the supplied value is a list, "contains" returns true if and only if the given list contains all of the specified values. "does not contain" returns true when at least one of the specified values is missing, and false when all are present.
 
 ```
 set myList to [1,2,3,4]
@@ -531,7 +533,7 @@ Sometimes you might want to reverse a list.  Maybe you want to iterate the list 
 ```
 set myList to [1,2,3]
 
-set myReverseList to reversed myList
+set myReversedList to reversed myList
 
 #[3,2,1]
 print myReversedList

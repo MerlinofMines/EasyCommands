@@ -1,4 +1,4 @@
-﻿# Rotor Block Handler
+# Rotor Block Handler
 
 * Block Type Keywords: ```rotor```
 * Block Type Group Keywords: ```rotors```
@@ -56,7 +56,7 @@ Gets or sets the rotor's angle.  When setting, takes an optional direction (Cloc
 
 Setting the rotor's angle is done by calculating the appropriate min/max angle, and then setting the rotor's velocity to +/- velocity to move the rotor to the desired angle.  If no direction is passed, the rotor uses the shortest angular distance to determine which direction to rotate.
 
-This property can also be moved in order to to rotate the rotor clockwise or counterclockwise without specifying the limits.
+This property can also be moved in order to rotate the rotor clockwise or counterclockwise without specifying the limits.
 
 ### Supported Directions
 Clockwise - Rotate Clockwise

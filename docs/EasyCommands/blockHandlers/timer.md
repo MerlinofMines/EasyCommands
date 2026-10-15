@@ -1,5 +1,5 @@
-﻿# Timer Block Handler
-This block handler lets you control Timer blocks, including triggering them immediately on on a delay.
+# Timer Block Handler
+This block handler lets you control Timer blocks, including triggering them immediately or after a delay.
 * Block Type Keywords: ```timer```
 * Block Type Group Keywords: ```timers```
 
@@ -45,7 +45,7 @@ power off "My Timer Block"
 * Primitive Type: Bool
 * Keywords: ```trigger, triggered```
 
-Get/Sets whether the Timer Block is currentl triggered. When getting, returns if the Timer Block is currently counting down.  When set, will trigger the Timer Block immediately.
+When getting, returns whether the Timer Block is currently counting down. When set to either true or false, triggers the Timer Block immediately.
 
 ```
 if "My Timer Block" is triggered
@@ -59,7 +59,7 @@ trigger "My Timer Block"
 * Primitive Type: Bool
 * Keywords: ```silent, silence```
 
-Gets/Sets whether the timer will play an audible beep when it triggers.
+Gets/Sets whether the timer is silent. Setting this to true disables its audible beep; setting it to false enables the beep.
 
 ```
 if "My Timer Block" is silent

@@ -1,4 +1,4 @@
-﻿# Items and Blueprints
+# Items and Blueprints
 
 EasyCommands provides a set of user friendly words for retrieving almost all items in the version of the game.
 
@@ -235,7 +235,7 @@ The returned list will be a list of the BlueprintIds for all items in the assemb
 The resulting blueprintIds are the Ids you should specify when retrieving or creating custom blueprints from an assembler.
 
 ```
-set myProducingTypes to to "My Assembler" types
+set myProducingTypes to "My Assembler" types
 
 set outputItems to []
 

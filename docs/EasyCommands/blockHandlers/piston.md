@@ -1,4 +1,4 @@
-﻿# Piston Block Handler
+# Piston Block Handler
 
 This handler lets you control pistons, including setting the height, velocity, and limits.
 
@@ -123,7 +123,7 @@ set "My Piston" lower limit to 4
 * Keywords: ```attached, connected```
 * Inverse Keywords: ```detached, disconnected```
 
-Get/Set true wether there is a piston head attached to the piston
+Get/Set true whether there is a piston head attached to the piston
 Attaching a piston head that is not oriented correctly might invoke the almighty Clang.
 
 ```

@@ -1,5 +1,5 @@
 ﻿# Welder Block Handler
-This Block Handler handles Grinders, which can be used to create ships, bases, and other creations quickly.
+This Block Handler handles Welders, which can be used to create ships, bases, and other creations quickly.
 
 * Block Type Keywords: ```welder```
 * Block Type Group Keywords: ```welders```

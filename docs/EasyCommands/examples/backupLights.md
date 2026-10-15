@@ -2,7 +2,7 @@
 ## Automatic Brake and Reverse Lights & Beeper
 This script will add some fun to your rover by adding brakes, reverse lights, and reverse beeper.  
 
-The lights will continue running until you turn them off (either manually or by calling "turnOff")
+The lights will continue running until you stop the script.
 
 ![Lights on the Boom Rover](https://i.imgur.com/ZaHA9xc.gif)
 
