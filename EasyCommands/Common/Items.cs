@@ -129,6 +129,54 @@ namespace IngameScript {
             AddItems(Words("medkit"), Consumable("Medkit"));
             AddItems(Words("powerkit"), Consumable("Powerkit"));
 
+            AddBluePrint(Words("medkit"), "Position0021_Medkit");
+            AddBluePrint(Words("powerkit"), "Position0022_Powerkit");
+            AddItems(Words("anti-radiation medkit", "radiation kit"), Consumable("RadiationKit"));
+
+            // Apex ingredients span physical objects and consumables. Seeds are a separate type.
+            AddItems(Words("algae"), IsItemType("MyObjectBuilder_PhysicalObject", "Algae"));
+            AddItems(Words("grain"), IsItemType("MyObjectBuilder_PhysicalObject", "Grain"));
+            AddItems(Words("fruit"), Consumable("Fruit"));
+            AddItems(Words("mushroom", "mushrooms"), Consumable("Mushrooms"));
+            AddItems(Words("vegetable", "vegetables"), Consumable("Vegetables"));
+            AddItems(Words("raw mammal meat"), Consumable("MammalMeatRaw"));
+            AddItems(Words("raw insect meat"), Consumable("InsectMeatRaw"));
+            AddBlueprintItems(Words("cooked mammal meat"), "Position0010_CookMammalMeat", Consumable("MammalMeatCooked"));
+            AddBlueprintItems(Words("cooked insect meat"), "Position0020_CookSpiderMeat", Consumable("InsectMeatCooked"));
+            AddBlueprintItems(Words("fruit seeds"), "Position0010_Seeds_Fruit", Seed("Fruit"));
+            AddBlueprintItems(Words("grain seeds"), "Position0020_Seeds_Grain", Seed("Grain"));
+            AddBlueprintItems(Words("vegetable seeds"), "Position0030_Seeds_Vegetables", Seed("Vegetables"));
+            AddBlueprintItems(Words("mushroom spores"), "Position0040_Spores_Mushrooms", Seed("Mushrooms"));
+            AddItems(Words("seeds"), Seed());
+            AddBlueprintItems(Words("kelp crisp"), "Position0030_MealPack_KelpCrisp", Consumable("MealPack_KelpCrisp"));
+            AddBlueprintItems(Words("fruit bar"), "Position0040_MealPack_FruitBar", Consumable("MealPack_FruitBar"));
+            AddBlueprintItems(Words("garden slaw"), "Position0050_MealPack_GardenSlaw", Consumable("MealPack_GardenSlaw"));
+            AddBlueprintItems(Words("red pellets"), "Position0060_MealPack_RedPellets", Consumable("MealPack_RedPellets"));
+            AddBlueprintItems(Words("chili"), "Position0070_MealPack_Chili", Consumable("MealPack_Chili"));
+            AddBlueprintItems(Words("flatbread"), "Position0080_MealPack_Flatbread", Consumable("MealPack_Flatbread"));
+            AddBlueprintItems(Words("ramen"), "Position0090_MealPack_Ramen", Consumable("MealPack_Ramen"));
+            AddBlueprintItems(Words("fruit pastry"), "Position0100_MealPack_FruitPastry", Consumable("MealPack_FruitPastry"));
+            AddBlueprintItems(Words("veggie burger"), "Position0110_MealPack_VeggieBurger", Consumable("MealPack_VeggieBurger"));
+            AddBlueprintItems(Words("curry"), "Position0120_MealPack_Curry", Consumable("MealPack_Curry"));
+            AddBlueprintItems(Words("green pellets"), "Position0130_MealPack_GreenPellets", Consumable("MealPack_GreenPellets"));
+            AddBlueprintItems(Words("dumplings"), "Position0140_MealPack_Dumplings", Consumable("MealPack_Dumplings"));
+            AddBlueprintItems(Words("spaghetti"), "Position0150_MealPack_Spaghetti", Consumable("MealPack_Spaghetti"));
+            AddBlueprintItems(Words("lasagna"), "Position0160_MealPack_Lasagna", Consumable("MealPack_Lasagna"));
+            AddBlueprintItems(Words("burrito"), "Position0170_MealPack_Burrito", Consumable("MealPack_Burrito"));
+            AddBlueprintItems(Words("frontier stew"), "Position0180_MealPack_FrontierStew", Consumable("MealPack_FrontierStew"));
+            AddBlueprintItems(Words("seared sabiroid"), "Position0190_MealPack_SearedSabiroid", Consumable("MealPack_SearedSabiroid"));
+            AddBlueprintItems(Words("steak dinner"), "Position0200_MealPack_SteakDinner", Consumable("MealPack_SteakDinner"));
+            // Loot-only meal aliases deliberately have no blueprint registration.
+            AddItems(Words("unknown meal"), Consumable("MealPack_Unknown"));
+            AddItems(Words("food paste"), Consumable("MealPack_FoodPaste"));
+            AddItems(Words("synth loaf"), Consumable("MealPack_SynthLoaf"));
+            AddItems(Words("clang crunchies"), Consumable("MealPack_ClangCrunchies"));
+            AddItems(Words("banana beef"), Consumable("MealPack_BananaBeef"));
+            AddItems(Words("hardtack"), Consumable("MealPack_Hardtack"));
+            AddItems(Words("expired slop"), Consumable("MealPack_ExpiredSlop"));
+            AddItems(Words("ingredients"), GetItemFilters("algae,grain,fruit,mushrooms,vegetables,raw mammal meat,raw insect meat,cooked mammal meat,cooked insect meat").ToArray());
+            AddItems(Words("meals"), i => i.Type.TypeId == "MyObjectBuilder_ConsumableItem" && i.Type.SubtypeId.StartsWith("MealPack_"));
+            AddItems(Words("food"), GetItemFilters("ingredients,meals").ToArray());
             //Misc
             AddItems(Words("package"), IsItemType("MyObjectBuilder_Package", "Package"));
             AddItems(Words("datapad"), IsItemType("MyObjectBuilder_Datapad", "Datapad"));
@@ -178,6 +226,7 @@ namespace IngameScript {
         public List<MyDefinitionId> GetItemBluePrints(String itemString) => GetItemsFromString(itemString, itemNamesToBlueprints, blueprintProvider);
         List<T> GetItemsFromString<T>(string itemString, Dictionary<string, T> values, Func<string, T> dynamicValue) => itemString.Split(',').Select(i => values.GetValueOrDefault(i.Trim().ToLower(), dynamicValue(i))).ToList();
 
+        public ItemFilter Seed(String subType = null) => IsItemType("MyObjectBuilder_SeedItem", subType);
         public ItemFilter Consumable(String subType = null) => IsItemType("MyObjectBuilder_ConsumableItem", subType);
         public ItemFilter Component(String subType = null) => IsItemType("MyObjectBuilder_Component", subType);
         public ItemFilter Ammo(String subType = null) => IsItemType("MyObjectBuilder_AmmoMagazine", subType);

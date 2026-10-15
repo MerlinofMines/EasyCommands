@@ -228,3 +228,7 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
 * [Wheel Suspension](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/suspension "Wheel Suspension Handler")
 * [Wind Turbines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turbine "Wind Turbine Handler")
+
+## Apex Survival families
+
+See [Apex Survival support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival) for Farm Plot, Algae Farm, Food Processor, Irrigation System, and Oxygen Farm selectors and compatibility notes.

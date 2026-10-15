@@ -1,4 +1,4 @@
-﻿# EasyCommands Cheat Sheet
+# EasyCommands Cheat Sheet
 The following lists out all of the reserved keywords in EasyCommands.
 
 All reserved keywords are matched by lowercase check, so capitalization does not matter.
@@ -393,3 +393,6 @@ These properties require a Variable value as part of the property
 ## Colors
 * Common Colors - ```red, blue, green, orange, yellow, white, black```
 * Hex Color indicator - ```#``` (if not first character on the line)
+## Apex Survival
+
+See the [Apex block and item reference](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival) for farming selectors, crop/water status, food recipes, and compatibility limitations.

@@ -124,6 +124,10 @@ namespace IngameScript {
             AddWords(Synonyms("on begin true start started resume resumed"), new VariableCommandParameter(GetStaticVariable(true)));
             AddWords(Synonyms("off terminate cancel end false stopped halt halted"), new VariableCommandParameter(GetStaticVariable(false)));
 
+            AddPropertyWords(Synonyms("crop"), Property.CROP);
+            AddPropertyWords(Synonyms("alive"), Property.ALIVE);
+            AddPropertyWords(Synonyms("dead"), Property.ALIVE, false);
+
             //Property Words
             AddPropertyWords(AllWords(PluralWords("height length level size period scale")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle azimuth"), Property.ANGLE);
@@ -334,6 +338,12 @@ namespace IngameScript {
                 else currentFunction.function = nullCommand;
                 return false;
             });
+
+            AddBlockWords(Synonyms("farmplot"), Block.FARM_PLOT);
+            AddBlockWords(Synonyms("algaefarm"), Block.ALGAE_FARM);
+            AddBlockWords(Synonyms("oxygenfarm"), Block.OXYGEN_FARM);
+            AddBlockWords(Synonyms("foodprocessor"), Block.FOOD_PROCESSOR);
+            AddBlockWords(Synonyms("irrigation"), Block.IRRIGATION);
 
             //Blocks
             AddBlockWords(Synonyms("piston"), Block.PISTON);

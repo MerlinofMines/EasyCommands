@@ -1,4 +1,4 @@
-﻿# O2/H2 Generator Block Handler
+# O2/H2 Generator Block Handler
 This Block Handler handles O2/H2 Generators.  It enables you to turn them on or off, and set them to auto-refill bottles or not.
 
 * Block Type Keywords: ```generator```
@@ -47,3 +47,7 @@ power off "My Generator"
 * Keywords: ```auto, refill```
 
 Gets/Sets whether the Generator is set to auto-refill bottles.
+
+## Production status
+
+`running` is a read-only Boolean reading whether the generator is producing. [Irrigation System](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/irrigation) extends this handler and remains selected by `generator`. Its inherited bottle-refill option is not automatic watering.

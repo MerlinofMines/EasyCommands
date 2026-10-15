@@ -192,3 +192,7 @@ Print "Fully Recharged Batteries: " + fullyRechargedBatteries
 #All batteries that are fully recharged can be set to auto
 set to auto batteries whose ratio > 0.99 and that are recharging
 ```
+
+## Apex Survival selectors
+
+The additional single-block keywords are `farmplot`, `algaefarm`, `foodprocessor`, `irrigation`, and `oxygenfarm`. Append `s` for block-group selection. Food Processors still match `assembler`; Irrigation Systems still match `generator`. See [Apex Survival support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival).

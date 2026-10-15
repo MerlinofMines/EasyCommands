@@ -79,7 +79,12 @@ namespace IngameScript {
             TURRET,
             TURRET_CONTROLLER,
             WARHEAD,
-            WELDER
+            WELDER,
+            FARM_PLOT,
+            ALGAE_FARM,
+            OXYGEN_FARM,
+            FOOD_PROCESSOR,
+            IRRIGATION
         }
 
         public enum Property {
@@ -142,7 +147,9 @@ namespace IngameScript {
             AMOUNT,
             CREATE,
             DESTROY,
-            PROPERTY
+            PROPERTY,
+            CROP,
+            ALIVE
         }
 
         public enum Direction { UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CLOCKWISE, COUNTERCLOCKWISE, NONE }

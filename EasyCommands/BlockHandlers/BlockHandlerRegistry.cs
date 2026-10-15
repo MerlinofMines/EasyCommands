@@ -27,6 +27,11 @@ namespace IngameScript {
 
         public static class BlockHandlerRegistry {
             static Dictionary<Block, IBlockHandler> blockHandlers = new Dictionary<Block, IBlockHandler> {
+                { Block.FARM_PLOT, new FarmPlotBlockHandler() },
+                { Block.ALGAE_FARM, new AlgaeFarmBlockHandler() },
+                { Block.OXYGEN_FARM, new OxygenFarmBlockHandler() },
+                { Block.FOOD_PROCESSOR, new FoodProcessorBlockHandler() },
+                { Block.IRRIGATION, new IrrigationBlockHandler() },
                 { Block.AIRVENT, new AirVentBlockHandler()},
                 { Block.ANTENNA, new AntennaBlockHandler()},
                 { Block.ASSEMBLER, new AssemblerBlockHandler()},
