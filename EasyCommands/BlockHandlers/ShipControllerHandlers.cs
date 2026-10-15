@@ -30,8 +30,7 @@ namespace IngameScript {
         public class RemoteControlBlockHandler : ShipControllerHandler<IMyRemoteControl> {
             public RemoteControlBlockHandler() {
                 var enableHandler = BooleanHandler(b => b.IsAutoPilotEnabled, (b, v) => b.SetAutoPilotEnabled(v));
-                AddPropertyHandler(Property.AUTO, enableHandler);
-                AddPropertyHandler(Property.RUN, enableHandler);
+                AddPropertyAliases(enableHandler, Property.AUTO, Property.RUN);
                 AddNumericHandler(Property.RANGE, b => b.SpeedLimit, (b, v) => b.SpeedLimit = v, 10);
                 AddPropertyHandler(Property.CONNECTED, TerminalPropertyHandler("DockingMode", true));
                 AddVectorHandler(Property.TARGET, b => b.CurrentWaypoint.Coords, (b,v) => SetWaypoints(b, CastList(ResolvePrimitive(v))));
@@ -42,9 +41,9 @@ namespace IngameScript {
                         return NewKeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))));
                     },
                     SetWaypoints);
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
-                defaultPropertiesByPrimitive[Return.LIST] = Property.WAYPOINTS;
+                SetDefaultProperty(Property.AUTO, Return.BOOLEAN);
+                SetDefaultProperty(Property.TARGET, Return.VECTOR);
+                SetDefaultProperty(Property.WAYPOINTS, Return.LIST);
             }
 
             void SetWaypoints(IMyRemoteControl b, KeyedList waypoints) {
@@ -60,10 +59,8 @@ namespace IngameScript {
             public ShipControllerHandler() {
                 var dampenerHandler = BooleanHandler(b => b.DampenersOverride, (b, v) => b.DampenersOverride = v);
                 var enableHandler = BooleanHandler(b => b.IsMainCockpit, (b, v) => b.IsMainCockpit = v);
-                AddPropertyHandler(Property.ENABLE, enableHandler);
-                AddPropertyHandler(Property.POWER, enableHandler);
-                AddPropertyHandler(Property.OVERRIDE, dampenerHandler);
-                AddPropertyHandler(Property.AUTO, dampenerHandler);
+                AddPropertyAliases(enableHandler, Property.ENABLE, Property.POWER);
+                AddPropertyAliases(dampenerHandler, Property.OVERRIDE, Property.AUTO);
                 AddBooleanHandler(Property.LOCKED, b => b.HandBrake, (b, v) => b.HandBrake = v);
                 AddVectorHandler(Property.STRENGTH, b => b.GetTotalGravity());
                 AddPropertyHandler(NewList(Property.NATURAL, Property.STRENGTH), VectorHandler(b => b.GetNaturalGravity()));
@@ -100,8 +97,7 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
                     TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
-                defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
+                SetDefaultProperty(Property.VELOCITY, Return.NUMERIC, Direction.UP);
             }
 
             Vector3D VelocityVector(T block) => Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));

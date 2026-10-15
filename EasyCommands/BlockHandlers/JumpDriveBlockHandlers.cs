@@ -24,8 +24,7 @@ namespace IngameScript {
                 AddNumericHandler(Property.POWER, b => b.CurrentStoredPower);
                 AddNumericHandler(Property.RATIO, b => b.CurrentStoredPower / b.MaxStoredPower);
                 var readyHandler = BooleanHandler(b => b.Status == MyJumpDriveStatus.Ready);
-                AddPropertyHandler(Property.COMPLETE, readyHandler);
-                AddPropertyHandler(Property.ABLE, readyHandler);
+                AddPropertyAliases(readyHandler, Property.COMPLETE, Property.ABLE);
                 AddBooleanHandler(Property.SUPPLY, b => !b.Recharge, (b, v) => b.Recharge = !v);
 
                 var jumpDistanceHandler = DirectionalTypedHandler(Direction.NONE,
@@ -33,8 +32,7 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => b.MaxJumpDistanceMeters), Direction.UP),
                     TypeHandler(NumericHandler(b => b.MinJumpDistanceMeters), Direction.DOWN));
 
-                AddPropertyHandler(Property.LEVEL, jumpDistanceHandler);
-                AddPropertyHandler(Property.RANGE, jumpDistanceHandler);
+                AddPropertyAliases(jumpDistanceHandler, Property.LEVEL, Property.RANGE);
             }
         }
     }

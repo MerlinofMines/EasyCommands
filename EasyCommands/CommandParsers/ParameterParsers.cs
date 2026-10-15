@@ -89,245 +89,245 @@ namespace IngameScript {
             );
 
             //Ignored words that have no command parameters
-            AddWords(Words("in", "the", "than", "turned", "block", "panel", "chamber", "drive", "of", "either", "for", "do", "does", "second", "seconds", "be", "being", "digits", "digit"), new IgnoreCommandParameter());
-            AddWords(Words("to", "from", "then"), new CommandSeparatorCommandParameter());
+            AddWords(Synonyms("in the than turned block panel chamber drive of either for do does second seconds be being digits digit"), new IgnoreCommandParameter());
+            AddWords(Synonyms("to from then"), new CommandSeparatorCommandParameter());
 
             //Selector Related Words
-            AddWords(Words("blocks", "group", "panels", "chambers", "drives"), new GroupCommandParameter());
-            AddWords(Words("my", "self", "this"), new SelfCommandParameter());
-            AddWords(Words("$"), new VariableSelectorCommandParameter());
+            AddWords(Synonyms("blocks group panels chambers drives"), new GroupCommandParameter());
+            AddWords(Synonyms("my self this"), new SelfCommandParameter());
+            AddWords(Synonyms("$"), new VariableSelectorCommandParameter());
 
             //Direction Words
-            AddDirectionWords(Words("up", "upward", "upwards", "upper"), Direction.UP);
-            AddDirectionWords(Words("down", "downward", "downwards", "lower"), Direction.DOWN);
-            AddDirectionWords(Words("left", "lefthand"), Direction.LEFT);
-            AddDirectionWords(Words("right", "righthand"), Direction.RIGHT);
-            AddDirectionWords(Words("forward", "forwards", "front"), Direction.FORWARD);
-            AddDirectionWords(Words("backward", "backwards", "back"), Direction.BACKWARD);
-            AddDirectionWords(Words("clockwise", "clock"), Direction.CLOCKWISE);
-            AddDirectionWords(Words("counterclockwise", "counter", "counterclock"), Direction.COUNTERCLOCKWISE);
+            AddDirectionWords(Synonyms("up upward upwards upper"), Direction.UP);
+            AddDirectionWords(Synonyms("down downward downwards lower"), Direction.DOWN);
+            AddDirectionWords(Synonyms("left lefthand"), Direction.LEFT);
+            AddDirectionWords(Synonyms("right righthand"), Direction.RIGHT);
+            AddDirectionWords(Synonyms("forward forwards front"), Direction.FORWARD);
+            AddDirectionWords(Synonyms("backward backwards back"), Direction.BACKWARD);
+            AddDirectionWords(Synonyms("clockwise clock"), Direction.CLOCKWISE);
+            AddDirectionWords(Synonyms("counterclockwise counter counterclock"), Direction.COUNTERCLOCKWISE);
 
             //Action Words
-            AddWords(Words("bind", "tie", "link"), new AssignmentCommandParameter(true));
-            AddWords(Words("move", "go", "tell", "turn", "rotate", "set", "assign", "allocate", "designate", "apply"), new AssignmentCommandParameter());
-            AddWords(Words("reverse", "reversed"), new ReverseCommandParameter());
-            AddWords(Words("raise", "extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
-            AddWords(Words("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
-            AddWords(Words("increase", "increment"), new IncreaseCommandParameter());
-            AddWords(Words("decrease", "decrement", "reduce"), new IncreaseCommandParameter(false));
-            AddWords(Words("++", "+="), new IncrementCommandParameter());
-            AddWords(Words("--", "-="), new IncrementCommandParameter(false));
-            AddWords(Words("global"), new GlobalCommandParameter());
-            AddWords(Words("by"), new RelativeCommandParameter());
+            AddWords(Synonyms("bind tie link"), new AssignmentCommandParameter(true));
+            AddWords(Synonyms("move go tell turn rotate set assign allocate designate apply"), new AssignmentCommandParameter());
+            AddWords(Synonyms("reverse reversed"), new ReverseCommandParameter());
+            AddWords(Synonyms("raise extend"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.UP));
+            AddWords(Synonyms("retract"), new AssignmentCommandParameter(), new DirectionCommandParameter(Direction.DOWN));
+            AddWords(Synonyms("increase increment"), new IncreaseCommandParameter());
+            AddWords(Synonyms("decrease decrement reduce"), new IncreaseCommandParameter(false));
+            AddWords(Synonyms("++ +="), new IncrementCommandParameter());
+            AddWords(Synonyms("-- -="), new IncrementCommandParameter(false));
+            AddWords(Synonyms("global"), new GlobalCommandParameter());
+            AddWords(Synonyms("by"), new RelativeCommandParameter());
 
             //Value Words
-            AddWords(Words("on", "begin", "true", "start", "started", "resume", "resumed"), new VariableCommandParameter(GetStaticVariable(true)));
-            AddWords(Words("off", "terminate", "cancel", "end", "false", "stopped", "halt", "halted"), new VariableCommandParameter(GetStaticVariable(false)));
+            AddWords(Synonyms("on begin true start started resume resumed"), new VariableCommandParameter(GetStaticVariable(true)));
+            AddWords(Synonyms("off terminate cancel end false stopped halt halted"), new VariableCommandParameter(GetStaticVariable(false)));
 
             //Property Words
-            AddPropertyWords(AllWords(PluralWords("height", "length", "level", "size", "period", "scale")), Property.LEVEL);
-            AddPropertyWords(PluralWords("angle", "azimuth"), Property.ANGLE);
-            AddPropertyWords(AllWords(PluralWords("speed", "rate", "pace"), Words("velocity", "velocities")), Property.VELOCITY);
-            AddPropertyWords(Words("connect", "attach", "connected", "attached", "dock", "docked", "docking"), Property.CONNECTED);
-            AddPropertyWords(Words("disconnect", "detach", "disconnected", "detached", "undock", "undocked"), Property.CONNECTED, false);
-            AddPropertyWords(Words("lock", "locked", "locking", "freeze", "frozen", "brake", "braking", "handbrake", "permanent", "static"), Property.LOCKED);
-            AddPropertyWords(Words("unlock", "unlocked", "unfreeze"), Property.LOCKED, false);
-            AddPropertyWords(Words("run", "running", "execute", "executing", "script"), Property.RUN);
-            AddPropertyWords(Words("use", "used", "occupy", "occupied", "control", "controlled"), Property.USE);
-            AddPropertyWords(Words("unused", "unoccupied", "vacant", "available"), Property.USE, false);
-            AddPropertyWords(Words("done", "complete", "finished", "finish", "pressurized", "depressurized"), Property.COMPLETE);
-            AddPropertyWords(Words("clear", "wipe", "erase"), Property.COMPLETE, false);
-            AddPropertyWords(Words("open", "opened"), Property.OPEN);
-            AddPropertyWords(Words("close", "closed", "shut"), Property.OPEN, false);
+            AddPropertyWords(AllWords(PluralWords("height length level size period scale")), Property.LEVEL);
+            AddPropertyWords(PluralWords("angle azimuth"), Property.ANGLE);
+            AddPropertyWords(AllWords(PluralWords("speed rate pace"), Synonyms("velocity velocities")), Property.VELOCITY);
+            AddPropertyWords(Synonyms("connect attach connected attached dock docked docking"), Property.CONNECTED);
+            AddPropertyWords(Synonyms("disconnect detach disconnected detached undock undocked"), Property.CONNECTED, false);
+            AddPropertyWords(Synonyms("lock locked locking freeze frozen brake braking handbrake permanent static"), Property.LOCKED);
+            AddPropertyWords(Synonyms("unlock unlocked unfreeze"), Property.LOCKED, false);
+            AddPropertyWords(Synonyms("run running execute executing script"), Property.RUN);
+            AddPropertyWords(Synonyms("use used occupy occupied control controlled"), Property.USE);
+            AddPropertyWords(Synonyms("unused unoccupied vacant available"), Property.USE, false);
+            AddPropertyWords(Synonyms("done complete finished finish pressurized depressurized"), Property.COMPLETE);
+            AddPropertyWords(Synonyms("clear wipe erase"), Property.COMPLETE, false);
+            AddPropertyWords(Synonyms("open opened"), Property.OPEN);
+            AddPropertyWords(Synonyms("close closed shut"), Property.OPEN, false);
             AddPropertyWords(PluralWords("font"), Property.FONT);
-            AddPropertyWords(PluralWords("text", "message", "argument"), Property.TEXT);
-            AddPropertyWords(AllWords(Words("colors"), PluralWords("foreground")), Property.COLOR);
-            AddAmbiguousWords(Words("color"), new PropertyCommandParameter(Property.COLOR));
+            AddPropertyWords(PluralWords("text message argument"), Property.TEXT);
+            AddPropertyWords(AllWords(Synonyms("colors"), PluralWords("foreground")), Property.COLOR);
+            AddAmbiguousWords(Synonyms("color"), new PropertyCommandParameter(Property.COLOR));
             AddPropertyWords(PluralWords("background"), Property.BACKGROUND);
-            AddPropertyWords(Words("power", "powered"), Property.POWER);
-            AddPropertyWords(Words("enable", "enabled", "arm", "armed"), Property.ENABLE);
-            AddPropertyWords(Words("disable", "disabled", "disarm", "disarmed"), Property.ENABLE, false);
-            AddPropertyWords(Words("music", "sound", "song", "track", "image", "play", "playing", "unsilence"), Property.MEDIA);
-            AddPropertyWords(Words("silence", "silent", "quiet"), Property.MEDIA, false);
-            AddPropertyWords(Words("sounds", "songs", "images", "tracks"), Property.MEDIA_LIST);
-            AddPropertyWords(AllWords(PluralWords("volume", "output"), Words("intensity", "intensities")), Property.VOLUME);
-            AddPropertyWords(AllWords(PluralWords("range", "distance", "limit", "delay"), Words("capacity", "capacities")), Property.RANGE);
-            AddPropertyWords(Words("radius", "radii"), Property.RADIUS);
+            AddPropertyWords(Synonyms("power powered"), Property.POWER);
+            AddPropertyWords(Synonyms("enable enabled arm armed"), Property.ENABLE);
+            AddPropertyWords(Synonyms("disable disabled disarm disarmed"), Property.ENABLE, false);
+            AddPropertyWords(Synonyms("music sound song track image play playing unsilence"), Property.MEDIA);
+            AddPropertyWords(Synonyms("silence silent quiet"), Property.MEDIA, false);
+            AddPropertyWords(Synonyms("sounds songs images tracks"), Property.MEDIA_LIST);
+            AddPropertyWords(AllWords(PluralWords("volume output"), Synonyms("intensity intensities")), Property.VOLUME);
+            AddPropertyWords(AllWords(PluralWords("range distance limit delay"), Synonyms("capacity capacities")), Property.RANGE);
+            AddPropertyWords(Synonyms("radius radii"), Property.RADIUS);
             AddPropertyWords(PluralWords("interval"), Property.INTERVAL);
-            AddPropertyWords(PluralWords("offset", "padding"), Property.OFFSET);
+            AddPropertyWords(PluralWords("offset padding"), Property.OFFSET);
             AddPropertyWords(PluralWords("falloff"), Property.FALLOFF);
-            AddPropertyWords(Words("trigger", "triggered", "detect", "detected", "trip", "tripped", "deploy", "deployed", "shoot", "shooting", "shot", "detonate", "fire", "firing"), Property.TRIGGER);
-            AddPropertyWords(Words("pressure", "pressurize", "pressurizing", "supply", "supplying", "generate", "generating", "discharge", "discharging", "broadcast", "broadcasting", "assemble", "assembling"), Property.SUPPLY);
-            AddPropertyWords(Words("stockpile", "stockpiling", "depressurize", "depressurizing", "gather", "gathering", "intake", "recharge", "recharging", "consume", "consuming", "collect", "collecting", "disassemble", "disassembling"), Property.SUPPLY, false);
-            AddPropertyWords(AllWords(PluralWords("ratio", "percentage", "percent", "completion"), Words("progress", "progresses")), Property.RATIO);
-            AddPropertyWords(PluralWords("input", "pilot", "user"), Property.INPUT);
-            AddPropertyWords(PluralWords("roll", "rollInput", "rotation"), Property.ROLL_INPUT);
-            AddPropertyWords(Words("auto", "autopilot", "refill", "drain", "draining", "cooperate", "cooperating"), Property.AUTO);
-            AddPropertyWords(AllWords(PluralWords("override", "dampener"), Words("overridden")), Property.OVERRIDE);
+            AddPropertyWords(Synonyms("trigger triggered detect detected trip tripped deploy deployed shoot shooting shot detonate fire firing"), Property.TRIGGER);
+            AddPropertyWords(Synonyms("pressure pressurize pressurizing supply supplying generate generating discharge discharging broadcast broadcasting assemble assembling"), Property.SUPPLY);
+            AddPropertyWords(Synonyms("stockpile stockpiling depressurize depressurizing gather gathering intake recharge recharging consume consuming collect collecting disassemble disassembling"), Property.SUPPLY, false);
+            AddPropertyWords(AllWords(PluralWords("ratio percentage percent completion"), Synonyms("progress progresses")), Property.RATIO);
+            AddPropertyWords(PluralWords("input pilot user"), Property.INPUT);
+            AddPropertyWords(PluralWords("roll rollInput rotation"), Property.ROLL_INPUT);
+            AddPropertyWords(Synonyms("auto autopilot refill drain draining cooperate cooperating"), Property.AUTO);
+            AddPropertyWords(AllWords(PluralWords("override dampener"), Synonyms("overridden")), Property.OVERRIDE);
             AddPropertyWords(PluralWords("direction"), Property.DIRECTION);
-            AddPropertyWords(PluralWords("position", "location", "alignment"), Property.POSITION);
-            AddPropertyWords(Words("target", "targeting", "destination", "waypoint", "coords", "coordinates"), Property.TARGET);
-            AddPropertyWords(Words("waypoints", "destinations"), Property.WAYPOINTS);
-            AddPropertyWords(AllWords(PluralWords("strength", "force", "torque"), Words("gravity", "gravities")), Property.STRENGTH);
-            AddPropertyWords(Words("natural", "planet"), Property.NATURAL);
-            AddPropertyWords(Words("artificial", "fake"), Property.ARTIFICIAL);
+            AddPropertyWords(PluralWords("position location alignment"), Property.POSITION);
+            AddPropertyWords(Synonyms("target targeting destination waypoint coords coordinates"), Property.TARGET);
+            AddPropertyWords(Synonyms("waypoints destinations"), Property.WAYPOINTS);
+            AddPropertyWords(AllWords(PluralWords("strength force torque"), Synonyms("gravity gravities")), Property.STRENGTH);
+            AddPropertyWords(Synonyms("natural planet"), Property.NATURAL);
+            AddPropertyWords(Synonyms("artificial fake"), Property.ARTIFICIAL);
             AddPropertyWords(PluralWords("countdown"), Property.COUNTDOWN);
-            AddPropertyWords(PluralWords("name", "label"), Property.NAME);
-            AddPropertyWords(Words("show", "showing"), Property.SHOW);
-            AddPropertyWords(Words("hide", "hiding"), Property.SHOW, false);
-            AddPropertyWords(Words("properties", "attributes"), Property.PROPERTIES);
-            AddPropertyWords(Words("actions"), Property.ACTIONS);
-            AddPropertyWords(Words("types", "blueprints"), Property.TYPES);
-            AddPropertyWords(PluralWords("altitude", "elevation"), Property.ALTITUDE);
-            AddPropertyWords(Words("weight", "mass"), Property.WEIGHT);
-            AddPropertyWords(Words("data", "customdata"), Property.DATA);
-            AddPropertyWords(Words("info", "details", "detailedinfo"), Property.INFO);
-            AddPropertyWords(Words("invert", "inverted", "inverting"), Property.INVERT);
-            AddPropertyWords(Words("steer", "steering"), Property.STEER);
-            AddPropertyWords(Words("able", "ready"), Property.ABLE);
-            AddPropertyWords(Words("unable"), Property.ABLE, false);
-            AddPropertyWords(Words("build", "building", "built"), Property.BUILD);
-            AddPropertyWords(Words("damage", "damaged"), Property.DAMAGE);
+            AddPropertyWords(PluralWords("name label"), Property.NAME);
+            AddPropertyWords(Synonyms("show showing"), Property.SHOW);
+            AddPropertyWords(Synonyms("hide hiding"), Property.SHOW, false);
+            AddPropertyWords(Synonyms("properties attributes"), Property.PROPERTIES);
+            AddPropertyWords(Synonyms("actions"), Property.ACTIONS);
+            AddPropertyWords(Synonyms("types blueprints"), Property.TYPES);
+            AddPropertyWords(PluralWords("altitude elevation"), Property.ALTITUDE);
+            AddPropertyWords(Synonyms("weight mass"), Property.WEIGHT);
+            AddPropertyWords(Synonyms("data customdata"), Property.DATA);
+            AddPropertyWords(Synonyms("info details detailedinfo"), Property.INFO);
+            AddPropertyWords(Synonyms("invert inverted inverting"), Property.INVERT);
+            AddPropertyWords(Synonyms("steer steering"), Property.STEER);
+            AddPropertyWords(Synonyms("able ready"), Property.ABLE);
+            AddPropertyWords(Synonyms("unable"), Property.ABLE, false);
+            AddPropertyWords(Synonyms("build building built"), Property.BUILD);
+            AddPropertyWords(Synonyms("damage damaged"), Property.DAMAGE);
 
             //ValueProperty Words
             AddWords(PluralWords("amount"), new ValuePropertyCommandParameter(Property.AMOUNT));
-            AddWords(Words("property", "attribute"), new ValuePropertyCommandParameter(Property.PROPERTY));
-            AddWords(Words("action"), new ValuePropertyCommandParameter(Property.ACTION));
-            AddWords(Words("produce", "producing", "create", "creating", "make", "making"), new ValuePropertyCommandParameter(Property.CREATE));
-            AddWords(Words("destroy", "destroying", "recycle", "recycling"), new ValuePropertyCommandParameter(Property.DESTROY));
+            AddWords(Synonyms("property attribute"), new ValuePropertyCommandParameter(Property.PROPERTY));
+            AddWords(Synonyms("action"), new ValuePropertyCommandParameter(Property.ACTION));
+            AddWords(Synonyms("produce producing create creating make making"), new ValuePropertyCommandParameter(Property.CREATE));
+            AddWords(Synonyms("destroy destroying recycle recycling"), new ValuePropertyCommandParameter(Property.DESTROY));
 
             //Special Command Words
-            AddWords(Words("times", "iterations"), new RepeatCommandParameter());
-            AddWords(Words("wait", "hold"), new WaitCommandParameter());
-            AddWords(Words("call", "gosub"), new FunctionCommandParameter(false));
-            AddWords(Words("goto"), new FunctionCommandParameter(true));
-            AddWords(Words("listen", "channel", "register", "subscribe"), new ListenCommandParameter(true));
-            AddWords(Words("forget", "dismiss", "ignore", "deregister", "unsubscribe"), new ListenCommandParameter(false));
-            AddWords(Words("send"), new SendCommandParameter());
-            AddWords(Words("print", "log", "echo", "write"), new PrintCommandParameter());
-            AddWords(Words("queue", "schedule"), new QueueCommandParameter(false));
-            AddAmbiguousWords(Words("async", "parallel"), new QueueCommandParameter(true));
-            AddWords(Words("await", "blocking"), new AwaitCommandParameter());
-            AddWords(Words("transfer", "give"), new TransferCommandParameter(true));
-            AddWords(Words("take"), new TransferCommandParameter(false));
-            AddWords(Words("->"), new KeyedVariableCommandParameter());
-            AddWords(Words("?"), new TernaryConditionIndicatorParameter());
-            AddWords(Words("::"), new TernaryConditionSeparatorParameter());
-            AddWords(Words(":"), new ColonSeparatorParameter());
-            AddWords(Words("each", "every"), new IteratorCommandParameter());
+            AddWords(Synonyms("times iterations"), new RepeatCommandParameter());
+            AddWords(Synonyms("wait hold"), new WaitCommandParameter());
+            AddWords(Synonyms("call gosub"), new FunctionCommandParameter(false));
+            AddWords(Synonyms("goto"), new FunctionCommandParameter(true));
+            AddWords(Synonyms("listen channel register subscribe"), new ListenCommandParameter(true));
+            AddWords(Synonyms("forget dismiss ignore deregister unsubscribe"), new ListenCommandParameter(false));
+            AddWords(Synonyms("send"), new SendCommandParameter());
+            AddWords(Synonyms("print log echo write"), new PrintCommandParameter());
+            AddWords(Synonyms("queue schedule"), new QueueCommandParameter(false));
+            AddAmbiguousWords(Synonyms("async parallel"), new QueueCommandParameter(true));
+            AddWords(Synonyms("await blocking"), new AwaitCommandParameter());
+            AddWords(Synonyms("transfer give"), new TransferCommandParameter(true));
+            AddWords(Synonyms("take"), new TransferCommandParameter(false));
+            AddWords(Synonyms("->"), new KeyedVariableCommandParameter());
+            AddWords(Synonyms("?"), new TernaryConditionIndicatorParameter());
+            AddWords(Synonyms("::"), new TernaryConditionSeparatorParameter());
+            AddWords(Synonyms(":"), new ColonSeparatorParameter());
+            AddWords(Synonyms("each every"), new IteratorCommandParameter());
 
             //Conditional Words
-            AddWords(Words("if"), new IfCommandParameter(false, false, false));
-            AddWords(Words("unless"), new IfCommandParameter(true, false, false));
-            AddWords(Words("while"), new IfCommandParameter(false, true, false));
-            AddWords(Words("until"), new IfCommandParameter(true, true, false));
-            AddWords(Words("when"), new IfCommandParameter(true, true, true));
-            AddWords(Words("else", "otherwise"), new ElseCommandParameter());
-            AddWords(Words("that", "which", "whose"), new ThatCommandParameter());
+            AddWords(Synonyms("if"), new IfCommandParameter(false, false, false));
+            AddWords(Synonyms("unless"), new IfCommandParameter(true, false, false));
+            AddWords(Synonyms("while"), new IfCommandParameter(false, true, false));
+            AddWords(Synonyms("until"), new IfCommandParameter(true, true, false));
+            AddWords(Synonyms("when"), new IfCommandParameter(true, true, true));
+            AddWords(Synonyms("else otherwise"), new ElseCommandParameter());
+            AddWords(Synonyms("that which whose"), new ThatCommandParameter());
 
             //Comparison Words
-            AddWords(Words("less", "<", "below"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) < 0));
-            AddWords(Words("<="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) <= 0));
-            AddWords(Words("is", "are", "equal", "equals", "=", "=="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) == 0));
-            AddWords(Words(">="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) >= 0));
-            AddWords(Words("greater", ">", "above", "more"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) > 0));
-            AddWords(Words("contain", "contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PerformOperation(BiOperand.CONTAINS, a, b))));
+            AddWords(Synonyms("less < below"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) < 0));
+            AddWords(Synonyms("<="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) <= 0));
+            AddWords(Synonyms("is are equal equals = =="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) == 0));
+            AddWords(Synonyms(">="), new ComparisonCommandParameter((a, b) => a.CompareTo(b) >= 0));
+            AddWords(Synonyms("greater > above more"), new ComparisonCommandParameter((a, b) => a.CompareTo(b) > 0));
+            AddWords(Synonyms("contain contains"), new ComparisonCommandParameter((a, b) => CastBoolean(PerformOperation(BiOperand.CONTAINS, a, b))));
 
             //Aggregation Words
-            AddWords(Words("any"), new AggregateConditionCommandParameter((count, matches) => matches > 0));
-            AddWords(Words("all"), new AggregateConditionCommandParameter(AllCondition));
-            AddWords(Words("none"), new AggregateConditionCommandParameter(NoneCondition));
-            AddWords(Words("average", "avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
-            AddWords(Words("minimum", "min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Min() ?? ResolvePrimitive(0)));
-            AddWords(Words("maximum", "max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Max() ?? ResolvePrimitive(0)));
-            AddWords(Words("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
-            AddAmbiguousWords(Words("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
-            AddWords(Words("sum", "total"), new PropertyAggregationCommandParameter(SumAggregator));
-            AddWords(Words("collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
-            AddAmbiguousWords(Words("list"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
+            AddWords(Synonyms("any"), new AggregateConditionCommandParameter((count, matches) => matches > 0));
+            AddWords(Synonyms("all"), new AggregateConditionCommandParameter(AllCondition));
+            AddWords(Synonyms("none"), new AggregateConditionCommandParameter(NoneCondition));
+            AddWords(Synonyms("average avg"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => SumAggregator(blocks, primitiveSupplier).Divide(ResolvePrimitive(Math.Max(1, blocks.Count())))));
+            AddWords(Synonyms("minimum min"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Min() ?? ResolvePrimitive(0)));
+            AddWords(Synonyms("maximum max"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => blocks.Select(primitiveSupplier).Max() ?? ResolvePrimitive(0)));
+            AddWords(Synonyms("count"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
+            AddAmbiguousWords(Synonyms("number"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(blocks.Count())));
+            AddWords(Synonyms("sum total"), new PropertyAggregationCommandParameter(SumAggregator));
+            AddWords(Synonyms("collection"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
+            AddAmbiguousWords(Synonyms("list"), new PropertyAggregationCommandParameter((blocks, primitiveSupplier) => ResolvePrimitive(NewKeyedList(blocks.Select(b => new StaticVariable(primitiveSupplier(b)))))));
 
             //Operations Words
-            AddWords(Words("("), new OpenParenthesisCommandParameter());
-            AddWords(Words(")"), new CloseParenthesisCommandParameter());
-            AddWords(Words("and", "&", "&&", "but", "yet"), new AndCommandParameter());
-            AddWords(Words("or", "|", "||"), new OrCommandParameter());
-            AddWords(Words("not", "!", "stop"), new NotCommandParameter());
-            AddWords(Words("@"), new IndexCommandParameter());
+            AddWords(Synonyms("("), new OpenParenthesisCommandParameter());
+            AddWords(Synonyms(")"), new CloseParenthesisCommandParameter());
+            AddWords(Synonyms("and & && but yet"), new AndCommandParameter());
+            AddWords(Synonyms("or | ||"), new OrCommandParameter());
+            AddWords(Synonyms("not ! stop"), new NotCommandParameter());
+            AddWords(Synonyms("@"), new IndexCommandParameter());
 
-            AddRightUniOperationWords(Words("absolute", "abs"), UniOperand.ABS);
-            AddRightUniOperationWords(Words("sqrt"), UniOperand.SQRT);
-            AddRightUniOperationWords(Words("sin"), UniOperand.SIN);
-            AddRightUniOperationWords(Words("cosine", "cos"), UniOperand.COS);
-            AddRightUniOperationWords(Words("tangent", "tan"), UniOperand.TAN);
-            AddRightUniOperationWords(Words("arcsin", "asin"), UniOperand.ASIN);
-            AddRightUniOperationWords(Words("arccos", "acos"), UniOperand.ACOS);
-            AddRightUniOperationWords(Words("arctan", "atan"), UniOperand.ATAN);
-            AddRightUniOperationWords(Words("sort", "sorted"), UniOperand.SORT);
-            AddRightUniOperationWords(Words("ln"), UniOperand.LN);
-            AddRightUniOperationWords(Words("rand", "random", "randomize"), UniOperand.RANDOM);
-            AddRightUniOperationWords(Words("shuffle", "shuffled"), UniOperand.SHUFFLE);
-            AddRightUniOperationWords(Words("sign", "quantize"), UniOperand.SIGN);
+            AddRightUniOperationWords(Synonyms("absolute abs"), UniOperand.ABS);
+            AddRightUniOperationWords(Synonyms("sqrt"), UniOperand.SQRT);
+            AddRightUniOperationWords(Synonyms("sin"), UniOperand.SIN);
+            AddRightUniOperationWords(Synonyms("cosine cos"), UniOperand.COS);
+            AddRightUniOperationWords(Synonyms("tangent tan"), UniOperand.TAN);
+            AddRightUniOperationWords(Synonyms("arcsin asin"), UniOperand.ASIN);
+            AddRightUniOperationWords(Synonyms("arccos acos"), UniOperand.ACOS);
+            AddRightUniOperationWords(Synonyms("arctan atan"), UniOperand.ATAN);
+            AddRightUniOperationWords(Synonyms("sort sorted"), UniOperand.SORT);
+            AddRightUniOperationWords(Synonyms("ln"), UniOperand.LN);
+            AddRightUniOperationWords(Synonyms("rand random randomize"), UniOperand.RANDOM);
+            AddRightUniOperationWords(Synonyms("shuffle shuffled"), UniOperand.SHUFFLE);
+            AddRightUniOperationWords(Synonyms("sign quantize"), UniOperand.SIGN);
 
-            AddLeftUniOperationWords(Words("tick", "ticks"), UniOperand.TICKS);
-            AddLeftUniOperationWords(Words("keys", "indexes"), UniOperand.KEYS);
-            AddLeftUniOperationWords(Words("values"), UniOperand.VALUES);
-            AddLeftUniOperationWords(Words("type"), UniOperand.TYPE);
+            AddLeftUniOperationWords(Synonyms("tick ticks"), UniOperand.TICKS);
+            AddLeftUniOperationWords(Synonyms("keys indexes"), UniOperand.KEYS);
+            AddLeftUniOperationWords(Synonyms("values"), UniOperand.VALUES);
+            AddLeftUniOperationWords(Synonyms("type"), UniOperand.TYPE);
 
             //Tier 0 Operations
-            AddWords(Words("dot", "."), new BiOperandCommandParameter(BiOperand.DOT, 0));
+            AddWords(Synonyms("dot ."), new BiOperandCommandParameter(BiOperand.DOT, 0));
 
             //Tier 1 Operations
-            AddBiOperationWords(Words("pow", "^", "xor"), BiOperand.EXPONENT, 1);
+            AddBiOperationWords(Synonyms("pow ^ xor"), BiOperand.EXPONENT, 1);
 
             //Tier 2 Operations
-            AddBiOperationWords(Words("multiply", "*"), BiOperand.MULTIPLY, 2);
-            AddBiOperationWords(Words("divide", "/"), BiOperand.DIVIDE, 2);
-            AddBiOperationWords(Words("mod", "%"), BiOperand.MOD, 2);
-            AddBiOperationWords(Words("split", "separate", "separated"), BiOperand.SPLIT, 2);
-            AddBiOperationWords(Words("join", "joined"), BiOperand.JOIN, 2);
+            AddBiOperationWords(Synonyms("multiply *"), BiOperand.MULTIPLY, 2);
+            AddBiOperationWords(Synonyms("divide /"), BiOperand.DIVIDE, 2);
+            AddBiOperationWords(Synonyms("mod %"), BiOperand.MOD, 2);
+            AddBiOperationWords(Synonyms("split separate separated"), BiOperand.SPLIT, 2);
+            AddBiOperationWords(Synonyms("join joined"), BiOperand.JOIN, 2);
 
             //Tier 3 Operations
-            AddBiOperationWords(Words("plus", "+"), BiOperand.ADD, 3);
-            AddBiOperationWords(Words("minus"), BiOperand.SUBTRACT, 3);
+            AddBiOperationWords(Synonyms("plus +"), BiOperand.ADD, 3);
+            AddBiOperationWords(Synonyms("minus"), BiOperand.SUBTRACT, 3);
 
             //Tier 4 Operations
-            AddBiOperationWords(Words(".."), BiOperand.RANGE, 4);
+            AddBiOperationWords(Synonyms(".."), BiOperand.RANGE, 4);
 
-            AddWords(Words("-"), new MinusCommandParameter());
-            AddWords(Words("round", "rnd", "rounded"), new RoundCommandParameter());
-            AddWords(Words("as", "cast", "resolve", "resolved"), new CastCommandParameter());
+            AddWords(Synonyms("-"), new MinusCommandParameter());
+            AddWords(Synonyms("round rnd rounded"), new RoundCommandParameter());
+            AddWords(Synonyms("as cast resolve resolved"), new CastCommandParameter());
 
             //List Words
-            AddWords(Words("["), new OpenBracketCommandParameter());
-            AddWords(Words("]"), new CloseBracketCommandParameter());
-            AddWords(Words(","), new ListSeparatorCommandParameter());
+            AddWords(Synonyms("["), new OpenBracketCommandParameter());
+            AddWords(Synonyms("]"), new CloseBracketCommandParameter());
+            AddWords(Synonyms(","), new ListSeparatorCommandParameter());
 
             //Control Types
-            AddControlWords(Words("restart", "reset", "reboot"), thread => {
+            AddControlWords(Synonyms("restart reset reboot"), thread => {
                 PROGRAM.ClearAllState();
                 throw new InterruptException(ProgramState.RUNNING);
             });
-            AddControlWords(Words("repeat", "loop", "rerun", "replay"), thread => {
+            AddControlWords(Synonyms("repeat loop rerun replay"), thread => {
                 thread.Command = thread.Command.Clone();
                 return false;
             });
-            AddControlWords(Words("exit"), thread => {
+            AddControlWords(Synonyms("exit"), thread => {
                 PROGRAM.ClearAllState();
                 throw new InterruptException(ProgramState.STOPPED);
             });
-            AddControlWords(Words("pause"), thread => {
+            AddControlWords(Synonyms("pause"), thread => {
                 if (PROGRAM.state != ProgramState.PAUSED) throw new InterruptException(ProgramState.PAUSED);
                 return true;
              });
-            AddControlWords(Words("break"), thread => {
+            AddControlWords(Synonyms("break"), thread => {
                 GetInterrupableCommand("break").Break();
                 return false;
             });
-            AddControlWords(Words("continue"), thread => {
+            AddControlWords(Synonyms("continue"), thread => {
                 GetInterrupableCommand("continue").Continue();
                 return false;
             });
-            AddControlWords(Words("return"), thread => {
+            AddControlWords(Synonyms("return"), thread => {
                 FunctionCommand currentFunction = thread.GetCurrentCommand<FunctionCommand>();
                 Command nullCommand = new NullCommand();
                 if (currentFunction == null) thread.Command = nullCommand;
@@ -336,72 +336,75 @@ namespace IngameScript {
             });
 
             //Blocks
-            AddBlockWords(Words("piston"), Block.PISTON);
-            AddBlockWords(Words("light", "spotlight"), Block.LIGHT);
-            AddBlockWords(Words("rotor"), Block.ROTOR);
-            AddBlockWords(Words("hinge"), Block.HINGE);
-            AddBlockWords(Words("program", "programmable"), Block.PROGRAM);
-            AddBlockWords(Words("timer"), Block.TIMER);
-            AddBlockWords(Words("projector"), Block.PROJECTOR);
-            AddBlockWords(Words("merge"), Words(), Block.MERGE);
-            AddBlockWords(Words("connector"), Block.CONNECTOR);
-            AddBlockWords(Words("welder"), Block.WELDER);
-            AddBlockWords(Words("grinder"), Block.GRINDER);
-            AddBlockWords(Words("door", "hangar", "bay", "gate"), Block.DOOR);
-            AddBlockWords(Words(), Words(), Block.DISPLAY, PluralWords("display", "screen", "lcd"));
-            AddBlockWords(Words("speaker", "alarm", "siren"), Block.SOUND);
-            AddBlockWords(Words("camera"), Block.CAMERA);
-            AddBlockWords(Words("sensor"), Block.SENSOR);
-            AddBlockWords(Words("beacon"), Block.BEACON);
-            AddBlockWords(Words("antenna"), Block.ANTENNA);
-            AddBlockWords(Words("ship", "rover", "cockpit", "seat", "station", "helm"), Block.COCKPIT);
-            AddBlockWords(Words("cryo"), Block.CRYO_CHAMBER);
-            AddBlockWords(Words("drone", "remote", "robot"), Block.REMOTE);
-            AddBlockWords(Words("thruster"), Block.THRUSTER);
-            AddBlockWords(Words("airvent", "vent"), Block.AIRVENT);
-            AddBlockWords(Words("gun", "railgun", "cannon", "autocannon", "rocket", "missile", "launcher"), Block.GUN);
-            AddBlockWords(Words("turret"), Block.TURRET);
-            AddBlockWords(Words("generator"), Block.GENERATOR);
-            AddBlockWords(Words("tank"), Block.TANK);
-            AddBlockWords(Words("magnet"), Words("magnets", "gears"), Block.MAGNET, Words("gear"));
-            AddBlockWords(Words("battery"), Words("batteries"), Block.BATTERY);
-            AddBlockWords(Words("chute", "parachute"), Block.PARACHUTE);
-            AddBlockWords(Words("wheel"), Words("wheels"), Block.SUSPENSION, Words("suspension"));
-            AddBlockWords(Words("detector"), Block.DETECTOR);
-            AddBlockWords(Words("drill"), Block.DRILL);
-            AddBlockWords(Words("engine"), Block.ENGINE);
-            AddBlockWords(Words("turbine"), Block.TURBINE);
-            AddBlockWords(Words("reactor"), Block.REACTOR);
-            AddBlockWords(Words("solar"), Block.SOLAR_PANEL);
-            AddBlockWords(Words("sorter"), Block.SORTER);
-            AddBlockWords(Words("gyro", "gyroscope"), Block.GYROSCOPE);
-            AddBlockWords(Words("gravitygenerator"), Block.GRAVITY_GENERATOR);
-            AddBlockWords(Words("gravitysphere"), Block.GRAVITY_SPHERE);
-            AddBlockWords(Words("container"), Words("cargos", "containers"), Block.CARGO, Words("cargo", "inventory", "inventories"));
-            AddBlockWords(Words("warhead", "bomb"), Block.WARHEAD);
-            AddBlockWords(Words("assembler"), Block.ASSEMBLER);
-            AddBlockWords(Words("collector"), Block.COLLECTOR);
-            AddBlockWords(Words("ejector"), Block.EJECTOR);
-            AddBlockWords(Words("decoy"), Block.DECOY);
-            AddBlockWords(Words("jump", "jumpdrive"), Block.JUMPDRIVE);
-            AddBlockWords(Words("laser", "laserantenna"), Block.LASER_ANTENNA);
-            AddBlockWords(Words("terminal"), Block.TERMINAL);
-            AddBlockWords(Words("refinery"), Words("refineries"), Block.REFINERY);
-            AddBlockWords(Words("heatvent"), Block.HEAT_VENT);
-            AddBlockWords(Words("searchlight"), Block.SEARCHLIGHT);
-            AddBlockWords(Words("turretcontroller"), Block.TURRET_CONTROLLER);
-            AddBlockWords(Words(), Words(), Block.GRID, PluralWords("grid"));
-            AddBlockWords(PluralWords("thread"), Words(), Block.THREAD);
+            AddBlockWords(Synonyms("piston"), Block.PISTON);
+            AddBlockWords(Synonyms("light spotlight"), Block.LIGHT);
+            AddBlockWords(Synonyms("rotor"), Block.ROTOR);
+            AddBlockWords(Synonyms("hinge"), Block.HINGE);
+            AddBlockWords(Synonyms("program programmable"), Block.PROGRAM);
+            AddBlockWords(Synonyms("timer"), Block.TIMER);
+            AddBlockWords(Synonyms("projector"), Block.PROJECTOR);
+            AddBlockWords(Synonyms("merge"), Synonyms(), Block.MERGE);
+            AddBlockWords(Synonyms("connector"), Block.CONNECTOR);
+            AddBlockWords(Synonyms("welder"), Block.WELDER);
+            AddBlockWords(Synonyms("grinder"), Block.GRINDER);
+            AddBlockWords(Synonyms("door hangar bay gate"), Block.DOOR);
+            AddBlockWords(Synonyms(), Synonyms(), Block.DISPLAY, PluralWords("display screen lcd"));
+            AddBlockWords(Synonyms("speaker alarm siren"), Block.SOUND);
+            AddBlockWords(Synonyms("camera"), Block.CAMERA);
+            AddBlockWords(Synonyms("sensor"), Block.SENSOR);
+            AddBlockWords(Synonyms("beacon"), Block.BEACON);
+            AddBlockWords(Synonyms("antenna"), Block.ANTENNA);
+            AddBlockWords(Synonyms("ship rover cockpit seat station helm"), Block.COCKPIT);
+            AddBlockWords(Synonyms("cryo"), Block.CRYO_CHAMBER);
+            AddBlockWords(Synonyms("drone remote robot"), Block.REMOTE);
+            AddBlockWords(Synonyms("thruster"), Block.THRUSTER);
+            AddBlockWords(Synonyms("airvent vent"), Block.AIRVENT);
+            AddBlockWords(Synonyms("gun railgun cannon autocannon rocket missile launcher"), Block.GUN);
+            AddBlockWords(Synonyms("turret"), Block.TURRET);
+            AddBlockWords(Synonyms("generator"), Block.GENERATOR);
+            AddBlockWords(Synonyms("tank"), Block.TANK);
+            AddBlockWords(Synonyms("magnet"), Synonyms("magnets gears"), Block.MAGNET, Synonyms("gear"));
+            AddBlockWords(Synonyms("battery"), Synonyms("batteries"), Block.BATTERY);
+            AddBlockWords(Synonyms("chute parachute"), Block.PARACHUTE);
+            AddBlockWords(Synonyms("wheel"), Synonyms("wheels"), Block.SUSPENSION, Synonyms("suspension"));
+            AddBlockWords(Synonyms("detector"), Block.DETECTOR);
+            AddBlockWords(Synonyms("drill"), Block.DRILL);
+            AddBlockWords(Synonyms("engine"), Block.ENGINE);
+            AddBlockWords(Synonyms("turbine"), Block.TURBINE);
+            AddBlockWords(Synonyms("reactor"), Block.REACTOR);
+            AddBlockWords(Synonyms("solar"), Block.SOLAR_PANEL);
+            AddBlockWords(Synonyms("sorter"), Block.SORTER);
+            AddBlockWords(Synonyms("gyro gyroscope"), Block.GYROSCOPE);
+            AddBlockWords(Synonyms("gravitygenerator"), Block.GRAVITY_GENERATOR);
+            AddBlockWords(Synonyms("gravitysphere"), Block.GRAVITY_SPHERE);
+            AddBlockWords(Synonyms("container"), Synonyms("cargos containers"), Block.CARGO, Synonyms("cargo inventory inventories"));
+            AddBlockWords(Synonyms("warhead bomb"), Block.WARHEAD);
+            AddBlockWords(Synonyms("assembler"), Block.ASSEMBLER);
+            AddBlockWords(Synonyms("collector"), Block.COLLECTOR);
+            AddBlockWords(Synonyms("ejector"), Block.EJECTOR);
+            AddBlockWords(Synonyms("decoy"), Block.DECOY);
+            AddBlockWords(Synonyms("jump jumpdrive"), Block.JUMPDRIVE);
+            AddBlockWords(Synonyms("laser laserantenna"), Block.LASER_ANTENNA);
+            AddBlockWords(Synonyms("terminal"), Block.TERMINAL);
+            AddBlockWords(Synonyms("refinery"), Synonyms("refineries"), Block.REFINERY);
+            AddBlockWords(Synonyms("heatvent"), Block.HEAT_VENT);
+            AddBlockWords(Synonyms("searchlight"), Block.SEARCHLIGHT);
+            AddBlockWords(Synonyms("turretcontroller"), Block.TURRET_CONTROLLER);
+            AddBlockWords(Synonyms(), Synonyms(), Block.GRID, PluralWords("grid"));
+            AddBlockWords(PluralWords("thread"), Synonyms(), Block.THREAD);
 
-            AddAliasWords(Words("can"), "is able");
-            AddAliasWords(Words("cannot"), "is not able");
+            AddAliasWords(Synonyms("can"), "is able");
+            AddAliasWords(Synonyms("cannot"), "is not able");
         }
 
+        // Keep item phrases intact; only parser synonyms are separated by spaces.
         String[] Words(params String[] words) => words;
+
+        String[] Synonyms(string words = "") => words.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         String[] AllWords(params String[][] words) => words.Aggregate((a, b) => a.Concat(b).ToArray());
 
-        String[] PluralWords(params String[] words) => words.Concat(words.Select(w => w + "s")).ToArray();
+        String[] PluralWords(string words) => AllWords(Synonyms(words), Synonyms(words).Select(w => w + "s").ToArray());
 
         void AddControlWords(String[] words, ControlFunction function) {
             AddWords(words, new CommandReferenceParameter(new ControlCommand { controlFunction = function }));

@@ -22,8 +22,7 @@ namespace IngameScript {
         public class MergeBlockHandler : FunctionalBlockHandler<IMyShipMergeBlock> {
             public MergeBlockHandler() {
                 var connectHandler = BooleanHandler(b => b.IsConnected, (b, v) => b.Enabled = v);
-                AddPropertyHandler(Property.LOCKED, connectHandler);
-                AddPropertyHandler(Property.CONNECTED, connectHandler);
+                AddPropertyAliases(connectHandler, Property.LOCKED, Property.CONNECTED);
             }
         }
     }

@@ -104,7 +104,7 @@ namespace IngameScript {
 
             public BlockHandler() {
                 AddStringHandler(Property.NAME, b => Name(b));
-                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
+                SetDefaultProperty(Property.NAME, Return.STRING);
             }
 
             public string GetName(object block) => Name((T)block);
@@ -127,6 +127,15 @@ namespace IngameScript {
             public abstract string Name(T block);
 
             public Direction GetDefaultDirection() => defaultDirection;
+
+            public void SetDefaultProperty(Property property, Return type, params Direction[] directions) {
+                defaultPropertiesByPrimitive[type] = property;
+                SetDefaultProperty(property, directions);
+            }
+
+            public void SetDefaultProperty(Property property, params Direction[] directions) {
+                foreach (var direction in directions) defaultPropertiesByDirection[direction] = property;
+            }
 
             public PropertySupplier GetDefaultProperty(Direction direction) =>
                 new PropertySupplier(NewList(new PropertyValue(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "")));
@@ -170,6 +179,10 @@ namespace IngameScript {
             public void ReverseNumericPropertyValue(Object block, PropertySupplier property) => GetPropertyHandler(property).Reverse((T)block, property);
             public void AddPropertyHandler(List<Property> properties, PropertyHandler<T> handler) => propertyHandlers[GetPropertyHash(new PropertySupplier(properties.Select(p => new PropertyValue(p + "")).ToList()))] = handler;
             public void AddPropertyHandler(Property property, PropertyHandler<T> handler) => propertyHandlers[property + ""] = handler;
+            // Aliases are independent properties; the List<Property> overload is a single compound property.
+            public void AddPropertyAliases(PropertyHandler<T> handler, params Property[] properties) {
+                foreach (var property in properties) AddPropertyHandler(property, handler);
+            }
             public void AddBooleanHandler(Property property, GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) =>
                 AddPropertyHandler(property, BooleanHandler(Get, Set));
             public void AddStringHandler(Property property, GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) =>

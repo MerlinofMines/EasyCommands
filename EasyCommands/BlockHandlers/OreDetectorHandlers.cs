@@ -22,11 +22,9 @@ namespace IngameScript {
         public class OreDetectorHandler : FunctionalBlockHandler<IMyOreDetector> {
             public OreDetectorHandler() {
                 var rangeHandler = TerminalPropertyHandler("Range", 50);
-                AddPropertyHandler(Property.RANGE, rangeHandler);
-                AddPropertyHandler(Property.RADIUS, rangeHandler);
+                AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.SUPPLY, b => b.BroadcastUsingAntennas, (b, v) => b.BroadcastUsingAntennas = v);
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
+                SetDefaultProperty(Property.RANGE, Return.NUMERIC, Direction.UP);
             }
         }
     }
