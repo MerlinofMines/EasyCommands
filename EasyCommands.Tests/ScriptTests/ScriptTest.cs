@@ -1,5 +1,4 @@
-﻿using IngameScript;
-using Malware.MDKUtilities;
+using IngameScript;
 using Moq;
 using Sandbox.ModAPI.Ingame;
 using System;
@@ -65,13 +64,13 @@ namespace EasyCommands.Tests.ScriptTests
             MockBlocksOfType("Script Program", me);
             MockEntityUtility.MockTextSurfaces(me, display);
 
-            MDKFactory.ProgramConfig config = default;
+            ProgramFactory.ProgramConfig config = default;
             config.GridTerminalSystem = mockGrid.Object;
             config.ProgrammableBlock = me.Object;
             config.Echo = (message) => Logger.Add(message);
             config.Runtime = runtime.Object;
 
-            program = MDKFactory.CreateProgram<Program>(config);
+            program = ProgramFactory.CreateProgram<Program>(config);
             program.commandParseAmount = 1000;
             program.logLevel = Program.LogLevel.SCRIPT_ONLY;
 
@@ -150,7 +149,7 @@ namespace EasyCommands.Tests.ScriptTests
         {
             do
             {
-                MDKFactory.Run(program);
+                ProgramFactory.Run(program);
                 RunCounter++;
             } while (runUntilPredicate.Invoke(this) != true);
         }
@@ -191,7 +190,7 @@ namespace EasyCommands.Tests.ScriptTests
         /// </summary>
         /// <param name="argument"></param>
         public void RunWithArgument(string argument) {
-            MDKFactory.Run(program, argument);
+            ProgramFactory.Run(program, argument);
         }
 
         /// <summary>

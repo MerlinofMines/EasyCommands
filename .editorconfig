@@ -1,4 +1,4 @@
-﻿[*.cs]
+[*.cs]
 
-# ProhibitedMemberRule: Prohibited Type Or Member
-dotnet_diagnostic.ProhibitedMemberRule.severity = error
+# MDK2: prohibited game API usage is a build error.
+dotnet_diagnostic.MDK01.severity = error

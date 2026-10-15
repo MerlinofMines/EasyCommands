@@ -1,4 +1,4 @@
-﻿# Contributing To EasyCommands
+# Contributing To EasyCommands
 
 Try as I might, I'm not able to do everything which folks request including new features, fixing bugs, etc.  I only have so much time to dedicate to further improvements.
 
@@ -38,39 +38,39 @@ Expect some feedback on your pull request before having it approved.  Additional
 ## Pulling Down the Code
 
 ### Dependencies
-Ok, now that the ground rules are out of the way, let's do this!  To pull down the code yourself, you're going to need a few things.
 
 * [Git](https://git-scm.com/download/win)
-* [Visual Studio](https://visualstudio.microsoft.com/downloads/)
-* [MDK Visual Studio Extension](https://github.com/malware-dev/MDK-SE/wiki/Getting-Started)
+* Visual Studio 2022 with the .NET desktop development workload, or a .NET 8+
+  SDK with the .NET Framework 4.8 targeting pack on Windows
+* A local Space Engineers game installation, or the dedicated-server binaries
+
+MDK2's analyzer, reference discovery, and packager are restored automatically.
+The old MDK Visual Studio extension and game-reference NuGet package are no
+longer required.
 
 ### Getting EasyCommands Set Up Locally
 
-Once you've got these dependencies installed, here's how you can import EasyCommands into Visual Studio.  Check out [this useful guide](https://opensource.com/article/19/7/create-pull-request-github) for information on standard practice for forking a repo and creating a pull request.
+After cloning and creating a branch from `master`, open `EasyCommands.sln` in
+Visual Studio. MDK2 can find a standard Steam game installation automatically.
+For a custom installation, configure both projects from the repository root:
 
-After you've forked, cloned, created your feature branch, and added remote, do the following to get set up in Visual Studio:
+```powershell
+./build/Set-GameReferences.ps1 -BinaryPath 'C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64'
+dotnet build EasyCommands.Tests/EasyCommands.Tests.csproj -c Release -p:Platform=x64
+dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj -c Release -p:Platform=x64 --no-build --no-restore
+```
 
-*  Open the existing EasyCommands/EasyCommands.sln file from Visual Studio
+Without a local game installation, run `./build/Get-GameReferences.ps1` once.
+It anonymously downloads the dedicated server and configures its DLLs for both
+projects. Ordinary builds do not download or update the server.
 
-*  MDK should ask you to repair the EasyCommands project.  This will bind your local SpaceEngineers installation with EasyCommands so that you can deploy your script locally. Go ahead and click "Repair"
+Release builds produce the minified script at
+`EasyCommands/bin/Release/MDK/EasyCommands/script.cs`. Debug builds skip packing.
+You can also run the tests from Visual Studio's Test Explorer.
 
-    ![Repair](https://imgur.com/KRSSs0y.png)
-
-    ![Upgrade Complete](https://imgur.com/L0DfSpP.png)
-
-    ![Valid Upgrade](https://imgur.com/INz7Xqe.png)
-
-*  Build the Solution.  This will build EasyCommands and EasyCommands.Tests
-
-    ![Build Solution](https://imgur.com/ouTAozx.png)
-
-*  Right click EasyCommands.Tests in the Solution Explorer and click "Run Tests".  This will make sure that all of the EasyCommands tests are passing.
-
-    ![Run Tests](https://imgur.com/C07aPpb.png)
-
-    ![Tests Passing](https://imgur.com/p6943wz.png)
-
-That's it! You should be ready to contribute to EasyCommands.
+GitHub Actions caches the server's binary directory and downloads it only on a
+cache miss. See the [build guide](https://github.com/MerlinofMines/EasyCommands/blob/master/build/README.md)
+for cache refresh instructions and branch/eviction behavior.
 
 ## Build on "master"
 
@@ -89,9 +89,8 @@ When I release a new version of EasyCommands I will merge all changes from maste
 * If your changes are visible to people using the script, add documentation for your changes/additions. 
 
 *  If you're changing block behavior, please manually test in Space Engineers.  To do this:
-    * [Install PBUnlimiter.dll from MDK](https://github.com/malware-dev/MDK-SE/tree/master/binaries)
-    * Change the MDK Script Options Minifier to "Strip Comments" or "None" in the EasyCommands project menu.
-    * Run MDK Deploy Script from EasyCommands project menu to deploy your modified script locally.
+    * Build in Release configuration to generate the MDK2-packed script.
+    * Copy `EasyCommands/bin/Release/MDK/EasyCommands/script.cs` into the programmable block editor.
     * Load up Space Engineers, put EasyCommands into a PB, and make sure the functionality works as you intend.
 
 *  Look for ways to condense the characters needed to implement your feature.

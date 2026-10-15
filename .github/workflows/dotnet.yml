@@ -1,24 +1,88 @@
-name: Run Tests
+name: Build and test EasyCommands
 
-on: [push, pull_request] 
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: easycommands-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: windows-2019
-
+    runs-on: windows-2022
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v7.0.1
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6.0.0
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Build EasyCommands
-      run: dotnet build ./EasyCommands/EasyCommands.csproj --configuration Release
-  
-    - name: Build EasyCommands.Tests
-      run: dotnet build ./EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release
-      
-    - name: Run EasyCommands.Tests Tests
-      run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj --verbosity normal
+      # Deliberately independent of commit SHA, date, and Steam's latest build.
+      # Bump the committed revision when intentionally refreshing game binaries.
+      - name: Restore game references
+        id: game-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: .build/game-references
+          key: se-references-windows-x64-${{ hashFiles('build/space-engineers-cache-version.txt', 'build/Get-GameReferences.ps1') }}
+
+      - name: Download dedicated-server references (cache miss only)
+        if: steps.game-cache.outputs.cache-hit != 'true'
+        run: ./build/Get-GameReferences.ps1
+
+      - name: Configure game references
+        run: |
+          ./build/Set-GameReferences.ps1 -BinaryPath .build/game-references
+          Get-Content .build/game-references/appmanifest_298740.acf
+
+      # Save before compilation: a source/test failure must not cause another download.
+      - name: Save game references
+        if: steps.game-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: .build/game-references
+          key: ${{ steps.game-cache.outputs.cache-primary-key }}
+
+      - name: Build and package EasyCommands
+        run: dotnet build EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release -p:Platform=x64
+
+      - name: Compile and size-check minified script
+        run: ./build/Test-PackedScript.ps1 -BinaryPath .build/game-references
+      - name: Run tests
+        run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release -p:Platform=x64 --no-build --no-restore --logger "trx;LogFileName=tests.trx" --results-directory .build/test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: test-results
+          path: .build/test-results/*.trx
+          if-no-files-found: ignore
+
+      - name: Upload packaged script
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: EasyCommands-script
+          path: EasyCommands/bin/Release/MDK/**/script.cs
+          if-no-files-found: error
+
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Build documentation (no deployment)
+        uses: actions/jekyll-build-pages@v1.0.13
+        with:
+          source: ./docs
+          destination: ./.build/docs-site

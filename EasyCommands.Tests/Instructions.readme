@@ -1,5 +1,7 @@
-﻿### Test Setup
+### Test Setup
 
-When setting this up in Visual Studio, you will need to ensure that you use NuGet to install all packages listed in the packages.config.
+The SDK project restores its test packages automatically. Both projects use
+MDK2 to reference the same locally installed game or dedicated-server DLLs.
 
-This is all required for the tests to function properly.
+See build/README.md for reference setup and build/test commands. No manually
+installed packages.config dependencies or MDK1 extension are required.

@@ -1,5 +1,4 @@
-﻿using IngameScript;
-using Malware.MDKUtilities;
+using IngameScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
         }
 
         public static Program CreateProgram() {
-            Program program = MDKFactory.CreateProgram<Program>();
+            Program program = ProgramFactory.CreateProgram<Program>();
             Program.PROGRAM = program;
             program.SetGlobalVariable(Program.NUMBER_FORMAT, Program.GetStaticVariable("#0.########"));
             return program;
