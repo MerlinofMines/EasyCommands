@@ -343,12 +343,12 @@ namespace IngameScript {
             AddBlockWords(Synonyms("program programmable"), Block.PROGRAM);
             AddBlockWords(Synonyms("timer"), Block.TIMER);
             AddBlockWords(Synonyms("projector"), Block.PROJECTOR);
-            AddBlockWords(Synonyms("merge"), Synonyms(), Block.MERGE);
+            AddBlockWords(Synonyms("merge"), Words(), Block.MERGE);
             AddBlockWords(Synonyms("connector"), Block.CONNECTOR);
             AddBlockWords(Synonyms("welder"), Block.WELDER);
             AddBlockWords(Synonyms("grinder"), Block.GRINDER);
             AddBlockWords(Synonyms("door hangar bay gate"), Block.DOOR);
-            AddBlockWords(Synonyms(), Synonyms(), Block.DISPLAY, PluralWords("display screen lcd"));
+            AddBlockWords(Words(), Words(), Block.DISPLAY, PluralWords("display screen lcd"));
             AddBlockWords(Synonyms("speaker alarm siren"), Block.SOUND);
             AddBlockWords(Synonyms("camera"), Block.CAMERA);
             AddBlockWords(Synonyms("sensor"), Block.SENSOR);
@@ -390,8 +390,8 @@ namespace IngameScript {
             AddBlockWords(Synonyms("heatvent"), Block.HEAT_VENT);
             AddBlockWords(Synonyms("searchlight"), Block.SEARCHLIGHT);
             AddBlockWords(Synonyms("turretcontroller"), Block.TURRET_CONTROLLER);
-            AddBlockWords(Synonyms(), Synonyms(), Block.GRID, PluralWords("grid"));
-            AddBlockWords(PluralWords("thread"), Synonyms(), Block.THREAD);
+            AddBlockWords(Words(), Words(), Block.GRID, PluralWords("grid"));
+            AddBlockWords(PluralWords("thread"), Words(), Block.THREAD);
 
             AddAliasWords(Synonyms("can"), "is able");
             AddAliasWords(Synonyms("cannot"), "is not able");
@@ -400,7 +400,7 @@ namespace IngameScript {
         // Keep item phrases intact; only parser synonyms are separated by spaces.
         String[] Words(params String[] words) => words;
 
-        String[] Synonyms(string words = "") => words.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        String[] Synonyms(string words) => words.Split(' ');
 
         String[] AllWords(params String[][] words) => words.Aggregate((a, b) => a.Concat(b).ToArray());
 

@@ -8,10 +8,10 @@ The game-reference configuration and project dependencies were not changed.
 | Version | Characters | Remaining under 100,000 |
 | --- | ---: | ---: |
 | Fresh baseline | 93,002 | 6,998 |
-| All four reductions | 92,233 | 7,767 |
+| All four reductions | 92,183 | 7,817 |
 
-The combined saving is **769 characters**, increasing available headroom by
-about **11%**. Counts use `File.ReadAllText(scriptPath).Length`, rather than file
+The combined saving is **819 characters**, increasing available headroom by
+about **12%**. Counts use `File.ReadAllText(scriptPath).Length`, rather than file
 bytes, matching the existing packed-script check.
 
 ## Changes and extension points
@@ -29,7 +29,7 @@ bytes, matching the existing packed-script check.
   Parser rule ordering, required/optional parameters, and ambiguity branching
   remain explicit in the rule table.
 
-Each change was also disabled in a temporary source copy while retaining the
+Before the minimal `Synonyms` simplification, each change was disabled in a temporary source copy while retaining the
 other three changes, then repackaged with the same settings:
 
 | Change disabled | Characters without it | Marginal saving from the change |
@@ -39,7 +39,7 @@ other three changes, then repackaged with the same settings:
 | Property aliases | 92,302 | 69 |
 | Selector factories | 92,274 | 41 |
 
-These marginal savings do not sum exactly to the combined saving because MDK
+These earlier marginal savings do not include the subsequent 50-character saving from simplifying `Synonyms`, and do not sum exactly because MDK
 assigns short identifiers across the whole script.
 
 ## Validation
@@ -57,7 +57,7 @@ assigns short identifiers across the whole script.
 - `git diff --check` passed.
 
 The final packaged artifact SHA-256 was
-`B2A0C52784EA29E6492C241C3204C321DA8BE3254792699329D015D05509F40B`.
+`B32CFC3E888489770321433A23E90F0D128C817F620207F8FA8EA2630E3E643B`.
 
 See [the build instructions](README.md) for normal Release packaging and the
 packed-script check. The generated measurement copies and test artifacts are
