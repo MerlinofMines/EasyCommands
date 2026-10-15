@@ -22,12 +22,10 @@ namespace IngameScript {
         public class SphericalGravityGeneratorBlockHandler : FunctionalBlockHandler<IMyGravityGeneratorSphere> {
             public SphericalGravityGeneratorBlockHandler() {
                 var rangeHandler = NumericHandler(b => b.Radius, (b, v) => b.Radius = v, 25);
-                AddPropertyHandler(Property.RANGE, rangeHandler);
-                AddPropertyHandler(Property.RADIUS, rangeHandler);
-                AddPropertyHandler(Property.LEVEL, rangeHandler);
+                AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS, Property.LEVEL);
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b,v) => b.GravityAcceleration = v, 0.25f);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
+                SetDefaultProperty(Property.STRENGTH, Return.NUMERIC);
             }
         }
 
@@ -42,11 +40,10 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => b.FieldSize.X, (b, v) => b.FieldSize = Vector(v, b.FieldSize.Y, b.FieldSize.Z)), Direction.LEFT, Direction.RIGHT),
                     TypeHandler(NumericHandler(b => b.FieldSize.Z, (b, v) => b.FieldSize = Vector(b.FieldSize.X, b.FieldSize.Y, v)), Direction.FORWARD, Direction.BACKWARD)
                     );
-                AddPropertyHandler(Property.RANGE, rangeHandler);
-                AddPropertyHandler(Property.LEVEL, rangeHandler);
+                AddPropertyAliases(rangeHandler, Property.RANGE, Property.LEVEL);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.RANGE;
+                SetDefaultProperty(Property.STRENGTH, Return.NUMERIC);
+                SetDefaultProperty(Property.RANGE, Return.VECTOR);
             }
         }
     }

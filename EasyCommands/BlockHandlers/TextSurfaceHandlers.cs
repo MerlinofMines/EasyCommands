@@ -46,12 +46,12 @@ namespace IngameScript {
                     TypeHandler(fontSizeHandler, Return.NUMERIC),
                     TypeHandler(fontColorHandler, Return.COLOR));
 
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
-                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
-                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
-                defaultPropertiesByPrimitive[Return.LIST] = Property.MEDIA_LIST;
-                defaultPropertiesByDirection[Direction.UP] = Property.TEXT;
+                SetDefaultProperty(Property.ENABLE, Return.BOOLEAN);
+                SetDefaultProperty(Property.TEXT, Return.STRING);
+                SetDefaultProperty(Property.COLOR, Return.COLOR);
+                SetDefaultProperty(Property.LEVEL, Return.NUMERIC);
+                SetDefaultProperty(Property.MEDIA_LIST, Return.LIST);
+                SetDefaultProperty(Property.TEXT, Direction.UP);
             }
 
             void SetImages(IMyTextSurface block, KeyedList images) {

@@ -24,10 +24,9 @@ namespace IngameScript {
                 AddVectorHandler(Property.TARGET, b => b.TargetCoords, (b, v) => b.SetTargetCoords($"GPS:Target:{VectorToString(v)}:"));
                 AddBooleanHandler(Property.LOCKED, b => b.IsPermanent, (b,v) => b.IsPermanent = v);
                 var rangeHandler = NumericHandler(b => b.Range, (b, v) => b.Range = v, 1000);
-                AddPropertyHandler(Property.RANGE, rangeHandler);
-                AddPropertyHandler(Property.RADIUS, rangeHandler);
+                AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.CONNECTED, b => b.Status == MyLaserAntennaStatus.Connected, (b, v) => { if (v) b.Connect(); });
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                SetDefaultProperty(Property.TARGET, Return.VECTOR);
             }
         }
 
@@ -37,12 +36,11 @@ namespace IngameScript {
                 AddBooleanHandler(Property.CONNECTED, b => b.EnableBroadcasting, (b, v) => b.EnableBroadcasting = v);
                 AddBooleanHandler(Property.SUPPLY, b => b.EnableBroadcasting, (b, v) => b.EnableBroadcasting = v);
                 var radiusHandler = NumericHandler(b => b.Radius, (b, v) => b.Radius = v, 1000);
-                AddPropertyHandler(Property.RANGE, radiusHandler);
-                AddPropertyHandler(Property.RADIUS, radiusHandler);
+                AddPropertyAliases(radiusHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.SHOW, b => b.ShowShipName, (b, v) => b.ShowShipName = v);
-                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                SetDefaultProperty(Property.TEXT, Return.STRING);
+                SetDefaultProperty(Property.CONNECTED, Return.BOOLEAN);
+                SetDefaultProperty(Property.RANGE, Direction.UP);
             }
         }
     }

@@ -22,8 +22,7 @@ namespace IngameScript {
         public class ParachuteBlockHandler : FunctionalBlockHandler<IMyParachute> {
             public ParachuteBlockHandler() {
                 var openHandler = BooleanHandler(b => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
-                AddPropertyHandler(Property.OPEN, openHandler);
-                AddPropertyHandler(Property.TRIGGER, openHandler);
+                AddPropertyAliases(openHandler, Property.OPEN, Property.TRIGGER);
                 AddPropertyHandler(Property.AUTO, TerminalPropertyHandler("AutoDeploy", true));
                 AddPropertyHandler(Property.RANGE, TerminalPropertyHandler("AutoDeployHeight", 500));
                 AddNumericHandler(Property.RATIO, b => 1 - b.OpenRatio);
@@ -35,8 +34,8 @@ namespace IngameScript {
                     Vector3D? closestPoint;
                     return (float)(b.TryGetClosestPoint(out closestPoint) ? (closestPoint.Value - b.GetPosition()).Length() : -1);
                 });
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.RATIO);
+                SetDefaultProperty(Property.LEVEL, Return.NUMERIC);
+                SetDefaultProperty(Property.RATIO, Direction.UP);
             }
         }
     }

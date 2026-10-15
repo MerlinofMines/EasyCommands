@@ -23,8 +23,7 @@ namespace IngameScript {
             public ConnectorBlockHandler() {
                 var connectedHandler = BooleanHandler(b => b.Status == MyShipConnectorStatus.Connected, (b, v) => { if (v) b.Connect(); else b.Disconnect(); });
 
-                AddPropertyHandler(Property.LOCKED, connectedHandler);
-                AddPropertyHandler(Property.CONNECTED, connectedHandler);
+                AddPropertyAliases(connectedHandler, Property.LOCKED, Property.CONNECTED);
                 AddNumericHandler(Property.STRENGTH, b => b.PullStrength, (b, v) => b.PullStrength = v, 0.01f);
 
                 var readyHandler = BooleanHandler(b => b.Status == MyShipConnectorStatus.Connectable);
@@ -32,7 +31,7 @@ namespace IngameScript {
                 AddPropertyHandler(NewList(Property.ABLE, Property.LOCKED), readyHandler);
                 AddPropertyHandler(NewList(Property.ABLE, Property.CONNECTED), readyHandler);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
+                SetDefaultProperty(Property.STRENGTH, Return.NUMERIC);
             }
         }
 

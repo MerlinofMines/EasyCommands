@@ -92,8 +92,7 @@ namespace IngameScript {
                 AddPropertyHandler(NewList(Property.DAMAGE, Property.RANGE), maxIntegrityHandler);
 
                 var isBuiltHandler = BooleanHandler(b => BuildRatio(GetSlimBlock(b)) == 1);
-                AddPropertyHandler(Property.BUILD, isBuiltHandler);
-                AddPropertyHandler(Property.COMPLETE, isBuiltHandler);
+                AddPropertyAliases(isBuiltHandler, Property.BUILD, Property.COMPLETE);
                 AddPropertyHandler(NewList(Property.BUILD, Property.COMPLETE), isBuiltHandler);
                 AddPropertyHandler(NewList(Property.BUILD, Property.LEVEL), NumericHandler(b => BuildIntegrity(GetSlimBlock(b))));
                 AddPropertyHandler(NewList(Property.BUILD, Property.RATIO), NumericHandler(b => BuildRatio(GetSlimBlock(b))));
@@ -105,8 +104,8 @@ namespace IngameScript {
                 AddPropertyHandler(NewList(Property.DAMAGE, Property.LEVEL), damageHandler);
                 AddPropertyHandler(NewList(Property.DAMAGE, Property.RATIO), NumericHandler(b => 1 - BuildRatio(GetSlimBlock(b))));
 
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
-                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
+                SetDefaultProperty(Property.POSITION, Return.VECTOR);
+                SetDefaultProperty(Property.ENABLE, Return.BOOLEAN);
             }
 
             IMySlimBlock GetSlimBlock(T b) => b.CubeGrid.GetCubeBlock(b.Position);
@@ -152,8 +151,7 @@ namespace IngameScript {
         public class FunctionalBlockHandler<T> : TerminalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public FunctionalBlockHandler() {
                 var enableHandler = BooleanHandler(b => b.Enabled, (b, v) => b.Enabled = v);
-                AddPropertyHandler(Property.ENABLE, enableHandler);
-                AddPropertyHandler(Property.POWER, enableHandler);
+                AddPropertyAliases(enableHandler, Property.ENABLE, Property.POWER);
             }
         }
 

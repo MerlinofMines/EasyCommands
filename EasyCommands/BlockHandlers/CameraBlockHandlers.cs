@@ -26,8 +26,8 @@ namespace IngameScript {
                 AddPropertyHandler(NewList(Property.TARGET, Property.VELOCITY), VectorHandler(b => GetVector(GetCustomProperty(b, "Velocity")) ?? Vector3D.Zero));
                 //TODO: Use setter to scan specific vector?
                 AddVectorHandler(Property.TARGET, GetTarget);
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
+                SetDefaultProperty(Property.TARGET, Return.VECTOR);
+                SetDefaultProperty(Property.RANGE, Direction.UP);
             }
 
             public Vector3D GetTarget(IMyCameraBlock b) {

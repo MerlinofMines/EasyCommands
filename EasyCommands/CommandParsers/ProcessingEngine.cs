@@ -27,13 +27,13 @@ namespace IngameScript {
 
             //SelectorVariableSelectorProcessor
             ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<AmbiguousStringCommandParameter>(), optionalRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType?.value, group), new AmbiguousStringVariable(selector.value)))),
+                (p, selector, blockType, group) => SelectorParameter(new AmbiguousStringVariable(selector.value), blockType, group)),
             ThreeValueRule(Type<VariableSelectorCommandParameter>, requiredRight<VariableCommandParameter>(), optionalRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, selector, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType?.value, group), selector.value))),
+                (p, selector, blockType, group) => SelectorParameter(selector.value, blockType, group)),
 
             //SelectorProcessor
             TwoValueRule(Type<AmbiguousStringCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                (p, blockType, group) => SelectorParameter(SelectorName(p), blockType, group)),
 
             //AmbiguousStringProcessor
             new BranchingProcessor<AmbiguousStringCommandParameter>(
@@ -45,7 +45,7 @@ namespace IngameScript {
                         (p, g) => new AmbiguousSelectorCommandParameter(
                                     new BlockSelector(
                                         ResolveSelectorType(findLast<SelectorTypeCommandParameter>(p.subTokens).value, g ?? findLast<GroupCommandParameter>(p.subTokens)),
-                                        p.isImplicit ? new AmbiguousStringVariable(p.value) : GetStaticVariable(p.value)))),
+                                        SelectorName(p)))),
                 NoValueRule(Type<AmbiguousStringCommandParameter>,
                     name => PROGRAM.functions.ContainsKey(name.value),
                     name => new FunctionDefinitionCommandParameter(() => name.value)),
@@ -74,11 +74,11 @@ namespace IngameScript {
 
             //VariableSelectorProcessor
             TwoValueRule(Type<VariableCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.value))),
+                (p, blockType, group) => SelectorParameter(p.value, blockType, group)),
 
             //ListSelectorProcessor
             TwoValueRule(Type<ListIndexCommandParameter>, requiredRight<SelectorTypeCommandParameter>(), optionalRight<GroupCommandParameter>(),
-                (p, blockType, group) => new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(blockType.value, group), p.value))),
+                (p, blockType, group) => SelectorParameter(p.value, blockType, group)),
 
             //ImplicitAllSelectorProcessor
             OneValueRule(Type<SelectorTypeCommandParameter>, optionalRight<GroupCommandParameter>(),
@@ -398,6 +398,12 @@ namespace IngameScript {
                     return new CommandReferenceParameter(new ConditionalCommand(condition.value, condition.swapCommands ? notMetCommand : metFetcher.value, condition.swapCommands ? metFetcher.value : notMetCommand, condition.alwaysEvaluate));
                 })
         );
+
+        static IVariable SelectorName(AmbiguousStringCommandParameter parameter) =>
+            parameter.isImplicit ? new AmbiguousStringVariable(parameter.value) : GetStaticVariable(parameter.value);
+
+        static SelectorCommandParameter SelectorParameter(IVariable name, SelectorTypeCommandParameter type, GroupCommandParameter group) =>
+            new SelectorCommandParameter(new BlockSelector(ResolveSelectorType(type?.value, group), name));
 
         /// <summary>
         /// This method inline processes the given list of command parameters.

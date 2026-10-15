@@ -23,8 +23,7 @@ namespace IngameScript {
             public SoundBlockHandler() {
                 AddNumericHandler(Property.VOLUME, b => b.Volume, (b, v) => b.Volume = v, 0.1f);
                 var rangeHandler = NumericHandler(b => b.Range, (b, v) => b.Range = v, 50);
-                AddPropertyHandler(Property.RANGE, rangeHandler);
-                AddPropertyHandler(Property.RADIUS, rangeHandler);
+                AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS);
                 AddNumericHandler(Property.LEVEL, b => b.LoopPeriod, (b, v) => b.LoopPeriod = v, 10);
                 AddPropertyHandler(Property.MEDIA, ReturnTypedHandler(Return.STRING,
                     TypeHandler(BooleanHandler((b) => b.DetailedInfo.Contains("Loop timer"), (b, v) => { if (v) b.Play(); else b.Stop(); }), Return.BOOLEAN),
@@ -35,8 +34,8 @@ namespace IngameScript {
                     b.GetSounds(availableSounds);
                     return NewKeyedList(availableSounds.Select(GetStaticVariable));
                 });
-                defaultPropertiesByPrimitive[Return.STRING] = Property.MEDIA;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;
+                SetDefaultProperty(Property.MEDIA, Return.STRING);
+                SetDefaultProperty(Property.VOLUME, Return.NUMERIC);
             }
         }
     }

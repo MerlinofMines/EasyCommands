@@ -22,8 +22,7 @@ namespace IngameScript {
         public class GyroscopeBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyGyro {
             public GyroscopeBlockHandler() {
                 var powerHandler = NumericHandler(b => b.GyroPower, (b, v) => b.GyroPower = v, 0.1f);
-                AddPropertyHandler(Property.RANGE, powerHandler);
-                AddPropertyHandler(Property.POWER, powerHandler);
+                AddPropertyAliases(powerHandler, Property.RANGE, Property.POWER);
 
                 AddBooleanHandler(Property.AUTO, b => !b.GyroOverride, (b, v) => b.GyroOverride = !v);
 
@@ -43,12 +42,10 @@ namespace IngameScript {
                         TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * v, 5), Direction.CLOCKWISE),
                         TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * -v, 5), Direction.COUNTERCLOCKWISE));
 
-                AddPropertyHandler(Property.OVERRIDE, overrideHandler);
-                AddPropertyHandler(Property.ROLL_INPUT, overrideHandler);
-                AddPropertyHandler(Property.INPUT, overrideHandler);
+                AddPropertyAliases(overrideHandler, Property.OVERRIDE, Property.ROLL_INPUT, Property.INPUT);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.POWER;
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.OVERRIDE;
+                SetDefaultProperty(Property.POWER, Return.NUMERIC);
+                SetDefaultProperty(Property.OVERRIDE, Return.VECTOR);
             }
         }
     }

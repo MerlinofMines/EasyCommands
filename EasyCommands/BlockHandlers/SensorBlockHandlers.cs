@@ -32,7 +32,7 @@ namespace IngameScript {
                     return lastDetectedEntity.IsEmpty() ? Vector3.Zero : lastDetectedEntity.Velocity;
                 }));
 
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                SetDefaultProperty(Property.TARGET, Return.VECTOR);
             }
         }
     }

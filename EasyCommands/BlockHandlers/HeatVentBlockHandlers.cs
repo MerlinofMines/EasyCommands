@@ -25,15 +25,14 @@ namespace IngameScript {
                     TypeHandler(TerminalPropertyHandler("ColorMax", Color.Black), Direction.UP),
                     TypeHandler(TerminalPropertyHandler("ColorMin", Color.Black), Direction.DOWN));
                 var radiusHandler = TerminalPropertyHandler("Radius", 1);
-                AddPropertyHandler(Property.RANGE, radiusHandler);
-                AddPropertyHandler(Property.RADIUS, radiusHandler);
+                AddPropertyAliases(radiusHandler, Property.RANGE, Property.RADIUS);
                 AddPropertyHandler(Property.VOLUME, TerminalPropertyHandler("Intensity", 1));
                 AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.3));
                 AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Offset", 0.5));
                 AddPropertyHandler(Property.RATIO, TerminalPropertyHandler("PowerDependency", 10));
-                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByDirection[Direction.UP] = Property.COLOR;
+                SetDefaultProperty(Property.COLOR, Return.COLOR);
+                SetDefaultProperty(Property.RATIO, Return.NUMERIC);
+                SetDefaultProperty(Property.COLOR, Direction.UP);
             }
         }
     }
