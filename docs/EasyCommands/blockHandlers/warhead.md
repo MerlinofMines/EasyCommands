@@ -1,4 +1,4 @@
-﻿# Warhead Block Handler
+# Warhead Block Handler
 This block handler gives you control over warheads, including arming/disarming, set the countdown, and of course, detonating.
 
 * Block Type Keywords: ```warhead```
@@ -35,20 +35,6 @@ if the "Trap Warhead" is triggered
 
 #Boom
 detonate the "Trap Warhead"
-```
-
-## "Delay" Property
-* Primitive Type: Numeric
-* Keywords: ```delay, delays, limit, limits```
-
-This property will get or set the Detonation Time for the warhead, in seconds.
-
-When retrieving, this property returns the current countdown (whether active or not).
-
-```
-Print "Detonation in " + the "Trap Warhead" delay + " seconds"
-
-set the "Trap Warhead" delay to 10 seconds
 ```
 
 ## "Delay" Property

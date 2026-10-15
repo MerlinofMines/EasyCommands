@@ -1,4 +1,4 @@
-﻿# Ship Follow Script
+# Ship Follow Script
 
 With these scripts you can always keep your support ship close at hand!  
 
@@ -6,7 +6,7 @@ Just load the Sender script onto your ship and load the Listener Script onto the
 
 ![Ship Following](https://i.imgur.com/ZzSsCxN.gif)
 
-Don't forget to put antenna's on both ships!  You can have more than 1 ship follow you by putting the Listener script on multiple ships.
+Don't forget to put antennas on both ships!  You can have more than 1 ship follow you by putting the Listener script on multiple ships.
 
 ## Listener Script
 ```

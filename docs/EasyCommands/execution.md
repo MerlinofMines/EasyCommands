@@ -2,11 +2,11 @@
 
 Just like all Programmable Block programs, EasyCommands runs on a "game loop".  Once every execution interval, or "tick", your script gets executed.  By default your script will execute 60 times / second.
 
-An EasyCommands script will run until completion, at which point the program terminates unless it is executed again.  It is also easy to create programs that area always running to manage things like Airlocks, systems automation, you name it.
+An EasyCommands script will run until completion, at which point the program terminates unless it is executed again.  It is also easy to create programs that are always running to manage things like Airlocks, systems automation, you name it.
 
-At it's core, EasyCommands is just keeping track of a list of [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands") to execute.  These Commands can also be broken up into [Functions](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions")
+At its core, EasyCommands is just keeping track of a list of [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands") to execute.  These Commands can also be broken up into [Functions](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions")
 
-Each tick, EasyCommands attempts to run as many commands as possible, in order, until it encounters a command that blocks execution (such as waiting for a specific amount of time, or for a specific [Condition](https://spaceengineers.merlinofmines.com/EasyCommands/conditions "Conditions") to be met.
+Each tick, EasyCommands attempts to run as many commands as possible, in order, until it encounters a command that blocks execution (such as waiting for a specific amount of time, or for a specific [Condition](https://spaceengineers.merlinofmines.com/EasyCommands/commands#conditional-commands "Conditional Commands") to be met).
 
 So for example, the following script would execute all commands on the same tick:
 

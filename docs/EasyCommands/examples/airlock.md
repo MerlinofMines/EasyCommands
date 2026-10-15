@@ -1,4 +1,4 @@
-﻿## Airlocks
+## Airlocks
 
 Automating Airlocks is a great use case for EasyCommands.  There's lots of ways to build an airlock, so here are a couple of examples.
 
@@ -29,7 +29,7 @@ open the "Airlock Exterior Door"
 ```
 
 ## Sensor Based Airlock Manager
-The following script can control multiple airlocks simultaneously, with each airlock consistening of 2 doors, an airlock vent, and a sensor which detects someone at the exterior door (presumably wanting to exit or enter).
+The following script can control multiple airlocks simultaneously, with each airlock consisting of 2 doors, an airlock vent, and a sensor which detects someone at the exterior door (presumably wanting to exit or enter).
 
 If the sensor is triggered it de-pressurizes the airlock and opens the exterior door.  Otherwise it pressurizes the airlock and keeps the interior door open.
 
@@ -57,7 +57,7 @@ else
   open the $exteriorDoorName door
 
 :comeInAirlock exteriorDoorName innerDoorName ventName
-if exteriorDoorName door is open
+if $exteriorDoorName door is open
   close the $exteriorDoorName door
 else if $ventName vent ratio < 0.99
   pressurize the $ventName vent

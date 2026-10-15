@@ -1,4 +1,4 @@
-﻿# Turret Block Handler
+# Custom Turret Controller Block Handler
 
 This Block Handler handles Custom Turret Controllers.  
 
@@ -50,7 +50,7 @@ Gets/Sets whether the turret has AI enabled, meaning whether the turret will aut
 if "My TurretController" is on auto
   Print "Sentry Active!"
 
-#Disable Target Locking
+#Disable AI
 turn off "My TurretController" auto
 ```
 
@@ -112,7 +112,7 @@ set "My TurretController" angle to 5
 * Primitive Type: Bool
 * Keywords: ```shoot, shooting, fire, firing, trigger, triggered```
 
-Gets/Sets whether the turret is shooting.  If any gun on the custom turret is shooting, this property will return true.  When set, this property tell the all guns associated with the custom turret controller to continuously fire (vs shooting once).
+Gets/Sets whether the turret is shooting.  If any gun on the custom turret is shooting, this property will return true.  When set, this property tells all guns associated with the custom turret controller to start or stop firing continuously.
 
 
 ```

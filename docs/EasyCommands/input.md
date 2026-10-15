@@ -1,4 +1,4 @@
-﻿# Handling User Input
+# Handling User Input
 
 One of the cool things you can do with EasyCommands is control block behavior based on user input coming from the mouse or keyboard.
 
@@ -6,11 +6,11 @@ This allows you to build things like cranes, rotating user controlled turrets/ca
 
 User Input can be fetched from any Cockpit Block.  When that cockpit is occupied, input can be retrieved based on the button(s) the user is pressing.
 
-There are two types of input supported by EasyCommand: Movement and Rotation.  Each support 3 directions of freedom.  Mouse input is also considered rotational input.
+There are two types of input supported by EasyCommands: Movement and Rotation.  Each supports 3 degrees of freedom.  Mouse input is also considered rotational input.
 
 The values returned by mouse and keyboard input are dependent on the user's sensitivity settings (higher sensitivity means higher values).  With default sensitivity settings, when getting user input, the values will be between -1 (max negative input) and 1 (max positive input).  When pressing on the keyboard with default user sensitivity settings, the value will be -1, 0, or 1.
 
-Finer grained control can retrieved when using a mouse or joystick.
+Finer grained control can be retrieved when using a mouse or joystick.
 
 Check out the [Crane-Like Drill Arm With Mouse and Keyboard](https://spaceengineers.merlinofmines.com/EasyCommands/examples/craneDrill "Crane-Like Drill Arm With Mouse and Keyboard") example to see handling user input in action.
 
@@ -22,8 +22,8 @@ Keywords: ```input, user, pilot```
 
 ### Supported Directions
 Assuming default controls:
-* Up - W key
-* Down - S key
+* Forward - W key
+* Backward - S key
 * Left - A key
 * Right - D key
 * Up - Space key

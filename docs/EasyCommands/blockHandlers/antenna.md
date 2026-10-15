@@ -93,7 +93,7 @@ Print "You know I'm here, but you don't know my name!"
 Note that this overrides the "show" property of Terminal Block.  So if you want to hide an antenna from the terminal menu, specify "terminal" as the block type:
 
 ```
-#Hides "Base Antenna" from tne terminal menu
+#Hides "Base Antenna" from the terminal menu
 hide the "Base Antenna" terminal
 
 #Hides the ship name from Hud Text

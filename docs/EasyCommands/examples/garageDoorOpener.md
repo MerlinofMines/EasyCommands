@@ -13,13 +13,13 @@ This script is loaded onto your vehicle.  It just contains a few functions to ca
 wait 1 tick
 
 :toggleDoor
-send "goto toggleDoor" to "garageDoors"
+send "goto toggleDoor1" to "garageDoors"
 
 :openDoor
-send "goto opendoor" to "garageDoors"
+send "goto openDoor1" to "garageDoors"
 
 :closeDoor
-send "goto closedoor" to "garageDoors"
+send "goto closeDoor1" to "garageDoors"
 ```
 
 ## Garage Door Controller Script

@@ -8,7 +8,7 @@ If EasyCommands cannot parse the script you provided, it will tell you which lin
 
 ## Automatic Re-parsing
 
-Every time EasyCommands executes, it will inspect the CustomData to see if it has changed since the last execution.  If the CustomData has changed, EasyCommands will halt all execution, resets it's state, and re-parse your script.  So if you decide to make a change to your script, you can simply update the Custom Data and EasyCommands will automatically update the script to reflect your changes.  Note that this means EasyCommands will reset back to the default [Function](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions").
+Every time EasyCommands executes, it will inspect the CustomData to see if it has changed since the last execution.  If the CustomData has changed, EasyCommands will halt all execution, reset its state, and re-parse your script.  So if you decide to make a change to your script, you can simply update the Custom Data and EasyCommands will automatically update the script to reflect your changes.  Note that this means EasyCommands will reset back to the default [Function](https://spaceengineers.merlinofmines.com/EasyCommands/functions "Functions").
 
 ## Progressive Parsing
 
@@ -32,7 +32,7 @@ print "a: " +a
 #a: 0
 ```
 
-For these cases, parantheses can help clarify the intended ordering:
+For these cases, parentheses can help clarify the intended ordering:
 ```
 set a to (2 - 3) - 1
 Print "a: " + a

@@ -1,4 +1,4 @@
-﻿# Threads
+# Threads
 
 Easy Commands has a basic concept of "threads", which allow you to run multiple scripts simultaneously.
 
@@ -43,9 +43,9 @@ until i > 120
 #### Requested Command Threads
 When you invoke your EasyCommands script with an argument, either using a button, or "Run with Argument", or cross-grid communication, this creates a new Queued Thread and puts it at the beginning of the Thread Queue.  This effectively pauses the main thread and starts executing the requested command to completion instead.
 
-Note that invoking your EasyCommands script in this way does not terminate the main thread, it just pauses it.  So don't expect the main thread to stop running just because you tried to interrupt it.  If this is the behavior you desire, have your main function sit idle (```wait until false```) or manage your script's "mode" using a global [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/variables "Variables").
+Note that invoking your EasyCommands script in this way does not terminate the main thread, it just pauses it.  So don't expect the main thread to stop running just because you tried to interrupt it.  If this is the behavior you desire, have your main function sit idle (```wait until false```) or manage your script's "mode" using a global [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables").
 
-See [Invoking Your Script](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/invoking "Invoking Your Script") for more information on invoking your script.
+See [Invoking Your Script](https://spaceengineers.merlinofmines.com/EasyCommands/invoking "Invoking Your Script") for more information on invoking your script.
 
 ### Asynchronous Threads
 
@@ -165,7 +165,7 @@ Special Keywords:
 ```child``` - all async threads that were created by the currently running thread.  Does not include any async threads spawned by children of this thread.
 
 
-### Getting and Set Thread Names
+### Getting and Setting Thread Names
 You can get/set the name of the current running thread using the following commands.  
 
 ```
@@ -185,8 +185,8 @@ print the list of child thread names
 
 You can also rename other threads:
 ```
-set asyncThread to my async thread names
-for each asyncThread in my asyncThreads
+set asyncThreads to the list of async thread names
+for each asyncThread in asyncThreads
   set asyncThread thread name to "Async Thread"
 ```
 

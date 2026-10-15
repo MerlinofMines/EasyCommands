@@ -7,10 +7,10 @@ Block Handlers consist of two concepts: A Block Type, and Block Properties.
 There are block handlers for almost all block types in the game, giving you the ability to read from and control just about everything you can think of.  It's also possible to interact with blocks that don't have explicit BlockType keywords (see Universal Block Properties below).
 
 ### Block Types
-Block Types define a mapping between specific keywords and a specific type of block to look for.  Block Types enable you to create [Selector's](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") based on specific block types, which also might have a specific name or be part of a specific group.  See Selectors for more information on accessing specific blocks withing a grid.
+Block Types define a mapping between specific keywords and a specific type of block to look for.  Block Types enable you to create [Selectors](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") based on specific block types, which also might have a specific name or be part of a specific group.  See Selectors for more information on accessing specific blocks within a grid.
 
 ### Block Properties
-Block Properties allow you to interact with properties of a given set of blocks, based on the [Selector's](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") block type.  Many blocks share the same properties, but the behavior is different for that block type.  For example, the "Range" property on a Gatling Turret will set the Gatling Turret's firing range, whereas "Range" on an antenna will set it's broadcasting distance.
+Block Properties allow you to interact with properties of a given set of blocks, based on the [Selector's](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") block type.  Many blocks share the same properties, but the behavior is different for that block type.  For example, the "Range" property on a Gatling Turret will set the Gatling Turret's firing range, whereas "Range" on an antenna will set its broadcasting distance.
 
 ## Getting and Setting Block Properties
 
@@ -31,6 +31,7 @@ set the "Base Antenna" range to 2000
 increase the "Base Antenna" range by 1000
 
 #Decrease a property value
+decrease the "Base Antenna" range by 1000
 ```
 
 You can also specify the property words in front of the selector, such as:
@@ -59,13 +60,13 @@ Print "Target Velocity: " + the velocity of the "Test Turret" target
 ```
 
 ### Read-only Properties
-Not all properties can be updated.  These properties will be labeled "Read-only" and can only be retrieved.  Examples include be "Position", "Direction", "Properties", etc.
+Not all properties can be updated.  These properties will be labeled "Read-only" and can only be retrieved.  Examples include "Position", "Direction", "Properties", etc.
 
 ## Moving Properties
 
 In addition to reading, updating and incrementing properties, you can also move some properties.  This is useful for things like extending pistons, rotating rotors, etc where you want to move a property in a direction but don't have a specific target value.
 
-Moving a property requires a direction to supplied, and typically has the form ```action selector property direction```.  If property is omitted the default direction based property is used (see Default Properties below).
+Moving a property requires a direction to be supplied, and typically has the form ```action selector property direction```.  If property is omitted the default direction based property is used (see Default Properties below).
 
 ```
 #Extends the piston's height

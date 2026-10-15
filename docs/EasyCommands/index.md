@@ -6,7 +6,7 @@ EasyCommands makes it easy to write scripts to control your creations without re
 
 EasyCommands is an interpreter, baked into a Programmable Block, which allows you to write human readable scripts in the CustomData.  The script interprets the Custom Data as the actual program to execute.
 
-Let's imagine you have a group of lights called "Outside Lights", and you want a to turn them on, wait 10 seconds, and turn them off. Here's how you would write that in EasyCommands:
+Let's imagine you have a group of lights called "Outside Lights", and you want to turn them on, wait 10 seconds, and turn them off. Here's how you would write that in EasyCommands:
 
 ```
 turn on the "Outside Lights"

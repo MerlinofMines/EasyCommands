@@ -1,6 +1,6 @@
-﻿# Assembler Block Handler
-This block handler controls Assemblers.  With this Block Handler you to control whether a given assembler is creating, destroying, in cooperative mode.
-Most importantly, this Block Handler allows you create and destroy items in your script.
+# Assembler Block Handler
+This block handler controls Assemblers. It lets you select assembly, disassembly, or cooperative mode.
+Most importantly, this Block Handler allows you to create and destroy items in your script.
 
 For more information on what items you can create or destroy, see [Items & Blueprints](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints")
 
@@ -47,7 +47,7 @@ power off "My Assembler"
 * Keywords: ```supply, supplying, generate, generating, assemble, assembling```
 * Inverse Keywords: ```consume, consuming, disassemble, disassembling```
 
-Not to be confused with Create/Destroy properties, this property sets whether the assembler is in Assembling or Dissassembling mode.
+Not to be confused with Create/Destroy properties, this property sets whether the assembler is in Assembling or Disassembling mode.
 To actually create or destroy items, use the Create & Destroy properties.
 
 ```
@@ -61,7 +61,7 @@ tell the "Base Assembler" to assemble
 * Inverse Keywords: ```clear, wipe, erase```
 
 Returns false if there are any items in the queue.  Clears the queue if updating with a false boolean value.
-Even though there are no inverse complete keywords, you can clear the queue easily using "stop", "false" since the default boolean property is Complete.
+Set Complete to false to clear the queue. Setting it to true does nothing. The inverse keywords "clear", "wipe", and "erase" also clear the queue.
 
 ```
 #Check if the assembler is finished
@@ -88,7 +88,7 @@ if the "Base Assembler" is building
   Print "Still creating stuff!"
 
 #All of the below will clear the assembler queue
-tell the "Base Assembler" not to stop building
+tell the "Base Assembler" to stop building
 
 #Does nothing
 tell the "Base Assembler" to build
@@ -128,7 +128,7 @@ If the given selector has more than 1 assembler, the requested items are sent to
 
 When retrieving the property value, the result is a boolean representing whether the assembler is creating the given item(s).  If any of the requested items are being built, it will return true.
 
-So if you are creating steel plate and interior plate and ask for "components" it'll tell you the total amount of steel plate + interior plate, not separated out individually.
+The check uses the total queued amount across all matching blueprints and requires Assembly mode. It returns true when that total meets the requested amount (1 by default). Use the Amount property to retrieve the numeric total.
 
 ```
 #Check if the assembler is creating steel plate
@@ -164,7 +164,7 @@ If the given selector has more than 1 assembler, the requested items are sent to
 
 When retrieving the property value, the result is a boolean representing whether the assembler is destroying the given item(s).  If any of the requested items are being destroyed, it will return true.
 
-So if you are destroying steel plate and interior plate and ask for "components" it'll tell you the total amount of steel plate + interior plate being destroyed, not separated out individually.
+The check uses the total queued amount across all matching blueprints and requires Disassembly mode. It returns true when that total meets the requested amount (1 by default). Use the Amount property to retrieve the numeric total.
 
 ```
 #Check if the assembler is destroying steel plate
@@ -195,9 +195,9 @@ tell "My Assembler" to destroy 10 "steel plate, interior plate"
 
 This property is similar to create/destroy, but the read value is a numeric.  This allows you to get the amount of item(s) being produced.
 
-Note that this property *does not* look for the amount of items in the Assembler's Inventory.  It is the amount of items in the Assembler's Production Queue.  To get the amount of item's in the Assembler's inventory, you will need to use the [Inventory Handler](https://spaceengineers.merlinofmines.com/EasyCommands/inventory "Inventory Item Handler")
+Note that this property *does not* look for the amount of items in the Assembler's Inventory.  It is the amount of items in the Assembler's Production Queue.  To get the amount of item's in the Assembler's inventory, you will need to use the [Inventory Handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/inventory "Inventory Item Handler")
 
-Also, this property does not automatically switch the Assembler mode.  
+This property adds the requested amount to the queue; it does not replace an existing queued amount or automatically switch the Assembler mode.
 
 ```
 #Check if the assembler is creating/destroying at least 10 steel plate
@@ -211,7 +211,7 @@ set "My Assembler" "steel plate" amount to 1
 set "My Assembler" "steel plate" amount to 10
 
 #Create/Destroy 1 steel plate and 1 interior plate
-set "My Assembler" "steel plate, interior plate" amount to 10
+set "My Assembler" "steel plate, interior plate" amount to 1
 
 #Create/Destroy 10 steel plate and 10 interior plate
 set "My Assembler" "steel plate, interior plate" amount to 10
@@ -227,7 +227,7 @@ Gets a list of BlueprintIds currently being produced by the given assembler.  Th
 The returned list will be a list of the BlueprintIds for all items in the assembler production queue, with duplicates removed.
 
 ```
-set myProducingTypes to to "My Assembler" types
+set myProducingTypes to "My Assembler" types
 
 print "Producing Types:\n" + myProducingTypes joined "\n"
 ```

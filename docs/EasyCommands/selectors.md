@@ -2,9 +2,9 @@
 
 Selectors are used to specify when you want to retrieve a value from, or act on, a block or group of blocks.  A "block" represents anything you can build/place on a Grid which is able to be interacted with (Pistons, Rotors, Antennas, Warheads, Displays, Inventories, etc).
 
-Selectors are used in several [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands") and [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables").  In general, if you ware interacting with a block, you'll need to specify a Selector to indicate which blocks.
+Selectors are used in several [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands") and [Variables](https://spaceengineers.merlinofmines.com/EasyCommands/variables "Variables").  In general, if you are interacting with a block, you'll need to specify a Selector to indicate which blocks.
 
-There a few different kinds of Selectors that you can choose from, which are described below.
+There are a few different kinds of Selectors that you can choose from, which are described below.
 
 ## Block Selector
 
@@ -37,7 +37,7 @@ extend the "Elevator Pistons" piston group
 
 ### Implicit Block Types
 
-It's often the case that the name of the block, or block group, you are selecting contains what kind of block it is.  For these cases, it is OK to emit the block type.  EasyCommands will infer the block type (and if it is a group) based on the name of the entity.
+It's often the case that the name of the block, or block group, you are selecting contains what kind of block it is.  For these cases, it is OK to omit the block type.  EasyCommands will infer the block type (and if it is a group) based on the name of the entity.
 ```
 #Assume Elevator Pistons is a Block Group of Pistons
 extend the "Elevator Pistons"
@@ -62,7 +62,7 @@ Sometimes it's useful to create groups of related blocks with different types.  
 
 ```
 turn on the "Battery Room" lights
-if the avg "Battery Room" batteries power < 0.5
+if the avg "Battery Room" batteries ratio < 0.5
   turn on the "Generator Room" generators
 ```
 
@@ -123,7 +123,7 @@ turn on "Base Batteries"[0..2]
 turn on "Base Batteries"[0..2, "Extra Battery"]
 ```
 
-If a supplied index is greater than the number of blocks, or if the selector does not include a block named for the string selecctor, then the selector returns an empty set of blocks to act on.
+Indexes are zero based. A numeric index less than zero or greater than or equal to the number of matching blocks causes an exception that halts the script. A string name with no matching block contributes no blocks to the result.
 
 Index Selectors can be used in combination with any other Selector modifier, such as Conditions.  I recommend parentheses to make it clear what you intend as the final result.
 

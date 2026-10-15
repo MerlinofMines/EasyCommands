@@ -1,6 +1,6 @@
 # Variables
 
-Variables allow you to retrieve, bind and store values in order to get or set block state(s), store and send information, and in general acts as the glue between the various [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands"). The following describes all the possible types of Variables avaiable to your script, and some examples of how to use them to bring your creations to life.
+Variables allow you to retrieve, bind and store values in order to get or set block state(s), store and send information, and in general act as the glue between the various [Commands](https://spaceengineers.merlinofmines.com/EasyCommands/commands "Commands"). The following describes all the possible types of Variables available to your script, and some examples of how to use them to bring your creations to life.
 
 ## Static Variables
 
@@ -36,7 +36,7 @@ Sometimes you might want to create strings that include spaces, double quotes, o
 By default, double quoted strings are considered as possible [Selectors](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors").  The parser should figure out whether you intended it to be a string or a selector, but in some cases you may need to wrap your string.
 
 To wrap double quotes so that they appear in your static string, wrap the entire string with single quotes (').
-To wrap single quotes so that they appear in your static stirng, wrap the entire string with tildes (\`).
+To include both single and double quotes in your static string, wrap the entire string with backticks (\`).
 
 
 ```
@@ -49,9 +49,9 @@ Print `This string isn't worried about having single quotes or having"double quo
 ### Available Static Variables
 EasyCommands provides a few variables out of the box, so that you don't need to create them yourself.  These are well known constants which might come in handy for some types of scripts involving logarithmic or circular calculations.
 
-Nothing stops you from overriding these variables, but if you do then don't expect them work as intended.  My recommendation would simply be to avoid overriding these variables with your own.
+Nothing stops you from overriding these variables, but if you do then don't expect them to work as intended.  My recommendation would simply be to avoid overriding these variables with your own.
 
-The x,y,z,r,g,b variables are in places so that you can get the components of vectors & colors easily. See [Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") for more information.
+The x,y,z,r,g,b variables are in place so that you can get the components of vectors & colors easily. See [Primitives](https://spaceengineers.merlinofmines.com/EasyCommands/primitives "Primitives") for more information.
 
 Supported Variables:
 * ```x``` - 1:0:0 vector, used for X component of Vectors
@@ -96,7 +96,7 @@ Print "empty: " + empty
 
 ## In Memory Variables
 
-In Memory Variables allow you "remember" values so that you can use them later. You might do this if you need to use a value in many places, or if the value is difficult to calculate and you'd rather not have to re-calculate it.
+In Memory Variables allow you to "remember" values so that you can use them later. You might do this if you need to use a value in many places, or if the value is difficult to calculate and you'd rather not have to re-calculate it.
 
 You can use any alphanumeric name you'd like for your Variables (no spaces allowed and can't look like just a number), but I recommend avoiding names that conflict with reserved keywords.  You can technically get around this by surrounding your variable with double quotes, but that also means that every time you want to use your variable you also need to supply double quotes.
 
@@ -166,7 +166,7 @@ bind b to a + 1
 Print "a: " + a
 Print "b: " + b
 #Result is:
-#a: 2
+#a: 1
 #b: 2
 
 set a to 2
@@ -180,7 +180,7 @@ Print "b: " + b
 
 ### Global Variables
 
-By default, In Memory Variables associated with the [Thread](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads") in which they were created.  This means that you can run multiple threads using the same variable names without conflict (comes in handy for running multiple instances of the same execution, like managing multiple airlocks).  
+By default, In Memory Variables are associated with the [Thread](https://spaceengineers.merlinofmines.com/EasyCommands/threads "Threads") in which they were created.  This means that you can run multiple threads using the same variable names without conflict (comes in handy for running multiple instances of the same execution, like managing multiple airlocks).
 
 To share a variable across threads, you need to create a global variable.  You can do this with the ```global``` keyword.  Global Variables exist until the program is restarted or a new program is loaded.  
 
@@ -213,7 +213,7 @@ else
   set a to "otherValue"
 ```
 
-This is fine & good, but a little lengthy.  Thankfully you can use a ternary condition to make shorten this:
+This is fine & good, but a little lengthy.  Thankfully you can use a ternary condition to shorten this:
 
 ```
 set someCondition to true
@@ -253,7 +253,7 @@ Print "My name is: " + myName
 #Implicit Aggregation for a selector with no blocks in it.  Will return an empty list.
 set myValue to "Invalid BlockName" terminal names
 
-#Implicit Aggregation for a list of blocks (assuming you have multiple turrets).  Since names is a string property, will return a list of names for your turruts.
+#Implicit Aggregation for a list of blocks (assuming you have multiple turrets).  Since names is a string property, will return a list of names for your turrets.
 set myNames to the turret names
 
 #Implicit Aggregation assuming there is only 1 block named "My Piston".  Since height is a numeric property, will return a SUM of both if there are more than 1 blocks named "My Piston"
@@ -387,7 +387,7 @@ Sometimes you might want to know if all, any or none of a given selector has a s
 There's a few ways you could do this.
 
 ```
-if the min "Base Batteries" level < 0.5
+if the min "Base Batteries" ratio < 0.5
   turn on the "Base Generators"
 ```
 
@@ -398,7 +398,7 @@ Another way you can do this is to use Aggregate Conditions.  The general form is
 So another way to write the above would be
 
 ```
-if any "Base Batteries" level < 0.5
+if any "Base Batteries" ratio < 0.5
   turn on the "Base Generators"
 ```
 

@@ -1,4 +1,4 @@
-﻿# Debugging Your Script
+# Debugging Your Script
 
 Rarely will you get your script perfect the first time you write it.  Some errors are obvious, given a hint at where the problem is at.
 
@@ -38,13 +38,13 @@ Another possibility is that you are trying to call a function from within itself
 
 ### Common Mistakes
 * My block(s) aren't responding to the command
-  * Most likely, your block names and/or block types are incorrect.  It could also be that your blocks are in a group and you aren't specifying to request a group, or vise versa.  See [Selectors](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/selectors "Selectors") for more information.
+  * Most likely, your block names and/or block types are incorrect.  It could also be that your blocks are in a group and you aren't specifying to request a group, or vice versa.  See [Selectors](https://spaceengineers.merlinofmines.com/EasyCommands/selectors "Selectors") for more information.
 * Operation cannot be performed on types
-  * Likely the variable(s) you are using are not the type you are expecting.  Try printing out the variable using ```Print myVariable```  to see it's value.
+  * Likely the variable(s) you are using are not the type you are expecting.  Try printing out the variable using ```Print myVariable```  to see its value.
 
 ### Common debugging steps
 * Print out the result of your operation(s) variables and make sure they are what you expect
-* Wrap calculations in parantheses to clarify order of operations.
+* Wrap calculations in parentheses to clarify order of operations.
 * Split up pieces into functions and call them directly to make sure they do what you expect.
 * Make sure your selectors are working by printing out their names:
   * ``` Print $mySelector names ```, or
@@ -67,5 +67,5 @@ Supported Values:
 * ```UpdateFrequency.Update1``` - Script runs once every tick (the default)
 * ```UpdateFrequency.Update10``` - Script runs once every 10 ticks
 * ```UpdateFrequency.Update100``` - Script runs once every 100 ticks
-* ```UpdateFrequency.None``` - Script runs 1 tick per time you click "Run".  Effectively pasues after each execution.
-* ```UpdateFrequency.Once``` - Script runs 1 tick per time you click "Run".  Effectively pasues after each execution.
+* ```UpdateFrequency.None``` - Script runs 1 tick per time you click "Run".  Effectively pauses after each execution.
+* ```UpdateFrequency.Once``` - Script runs 1 tick per time you click "Run".  Effectively pauses after each execution.

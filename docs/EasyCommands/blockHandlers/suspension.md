@@ -1,4 +1,4 @@
-﻿# Wheel Suspension Block Handler
+# Wheel Suspension Block Handler
 This Block Handler handles Wheel Suspension (not wheels directly, but still controls them).  It can control most properties of Wheel Suspension including auto steering & propulsion (anyone else thinking remote control rovers??).
 
 * Block Type Keywords: ```wheel, suspension```
@@ -204,7 +204,7 @@ set "My Wheel" ratio to 50
 * Keywords: ```attached, connected```
 * Inverse Keywords: ```detached, disconnected```
 
-Get/Set true wether there is a wheel attached to the suspension.
+Get/Set true whether there is a wheel attached to the suspension.
 Attaching a wheel that is not placed right might invoke the almighty Clang.
 
 ```
