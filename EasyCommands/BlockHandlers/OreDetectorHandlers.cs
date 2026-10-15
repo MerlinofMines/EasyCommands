@@ -24,8 +24,7 @@ namespace IngameScript {
                 var rangeHandler = TerminalPropertyHandler("Range", 50);
                 AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.SUPPLY, b => b.BroadcastUsingAntennas, (b, v) => b.BroadcastUsingAntennas = v);
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
-                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
+                SetDefaultProperty(Property.RANGE, Return.NUMERIC, Direction.UP);
             }
         }
     }

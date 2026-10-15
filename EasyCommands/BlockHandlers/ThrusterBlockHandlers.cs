@@ -26,8 +26,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.RANGE, b => b.MaxThrust, (b, v) => b.ThrustOverride = v, 5000);
                 AddNumericHandler(Property.RATIO, b => b.ThrustOverridePercentage, (b, v) => b.ThrustOverridePercentage = v, 0.1f);
                 AddNumericHandler(Property.OVERRIDE, b => b.ThrustOverride, (b, v) => b.ThrustOverride = v, 5000);
-                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
+                SetDefaultProperty(Property.RANGE, Direction.UP);
+                SetDefaultProperty(Property.LEVEL, Return.NUMERIC);
             }
         }
     }

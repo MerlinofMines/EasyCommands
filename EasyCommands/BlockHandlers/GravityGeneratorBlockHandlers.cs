@@ -25,7 +25,7 @@ namespace IngameScript {
                 AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS, Property.LEVEL);
                 AddNumericHandler(Property.STRENGTH, b => b.GravityAcceleration, (b,v) => b.GravityAcceleration = v, 0.25f);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
+                SetDefaultProperty(Property.STRENGTH, Return.NUMERIC);
             }
         }
 
@@ -42,8 +42,8 @@ namespace IngameScript {
                     );
                 AddPropertyAliases(rangeHandler, Property.RANGE, Property.LEVEL);
 
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.STRENGTH;
-                defaultPropertiesByPrimitive[Return.VECTOR] = Property.RANGE;
+                SetDefaultProperty(Property.STRENGTH, Return.NUMERIC);
+                SetDefaultProperty(Property.RANGE, Return.VECTOR);
             }
         }
     }

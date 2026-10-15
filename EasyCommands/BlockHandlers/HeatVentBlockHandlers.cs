@@ -30,9 +30,9 @@ namespace IngameScript {
                 AddPropertyHandler(Property.FALLOFF, TerminalPropertyHandler("Falloff", 0.3));
                 AddPropertyHandler(Property.OFFSET, TerminalPropertyHandler("Offset", 0.5));
                 AddPropertyHandler(Property.RATIO, TerminalPropertyHandler("PowerDependency", 10));
-                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
-                defaultPropertiesByDirection[Direction.UP] = Property.COLOR;
+                SetDefaultProperty(Property.COLOR, Return.COLOR);
+                SetDefaultProperty(Property.RATIO, Return.NUMERIC);
+                SetDefaultProperty(Property.COLOR, Direction.UP);
             }
         }
     }

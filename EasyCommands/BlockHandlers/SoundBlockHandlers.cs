@@ -34,8 +34,8 @@ namespace IngameScript {
                     b.GetSounds(availableSounds);
                     return NewKeyedList(availableSounds.Select(GetStaticVariable));
                 });
-                defaultPropertiesByPrimitive[Return.STRING] = Property.MEDIA;
-                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VOLUME;
+                SetDefaultProperty(Property.MEDIA, Return.STRING);
+                SetDefaultProperty(Property.VOLUME, Return.NUMERIC);
             }
         }
     }

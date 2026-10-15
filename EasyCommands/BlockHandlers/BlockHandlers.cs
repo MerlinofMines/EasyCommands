@@ -104,7 +104,7 @@ namespace IngameScript {
 
             public BlockHandler() {
                 AddStringHandler(Property.NAME, b => Name(b));
-                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
+                SetDefaultProperty(Property.NAME, Return.STRING);
             }
 
             public string GetName(object block) => Name((T)block);
@@ -127,6 +127,15 @@ namespace IngameScript {
             public abstract string Name(T block);
 
             public Direction GetDefaultDirection() => defaultDirection;
+
+            public void SetDefaultProperty(Property property, Return type, params Direction[] directions) {
+                defaultPropertiesByPrimitive[type] = property;
+                SetDefaultProperty(property, directions);
+            }
+
+            public void SetDefaultProperty(Property property, params Direction[] directions) {
+                foreach (var direction in directions) defaultPropertiesByDirection[direction] = property;
+            }
 
             public PropertySupplier GetDefaultProperty(Direction direction) =>
                 new PropertySupplier(NewList(new PropertyValue(defaultPropertiesByDirection.GetValueOrDefault(direction, defaultPropertiesByDirection[defaultDirection]) + "")));
