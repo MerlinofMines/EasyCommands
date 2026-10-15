@@ -44,8 +44,8 @@ namespace IngameScript {
 
                 AddPropertyAliases(overrideHandler, Property.OVERRIDE, Property.ROLL_INPUT, Property.INPUT);
 
-                SetDefaultProperty(Property.POWER, Return.NUMERIC);
-                SetDefaultProperty(Property.OVERRIDE, Return.VECTOR);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.POWER;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.OVERRIDE;
             }
         }
     }

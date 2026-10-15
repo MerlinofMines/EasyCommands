@@ -34,9 +34,9 @@ namespace IngameScript {
                     return NewKeyedList(inventoryItems.Select(type => type.Type.TypeId + "." + type.Type.SubtypeId).Distinct().Select(GetStaticVariable));
                 });
 
-                SetDefaultProperty(Property.RATIO, Return.NUMERIC);
-                SetDefaultProperty(Property.NAME, Return.STRING);
-                SetDefaultProperty(Property.SHOW, Return.BOOLEAN);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
+                defaultPropertiesByPrimitive[Return.STRING] = Property.NAME;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.SHOW;
             }
 
             public override string Name(IMyInventory block) => GetOwner(block).CustomName;

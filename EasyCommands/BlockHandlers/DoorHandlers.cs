@@ -23,7 +23,8 @@ namespace IngameScript {
             public DoorBlockHandler() {
                 AddBooleanHandler(Property.OPEN, (b) => b.Status != DoorStatus.Closed, (b, v) => { if (v) b.OpenDoor(); else b.CloseDoor(); });
                 AddNumericHandler(Property.RATIO, b => b.OpenRatio);
-                SetDefaultProperty(Property.RATIO, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
+                defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
             }
         }
     }

@@ -26,7 +26,7 @@ namespace IngameScript {
                 var rangeHandler = NumericHandler(b => b.Range, (b, v) => b.Range = v, 1000);
                 AddPropertyAliases(rangeHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.CONNECTED, b => b.Status == MyLaserAntennaStatus.Connected, (b, v) => { if (v) b.Connect(); });
-                SetDefaultProperty(Property.TARGET, Return.VECTOR);
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
             }
         }
 
@@ -38,9 +38,9 @@ namespace IngameScript {
                 var radiusHandler = NumericHandler(b => b.Radius, (b, v) => b.Radius = v, 1000);
                 AddPropertyAliases(radiusHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.SHOW, b => b.ShowShipName, (b, v) => b.ShowShipName = v);
-                SetDefaultProperty(Property.TEXT, Return.STRING);
-                SetDefaultProperty(Property.CONNECTED, Return.BOOLEAN);
-                SetDefaultProperty(Property.RANGE, Direction.UP);
+                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.CONNECTED;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
         }
     }

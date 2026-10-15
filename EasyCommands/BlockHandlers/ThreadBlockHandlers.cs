@@ -23,7 +23,7 @@ namespace IngameScript {
             public ThreadBlockHandler() {
                 AddStringHandler(Property.NAME, t => t.customName ?? t.name, (t,s) => t.customName = s);
                 AddBooleanHandler(Property.COMPLETE, t => false, (t, b) => { t.Command = new NullCommand(); if(t==PROGRAM.currentThread) throw new ThreadInterruptException(); });
-                SetDefaultProperty(Property.COMPLETE, Return.BOOLEAN);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.COMPLETE;
             }
 
             public override string Name(Thread thread) => thread.customName ?? thread.name;

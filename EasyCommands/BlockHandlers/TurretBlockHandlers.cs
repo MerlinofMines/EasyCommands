@@ -36,7 +36,7 @@ namespace IngameScript {
                 AddDirectionHandlers(Property.VELOCITY, Direction.RIGHT,
                     TypeHandler(NumericHandler(b => b.VelocityMultiplierAzimuthRpm, (b,v) => b.VelocityMultiplierAzimuthRpm = v), Direction.LEFT, Direction.RIGHT),
                     TypeHandler(NumericHandler(b => b.VelocityMultiplierElevationRpm, (b,v) => b.VelocityMultiplierElevationRpm = v), Direction.UP, Direction.DOWN));
-                SetDefaultProperty(Property.RANGE, Return.NUMERIC);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
             }
 
             IEnumerable<IMyUserControllableGun> GetGuns(IMyTurretControlBlock block) {
@@ -69,8 +69,8 @@ namespace IngameScript {
                     b.Elevation = v * DegreesToRadians;
                     b.SyncElevation();
                 }, 5);
-                SetDefaultProperty(Property.TARGET, Return.VECTOR);
-                SetDefaultProperty(Property.RANGE, Return.NUMERIC);
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
             }
 
             Vector3D GetTarget(IMyLargeTurretBase turret) =>

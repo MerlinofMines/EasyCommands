@@ -30,7 +30,8 @@ namespace IngameScript {
                 AddNumericHandler(Property.LEVEL, b => b.CurrentStoredPower);
                 AddPropertyHandler(NewList(Property.VOLUME, Property.RANGE), NumericHandler(b => b.MaxOutput));
                 AddPropertyHandler(NewList(Property.INPUT, Property.RANGE), NumericHandler(b => b.MaxInput));
-                SetDefaultProperty(Property.RATIO, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RATIO;
+                defaultPropertiesByDirection[Direction.UP] = Property.RATIO;
              }
         }
     }

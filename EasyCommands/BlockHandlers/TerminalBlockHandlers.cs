@@ -104,8 +104,8 @@ namespace IngameScript {
                 AddPropertyHandler(NewList(Property.DAMAGE, Property.LEVEL), damageHandler);
                 AddPropertyHandler(NewList(Property.DAMAGE, Property.RATIO), NumericHandler(b => 1 - BuildRatio(GetSlimBlock(b))));
 
-                SetDefaultProperty(Property.POSITION, Return.VECTOR);
-                SetDefaultProperty(Property.ENABLE, Return.BOOLEAN);
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.POSITION;
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.ENABLE;
             }
 
             IMySlimBlock GetSlimBlock(T b) => b.CubeGrid.GetCubeBlock(b.Position);

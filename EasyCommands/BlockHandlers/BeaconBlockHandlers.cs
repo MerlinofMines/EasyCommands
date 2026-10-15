@@ -25,8 +25,9 @@ namespace IngameScript {
                 var radiusHandler = NumericHandler(b => b.Radius, (b, v) => b.Radius = v, 1000);
                 AddPropertyAliases(radiusHandler, Property.RANGE, Property.RADIUS);
                 AddBooleanHandler(Property.SUPPLY, b => b.Enabled, (b, v) => b.Enabled = v);
-                SetDefaultProperty(Property.TEXT, Return.STRING);
-                SetDefaultProperty(Property.RANGE, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.STRING] = Property.TEXT;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection[Direction.UP] = Property.RANGE;
             }
         }
     }

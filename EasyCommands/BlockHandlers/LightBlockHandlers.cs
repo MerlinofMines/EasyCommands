@@ -33,8 +33,9 @@ namespace IngameScript {
                 AddPropertyHandler(Property.LOCKED, TerminalPropertyHandler("EnableTargetLocking", true));
                 //TODO: Add Blink Offset w/ Multi-Property Support
                 //TODO: Add Target Options support
-                SetDefaultProperty(Property.COLOR, Return.COLOR);
-                SetDefaultProperty(Property.RANGE, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
             }
         }
 
@@ -49,8 +50,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.OFFSET, b => b.BlinkOffset, (b, v) => b.BlinkOffset = v, 0.1f);
                 AddNumericHandler(Property.VOLUME, b => b.Intensity, (b, v) => b.Intensity = v, 1f);
                 AddNumericHandler(Property.FALLOFF, b => b.Falloff, (b, v) => b.Falloff = v, 0.5f);
-                SetDefaultProperty(Property.COLOR, Return.COLOR);
-                SetDefaultProperty(Property.RANGE, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.COLOR] = Property.COLOR;
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.RANGE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.RANGE);
             }
         }
     }

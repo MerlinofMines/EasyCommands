@@ -46,9 +46,11 @@ namespace IngameScript {
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
                 AddBooleanHandler(Property.LOCKED, b => b.RotorLock, (b, v) => b.RotorLock = v);
                 AddNumericHandler(Property.STRENGTH, b => b.Torque, (b,v) => b.Torque = v, 1000);
-                SetDefaultProperty(Property.ANGLE, Return.NUMERIC);
-                SetDefaultProperty(Property.LEVEL, Direction.UP, Direction.DOWN);
-                SetDefaultProperty(Property.ANGLE, Direction.CLOCKWISE, Direction.COUNTERCLOCKWISE);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.ANGLE;
+                defaultPropertiesByDirection.Add(Direction.UP, Property.LEVEL);
+                defaultPropertiesByDirection.Add(Direction.DOWN, Property.LEVEL);
+                defaultPropertiesByDirection.Add(Direction.CLOCKWISE, Property.ANGLE);
+                defaultPropertiesByDirection.Add(Direction.COUNTERCLOCKWISE, Property.ANGLE);
                 defaultDirection = Direction.CLOCKWISE;
             }
         }

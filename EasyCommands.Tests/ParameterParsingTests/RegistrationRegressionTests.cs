@@ -5,7 +5,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
     [TestClass]
     public class RegistrationRegressionTests {
         [TestMethod]
-        public void GroupedDefaultsPreserveInheritedAndDirectionalProperties() {
+        public void DefaultsPreserveInheritedAndDirectionalProperties() {
             var battery = new BatteryBlockHandler();
             Assert.AreEqual(Property.NAME, battery.defaultPropertiesByPrimitive[Return.STRING]);
             Assert.AreEqual(Property.ENABLE, battery.defaultPropertiesByPrimitive[Return.BOOLEAN]);

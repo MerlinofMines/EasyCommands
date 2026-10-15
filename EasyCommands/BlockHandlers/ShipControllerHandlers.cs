@@ -41,9 +41,9 @@ namespace IngameScript {
                         return NewKeyedList(waypoints.Select(w => new KeyedVariable(GetStaticVariable(w.Name), GetStaticVariable(w.Coords))));
                     },
                     SetWaypoints);
-                SetDefaultProperty(Property.AUTO, Return.BOOLEAN);
-                SetDefaultProperty(Property.TARGET, Return.VECTOR);
-                SetDefaultProperty(Property.WAYPOINTS, Return.LIST);
+                defaultPropertiesByPrimitive[Return.BOOLEAN] = Property.AUTO;
+                defaultPropertiesByPrimitive[Return.VECTOR] = Property.TARGET;
+                defaultPropertiesByPrimitive[Return.LIST] = Property.WAYPOINTS;
             }
 
             void SetWaypoints(IMyRemoteControl b, KeyedList waypoints) {
@@ -97,7 +97,8 @@ namespace IngameScript {
                     TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
                     TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
 
-                SetDefaultProperty(Property.VELOCITY, Return.NUMERIC, Direction.UP);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.VELOCITY;
+                defaultPropertiesByDirection[Direction.UP] = Property.VELOCITY;
             }
 
             Vector3D VelocityVector(T block) => Vector3D.TransformNormal(block.GetShipVelocities().LinearVelocity, MatrixD.Transpose(block.WorldMatrix));

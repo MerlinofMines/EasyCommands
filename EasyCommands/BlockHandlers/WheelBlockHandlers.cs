@@ -35,8 +35,9 @@ namespace IngameScript {
                 AddNumericHandler(Property.STRENGTH, b => b.Strength, (b, v) => b.Strength = v, 10);
                 AddNumericHandler(Property.POWER, b => b.Power, (b, v) => b.Power = v, 10);
                 AddNumericHandler(Property.RATIO, b => b.Friction, (b, v) => b.Friction = v, 10);
-                SetDefaultProperty(Property.LEVEL, Return.NUMERIC, Direction.UP);
-                SetDefaultProperty(Property.LEVEL, Direction.DOWN);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
             }
         }
     }

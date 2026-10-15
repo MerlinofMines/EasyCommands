@@ -27,8 +27,9 @@ namespace IngameScript {
                 AddPropertyHandler(Property.LEVEL, new PistonHeightHandler());
                 AddNumericHandler(Property.VELOCITY, b => b.Velocity, (b,v) => b.Velocity = v,1);
                 AddBooleanHandler(Property.CONNECTED, b => b.IsAttached, (b, v) => { if (v) b.Attach(); else b.Detach(); });
-                SetDefaultProperty(Property.LEVEL, Return.NUMERIC, Direction.UP);
-                SetDefaultProperty(Property.LEVEL, Direction.DOWN);
+                defaultPropertiesByPrimitive[Return.NUMERIC] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.UP] = Property.LEVEL;
+                defaultPropertiesByDirection[Direction.DOWN] = Property.LEVEL;
             }
         }
 

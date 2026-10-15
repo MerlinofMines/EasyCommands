@@ -27,7 +27,7 @@ namespace IngameScript {
                     TypeHandler(StringHandler(b => b.IsRunning.ToString(), (b, v) => b.TryRun(v)), Return.STRING),
                     TypeHandler(BooleanHandler(b => b.IsRunning, (b, v) => { if (v) b.TryRun(b.TerminalRunArgument); else b.Enabled = false; }), Return.BOOLEAN));
 
-                SetDefaultProperty(Property.RUN, Return.STRING);
+                defaultPropertiesByPrimitive[Return.STRING] = Property.RUN;
             }
         }
     }
