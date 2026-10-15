@@ -56,3 +56,21 @@ a cache miss after eviction can fetch newer binaries for the same revision.
 When validating a refresh, run the workflow twice and check that the second
 run reports a cache hit and skips both download and save steps. The test suite
 must pass and the `EasyCommands-script` artifact must contain `script.cs`.
+
+## Checking the packaged script
+
+The workflow also compiles the exact minified `script.cs` artifact inside a
+programmable-block-style wrapper, with C# 6 and MDK2's game API analyzer. It
+fails if the script exceeds 100,000 characters and prints its SHA-256 hash.
+To run the same check locally after a Release build:
+
+```powershell
+./build/Test-PackedScript.ps1 -BinaryPath 'C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64'
+```
+
+This verifies compilation and allowed API use, not execution inside a running
+game. The unit suite exercises the original source against the same DLLs.
+
+The separate `docs` job builds `docs/` with GitHub's Jekyll Pages builder on
+pushes and pull requests. It does not deploy. Live Pages publication continues
+from `currentRelease` and its `/docs` folder.
