@@ -1,0 +1,8 @@
+[
+  {
+    "Name": "light-toggle",
+    "RequiredBlocks": ["EC Test Light"],
+    "TimeoutTicks": 600,
+    "Commands": "turn off \"EC Test Light\" light\nif \"EC Test Light\" light is on\n  print \"EC_FAIL: light stayed enabled\"\nelse\n  turn on \"EC Test Light\" light\n  if \"EC Test Light\" light is on\n    print \"EC_PASS\"\n  else\n    print \"EC_FAIL: light stayed disabled\""
+  }
+]

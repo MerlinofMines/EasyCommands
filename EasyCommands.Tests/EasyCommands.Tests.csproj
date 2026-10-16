@@ -21,4 +21,8 @@
   <ItemGroup>
     <ProjectReference Include="..\EasyCommands\EasyCommands.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Extensions" />
+    <Content Include="../integration/scenarios/*.json" Link="scenarios/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
