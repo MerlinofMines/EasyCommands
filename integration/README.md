@@ -1,6 +1,6 @@
 # Dedicated-server integration tests
 
-The harness ships independently of the Apex Survival feature branch. The existing mocked tests
+The harness ships independently of feature-specific scenario suites. The existing mocked tests
 remain independent; this harness runs the exact packaged Release script in the game.
 
 ## Run
@@ -8,14 +8,12 @@ remain independent; this harness runs the exact packaged Release script in the g
 From this worktree, in PowerShell on Windows:
 
     ./build/Test-InGame.ps1 -Suite smoke
-    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs'
 
 To rerun one scenario with existing builds:
 
-    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -Scenario seed-alias-transfer -SkipBuild
+    ./build/Test-InGame.ps1 -Suite smoke -Scenario light-toggle -SkipBuild
 
-The Apex suite requires a script built with the Apex Survival handlers (PR #281).
-Use -ScriptPath to supply that artifact while the feature is still separate.
+Feature-specific scenario suites live with their feature branches and PRs.
 
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need
@@ -25,7 +23,7 @@ The runner builds EasyCommands and the plugin against that server, copies its sh
 Empty World into a unique .build/integration directory, enables in-game scripts and
 unattended simulation, then starts a separate server bound to 127.0.0.1:27026.
 Do not run two suites simultaneously on the same machine/port.
-Each scenario recompiles the full script; allow several minutes for the Apex suite.
+Each scenario recompiles the full script; allow several minutes for multi-scenario suites.
 The default wall-clock timeout is ten minutes; progress.json identifies the current scenario.
 
 The harness creates a connected static platform, charged battery, programmable block,
@@ -41,11 +39,11 @@ Each whole invocation starts from a fresh world.
 
 ## Existing installation or custom setups
 
-    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -ServerRoot 'D:\SE-TestServer'
+    ./build/Test-InGame.ps1 -Suite smoke -ServerRoot 'D:\SE-TestServer'
 
 For a hand-built or saved regression setup:
 
-    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -ServerRoot 'D:\SE-TestServer' -TemplateWorld 'D:\Worlds\ApexFixture'
+    ./build/Test-InGame.ps1 -Suite smoke -ServerRoot 'D:\SE-TestServer' -TemplateWorld 'D:\Worlds\ApexFixture'
 
 Supplying TemplateWorld disables automatic fixture spawning. Supply one powered,
 working programmable block named EC Test PB plus exactly one block for each
@@ -74,10 +72,6 @@ server exit, or wall-clock timeout fails the runner. Failed runs remain availabl
 The runner stops only the process it launched; it forcibly stops the disposable world
 after results because that world is not reused.
 
-The initial Apex suite covers selector/control paths, reading algae production output,
-exact seed alias transfers, empty crop state, and food recipe queueing. It does not yet prove planting/harvest behavior,
-long-duration crop growth, completed food production, or save/reload persistence.
-Those need additional fixtures and assertions.
 
 If results never arrive, inspect server logs for Harness plugin loading. The runner
 uses the vanilla dedicated server -plugin argument. Game updates can change plugin
