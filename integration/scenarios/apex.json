@@ -1,0 +1,59 @@
+[
+  {
+    "Name": "farm-plot-selector",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn off \"EC Test Farm\" farmplot\nturn on \"EC Test Farm\" farmplot\nif \"EC Test Farm\" farmplot is on\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: farm selector\""
+  },
+  {
+    "Name": "algae-selector-and-output",
+    "RequiredBlocks": [
+      "EC Test Algae"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn on \"EC Test Algae\" algaefarm\nif \"EC Test Algae\" algaefarm output >= 0\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: algae output\""
+  },
+  {
+    "Name": "food-processor-selector",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn off \"EC Test Kitchen\" foodprocessor\nturn on \"EC Test Kitchen\" foodprocessor\nif \"EC Test Kitchen\" foodprocessor is on\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: food processor selector\""
+  },
+  {
+    "Name": "seed-alias-transfer",
+    "RequiredBlocks": [
+      "source cargo",
+      "destination cargo"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "transfer 2 \"fruit seeds\" from \"source cargo\" to \"destination cargo\"\nassign sourceCount to \"source cargo\" amount \"fruit seeds\"\nassign destinationCount to \"destination cargo\" amount \"fruit seeds\"\nif sourceCount is 3 and destinationCount is 2\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: seed transfer counts\""
+  },
+  {
+    "Name": "irrigation-selector",
+    "RequiredBlocks": [
+      "EC Test Irrigation"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn on \"EC Test Irrigation\" irrigation system\r\nif \"EC Test Irrigation\" irrigation system is on\r\n  print \"EC_PASS\"\r\nelse\r\n  print \"EC_FAIL: irrigation selector\""
+  },
+  {
+    "Name": "empty-farm-crop-state",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "assign ecOccupiedFlag to \"EC Test Farm\" farmplot occupied\nassign ecLivingFlag to \"EC Test Farm\" farmplot crop alive\nassign ecCropName to \"EC Test Farm\" farmplot crop\nif ecOccupiedFlag or ecLivingFlag or ecCropName != \"\"\n  print \"EC_FAIL: fresh farm must be empty\"\nelse\n  print \"EC_PASS\""
+  },
+  {
+    "Name": "food-recipe-blueprint",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "tell \"EC Test Kitchen\" foodprocessor to create \"kelp crisp\"\nassign ecRecipeQueued to \"EC Test Kitchen\" foodprocessor producing \"kelp crisp\"\nif ecRecipeQueued\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: kelp crisp blueprint was not queued\""
+  }
+]

@@ -74,3 +74,7 @@ game. The unit suite exercises the original source against the same DLLs.
 The separate `docs` job builds `docs/` with GitHub's Jekyll Pages builder on
 pushes and pull requests. It does not deploy. Live Pages publication continues
 from `currentRelease` and its `/docs` folder.
+
+## In-game integration tests
+
+See [integration/README.md](../integration/README.md) for the isolated dedicated-server runner and Apex suite.
