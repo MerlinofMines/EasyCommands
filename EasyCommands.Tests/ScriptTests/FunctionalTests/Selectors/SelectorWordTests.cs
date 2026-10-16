@@ -460,13 +460,42 @@ namespace EasyCommands.Tests.ScriptTests {
             );
         }
 
+        [TestMethod]
+        public void FarmingSelectorNames() {
+            TestExpectedSelectorWords<IMyOxygenFarm>(Words("oxygenfarm", "Oxygen Farm", "Half Oxygen Farm"), Words("oxygenfarms", "Oxygen Farms"));
+            TestExpectedSelectorWords<IMyFunctionalBlock>(Words("algaefarm", "Algae Farm", "Half Algae Farm"), Words("algaefarms", "Algae Farms"), b => MockBlockDefinition(b, "LargeBlockAlgaeFarm"));
+            TestExpectedSelectorWords<IMyFunctionalBlock>(Words("farmplot", "Farm Plot"), Words("farmplots", "Farm Plots"), b => MockBlockDefinition(b, "LargeBlockFarmPlot"));
+            TestExpectedSelectorWords<IMyAssembler>(Words("foodprocessor", "Food Processor"), Words("foodprocessors", "Food Processors"), b => MockBlockDefinition(b, "FoodProcessor"));
+            TestExpectedSelectorWords<IMyGasGenerator>(Words("irrigation", "Irrigation System"), Words("irrigations", "Irrigation Systems"), b => MockBlockDefinition(b, "IrrigationSystem"));
+            TestExpectedSelectorWords<IMyGasTank>(Words("Oxygen Tank", "Hydrogen Tank"), Words("Oxygen Tanks", "Hydrogen Tanks"));
+            TestExpectedSelectorWords<IMyGasGenerator>(Words("Oxygen Generator", "Hydrogen Generator"), Words("Oxygen Generators", "Hydrogen Generators"));
+        }
+
+        [DataTestMethod]
+        [DataRow("oxygen farm", false)]
+        [DataRow("Oxygen   Farm", false)]
+        [DataRow("oxygen farms", true)]
+        public void ExplicitSpacedSelector(string keyword, bool group) {
+            using (var test = new ScriptTest("turn on the \"Garden\" " + keyword)) {
+                var farm = new Mock<IMyOxygenFarm>();
+                if (group) test.MockBlocksInGroup("Garden", farm);
+                else test.MockBlocksOfType("Garden", farm);
+                test.RunUntilDone();
+                farm.VerifySet(b => b.Enabled = true);
+            }
+        }
         void TestExpectedSelectorWords<T>(String[] singularWords, String[] groupWords, Action<Mock<T>> extraActions = null) where T : class, IMyTerminalBlock {
             singularWords.ForEach(word => BlockSelectorWordTest<T>(word, false, extraActions));
             groupWords.ForEach(word => BlockSelectorWordTest<T>(word, true, extraActions));
         }
 
         void BlockSelectorWordTest<T>(string selectorName, bool useGroup, Action<Mock<T>> extraActions = null) where T : class, IMyTerminalBlock {
-            using (var test = new ScriptTest("print the count of the \"test " + selectorName +"\"")) {
+            var commands = new[] { "print the count of the \"test " + selectorName + "\"" }.ToList();
+            // These registered phrases also work outside the quoted block/group name.
+            if (new[] { "oxygen farm", "oxygen farms", "algae farm", "algae farms", "farm plot", "farm plots", "food processor", "food processors", "irrigation system", "irrigation systems" }.Contains(selectorName.ToLower()))
+                commands.Add(commands[0] + " " + selectorName);
+            foreach (var command in commands)
+            using (var test = new ScriptTest(command)) {
                 var mockBlock = new Mock<T>();
 
                 if (extraActions != null) extraActions(mockBlock);

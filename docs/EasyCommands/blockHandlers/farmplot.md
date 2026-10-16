@@ -1,8 +1,8 @@
 # Farm Plot
 
-Keywords: `farmplot`, `farmplots`.
+Keywords: `farmplot`, `farm plot` (single); `farmplots`, `farm plots` (group).
 
-Selects the vanilla Farm Plot. It inherits functional/terminal properties such as power, name, data, position, and structural damage. Crop and water readings come from the block's attached PB components.
+Selects the vanilla Farm Plot. It inherits functional/terminal properties such as power, name, data, position, and structural damage.
 
 | Property words | Type | Meaning (read-only) |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Selects the vanilla Farm Plot. It inherits functional/terminal properties such a
 | `capacity`, `range` | Numeric | Water storage capacity in game resource units |
 | `level` | Numeric | Water stored, in the same units as capacity |
 
-The numeric default is water ratio. String/Boolean defaults remain name/enabled. Bare `complete` still means structural completion. Read-only writes retain EasyCommands' existing no-op behavior.
+The numeric default is water ratio. String/Boolean defaults remain name/enabled. Bare `complete` still means structural completion. Assignments to read-only properties have no effect.
 
 ```
 print "Bed" farmplot percentage
@@ -24,6 +24,4 @@ if "Bed" farmplot is occupied and "Bed" farmplot crop alive and "Bed" farmplot c
   print "Mature living crop"
 ```
 
-Turning off a plot does not pause crop growth. Farm Plots do not expose a seed inventory through this handler. Planting, harvesting, and removing plants are not exposed by the inspected Ingame farm component; this handler does not call mod-only methods. Use the game's supported farming interactions and collector arrangements. Numeric health/growth, plot-light properties, and automatic planting are not implemented.
-
-Missing crop/water components and storage for the wrong resource produce errors instead of fabricated readings. Requires game references with the Apex component interfaces; current build validation is described in [Apex support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival).
+Turning off a plot does not pause crop growth. These commands read crop status; use the game's interactions for planting, harvesting, and removing plants.

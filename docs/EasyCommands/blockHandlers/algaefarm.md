@@ -1,8 +1,8 @@
 # Algae Farm
 
-Keywords: `algaefarm`, `algaefarms`. Includes Algae Farm and Half Algae Farm.
+Keywords: `algaefarm`, `algae farm` (single); `algaefarms`, `algae farms` (group).
 
-Inherits functional/terminal controls. The solar-food component supplies these read-only values:
+Supports standard and Half Algae Farms, with functional/terminal controls and these read-only values:
 
 | Property words | Type | Meaning |
 | --- | --- | --- |
@@ -16,4 +16,4 @@ print "Algae Farm" algaefarm output
 print "Algae Farm" inventory amount "algae"
 ```
 
-Missing solar-food components produce an error. Read-only writes have the existing no-op behavior. See [Apex support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival) for validation limitations.
+Assignments to read-only properties have no effect.

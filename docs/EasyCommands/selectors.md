@@ -193,6 +193,15 @@ Print "Fully Recharged Batteries: " + fullyRechargedBatteries
 set to auto batteries whose ratio > 0.99 and that are recharging
 ```
 
-## Apex Survival selectors
 
-The additional single-block keywords are `farmplot`, `algaefarm`, `foodprocessor`, `irrigation`, and `oxygenfarm`. Append `s` for block-group selection. Food Processors still match `assembler`; Irrigation Systems still match `generator`. See [Apex Survival support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival).
+## Multi-word Block Types
+
+Use `oxygen farm`, `algae farm`, `farm plot`, `food processor`, or `irrigation system`. Add `s` to the last word for a group. Compact forms such as `oxygenfarm` also work.
+
+```
+turn on "Oxygen Farm"
+print "Garden" algae farm output
+turn on "Greenhouse" farm plots
+```
+
+Double-quoted names infer their type from these words. An explicit type after the name overrides that inference. Use `food processor` or `irrigation system` to select those families specifically; broader `assembler` and `generator` selectors also include them.

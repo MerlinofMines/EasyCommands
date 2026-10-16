@@ -1,14 +1,12 @@
 # Oxygen Farm
 
-Keywords: `oxygenfarm`, `oxygenfarms`.
+Keywords: `oxygenfarm`, `oxygen farm` (single); `oxygenfarms`, `oxygen farms` (group).
 
-Selects blocks implementing the Ingame oxygen-farm interface, including Half Oxygen Farm. Inherits functional/terminal properties.
+Supports Oxygen Farms and Half Oxygen Farms, with functional/terminal properties such as power and name.
 
-`ready` / `able` is a read-only Boolean indicating `CanProduce`.
+`ready` / `able` is a read-only Boolean indicating whether the farm can produce oxygen.
 
 ```
 turn on "Oxygen Farm" oxygenfarm
 print "Oxygen Farm" oxygenfarm ready
 ```
-
-No output ratio or flow-rate alias is introduced yet: `GetOutput()` units still need verification in a running game. This handler does not treat oxygen farms as electrical power producers.

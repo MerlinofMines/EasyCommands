@@ -341,9 +341,9 @@ Railguns:
 * Large Railgun Ammo: ```large railgun ammo```
 * Small Railgun Ammo: ```small railgun ammmo```
 
-## Apex Survival items
+## Food, Seeds, and Medical Items
 
-These are ordinary inventory items, handled by existing counting and transfer commands. Friendly names map to exact item types, while crafting names separately map to blueprint IDs. No new item language construct is required.
+These are ordinary inventory items, handled by existing counting and transfer commands. Friendly names map to exact item types, while crafting names separately map to blueprint IDs.
 
 | Category | Friendly names | Inventory type |
 | --- | --- | --- |
@@ -352,7 +352,7 @@ These are ordinary inventory items, handled by existing counting and transfer co
 | Seeds/spores | `fruit seeds`, `grain seeds`, `vegetable seeds`, `mushroom spores` | `MyObjectBuilder_SeedItem` |
 | Craftable meals | `kelp crisp`, `fruit bar`, `garden slaw`, `red pellets`, `chili`, `flatbread`, `ramen`, `fruit pastry`, `veggie burger`, `curry`, `green pellets`, `dumplings`, `spaghetti`, `lasagna`, `burrito`, `frontier stew`, `seared sabiroid`, `steak dinner` | `MyObjectBuilder_ConsumableItem` |
 | Loot-only meals | `unknown meal`, `food paste`, `synth loaf`, `clang crunchies`, `banana beef`, `hardtack`, `expired slop` | `MyObjectBuilder_ConsumableItem` |
-| Medical items | Existing `medkit`, `powerkit`; new `anti-radiation medkit` / `radiation kit` | `MyObjectBuilder_ConsumableItem` |
+| Medical items | `medkit`, `powerkit`; `anti-radiation medkit` / `radiation kit` | `MyObjectBuilder_ConsumableItem` |
 
 Cooked meats, the 18 craftable meals, four seed/spore aliases, and Med Kit/Power Kit have blueprint mappings. Loot-only aliases do not. Ingredients obtained through growing/harvesting are not given invented crafting recipes. Producers can only craft the recipes supported by that block.
 
@@ -371,4 +371,4 @@ transfer 2 "fruit seeds" from "Seed Store" inventory to "Kitchen" inventory
 tell "Kitchen" foodprocessor to create "fruit seeds"
 ```
 
-Transferring seeds does not plant crops. The inspected Farm Plot has no seed inventory; its plant is component state. See [Apex Survival support](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival).
+Transferring seeds does not plant crops. Use the game's planting interaction; see [Farm Plot](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/farmplot).

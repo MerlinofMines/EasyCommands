@@ -19,7 +19,12 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Self Selector - ```my, self, this``` 
 * Variable Selector - ```$```
 
-### Block Types (Single, Group) 
+### Block Types (Single, Group)
+* Algae Farm: `algaefarm`, `algae farm` (single); `algaefarms`, `algae farms` (group)
+* Farm Plot: `farmplot`, `farm plot` (single); `farmplots`, `farm plots` (group)
+* Food Processor: `foodprocessor`, `food processor` (single); `foodprocessors`, `food processors` (group)
+* Irrigation System: `irrigation`, `irrigation system` (single); `irrigations`, `irrigation systems` (group)
+* Oxygen Farm: `oxygenfarm`, `oxygen farm` (single); `oxygenfarms`, `oxygen farms` (group)
 * Air Vent
   * ```airvent, vent```
   *  ```airvents, vents```
@@ -195,6 +200,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```turbines```
 
 ## Properties (Inverse in Parentheses, if present)
+* Crop - `crop`
+* Alive - `alive` (`dead`)
 * Able - ```able, can, ready```, (```unable, cannot```)
 * Actions - ```actions```
 * Altitude - ```altitude, altitudes, elevation, elevations```
@@ -393,6 +400,3 @@ These properties require a Variable value as part of the property
 ## Colors
 * Common Colors - ```red, blue, green, orange, yellow, white, black```
 * Hex Color indicator - ```#``` (if not first character on the line)
-## Apex Survival
-
-See the [Apex block and item reference](https://spaceengineers.merlinofmines.com/EasyCommands/apex-survival) for farming selectors, crop/water status, food recipes, and compatibility limitations.

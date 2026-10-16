@@ -1,10 +1,10 @@
 # Irrigation System
 
-Keywords: `irrigation`, `irrigations` (group selector).
+Keywords: `irrigation`, `irrigation system` (single); `irrigations`, `irrigation systems` (group).
 
 Extends the [Gas Generator handler](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/generator), narrowing selection to Irrigation System. Broad `generator` selectors still include Irrigation Systems. Enabled/power, terminal properties, defaults, and refill behavior are inherited unchanged.
 
-`running` is a new read-only Boolean on all gas generators, reading `IsProducing`.
+`running` is a read-only Boolean indicating active production.
 
 ```
 turn on "Water Supply" irrigation

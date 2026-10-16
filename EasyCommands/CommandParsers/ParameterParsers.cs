@@ -339,11 +339,11 @@ namespace IngameScript {
                 return false;
             });
 
-            AddBlockWords(Synonyms("farmplot"), Block.FARM_PLOT);
-            AddBlockWords(Synonyms("algaefarm"), Block.ALGAE_FARM);
-            AddBlockWords(Synonyms("oxygenfarm"), Block.OXYGEN_FARM);
-            AddBlockWords(Synonyms("foodprocessor"), Block.FOOD_PROCESSOR);
-            AddBlockWords(Synonyms("irrigation"), Block.IRRIGATION);
+            AddBlockWords(Words("farmplot", "farm plot"), Block.FARM_PLOT);
+            AddBlockWords(Words("algaefarm", "algae farm"), Block.ALGAE_FARM);
+            AddBlockWords(Words("oxygenfarm", "oxygen farm"), Block.OXYGEN_FARM);
+            AddBlockWords(Words("foodprocessor", "food processor"), Block.FOOD_PROCESSOR);
+            AddBlockWords(Words("irrigation", "irrigation system"), Block.IRRIGATION);
 
             //Blocks
             AddBlockWords(Synonyms("piston"), Block.PISTON);
@@ -466,7 +466,18 @@ namespace IngameScript {
 
         public List<Token> Tokenize(String commandString) => tokenize(commandString).ToList();
 
-        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(ParseCommandParameters).ToList();
+        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) {
+            var parameters = NewList<ICommandParameter>();
+            for (int i = 0; i < tokens.Count; i++) {
+                var token = tokens[i];
+                // Match registered two-word selectors without crossing quoted-string boundaries.
+                if (!token.isString && i + 1 < tokens.Count && !tokens[i + 1].isString &&
+                    propertyWords.ContainsKey(token.token + " " + tokens[i + 1].token))
+                    token = new Token(token.original + " " + tokens[++i].original, false, false);
+                parameters.AddList(ParseCommandParameters(token));
+            }
+            return parameters;
+        }
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
             var commandParameters = NewList<ICommandParameter>();
