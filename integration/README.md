@@ -1,6 +1,6 @@
 # Dedicated-server integration tests
 
-This branch starts from the committed Apex Survival changes. The existing mocked tests
+The harness ships independently of the Apex Survival feature branch. The existing mocked tests
 remain independent; this harness runs the exact packaged Release script in the game.
 
 ## Run
@@ -8,11 +8,14 @@ remain independent; this harness runs the exact packaged Release script in the g
 From this worktree, in PowerShell on Windows:
 
     ./build/Test-InGame.ps1 -Suite smoke
-    ./build/Test-InGame.ps1 -Suite apex
+    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs'
 
 To rerun one scenario with existing builds:
 
-    ./build/Test-InGame.ps1 -Suite apex -Scenario seed-alias-transfer -SkipBuild
+    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -Scenario seed-alias-transfer -SkipBuild
+
+The Apex suite requires a script built with the Apex Survival handlers (PR #281).
+Use -ScriptPath to supply that artifact while the feature is still separate.
 
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need
@@ -38,11 +41,11 @@ Each whole invocation starts from a fresh world.
 
 ## Existing installation or custom setups
 
-    ./build/Test-InGame.ps1 -Suite apex -ServerRoot 'D:\SE-TestServer'
+    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -ServerRoot 'D:\SE-TestServer'
 
 For a hand-built or saved regression setup:
 
-    ./build/Test-InGame.ps1 -Suite apex -ServerRoot 'D:\SE-TestServer' -TemplateWorld 'D:\Worlds\ApexFixture'
+    ./build/Test-InGame.ps1 -Suite apex -ScriptPath 'D:\Artifacts\apex-script.cs' -ServerRoot 'D:\SE-TestServer' -TemplateWorld 'D:\Worlds\ApexFixture'
 
 Supplying TemplateWorld disables automatic fixture spawning. Supply one powered,
 working programmable block named EC Test PB plus exactly one block for each
