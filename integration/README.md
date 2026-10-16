@@ -14,6 +14,7 @@ To rerun one scenario with existing builds:
     ./build/Test-InGame.ps1 -Suite smoke -Scenario light-toggle -SkipBuild
 
 Feature-specific scenario suites live with their feature branches and PRs.
+See [Apex Survival E2E tests](APEX.md) for this branch's Apex suite.
 
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need
