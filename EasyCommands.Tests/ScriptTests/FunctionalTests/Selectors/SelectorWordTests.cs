@@ -492,7 +492,7 @@ namespace EasyCommands.Tests.ScriptTests {
         void BlockSelectorWordTest<T>(string selectorName, bool useGroup, Action<Mock<T>> extraActions = null) where T : class, IMyTerminalBlock {
             var commands = new[] { "print the count of the \"test " + selectorName + "\"" }.ToList();
             // These registered phrases also work outside the quoted block/group name.
-            if (new[] { "oxygen farm", "oxygen farms", "algae farm", "algae farms", "farm plot", "farm plots", "food processor", "food processors", "irrigation system", "irrigation systems" }.Contains(selectorName.ToLower()))
+            if (new[] { "oxygen farm", "oxygen farms", "algae farm", "algae farms", "farm plot", "farm plots", "food processor", "food processors", "irrigation system", "irrigation systems", "oxygen tank", "oxygen tanks", "hydrogen tank", "hydrogen tanks", "oxygen generator", "oxygen generators", "hydrogen generator", "hydrogen generators" }.Contains(selectorName.ToLower()))
                 commands.Add(commands[0] + " " + selectorName);
             foreach (var command in commands)
             using (var test = new ScriptTest(command)) {

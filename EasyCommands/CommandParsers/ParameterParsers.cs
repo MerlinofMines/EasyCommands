@@ -371,8 +371,8 @@ namespace IngameScript {
             AddBlockWords(Synonyms("airvent vent"), Block.AIRVENT);
             AddBlockWords(Synonyms("gun railgun cannon autocannon rocket missile launcher"), Block.GUN);
             AddBlockWords(Synonyms("turret"), Block.TURRET);
-            AddBlockWords(Synonyms("generator"), Block.GENERATOR);
-            AddBlockWords(Synonyms("tank"), Block.TANK);
+            AddBlockWords(Words("generator", "oxygen generator", "hydrogen generator"), Block.GENERATOR);
+            AddBlockWords(Words("tank", "oxygen tank", "hydrogen tank"), Block.TANK);
             AddBlockWords(Synonyms("magnet"), Synonyms("magnets gears"), Block.MAGNET, Synonyms("gear"));
             AddBlockWords(Synonyms("battery"), Synonyms("batteries"), Block.BATTERY);
             AddBlockWords(Synonyms("chute parachute"), Block.PARACHUTE);

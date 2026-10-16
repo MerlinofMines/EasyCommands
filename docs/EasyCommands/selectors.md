@@ -196,7 +196,7 @@ set to auto batteries whose ratio > 0.99 and that are recharging
 
 ## Multi-word Block Types
 
-Use `oxygen farm`, `algae farm`, `farm plot`, `food processor`, or `irrigation system`. Add `s` to the last word for a group. Compact forms such as `oxygenfarm` also work.
+Use `oxygen farm`, `algae farm`, `farm plot`, `food processor`, `irrigation system`, `oxygen tank`, `hydrogen tank`, `oxygen generator`, or `hydrogen generator`. Add `s` to the last word for a group. Compact forms such as `oxygenfarm` also work.
 
 ```
 turn on "Oxygen Farm"

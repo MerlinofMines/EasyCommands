@@ -1,8 +1,20 @@
 ﻿# Tank Block Handler
 This Block Handler handles both Oxygen and Hydrogen tanks.  It enables you to get information about stored O2/H2 levels and set the tank to stockpile or not, and whether auto-refill bottles or not.
 
-* Block Type Keywords: ```tank```
-* Block Type Group Keywords: ```tanks```
+* Block Type Keywords: ```tank, oxygen tank, hydrogen tank```
+* Block Type Group Keywords: ```tanks, oxygen tanks, hydrogen tanks```
+
+## Selecting blocks and groups
+
+Spaced keywords work both in double-quoted names and as explicit types after a name. Add `s` to the last word for a block group.
+
+```
+turn on "Hydrogen tank"
+turn on "Storage" oxygen tank
+turn on "Backup" hydrogen tanks
+```
+
+`oxygen tank` and `hydrogen tank` are aliases for the same `tank` handler. They do not filter by gas type. Use the block name or a dedicated group to select the intended blocks.
 
 Default Primitive Properties:
 * Numeric - Ratio

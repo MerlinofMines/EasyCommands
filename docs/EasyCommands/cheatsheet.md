@@ -122,8 +122,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```merge```
   * (no group keywords)
 * O2/H2 Generator
-  * ```generator```
-  * ```generators```
+  * ```generator, oxygen generator, hydrogen generator```
+  * ```generators, oxygen generators, hydrogen generators```
 * Ore Detector
   * ```detector```
   * ```detectors```
@@ -168,8 +168,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```speaker, alarm, siren```
   * ```speakers, alarms, sirens```
 * Tank (Oxygen or Hydrogen)
-  * ```tank```
-  * ```tanks```
+  * ```tank, oxygen tank, hydrogen tank```
+  * ```tanks, oxygen tanks, hydrogen tanks```
 * Terminal Block
   * ```terminal```
   * ```terminals```
