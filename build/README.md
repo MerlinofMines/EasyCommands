@@ -27,6 +27,103 @@ SteamCMD's anonymous login to install dedicated server app 298740 and configures
 both projects to use `.build/game-references`. It does not start a server.
 Normal `dotnet build` and `dotnet test` never invoke SteamCMD.
 
+## Publish the existing Steam Workshop script locally
+
+`Publish-Workshop.ps1` builds Release, checks the exact packaged script with
+`Test-PackedScript.ps1`, and uploads through your local Steam session. It is
+locked to [EasyCommands item 2698315573](https://steamcommunity.com/sharedfiles/filedetails/?id=2698315573).
+It requires the `modinfo.sbmi` from the local script folder previously published
+in-game, and refuses missing, zero, different, or multiple Workshop IDs. It stages
+only that metadata, the freshly built `script.cs`, and `thumb.png` under ignored
+`.build/workshop/`, leaving your original local script folder untouched.
+
+One-time setup:
+
+1. Install the game and .NET Framework 4.8. `Send-WorkshopUpdate.ps1` compiles
+   `WorkshopUpload.cs` locally against the game's Steamworks.NET library.
+   [SEWorkshopTool](https://github.com/Gwindalmir/SEWorkshopTool#installation)
+   is needed only to create a new disposable test item; the downloaded copy on
+   this computer is under ignored `.build/workshop-tool/SEWorkshopTool.exe`.
+2. Run Steam and sign in as the account that owns the existing Workshop item.
+   Steam ownership authorizes updates; having a copy of this script or knowing
+   the Workshop ID does not grant publishing access. No credentials go in GitHub.
+3. Find the original local script folder under
+   `%APPDATA%\SpaceEngineers\IngameScripts\local`. Its `modinfo.sbmi` must contain
+   Workshop ID 2698315573 (normally `WorkshopIds/WorkshopId/Id`). If the metadata
+   is missing, recover the original
+   publishing metadata before continuing; do not publish a new item to replace it.
+
+First prepare and inspect the package without uploading:
+
+```powershell
+./build/Publish-Workshop.ps1 `
+  -LocalScriptPath "$env:APPDATA\SpaceEngineers\IngameScripts\local\EasyCommands" `
+  -BinaryPath 'C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64' `
+  -PrepareOnly
+```
+
+Then publish from the checkout you want to release:
+
+```powershell
+./build/Publish-Workshop.ps1 `
+  -LocalScriptPath "$env:APPDATA\SpaceEngineers\IngameScripts\local\EasyCommands" `
+  -BinaryPath 'C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64' `
+  -ChangeNote 'Release vX.Y.Z: describe changes here'
+```
+
+`-ChangeNote` publishes the text to Steam's Workshop change notes with the upload.
+For multiline release notes, replace it with `-ReleaseNotesPath './release-notes.txt'`
+(a UTF-8 text file). Supply only one of these options. The helper rejects empty
+notes and prints the notes during preparation, so `-PrepareOnly` also previews
+what will be posted. The notes file is kept outside the uploaded script content.
+
+To publish a tagged release, check out that tag first. The helper builds the
+current working tree, including local edits; the change note does not select a
+Git revision. Run the unit tests before publishing. Check the uploader's output
+and the existing Workshop page afterward to confirm the update. Live upload
+requires local Steam authentication and is not exercised by automated tests.
+
+### Disposable upload test
+
+Use `-PrivateTest` without `-LocalScriptPath` to create a separate, explicitly
+private item named `EasyCommands UPLOAD TEST`. Never copy production metadata
+into a new test item. Add `-TestVisibility Unlisted` to verify change notes in
+the browser: Steam hides change history for Private items, even from the signed-in
+owner. Unlisted items are accessible to anyone with their link, but do not appear
+in searches or on your profile. For example:
+
+```powershell
+./build/Publish-Workshop.ps1 -PrivateTest `
+  -TestVisibility Unlisted `
+  -BinaryPath 'C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64' `
+  -WorkshopToolPath './.build/workshop-tool/SEWorkshopTool.exe' `
+  -ChangeNote "Private upload test`nSecond line of release notes"
+```
+
+The tool writes the new item's ID into `modinfo.sbmi` in the printed staging
+folder. To verify updating that same test item, run again with `-PrivateTest`,
+`-TestWorkshopId <new ID>`, and `-LocalScriptPath '<previous staging folder>'`.
+Include `-TestVisibility Unlisted` again to keep it unlisted; test uploads default
+to Private otherwise. Test mode refuses the production ID. Existing-item uploads
+use Steam's update-only API, verify the signed-in owner and game before uploading,
+and read back the final visibility. They cannot create a new item. Verify the content, intended
+visibility, and both change notes on Steam before deleting this disposable item
+through its Workshop owner's controls. Keep the test item until verification is
+complete. `-PrepareOnly` never creates an item.
+
+The test item retained ID 3821621809 across repeated uploads. Changing it from
+Private to Unlisted revealed all five original upload history entries, including
+multiline notes from SEWorkshopTool: the notes were saved while Private but hidden
+on Steam's website. Existing published items retain their visibility; the
+`-TestVisibility` option is accepted only in test mode. These tests did not update
+the production item. SEWorkshopTool 0.7.20 also downgraded a requested Unlisted
+upload to Private in this test. Existing-item uploads therefore use the direct
+Steam API, which preserves production visibility and explicitly sets and verifies
+Private or Unlisted in test mode. No Steam credentials are stored in the repo.
+The final complete run of `Publish-Workshop.ps1` rebuilt and validated the script,
+published revision 7 to that same test ID, and verified Unlisted visibility through
+both the API and Steam's browser page, where the multiline notes were visible.
+
 ## GitHub Actions caching
 
 The workflow restores `.build/game-references` using an exact key derived from
