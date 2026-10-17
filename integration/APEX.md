@@ -66,3 +66,32 @@ C# 6/API-analyzer compilation both complete with zero warnings/errors.
 
 The existing light-toggle smoke scenario also passed on the same artifact in run
 `f81e4f4764954c678d32a8ea8f164ac8`.
+
+## Coverage boundaries and terminal audit
+
+The 16 passing scenarios validate the core implemented behavior, not every property alias
+or every inherited operation. In particular, Farm Plot `ready`, Oxygen Farm `ready`,
+Irrigation production/refill status, all recipe mappings, and all selector spellings
+have functional/API or definition coverage but are not individually asserted by these E2E
+scenarios. Irrigation's E2E scenario checks selection and power. Real food production
+uses kelp crisp; it does not cook every mapped recipe. Long-duration natural crop growth,
+planetary conditions, full-inventory delivery, and historical game versions remain untested.
+
+Two additional read-only dedicated-server audits passed using the same packed script:
+
+- `58f51e2b9f544b10ae1794574df068a7`: enumerated terminal properties on all five block types.
+- `a33e1e3378754a529186f48c2df31c29`: read Food Processor `UseConveyor = true`,
+  `slaveMode = false`, and Irrigation `UseConveyor = true`, `Auto-Refill = false`,
+  `AutomaticallyPullBottles = false` in the fresh fixture.
+
+These were exploratory audits; their requests/results remain in the local run artifacts,
+not additional checked-in regression scenarios. No new conveyor mapping is being added.
+Cooperative mode and automatic refill already have inherited mappings. Automatically
+pulling bottles has no dedicated mapping. Farm Plot's UI registrations for `Stockpile`
+and physical light `Offset` were absent from the live `GetProperties()` results; they
+must not be documented as available terminal-property fallbacks. Crop health/growth
+and planting/harvesting were also absent from those results.
+
+Property names and meanings remain unchanged after review: `occupied` includes dead
+plants, `crop dead` is also true when empty, and `offset` means blink phase. No proposed
+`active`, `planted`, `yield`, `water`, or `blink` aliases were added.
