@@ -13,3 +13,12 @@ print "Kitchen" foodprocessor progress
 `running` indicates active production; `progress`/`ratio` gives current job completion from 0 to 1. Both are read-only and are also available on ordinary assemblers. A queued recipe waiting for ingredients is not necessarily running. Progress is for the current job, not the entire queue. Use `producing` with a recipe name to check its queued amount.
 
 Food names map to blueprint IDs; see [Items](https://spaceengineers.merlinofmines.com/EasyCommands/items). Producers still accept only their supported recipes. Supply ingredients separately. Survival Kits can be addressed as assemblers and have a smaller recipe set.
+## Count finished meals
+
+Food Processors have separate input and output inventories. Select the output inventory explicitly (index 1); a singular `inventory` selector reads the first inventory.
+
+```
+print "Kitchen" inventories[1] amount "kelp crisp"
+```
+
+Use `inventories` without an index to include both inventories. This is the existing inventory handler, shared with assemblers and other multi-inventory blocks.

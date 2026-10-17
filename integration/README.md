@@ -28,7 +28,8 @@ Each scenario recompiles the full script; allow several minutes for multi-scenar
 The default wall-clock timeout is ten minutes; progress.json identifies the current scenario.
 
 The harness creates a connected static platform, charged battery, programmable block,
-light, Farm Plot, Algae Farm, Food Processor, Irrigation System, and adjacent cargo
+light, Farm Plot, standard/half Algae Farms and Oxygen Farms, Food Processor,
+Irrigation System, a fueled reactor, and adjacent cargo
 containers. It seeds the source with five fruit seeds and 99 fruit as a decoy. No
 Workshop upload or player connection is required. The suite selects the scenarios
 independently of the existing unit suite.
@@ -67,7 +68,7 @@ metadata records the hash of that exact file.
 ## Results and debugging
 
 Each .build/integration/<run-id> retains request.json (including deployed source),
-metadata.json (script SHA-256 and server version), fixture.json, progress.json, results.json, world, and server logs.
+metadata.json (script SHA-256 and server version), fixture.json, progress.json, results.json, measurements.jsonl, world, and server logs.
 A missing block, compile error, script exception, explicit failure, tick timeout,
 server exit, or wall-clock timeout fails the runner. Failed runs remain available.
 The runner stops only the process it launched; it forcibly stops the disposable world

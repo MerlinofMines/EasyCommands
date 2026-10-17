@@ -21,7 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class AssemblerBlockHandler : FunctionalBlockHandler<IMyAssembler> {
             public AssemblerBlockHandler() {
-                AddBooleanHandler(Property.RUN, b => b.IsProducing);
+                AddBooleanHandler(Property.RUN, b => b.IsWorking && b.IsProducing);
                 AddNumericHandler(Property.RATIO, b => b.CurrentProgress);
                 AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });
