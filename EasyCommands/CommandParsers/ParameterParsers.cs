@@ -129,6 +129,10 @@ namespace IngameScript {
             AddPropertyWords(Synonyms("dead"), Property.ALIVE, false);
 
             //Property Words
+            AddPropertyWords(Synonyms("behavior behaviour"), Property.AUTO);
+            AddPropertyWords(Synonyms("precision"), Property.PRECISION);
+            AddPropertyWords(Synonyms("avoid avoidance"), Property.AVOID);
+            AddPropertyWords(Synonyms("flee fleeing"), Property.FLEE);
             AddPropertyWords(AllWords(PluralWords("height length level size period scale")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle azimuth"), Property.ANGLE);
             AddPropertyWords(AllWords(PluralWords("speed rate pace"), Synonyms("velocity velocities")), Property.VELOCITY);
@@ -346,6 +350,11 @@ namespace IngameScript {
             AddBlockWords(Words("irrigation", "irrigation system"), Block.IRRIGATION);
 
             //Blocks
+            AddBlockWords(Words("aiflight", "ai flight"), Block.AI_FLIGHT);
+            AddBlockWords(Words("aibasic", "ai basic"), Block.AI_BASIC);
+            AddBlockWords(Words("airecorder", "ai recorder"), Block.AI_RECORDER);
+            AddBlockWords(Words("aidefensive", "ai defensive"), Block.AI_DEFENSIVE);
+            AddBlockWords(Words("aioffensive", "ai offensive"), Block.AI_OFFENSIVE);
             AddBlockWords(Synonyms("piston"), Block.PISTON);
             AddBlockWords(Synonyms("light spotlight"), Block.LIGHT);
             AddBlockWords(Synonyms("rotor"), Block.ROTOR);

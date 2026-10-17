@@ -234,3 +234,4 @@ Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/Eas
 * [Welders](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/welder "Welder Handler")
 * [Wheel Suspension](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/suspension "Wheel Suspension Handler")
 * [Wind Turbines](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/turbine "Wind Turbine Handler")
+* [AI Blocks](blockHandlers/ai)

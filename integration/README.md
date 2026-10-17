@@ -24,6 +24,13 @@ controls with the existing whole-vector getters.
 Run `-Suite connector-production` for connector target names and shared refinery
 production status. See [connector and production E2E tests](CONNECTOR-PRODUCTION.md)
 for the fixture, assertions, and validation results.
+AI handler checks run with `./build/Test-InGame.ps1 -Suite ai`. They verify all
+five behavior switches independently of block power, Flight settings, Recorder
+playback start/stop with a seeded waypoint, and the no-threat/no-movement flee
+precondition. The fixture is a stationary powered platform: these checks do not
+certify navigation, docking, or positive fleeing from a detected enemy.
+For route arrival, stop/resume and detected-threat retreat, run `-Suite ai-motion`.
+See [AI E2E scenarios](AI.md) for the physical fixture and independent assertions.
 
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need

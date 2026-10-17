@@ -45,6 +45,9 @@ namespace EasyCommands.Integration {
         bool finished;
         int startup;
         string passToken, failToken;
+        Vector3D motionStart, motionDestination;
+        double maxTravel, maxSpeed;
+        bool sawPlaying, sawFleeing, sawEnemy, sawStopped;
         public void Init(object gameInstance) {
             root = Environment.GetEnvironmentVariable("EC_TEST_ROOT");
         }
@@ -102,6 +105,7 @@ namespace EasyCommands.Integration {
                 }
                 ticks++;
                 if (test.Setup == "connector-production" && ticks % 60 == 0) CaptureMeasurements(test.Name + "-tick-" + ticks);
+                if (test.Setup != null && test.Setup.StartsWith("ai-motion") && ticks % 30 == 0) ObserveMotion();
                 var output = pb.DetailedInfo ?? "";
                 if (ticks % 60 == 0) File.WriteAllText(Path.Combine(root, "progress.json"), json.Serialize(new { Scenario = test.Name, Ticks = ticks, Output = output, Working = pb.IsWorking }));
                 if (pb.HasCompileErrors || output.Contains("Exception Occurred:") || output.Contains("Caught exception") || output.Contains("Script execution terminated") || output.Contains(failToken))
@@ -126,6 +130,10 @@ namespace EasyCommands.Integration {
             return blocks;
         }
         void CreateFixture() {
+            if (request.Scenarios.Any(s => s.Setup != null && s.Setup.StartsWith("ai-motion"))) {
+                CreateDroneFixture();
+                return;
+            }
             var grid = new MyObjectBuilder_CubeGrid {
                 GridSizeEnum = MyCubeSize.Large, IsStatic = true, CreatePhysics = true,
                 PersistentFlags = MyPersistentEntityFlags2.InScene | MyPersistentEntityFlags2.Enabled,
@@ -133,7 +141,7 @@ namespace EasyCommands.Integration {
                 PositionAndOrientation = new MyPositionAndOrientation(Vector3D.Zero, Vector3.Forward, Vector3.Up)
             };
             // One connected deck, with enough clearance for the Apex production blocks.
-            for (int x = 0; x < 80; x++)
+            for (int x = 0; x < 122; x++)
                 for (int z = 0; z < 6; z++)
                     grid.CubeBlocks.Add(new MyObjectBuilder_CubeBlock {
                         SubtypeName = "LargeBlockArmorBlock", Min = new Vector3I(x, 0, z)
@@ -169,6 +177,11 @@ namespace EasyCommands.Integration {
                 MyAPIGateway.Entities.RemapObjectBuilder(partnerGrid);
                 MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(partnerGrid);
             }
+            Add(grid, "FlightMovementBlock", "LargeFlightMovement", "EC AI Flight", 82);
+            Add(grid, "BasicMissionBlock", "LargeBasicMission", "EC AI Basic", 87);
+            Add(grid, "PathRecorderBlock", "LargePathRecorderBlock", "EC AI Recorder", 92);
+            Add(grid, "DefensiveCombatBlock", "LargeDefensiveCombat", "EC AI Defensive", 97);
+            Add(grid, "OffensiveCombatBlock", "LargeOffensiveCombat", "EC AI Offensive", 102);
             MyAPIGateway.Entities.RemapObjectBuilder(grid);
             MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(grid);
             var reactor = Blocks().Single(b => b.CustomName == "EC Test Reactor");
@@ -182,6 +195,74 @@ namespace EasyCommands.Integration {
             var fruit = MyObjectBuilderSerializer.CreateNewObject(
                 MyObjectBuilderType.Parse("MyObjectBuilder_ConsumableItem"), "Fruit") as MyObjectBuilder_PhysicalObject;
             source.GetInventory().AddItems((VRage.MyFixedPoint)99, fruit);
+        }
+        void CreateDroneFixture() {
+            // The compact test rig verifies controls, not exhaust-clearance damage.
+            MyAPIGateway.Session.SessionSettings.ThrusterDamage = false;
+            long owner = Sandbox.Game.World.MySession.Static.Players.CreateNewIdentity("EC Drone Owner", addToNpcs: true).IdentityId;
+            long enemy = Sandbox.Game.World.MySession.Static.Players.CreateNewIdentity("EC Threat Owner", addToNpcs: true).IdentityId;
+            var grid = new MyObjectBuilder_CubeGrid {
+                GridSizeEnum = MyCubeSize.Large, IsStatic = false, CreatePhysics = true,
+                PersistentFlags = MyPersistentEntityFlags2.InScene | MyPersistentEntityFlags2.Enabled,
+                DisplayName = "EC Flight Rig",
+                PositionAndOrientation = new MyPositionAndOrientation(Vector3D.Zero, Vector3.Forward, Vector3.Up)
+            };
+            for (int x = 0; x < 16; x++)
+                for (int z = 0; z < 9; z++) grid.CubeBlocks.Add(new MyObjectBuilder_CubeBlock { SubtypeName = "LargeBlockArmorBlock", Min = new Vector3I(x, 0, z) });
+            AddDroneBlock(grid, "BatteryBlock", "LargeBlockBatteryBlock", "EC Drone Battery", new Vector3I(0, 1, 0));
+            AddDroneBlock(grid, "Reactor", "LargeBlockSmallGenerator", "EC Drone Reactor", new Vector3I(0, 1, 6));
+            AddDroneBlock(grid, "MyProgrammableBlock", "LargeProgrammableBlock", "EC Test PB", new Vector3I(4, 1, 0));
+            AddDroneBlock(grid, "FlightMovementBlock", "LargeFlightMovement", "EC Drone Flight", new Vector3I(6, 1, 0));
+            AddDroneBlock(grid, "PathRecorderBlock", "LargePathRecorderBlock", "EC Drone Recorder", new Vector3I(8, 1, 0));
+            AddDroneBlock(grid, "DefensiveCombatBlock", "LargeDefensiveCombat", "EC Drone Defensive", new Vector3I(10, 1, 0));
+            AddDroneBlock(grid, "Gyro", "LargeBlockGyro", "EC Drone Gyro", new Vector3I(12, 1, 0));
+            var directions = new[] { Base6Directions.Direction.Forward, Base6Directions.Direction.Backward, Base6Directions.Direction.Left, Base6Directions.Direction.Right, Base6Directions.Direction.Up, Base6Directions.Direction.Down };
+            for (int i = 0; i < directions.Length; i++) {
+                var thrust = AddDroneBlock(grid, "Thrust", "LargeBlockSmallThrust", "EC Drone Thrust " + i, new Vector3I(4 + i % 4 * 3, 1, i < 4 ? 6 : 3));
+                thrust.BlockOrientation = new SerializableBlockOrientation(directions[i], i < 4 ? Base6Directions.Direction.Up : Base6Directions.Direction.Forward);
+            }
+            foreach (var block in grid.CubeBlocks) block.Owner = owner;
+            MyAPIGateway.Entities.RemapObjectBuilder(grid);
+            MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(grid);
+            var target = new MyObjectBuilder_CubeGrid {
+                GridSizeEnum = MyCubeSize.Large, IsStatic = true, CreatePhysics = true,
+                PersistentFlags = MyPersistentEntityFlags2.InScene | MyPersistentEntityFlags2.Enabled,
+                DisplayName = "EC Threat Grid",
+                PositionAndOrientation = new MyPositionAndOrientation(new Vector3D(1000, 0, 0), Vector3.Forward, Vector3.Up)
+            };
+            AddDroneBlock(target, "BatteryBlock", "LargeBlockBatteryBlock", "EC Threat Battery", Vector3I.Zero).Owner = enemy;
+            MyAPIGateway.Entities.RemapObjectBuilder(target);
+            MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(target);
+            var reactor = Blocks().Single(b => b.CustomName == "EC Drone Reactor");
+            reactor.GetInventory().AddItems((MyFixedPoint)100, MyObjectBuilderSerializer.CreateNewObject(MyObjectBuilderType.Parse("MyObjectBuilder_Ingot"), "Uranium") as MyObjectBuilder_PhysicalObject);
+        }
+        static MyObjectBuilder_TerminalBlock AddDroneBlock(MyObjectBuilder_CubeGrid grid, string type, string subtype, string name, Vector3I position) {
+            var block = Add(grid, type, subtype, name, position.X);
+            block.Min = position;
+            return block;
+        }
+        void ObserveMotion() {
+            var blocks = Blocks();
+            var recorderBlock = blocks.Single(b => b.CustomName == "EC Drone Recorder");
+            Sandbox.ModAPI.Ingame.IMyPathRecorderComponent recorder;
+            recorderBlock.Components.TryGet(out recorder);
+            var defensive = (Sandbox.ModAPI.Ingame.IMyDefensiveCombatBlock)blocks.Single(b => b.CustomName == "EC Drone Defensive");
+            var position = pb.GetPosition();
+            var speed = pb.CubeGrid.Physics.LinearVelocity.Length();
+            maxTravel = Math.Max(maxTravel, Vector3D.Distance(motionStart, position));
+            maxSpeed = Math.Max(maxSpeed, speed);
+            sawPlaying |= recorder.IsPlaying;
+            sawFleeing |= defensive.IsFleeing;
+            sawEnemy |= defensive.SearchEnemyComponent.FoundEnemyId.HasValue;
+            // Require stopping during the explicit pause, before playback resumes.
+            sawStopped |= ticks > 600 && ticks < 1000 && !recorder.IsPlaying && maxTravel > 5 && speed < .5;
+            File.AppendAllText(Path.Combine(root, "motion.jsonl"), json.Serialize(new {
+                Scenario = request.Scenarios[index].Name, Ticks = ticks, Position = new[] { position.X, position.Y, position.Z },
+                Speed = speed, Distance = Vector3D.Distance(position, motionDestination), Playing = recorder.IsPlaying,
+                Fleeing = defensive.IsFleeing, Enemy = defensive.SearchEnemyComponent.FoundEnemyId,
+                FlightInfo = blocks.Single(b => b.CustomName == "EC Drone Flight").DetailedInfo,
+                DefenseInfo = blocks.Single(b => b.CustomName == "EC Drone Defensive").DetailedInfo
+            }) + Environment.NewLine);
         }
         static MyObjectBuilder_TerminalBlock Add(MyObjectBuilder_CubeGrid grid, string type, string subtype, string name, int x) {
             var block = MyObjectBuilderSerializer.CreateNewObject(
@@ -215,6 +296,44 @@ namespace EasyCommands.Integration {
         }
         void PrepareScenario(Scenario scenario, List<IMyTerminalBlock> blocks) {
             if (String.IsNullOrEmpty(scenario.Setup)) return;
+            if (scenario.Setup.StartsWith("ai-motion")) {
+                maxTravel = maxSpeed = 0;
+                sawPlaying = sawFleeing = sawEnemy = sawStopped = false;
+                foreach (var block in blocks.Where(b => b.CustomName.StartsWith("EC Drone ") && (b is IMyFlightMovementBlock || b is IMyPathRecorderBlock || b is IMyDefensiveCombatBlock)))
+                    Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.SetValueBool(block, "ActivateBehavior", false);
+                pb.CubeGrid.Physics.ClearSpeed();
+                motionStart = pb.GetPosition();
+                motionDestination = motionStart + new Vector3D(0, 0, -150);
+                var rb = blocks.Single(b => b.CustomName == "EC Drone Recorder");
+                IMyPathRecorderComponent recorder;
+                rb.Components.TryGet(out recorder);
+                recorder.StopPlay();
+                recorder.DeleteAllWaypoints();
+                recorder.AddWaypoint(new Sandbox.Game.Entities.MyAutopilotWaypoint(motionDestination, "EC arrival"));
+                var defensive = (IMyDefensiveCombatBlock)blocks.Single(b => b.CustomName == "EC Drone Defensive");
+                defensive.FleeTrigger = VRage.Game.ModAPI.Ingame.FleeTrigger.Never;
+                defensive.CustomFleeCoordinates = motionDestination;
+                defensive.WaypointZoneSize = 5;
+                defensive.SearchEnemyComponent.TargetingLockOptions = VRage.Game.ModAPI.Ingame.MyGridTargetingRelationFiltering.Enemy | VRage.Game.ModAPI.Ingame.MyGridTargetingRelationFiltering.Neutral;
+                defensive.SearchEnemyComponent.SubsystemsToDestroy = VRage.Utils.MyStringHash.GetOrCompute("PowerSystems");
+                Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.SetValue<long>(defensive, "FleeMode", 1);
+                CaptureMeasurements("setup-" + scenario.Setup);
+                return;
+            }
+            if (scenario.Setup == "ai-reset") {
+                foreach (var block in blocks.Where(b => b.CustomName.StartsWith("EC AI "))) {
+                    ((IMyFunctionalBlock)block).Enabled = true;
+                    Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.SetValueBool(block, "ActivateBehavior", false);
+                }
+                var recorderBlock = blocks.Single(b => b.CustomName == "EC AI Recorder");
+                IMyPathRecorderComponent recorder;
+                if (!recorderBlock.Components.TryGet(out recorder)) throw new Exception("Missing recorder component");
+                recorder.StopPlay();
+                recorder.DeleteAllWaypoints();
+                recorder.AddWaypoint(new Sandbox.Game.Entities.MyAutopilotWaypoint(new Vector3D(5000, 0, 0), "EC distant waypoint"));
+                CaptureMeasurements("setup-ai-reset");
+                return;
+            }
             IMyResourceStorageComponent water;
             IMyFarmPlotLogic crop;
             if (scenario.Setup == "connector-production") {
@@ -238,8 +357,8 @@ namespace EasyCommands.Integration {
             } else if (scenario.Setup == "crop-states") {
                 var farm = blocks.Single(b => b.CustomName == "EC Test Farm");
                 var builder = new MyObjectBuilder_CubeGrid();
-                AddFarmState(builder, "EC Test Mature Farm", 66, 100);
-                AddFarmState(builder, "EC Test Dead Farm", 72, 0);
+                AddFarmState(builder, "EC Test Mature Farm", 110, 100);
+                AddFarmState(builder, "EC Test Dead Farm", 116, 0);
                 foreach (var block in builder.CubeBlocks)
                     if (farm.CubeGrid.AddBlock(block, false) == null) throw new Exception("Could not add crop fixture");
             } else if (scenario.Setup == "food-ingredients") {
@@ -255,6 +374,30 @@ namespace EasyCommands.Integration {
             var readings = new List<object>();
             foreach (var block in Blocks()) {
                 var values = new Dictionary<string, object>();
+                var thrust = block as Sandbox.ModAPI.Ingame.IMyThrust;
+                if (thrust != null) {
+                    values["Working"] = thrust.IsWorking;
+                    values["Functional"] = thrust.IsFunctional;
+                    values["Direction"] = thrust.Orientation.Forward.ToString();
+                    values["MaximumForce"] = thrust.MaxEffectiveThrust;
+                }
+                if (block.CustomName.StartsWith("EC AI ")) {
+                    values["Enabled"] = ((IMyFunctionalBlock)block).Enabled;
+                    values["Behavior"] = Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.GetValueBool(block, "ActivateBehavior");
+                    var flight = block as Sandbox.ModAPI.Ingame.IMyFlightMovementBlock;
+                    if (flight != null) {
+                        values["SpeedLimit"] = flight.SpeedLimit;
+                        values["Precision"] = flight.PrecisionMode;
+                        values["Avoidance"] = flight.CollisionAvoidance;
+                    }
+                    Sandbox.ModAPI.Ingame.IMyPathRecorderComponent recorder;
+                    if (block.Components.TryGet(out recorder)) values["Playing"] = recorder.IsPlaying;
+                    var defensive = block as Sandbox.ModAPI.Ingame.IMyDefensiveCombatBlock;
+                    if (defensive != null) {
+                        values["Fleeing"] = defensive.IsFleeing;
+                        values["EnemyId"] = defensive.SearchEnemyComponent.FoundEnemyId;
+                    }
+                }
                 Sandbox.ModAPI.Ingame.IMyResourceStorageComponent water;
                 if (block.Components.TryGet(out water)) {
                     values["WaterType"] = water.GetType().FullName;
@@ -309,6 +452,20 @@ namespace EasyCommands.Integration {
             File.AppendAllText(Path.Combine(root, "measurements.jsonl"), json.Serialize(new { Stage = stage, Readings = readings }) + Environment.NewLine);
         }
         void Record(bool passed, string detail) {
+            var setup = request.Scenarios[index].Setup;
+            if (passed && setup != null && setup.StartsWith("ai-motion")) {
+                ObserveMotion();
+                var distance = Vector3D.Distance(pb.GetPosition(), motionDestination);
+                var speed = pb.CubeGrid.Physics.LinearVelocity.Length();
+                var thrusters = Blocks().OfType<Sandbox.ModAPI.Ingame.IMyThrust>().Where(b => b.CubeGrid.EntityId == pb.CubeGrid.EntityId).ToList();
+                bool healthyThrust = thrusters.Count == 6 && thrusters.Select(b => b.Orientation.Forward).Distinct().Count() == 6 && thrusters.All(b => b.IsFunctional && b.MaxEffectiveThrust > 0);
+                bool valid = maxTravel > 100 && distance < 12 && speed < 1 && healthyThrust;
+                if (setup == "ai-motion-flee") valid &= sawEnemy && sawFleeing;
+                else valid &= sawPlaying;
+                if (setup == "ai-motion-stop") valid &= sawStopped;
+                passed = valid;
+                detail += " Motion: " + json.Serialize(new { maxTravel, maxSpeed, distance, speed, sawPlaying, sawFleeing, sawEnemy, sawStopped, healthyThrust });
+            }
             CaptureMeasurements(request.Scenarios[index].Name);
             results.Add(new Result { Name = request.Scenarios[index].Name, Passed = passed, Detail = detail, Ticks = ticks });
             pb.Enabled = false;
