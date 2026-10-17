@@ -192,3 +192,16 @@ Print "Fully Recharged Batteries: " + fullyRechargedBatteries
 #All batteries that are fully recharged can be set to auto
 set to auto batteries whose ratio > 0.99 and that are recharging
 ```
+
+
+## Multi-word Block Types
+
+Use `oxygen farm`, `algae farm`, `farm plot`, `food processor`, `irrigation system`, `oxygen tank`, `hydrogen tank`, `oxygen generator`, or `hydrogen generator`. Add `s` to the last word for a group. Compact forms such as `oxygenfarm` also work.
+
+```
+turn on "Oxygen Farm"
+print "Garden" algae farm output
+turn on "Greenhouse" farm plots
+```
+
+Double-quoted names infer their type from these words. An explicit type after the name overrides that inference. Use `food processor` or `irrigation system` to select those families specifically; broader `assembler` and `generator` selectors also include them.

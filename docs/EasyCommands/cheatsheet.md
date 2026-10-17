@@ -1,4 +1,4 @@
-﻿# EasyCommands Cheat Sheet
+# EasyCommands Cheat Sheet
 The following lists out all of the reserved keywords in EasyCommands.
 
 All reserved keywords are matched by lowercase check, so capitalization does not matter.
@@ -19,7 +19,12 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
 * Self Selector - ```my, self, this``` 
 * Variable Selector - ```$```
 
-### Block Types (Single, Group) 
+### Block Types (Single, Group)
+* Algae Farm: `algaefarm`, `algae farm` (single); `algaefarms`, `algae farms` (group)
+* Farm Plot: `farmplot`, `farm plot` (single); `farmplots`, `farm plots` (group)
+* Food Processor: `foodprocessor`, `food processor` (single); `foodprocessors`, `food processors` (group)
+* Irrigation System: `irrigation`, `irrigation system` (single); `irrigations`, `irrigation systems` (group)
+* Oxygen Farm: `oxygenfarm`, `oxygen farm` (single); `oxygenfarms`, `oxygen farms` (group)
 * Air Vent
   * ```airvent, vent```
   *  ```airvents, vents```
@@ -117,8 +122,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```merge```
   * (no group keywords)
 * O2/H2 Generator
-  * ```generator```
-  * ```generators```
+  * ```generator, oxygen generator, hydrogen generator```
+  * ```generators, oxygen generators, hydrogen generators```
 * Ore Detector
   * ```detector```
   * ```detectors```
@@ -163,8 +168,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```speaker, alarm, siren```
   * ```speakers, alarms, sirens```
 * Tank (Oxygen or Hydrogen)
-  * ```tank```
-  * ```tanks```
+  * ```tank, oxygen tank, hydrogen tank```
+  * ```tanks, oxygen tanks, hydrogen tanks```
 * Terminal Block
   * ```terminal```
   * ```terminals```
@@ -195,6 +200,8 @@ These words are (mostly) ignored when parsing your script, but feel free to use 
   * ```turbines```
 
 ## Properties (Inverse in Parentheses, if present)
+* Crop - `crop`
+* Alive - `alive` (`dead`)
 * Able - ```able, can, ready```, (```unable, cannot```)
 * Actions - ```actions```
 * Altitude - ```altitude, altitudes, elevation, elevations```

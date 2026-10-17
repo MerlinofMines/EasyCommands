@@ -258,3 +258,7 @@ set my display to "Nothing to Recycle"
 stop $recycleAssembler
 replay
 ```
+
+## Production status
+
+`running` (read-only Boolean) requires both a working block and active production. Disabled or unpowered blocks report false, even if the game retains its previous production flag. `progress` / `ratio` (read-only Numeric) reads current job progress, not overall queue completion. The existing recipe-qualified `producing` keyword is unchanged. [Food Processor](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/foodprocessor) extends this handler; Survival Kits also remain accessible as assemblers.

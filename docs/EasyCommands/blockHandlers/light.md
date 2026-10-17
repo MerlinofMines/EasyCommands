@@ -129,7 +129,7 @@ set "My Light" length to 50
 * Primitive Type: Numeric
 * Keywords: ```offset, offsets```
 
-Get/Sets the blink offset (when during each interval does the light start blinking?) for the given light(s), in seconds. Values are between 0 - 100.
+Get/Sets the blink offset (when during each interval does the light start blinking?) for the given light(s), as a percentage of the interval. Values are between 0 - 100.
 
 ```
 Print "Blink Offset: " + "My Light" offset
@@ -141,7 +141,7 @@ set "My Light" offset to 50
 * Primitive Type: Numeric
 * Keywords: ```falloff, falloffs```
 
-Gets/Sets the falloff for the given lights(s), in seconds.
+Gets/Sets the light attenuation setting for the given light(s).
 
 ```
 Print "Falloff: " + "My Light" falloff

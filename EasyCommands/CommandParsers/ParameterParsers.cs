@@ -124,6 +124,10 @@ namespace IngameScript {
             AddWords(Synonyms("on begin true start started resume resumed"), new VariableCommandParameter(GetStaticVariable(true)));
             AddWords(Synonyms("off terminate cancel end false stopped halt halted"), new VariableCommandParameter(GetStaticVariable(false)));
 
+            AddPropertyWords(Synonyms("crop"), Property.CROP);
+            AddPropertyWords(Synonyms("alive"), Property.ALIVE);
+            AddPropertyWords(Synonyms("dead"), Property.ALIVE, false);
+
             //Property Words
             AddPropertyWords(AllWords(PluralWords("height length level size period scale")), Property.LEVEL);
             AddPropertyWords(PluralWords("angle azimuth"), Property.ANGLE);
@@ -335,6 +339,12 @@ namespace IngameScript {
                 return false;
             });
 
+            AddBlockWords(Words("farmplot", "farm plot"), Block.FARM_PLOT);
+            AddBlockWords(Words("algaefarm", "algae farm"), Block.ALGAE_FARM);
+            AddBlockWords(Words("oxygenfarm", "oxygen farm"), Block.OXYGEN_FARM);
+            AddBlockWords(Words("foodprocessor", "food processor"), Block.FOOD_PROCESSOR);
+            AddBlockWords(Words("irrigation", "irrigation system"), Block.IRRIGATION);
+
             //Blocks
             AddBlockWords(Synonyms("piston"), Block.PISTON);
             AddBlockWords(Synonyms("light spotlight"), Block.LIGHT);
@@ -361,8 +371,8 @@ namespace IngameScript {
             AddBlockWords(Synonyms("airvent vent"), Block.AIRVENT);
             AddBlockWords(Synonyms("gun railgun cannon autocannon rocket missile launcher"), Block.GUN);
             AddBlockWords(Synonyms("turret"), Block.TURRET);
-            AddBlockWords(Synonyms("generator"), Block.GENERATOR);
-            AddBlockWords(Synonyms("tank"), Block.TANK);
+            AddBlockWords(Words("generator", "oxygen generator", "hydrogen generator"), Block.GENERATOR);
+            AddBlockWords(Words("tank", "oxygen tank", "hydrogen tank"), Block.TANK);
             AddBlockWords(Synonyms("magnet"), Synonyms("magnets gears"), Block.MAGNET, Synonyms("gear"));
             AddBlockWords(Synonyms("battery"), Synonyms("batteries"), Block.BATTERY);
             AddBlockWords(Synonyms("chute parachute"), Block.PARACHUTE);
@@ -456,7 +466,18 @@ namespace IngameScript {
 
         public List<Token> Tokenize(String commandString) => tokenize(commandString).ToList();
 
-        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) => tokens.SelectMany(ParseCommandParameters).ToList();
+        List<ICommandParameter> ParseCommandParameters(List<Token> tokens) {
+            var parameters = NewList<ICommandParameter>();
+            for (int i = 0; i < tokens.Count; i++) {
+                var token = tokens[i];
+                // Match registered two-word selectors without crossing quoted-string boundaries.
+                if (!token.isString && i + 1 < tokens.Count && !tokens[i + 1].isString &&
+                    propertyWords.ContainsKey(token.token + " " + tokens[i + 1].token))
+                    token = new Token(token.original + " " + tokens[++i].original, false, false);
+                parameters.AddList(ParseCommandParameters(token));
+            }
+            return parameters;
+        }
 
         List<ICommandParameter> ParseCommandParameters(Token token) {
             var commandParameters = NewList<ICommandParameter>();

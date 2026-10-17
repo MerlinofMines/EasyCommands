@@ -1,0 +1,138 @@
+[
+  {
+    "Name": "farm-plot-selector",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn off \"EC Test Farm\" farmplot\nturn on \"EC Test Farm\" farmplot\nif \"EC Test Farm\" farmplot is on\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: farm selector\""
+  },
+  {
+    "Name": "algae-selector-and-output",
+    "RequiredBlocks": [
+      "EC Test Algae"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn on \"EC Test Algae\" algaefarm\nif \"EC Test Algae\" algaefarm output >= 0\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: algae output\""
+  },
+  {
+    "Name": "food-processor-selector",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn off \"EC Test Kitchen\" foodprocessor\nturn on \"EC Test Kitchen\" foodprocessor\nif \"EC Test Kitchen\" foodprocessor is on\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: food processor selector\""
+  },
+  {
+    "Name": "seed-alias-transfer",
+    "RequiredBlocks": [
+      "source cargo",
+      "destination cargo"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "transfer 2 \"fruit seeds\" from \"source cargo\" to \"destination cargo\"\nassign sourceCount to \"source cargo\" amount \"fruit seeds\"\nassign destinationCount to \"destination cargo\" amount \"fruit seeds\"\nif sourceCount is 3 and destinationCount is 2\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: seed transfer counts\""
+  },
+  {
+    "Name": "irrigation-selector",
+    "RequiredBlocks": [
+      "EC Test Irrigation"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "turn on \"EC Test Irrigation\" irrigation system\r\nif \"EC Test Irrigation\" irrigation system is on\r\n  print \"EC_PASS\"\r\nelse\r\n  print \"EC_FAIL: irrigation selector\""
+  },
+  {
+    "Name": "empty-farm-crop-state",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "assign ecOccupiedFlag to \"EC Test Farm\" farmplot occupied\nassign ecLivingFlag to \"EC Test Farm\" farmplot crop alive\nassign ecCropName to \"EC Test Farm\" farmplot crop\nif ecOccupiedFlag or ecLivingFlag or ecCropName != \"\"\n  print \"EC_FAIL: fresh farm must be empty\"\nelse\n  print \"EC_PASS\""
+  },
+  {
+    "Name": "food-recipe-blueprint",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "tell \"EC Test Kitchen\" foodprocessor to create \"kelp crisp\"\nassign ecRecipeQueued to \"EC Test Kitchen\" foodprocessor producing \"kelp crisp\"\nif ecRecipeQueued\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: kelp crisp blueprint was not queued\""
+  },
+  {
+    "Name": "farm-water-units",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 900,
+    "Commands": "assign ecWaterRatio to \"EC Test Farm\" farm plot percentage\nassign ecWaterLevel to \"EC Test Farm\" farm plot level\nassign ecWaterCapacity to \"EC Test Farm\" farm plot capacity\nprint ecWaterRatio\nprint ecWaterLevel\nprint ecWaterCapacity\nset \"EC Test Farm\" farm plot level to 999\nif ecWaterRatio is 0.25 and ecWaterLevel is 45 and ecWaterCapacity is 180 and \"EC Test Farm\" farm plot level is 45\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: water units or read-only setter\"",
+    "Setup": "water-quarter"
+  },
+  {
+    "Name": "oxygen-farm-ratio",
+    "RequiredBlocks": [
+      "EC Test Oxygen",
+      "EC Test Half Oxygen"
+    ],
+    "TimeoutTicks": 900,
+    "Commands": "turn on \"EC Test Oxygen\" oxygen farm\nturn on \"EC Test Half Oxygen\" oxygen farm\nwait 3\nassign ecOxygenRatio to \"EC Test Oxygen\" oxygen farm percentage\nassign ecHalfRatio to \"EC Test Half Oxygen\" oxygen farm ratio\nprint ecOxygenRatio\nprint ecHalfRatio\nif ecOxygenRatio <= 0 or ecOxygenRatio > 1 or ecHalfRatio <= 0 or ecHalfRatio > 1\n  print \"EC_FAIL: sunlight factor must be a nonzero fraction\"\nelse\n  turn off \"EC Test Oxygen\" oxygen farm\n  wait 2\n  if \"EC Test Oxygen\" oxygen farm percentage is 0\n    print \"EC_PASS\"\n  else\n    print \"EC_FAIL: unpowered oxygen output\""
+  },
+  {
+    "Name": "crop-input-output",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 900,
+    "Commands": "print \"EC Test Farm\" farm plot crop\nprint \"EC Test Farm\" farm plot crop input\nprint \"EC Test Farm\" farm plot crop output\nif \"EC Test Farm\" farm plot occupied and \"EC Test Farm\" farm plot crop alive and \"EC Test Farm\" farm plot crop input is 1 and \"EC Test Farm\" farm plot crop output > 0\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: newly planted crop amounts\"",
+    "Setup": "crop-planted"
+  },
+  {
+    "Name": "algae-countdown-units",
+    "RequiredBlocks": [
+      "EC Test Algae"
+    ],
+    "TimeoutTicks": 900,
+    "Commands": "assign ecSecondsBefore to \"EC Test Algae\" algae farm countdown\nassign ecRate to \"EC Test Algae\" algae farm output\nwait 3\nassign ecSecondsAfter to \"EC Test Algae\" algae farm countdown\nprint ecRate\nprint ecSecondsBefore\nprint ecSecondsAfter\nassign ecElapsedSeconds to ecSecondsBefore - ecSecondsAfter\nif ecRate > 0 and ecRate <= 0.334 and ecSecondsBefore > 0 and ecElapsedSeconds > 1 and ecElapsedSeconds < 8\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: algae production countdown\""
+  },
+  {
+    "Name": "algae-blocked-countdown",
+    "RequiredBlocks": [
+      "EC Test Half Algae"
+    ],
+    "TimeoutTicks": 900,
+    "Commands": "wait 3\nprint \"EC Test Half Algae\" algae farm output\nprint \"EC Test Half Algae\" algae farm countdown\nif \"EC Test Half Algae\" algae farm output is 0 and \"EC Test Half Algae\" algae farm countdown is -1\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: unavailable algae countdown\"",
+    "Setup": "algae-blocked"
+  },
+  {
+    "Name": "crop-mature-and-dead",
+    "Setup": "crop-states",
+    "RequiredBlocks": [
+      "EC Test Mature Farm",
+      "EC Test Dead Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "assign ecYield to \"EC Test Mature Farm\" farm plot crop output\nassign ecDeadYield to \"EC Test Dead Farm\" farm plot crop output\nassign ecMature to \"EC Test Mature Farm\" farm plot crop complete\nassign ecDead to \"EC Test Dead Farm\" farm plot crop dead\nprint ecYield\nprint ecDeadYield\nif ecYield is 2 and ecDeadYield is 2 and ecMature and ecDead\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: restored crop states\""
+  },
+  {
+    "Name": "food-production",
+    "Setup": "food-ingredients",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 2400,
+    "Commands": "tell \"EC Test Kitchen\" food processor to create 5 \"kelp crisp\"\nturn on \"EC Test Kitchen\" food processor\nwait 5\nassign ecCooking to \"EC Test Kitchen\" food processor is running\nassign ecProgress to \"EC Test Kitchen\" food processor progress\nprint ecCooking\nprint ecProgress\nif ecCooking and ecProgress >= 0 and ecProgress <= 1\n  turn off \"EC Test Kitchen\" food processor\n  wait 5\n  if \"EC Test Kitchen\" assembler is running\n    print \"EC_FAIL: disabled production\"\n  else\n    assign ecMealsBefore to \"EC Test Kitchen\" inventories[1] amount \"kelp crisp\"\n    turn on \"EC Test Kitchen\" assembler\n    wait 12\n    if \"EC Test Kitchen\" inventories[1] amount \"kelp crisp\" > ecMealsBefore\n      print \"EC_PASS\"\n    else\n      print \"EC_FAIL: no cooked item\"\nelse\n  print \"EC_FAIL: production status or progress\""
+  },
+  {
+    "Name": "farm-lighting",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "set \"EC Test Farm\" farm plot radius to 8\nset \"EC Test Farm\" farm plot intensity to 2\nset \"EC Test Farm\" farm plot interval to 3\nset \"EC Test Farm\" farm plot interval level to 50\nset \"EC Test Farm\" farm plot offset to 25\nassign ecRadius to \"EC Test Farm\" farm plot radius\nassign ecBlink to \"EC Test Farm\" farm plot interval level\nassign ecOffset to \"EC Test Farm\" farm plot offset\nassign ecInterval to \"EC Test Farm\" farm plot interval\nif ecInterval is 3 and ecRadius is 8 and ecBlink is 50 and ecOffset is 25\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: plot lighting units\""
+  },
+  {
+    "Name": "farm-light-color-intensity",
+    "RequiredBlocks": [
+      "EC Test Farm"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "set \"EC Test Farm\" farm plot color to green\nset \"EC Test Farm\" farm plot intensity to 2\nset \"EC Test Farm\" farm plot falloff to 1\nassign ecColor to \"EC Test Farm\" farm plot color\nassign ecIntensity to \"EC Test Farm\" farm plot intensity\nassign ecFalloff to \"EC Test Farm\" farm plot falloff\nif ecColor is green and ecIntensity is 2 and ecFalloff is 1\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: plot color intensity falloff\""
+  }
+]

@@ -172,6 +172,12 @@ You can also manage inventories and production queues using the [Inventory](http
 Also check out [Items & Blueprints](https://spaceengineers.merlinofmines.com/EasyCommands/items "Items & Blueprints") for information on how to specify items and blueprints to these Block Handlers.
 
 ## Supported Block Handlers
+
+* [Algae Farm](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/algaefarm)
+* [Farm Plot](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/farmplot)
+* [Food Processor](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/foodprocessor)
+* [Irrigation System](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/irrigation)
+* [Oxygen Farm](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/oxygenfarm)
 * [Air Vents](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/airvent "Air Vent Handler")
 * [Antennas](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/antenna "Antenna Handler")
 * [Assemblers](https://spaceengineers.merlinofmines.com/EasyCommands/blockHandlers/assembler "Assembler Handler")
