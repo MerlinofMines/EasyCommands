@@ -29,21 +29,15 @@ namespace IngameScript {
 
                 AddDirectionHandlers(Property.ROLL_INPUT, Direction.NONE,
                     TypeHandler(VectorHandler(b => GetRotation(b), (b, v) => b.ProjectionRotation = Vector(Clamp(v.X), Clamp(v.Y), Clamp(v.Z))), Direction.NONE),
-                    TypeHandler(NumericHandler(b => GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(v, 0, 0))), Direction.UP),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(-v, 0, 0))), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, v, 0))), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, -v, 0))), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, v))), Direction.CLOCKWISE),
-                    TypeHandler(NumericHandler(b => -GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, -v))), Direction.COUNTERCLOCKWISE));
+                    SignedAxis(b => GetRotation(b).X, (b, v) => SetRotation(b, Vector(0, 1, 1), Vector(v, 0, 0)), Direction.UP, Direction.DOWN),
+                    SignedAxis(b => GetRotation(b).Y, (b, v) => SetRotation(b, Vector(1, 0, 1), Vector(0, v, 0)), Direction.RIGHT, Direction.LEFT),
+                    SignedAxis(b => GetRotation(b).Z, (b, v) => SetRotation(b, Vector(1, 1, 0), Vector(0, 0, v)), Direction.CLOCKWISE, Direction.COUNTERCLOCKWISE));
 
                 AddDirectionHandlers(Property.OFFSET, Direction.NONE,
                     TypeHandler(VectorHandler(b => GetOffset(b), (b,v) => b.ProjectionOffset = new Vector3I(v)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => GetOffset(b).X, (b, v) => SetOffset(b, Vector(0, 1, 1),  Vector(v, 0, 0))), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).X, (b,v) => SetOffset(b, Vector(0, 1, 1), Vector(-v, 0, 0))), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, v, 0))), Direction.UP),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, -v, 0))), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0), Vector(0, 0, v))), Direction.FORWARD),
-                    TypeHandler(NumericHandler(b => -GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0),  Vector(0, 0, -v))), Direction.BACKWARD));
+                    SignedAxis(b => GetOffset(b).X, (b, v) => SetOffset(b, Vector(0, 1, 1),  Vector(v, 0, 0)), Direction.RIGHT, Direction.LEFT),
+                    SignedAxis(b => GetOffset(b).Y, (b, v) => SetOffset(b, Vector(1, 0, 1), Vector(0, v, 0)), Direction.UP, Direction.DOWN),
+                    SignedAxis(b => GetOffset(b).Z, (b, v) => SetOffset(b, Vector(1, 1, 0), Vector(0, 0, v)), Direction.FORWARD, Direction.BACKWARD));
             }
 
             void SetRotation(IMyProjector projector, Vector3I clearVector, Vector3I newOffset) => projector.ProjectionRotation = GetRotation(projector) * clearVector + Vector(Clamp(newOffset.X), Clamp(newOffset.Y), Clamp(newOffset.Z));

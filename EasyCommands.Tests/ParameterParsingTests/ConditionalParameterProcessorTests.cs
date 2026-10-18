@@ -36,12 +36,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if 3 > 2 set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is ComparisonVariable);
-            ComparisonVariable variable = (ComparisonVariable)conditionalCommand.condition;
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.Comparison));
+            ComputedVariable variable = (ComputedVariable)conditionalCommand.condition;
             Assert.AreEqual(Return.BOOLEAN, variable.GetValue().returnType);
             Assert.IsTrue(CastBoolean(variable.GetValue()));
-            Assert.IsTrue(variable.a is StaticVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is StaticVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -50,7 +50,7 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if the \"batteries\" are recharging set the \"rotors\" height to 5");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.BlockCondition));
         }
     }
 }

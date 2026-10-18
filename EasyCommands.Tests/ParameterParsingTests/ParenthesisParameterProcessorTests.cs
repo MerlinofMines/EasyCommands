@@ -28,9 +28,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
             IVariable condition = conditionalCommand.condition;
-            Assert.IsTrue(condition is ComparisonVariable);
-            ComparisonVariable comparison = (ComparisonVariable)condition;
-            Assert.IsTrue(comparison.a is BiOperandVariable);
+            Assert.IsTrue(IsExpression(condition, VariableKind.Comparison));
+            ComputedVariable comparison = (ComputedVariable)condition;
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", comparison), VariableKind.Binary));
         }
     }
 }

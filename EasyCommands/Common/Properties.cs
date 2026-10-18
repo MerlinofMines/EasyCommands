@@ -72,7 +72,7 @@ namespace IngameScript {
 
                 if (resolvedSupplier.propertyValues.Any(p => p.inverse)) {
                     resolvedSupplier = resolvedSupplier
-                        .WithPropertyValue(new UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
+                        .WithPropertyValue(UniOperandVariable(UniOperand.REVERSE, propertyValue ?? GetStaticVariable(true)));
                     resolvedSupplier.inverse = true;
                 }
                 return resolvedSupplier;

@@ -16,9 +16,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to abs -3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
@@ -28,9 +28,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to sin 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.SIN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.SIN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
@@ -40,9 +40,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to cos 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.COS, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.COS, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Cos(1.5708f), CastNumber(variable.GetValue()));
         }
 
@@ -52,9 +52,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to tan 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.TAN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.TAN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Tan(1.5708f), CastNumber(variable.GetValue()));
         }
 
@@ -64,9 +64,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to asin 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ASIN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ASIN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Asin(1.5708f), CastNumber(variable.GetValue()));
         }
 
@@ -76,9 +76,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to acos 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ACOS, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ACOS, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Acos(1.5708f), CastNumber(variable.GetValue()));
         }
 
@@ -88,9 +88,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to atan 1.5708");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ATAN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ATAN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Atan(1.5708f), CastNumber(variable.GetValue()));
         }
 
@@ -100,9 +100,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to ln 1.5");
             Assert.IsTrue(command is VariableAssignmentCommand);
             var assignment = command as VariableAssignmentCommand;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            var variable = assignment.variable as UniOperandVariable;
-            Assert.AreEqual(UniOperand.LN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            var variable = assignment.variable as ComputedVariable;
+            Assert.AreEqual(UniOperand.LN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual((float)Math.Log(1.5f), CastNumber(variable.GetValue()));
         }
 
@@ -112,9 +112,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to sign -0.5");
             Assert.IsTrue(command is VariableAssignmentCommand);
             var assignment = command as VariableAssignmentCommand;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            var variable = assignment.variable as UniOperandVariable;
-            Assert.AreEqual(UniOperand.SIGN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            var variable = assignment.variable as ComputedVariable;
+            Assert.AreEqual(UniOperand.SIGN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(-1f, CastNumber(variable.GetValue()));
         }
 
@@ -124,9 +124,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to round 5.4");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ROUND, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ROUND, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
@@ -136,9 +136,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to round 5.6");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ROUND, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ROUND, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(6f, CastNumber(variable.GetValue()));
         }
 
@@ -148,9 +148,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to round (5.6:0:5.4)");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.ROUND, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.ROUND, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(6f, 0f, 5f), CastVector(variable.GetValue()));
         }
 
@@ -160,14 +160,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to abs 1:0:0 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.IsTrue(variable.a is UniOperandVariable);
-            UniOperandVariable operation = (UniOperandVariable)variable.a;
-            Assert.AreEqual(UniOperand.ABS, operation.operand);
-            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().returnType);
-            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().returnType);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.Unary));
+            ComputedVariable operation = (ComputedVariable)GetVariableProperty<IVariable>("a", variable);
+            Assert.AreEqual(UniOperand.ABS, GetVariableProperty<UniOperand>("operand", operation));
+            Assert.AreEqual(Return.VECTOR, GetVariableProperty<IVariable>("a", operation).GetValue().returnType);
+            Assert.AreEqual(Return.NUMERIC, GetVariableProperty<IVariable>("a", variable).GetValue().returnType);
             Assert.AreEqual(3f, CastNumber(variable.GetValue()));
         }
 
@@ -177,9 +177,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to sqrt 9 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
@@ -189,14 +189,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to sqrt 9:0:0 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.IsTrue(variable.a is UniOperandVariable);
-            UniOperandVariable operation = (UniOperandVariable)variable.a;
-            Assert.AreEqual(UniOperand.SQRT, operation.operand);
-            Assert.AreEqual(Return.VECTOR, operation.a.GetValue().returnType);
-            Assert.AreEqual(Return.NUMERIC, variable.a.GetValue().returnType);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.Unary));
+            ComputedVariable operation = (ComputedVariable)GetVariableProperty<IVariable>("a", variable);
+            Assert.AreEqual(UniOperand.SQRT, GetVariableProperty<UniOperand>("operand", operation));
+            Assert.AreEqual(Return.VECTOR, GetVariableProperty<IVariable>("a", operation).GetValue().returnType);
+            Assert.AreEqual(Return.NUMERIC, GetVariableProperty<IVariable>("a", variable).GetValue().returnType);
             Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
@@ -206,9 +206,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 3 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(5f, CastNumber(variable.GetValue()));
         }
 
@@ -218,9 +218,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 3 - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
@@ -230,9 +230,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"test\" - t");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("est", CastString(variable.GetValue()));
         }
 
@@ -242,11 +242,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to -t");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)assignment.variable;
-            Assert.AreEqual(UniOperand.REVERSE, variable.operand);
-            Assert.IsTrue(variable.a is AmbiguousStringVariable);
-            AmbiguousStringVariable memoryVariable = (AmbiguousStringVariable)variable.a;
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(UniOperand.REVERSE, GetVariableProperty<UniOperand>("operand", variable));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is AmbiguousStringVariable);
+            AmbiguousStringVariable memoryVariable = (AmbiguousStringVariable)GetVariableProperty<IVariable>("a", variable);
             Assert.AreEqual("t", memoryVariable.value);
         }
 
@@ -256,9 +256,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - eco");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("snd", CastString(variable.GetValue()));
         }
 
@@ -268,9 +268,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - \"\"");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("second", CastString(variable.GetValue()));
         }
 
@@ -280,9 +280,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - d");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("secon", CastString(variable.GetValue()));
         }
 
@@ -292,9 +292,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - f");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("second", CastString(variable.GetValue()));
         }
 
@@ -304,9 +304,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("seco", CastString(variable.GetValue()));
         }
 
@@ -316,9 +316,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to \"second\" - 6");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("", CastString(variable.GetValue()));
         }
 
@@ -328,9 +328,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 3 * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MULTIPLY, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(6f, CastNumber(variable.GetValue()));
         }
 
@@ -340,9 +340,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 1:0:0 + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(3, 0, 0), CastVector(variable.GetValue()));
         }
 
@@ -352,9 +352,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 1:0:0 - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(-1, 0, 0), CastVector(variable.GetValue()));
         }
 
@@ -364,9 +364,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 1:0:0 * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MULTIPLY, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(2, 0, 0), CastVector(variable.GetValue()));
         }
 
@@ -376,9 +376,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 2:0:0 / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.DIVIDE, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(1, 0, 0), CastVector(variable.GetValue()));
         }
 
@@ -388,9 +388,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0:1:0 * 1:0:0");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MULTIPLY, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(0,0,-1), CastVector(variable.GetValue()));
         }
 
@@ -400,9 +400,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0:1:0 . 1:0:0");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.DOT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.DOT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(0f, CastNumber(variable.GetValue()));
         }
 
@@ -412,9 +412,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to sign -0.5:1.5:0");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is UniOperandVariable);
-            var variable = assignment.variable as UniOperandVariable;
-            Assert.AreEqual(UniOperand.SIGN, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Unary));
+            var variable = assignment.variable as ComputedVariable;
+            Assert.AreEqual(UniOperand.SIGN, GetVariableProperty<UniOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(-1,1,0), CastVector(variable.GetValue()));
         }
 
@@ -424,9 +424,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 6 / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.DIVIDE, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(3f, CastNumber(variable.GetValue()));
         }
 
@@ -436,9 +436,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 5 % 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MOD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MOD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(1f, CastNumber(variable.GetValue()));
         }
 
@@ -448,9 +448,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to test % t");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MOD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MOD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual("es", CastString(variable.GetValue()));
         }
 
@@ -460,9 +460,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 1:1:0 % 0:1:0");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MOD, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MOD, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(new Vector3D(1,0,0), CastVector(variable.GetValue()));
         }
 
@@ -472,9 +472,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 2 ^ 4");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(16, CastNumber(variable.GetValue()));
         }
 
@@ -484,9 +484,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to true ^ false");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.IsTrue(CastBoolean(variable.GetValue()));
         }
 
@@ -496,9 +496,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to true xor true");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.IsFalse(CastBoolean(variable.GetValue()));
         }
 
@@ -508,9 +508,9 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 0:0:1 ^ 1:0:0");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.EXPONENT, variable.operand);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.EXPONENT, GetVariableProperty<BiOperand>("operand", variable));
             Assert.AreEqual(90, CastNumber(variable.GetValue()));
         }
 
@@ -520,11 +520,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b + 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.ADD, variable.operand);
-            Assert.IsTrue(variable.a is AmbiguousStringVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -533,11 +533,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b - 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.SUBTRACT, variable.operand);
-            Assert.IsTrue(variable.a is AmbiguousStringVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.SUBTRACT, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -546,11 +546,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b * 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.MULTIPLY, variable.operand);
-            Assert.IsTrue(variable.a is AmbiguousStringVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.MULTIPLY, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -559,11 +559,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b / 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.DIVIDE, variable.operand);
-            Assert.IsTrue(variable.a is AmbiguousStringVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.DIVIDE, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", variable) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -572,14 +572,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 4 * 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable addVariable = (ComputedVariable)assignment.variable;
             Assert.AreEqual(11f, CastNumber(addVariable.GetValue()));
-            Assert.AreEqual(BiOperand.ADD, addVariable.operand);
-            Assert.IsTrue(addVariable.a is BiOperandVariable);
-            Assert.IsTrue(addVariable.b is StaticVariable);
-            BiOperandVariable multiplyVariable = (BiOperandVariable)addVariable.a;
-            Assert.AreEqual(BiOperand.MULTIPLY, multiplyVariable.operand);
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", addVariable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", addVariable), VariableKind.Binary));
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", addVariable) is StaticVariable);
+            ComputedVariable multiplyVariable = (ComputedVariable)GetVariableProperty<IVariable>("a", addVariable);
+            Assert.AreEqual(BiOperand.MULTIPLY, GetVariableProperty<BiOperand>("operand", multiplyVariable));
         }
 
         [TestMethod]
@@ -588,14 +588,14 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to 4 / 2 + 3");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable addVariable = (BiOperandVariable)assignment.variable;
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable addVariable = (ComputedVariable)assignment.variable;
             Assert.AreEqual(5f, CastNumber(addVariable.GetValue()));
-            Assert.AreEqual(BiOperand.ADD, addVariable.operand);
-            Assert.IsTrue(addVariable.a is BiOperandVariable);
-            Assert.IsTrue(addVariable.b is StaticVariable);
-            BiOperandVariable multiplyVariable = (BiOperandVariable)addVariable.a;
-            Assert.AreEqual(BiOperand.DIVIDE, multiplyVariable.operand);
+            Assert.AreEqual(BiOperand.ADD, GetVariableProperty<BiOperand>("operand", addVariable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", addVariable), VariableKind.Binary));
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", addVariable) is StaticVariable);
+            ComputedVariable multiplyVariable = (ComputedVariable)GetVariableProperty<IVariable>("a", addVariable);
+            Assert.AreEqual(BiOperand.DIVIDE, GetVariableProperty<BiOperand>("operand", multiplyVariable));
         }
 
         [TestMethod]
@@ -604,10 +604,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b + 1 > 2");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is ComparisonVariable);
-            ComparisonVariable variable = (ComparisonVariable)assignment.variable;
-            Assert.IsTrue(variable.a is BiOperandVariable);
-            Assert.IsTrue(variable.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Comparison));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.Binary));
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is StaticVariable);
         }
 
         [TestMethod]
@@ -616,11 +616,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to b + 1 and c");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.AND, variable.operand);
-            Assert.IsTrue(variable.a is BiOperandVariable);
-            Assert.IsTrue(variable.b is AmbiguousStringVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.AND, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.Binary));
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", variable) is AmbiguousStringVariable);
         }
 
         [TestMethod]
@@ -631,15 +631,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
             Assert.IsTrue(assignment.variable is TernaryConditionVariable);
             TernaryConditionVariable variable = (TernaryConditionVariable)assignment.variable;
-            Assert.IsTrue(variable.condition is ComparisonVariable);
-            ComparisonVariable condition = (ComparisonVariable)variable.condition;
-            Assert.IsTrue(condition.a is AmbiguousStringVariable);
-            Assert.IsTrue(condition.b is AmbiguousStringVariable);
-            Assert.AreEqual("a", ((AmbiguousStringVariable)condition.a).value);
-            Assert.AreEqual("b", ((AmbiguousStringVariable)condition.b).value);
+            Assert.IsTrue(IsExpression(variable.condition, VariableKind.Comparison));
+            ComputedVariable condition = (ComputedVariable)variable.condition;
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", condition) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", condition) is AmbiguousStringVariable);
+            Assert.AreEqual("a", ((AmbiguousStringVariable)GetVariableProperty<IVariable>("a", condition)).value);
+            Assert.AreEqual("b", ((AmbiguousStringVariable)GetVariableProperty<IVariable>("b", condition)).value);
             Assert.IsTrue(variable.positiveValue is AmbiguousStringVariable);
             Assert.AreEqual("c", ((AmbiguousStringVariable)variable.positiveValue).value);
-            Assert.IsTrue(variable.negativeValue is BiOperandVariable);
+            Assert.IsTrue(IsExpression(variable.negativeValue, VariableKind.Binary));
         }
 
         [TestMethod]
@@ -648,17 +648,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign c to a > 0 and b < 1");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignment = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignment.variable is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)assignment.variable;
-            Assert.AreEqual(BiOperand.AND, variable.operand);
-            Assert.IsTrue(variable.a is ComparisonVariable);
-            Assert.IsTrue(variable.b is ComparisonVariable);
-            ComparisonVariable a = (ComparisonVariable)variable.a;
-            Assert.IsTrue(a.a is AmbiguousStringVariable);
-            Assert.IsTrue(a.b is StaticVariable);
-            ComparisonVariable b = (ComparisonVariable)variable.b;
-            Assert.IsTrue(b.a is AmbiguousStringVariable);
-            Assert.IsTrue(b.b is StaticVariable);
+            Assert.IsTrue(IsExpression(assignment.variable, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)assignment.variable;
+            Assert.AreEqual(BiOperand.AND, GetVariableProperty<BiOperand>("operand", variable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.Comparison));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("b", variable), VariableKind.Comparison));
+            ComputedVariable a = (ComputedVariable)GetVariableProperty<IVariable>("a", variable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", a) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", a) is StaticVariable);
+            ComputedVariable b = (ComputedVariable)GetVariableProperty<IVariable>("b", variable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", b) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", b) is StaticVariable);
         }
 
         [TestMethod]
@@ -667,15 +667,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if the \"rotor\" angle > a + 30 set the \"rotor\" angle to a");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
-            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.BlockCondition));
+            ComputedVariable condition = (ComputedVariable)conditionalCommand.condition;
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", GetVariableProperty<BlockCondition>("blockCondition", condition));
             Assert.AreEqual(Property.ANGLE + "", property.propertyValues[0].propertyType);
-            BiOperandVariable comparisonValue = GetDelegateProperty<BiOperandVariable>("comparisonValue", condition.blockCondition);
-            Assert.IsTrue(comparisonValue.a is AmbiguousStringVariable);
-            Assert.IsTrue(comparisonValue.b is StaticVariable);
-            Assert.AreEqual("a", comparisonValue.a.GetValue().value);
-            Assert.AreEqual(30f, comparisonValue.b.GetValue().value);
+            ComputedVariable comparisonValue = GetDelegateProperty<ComputedVariable>("comparisonValue", GetVariableProperty<BlockCondition>("blockCondition", condition));
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", comparisonValue) is AmbiguousStringVariable);
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", comparisonValue) is StaticVariable);
+            Assert.AreEqual("a", GetVariableProperty<IVariable>("a", comparisonValue).GetValue().value);
+            Assert.AreEqual(30f, GetVariableProperty<IVariable>("b", comparisonValue).GetValue().value);
         }
 
         [TestMethod]

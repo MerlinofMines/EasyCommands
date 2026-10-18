@@ -194,17 +194,17 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if count of shipRoute[] > 0 wait");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is ComparisonVariable);
-            ComparisonVariable comparison = (ComparisonVariable)conditionalCommand.condition;
-            Assert.IsTrue(comparison.a is ListAggregateVariable);
-            ListAggregateVariable listAggregate = (ListAggregateVariable)comparison.a;
-            Assert.IsTrue(listAggregate.expectedList is ListIndexVariable);
-            ListIndexVariable listIndex = (ListIndexVariable)listAggregate.expectedList;
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.Comparison));
+            ComputedVariable comparison = (ComputedVariable)conditionalCommand.condition;
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", comparison), VariableKind.ListAggregate));
+            ComputedVariable listAggregate = (ComputedVariable)GetVariableProperty<IVariable>("a", comparison);
+            Assert.IsTrue(GetVariableProperty<IVariable>("expectedList", listAggregate) is ListIndexVariable);
+            ListIndexVariable listIndex = (ListIndexVariable)GetVariableProperty<IVariable>("expectedList", listAggregate);
             Assert.IsTrue(listIndex.expectedList is AmbiguousStringVariable);
             AmbiguousStringVariable listVariable = (AmbiguousStringVariable)listIndex.expectedList;
             Assert.AreEqual("shipRoute", listVariable.value);
-            Assert.IsTrue(comparison.b is StaticVariable);
-            StaticVariable comparisonVariable = (StaticVariable)comparison.b;
+            Assert.IsTrue(GetVariableProperty<IVariable>("b", comparison) is StaticVariable);
+            StaticVariable comparisonVariable = (StaticVariable)GetVariableProperty<IVariable>("b", comparison);
             Assert.AreEqual(0f, comparisonVariable.GetValue().value);
         }
     }

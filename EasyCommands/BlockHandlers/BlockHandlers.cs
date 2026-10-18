@@ -216,6 +216,12 @@ namespace IngameScript {
                 return new SimplePropertySupplierBasedHandler<T>(p => typeHandlers.GetValueOrDefault(Resolver(p), typeHandlers[defaultType]));
             }
 
+            public TypeHandler<T, Direction> SignedAxis(GetTypedProperty<T, float> get, SetTypedProperty<T, float> set, Direction positive, Direction negative, float delta = 0) =>
+                TypeHandler(new SimplePropertyHandler<T>(
+                    (b, p) => ResolvePrimitive(get(b) * (p.direction == negative ? -1 : 1)),
+                    (b, p, v) => { var number = CastNumber(v); if (set != null) set(b, number * (p.direction == negative ? -1 : 1)); },
+                    ResolvePrimitive(delta)), positive, negative);
+
             public PropertyHandler<T> BooleanHandler(GetTypedProperty<T, bool> Get, SetTypedProperty<T, bool> Set = null) => TypedPropertyHandler(Get, Set, CastBoolean, true);
             public PropertyHandler<T> StringHandler(GetTypedProperty<T, string> Get, SetTypedProperty<T, string> Set = null) => TypedPropertyHandler(Get, Set, CastString, "");
             public PropertyHandler<T> NumericHandler(GetTypedProperty<T, float> Get, SetTypedProperty<T, float> Set = null, float delta = 0) => TypedPropertyHandler(Get, Set, CastNumber, delta);

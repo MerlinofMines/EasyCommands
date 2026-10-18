@@ -98,3 +98,73 @@ The E2E run is retained locally under
 `.build/integration/54dfc20377f34d7ea372b914f7b4c60b/`. Its deployed source and
 metadata identify package SHA-256
 `6C74FFAF8F637559917477A0450D783068FC406D6A878932E54B889A65529AE8`.
+
+## Compact source refactors (2026-10-18)
+
+Measured against `master` after PR #285 (`b8d9b23`), with the existing visibility
+pass enabled and the same dedicated-server references (Steam build 24675709):
+
+| Package | Characters | Remaining under 100,000 |
+| --- | ---: | ---: |
+| Visibility pass only | 95,985 | 4,015 |
+| All three source refactors | 94,389 | 5,611 |
+
+The additional saving is **1,596 characters**. The source changes save 1,589
+characters before visibility redaction; the visibility pass removes one additional
+modifier (314 rather than 313), saving another seven characters.
+
+- `AddMeal` constructs the repeated blueprint/item prefixes for all 18 craftable
+  meals, retaining their explicit position numbers and complete item phrases.
+  Seven loot-only meals retain filters without blueprint registrations.
+- `SignedAxis` shares 18 opposing-direction pairs across gyroscopes, projectors,
+  and ship controllers. Existing whole-vector handlers, gyro units, projector
+  clamping, and numeric validation for read-only setters are preserved.
+- Eight computation-only variable classes become factories returning one
+  `ComputedVariable`. Captured input variables are evaluated on every `GetValue`;
+  factory calls retain independent captures. Vector, ambiguous-name, and assignable
+  list-index types remain concrete. Factories allocate a wrapper, closure, and
+  delegate per expression.
+
+All **1,860 tests** passed, including meal identity and loot-only regressions,
+lazy/repeated evaluation and capture isolation, signed reads/writes/increments,
+and read-only numeric validation. Existing parser expression-kind, operand, and
+precedence assertions now inspect captured inputs without evaluating them.
+The exact artifact passed standalone C# 6 compilation and MDK game API analysis.
+
+Package SHA-256:
+`342FBF4B992D3890D3D109CBB30DFFF6EFBE64D7597593BCA0EE2C77919F871F`.
+
+The exact artifact also passed all four live `compact-refactors` E2E scenarios:
+
+| Scenario | Simulation ticks | Result |
+| --- | ---: | --- |
+| Gyro/projector signed axes and clamping | 44 | Pass |
+| Changing lazy bindings, aggregates, and indices | 27 | Pass |
+| Meal blueprint queueing | 10 | Pass |
+| Actual meal production | 1,352 | Pass |
+
+The deployed source and hash were verified against the packaged artifact. Results,
+metadata, and server logs are retained under
+`.build/integration/7aa49868fdce4ffeb9787f5f8316bc97/`. The dedicated server was
+stopped by the runner after completion. `git diff --check` passed.
+
+### Independent behavior comparison
+
+An additional 177 script-level cases pass unchanged against both the pre-refactor
+code (`b8d9b23`, built in an isolated source snapshot) and this change. They use
+script commands and observable game API values; they do not inspect expression
+types, captured fields, or the signed-axis helper.
+
+- 108 ship-controller cases cover all 18 velocity, movement-input, and rotation-input
+  directions with positive, negative, and zero inputs, both at identity orientation
+  and rotated 90 degrees. Directional writes and increments remain no-ops.
+- 54 gyro/projector cases cover all 18 writable directions, signed initial reads,
+  absolute writes, explicit increments/decrements, default increments, gyro RPM
+  conversion, and preservation of other axes.
+- Six cases verify projector rotation clamping at both ends for every direction.
+- Nine lazy-expression cases cover all eight refactored expression kinds through
+  script syntax, changing operands, list indices, list contents, and game properties.
+
+The complete suite now passes **2,037 tests**. No production source changed for
+this additional validation; the packed artifact hash and four live E2E results
+above still apply.

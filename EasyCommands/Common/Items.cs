@@ -148,24 +148,24 @@ namespace IngameScript {
             AddBlueprintItems(Words("vegetable seeds"), "Position0030_Seeds_Vegetables", Seed("Vegetables"));
             AddBlueprintItems(Words("mushroom spores"), "Position0040_Spores_Mushrooms", Seed("Mushrooms"));
             AddItems(Words("seeds"), Seed());
-            AddBlueprintItems(Words("kelp crisp"), "Position0030_MealPack_KelpCrisp", Consumable("MealPack_KelpCrisp"));
-            AddBlueprintItems(Words("fruit bar"), "Position0040_MealPack_FruitBar", Consumable("MealPack_FruitBar"));
-            AddBlueprintItems(Words("garden slaw"), "Position0050_MealPack_GardenSlaw", Consumable("MealPack_GardenSlaw"));
-            AddBlueprintItems(Words("red pellets"), "Position0060_MealPack_RedPellets", Consumable("MealPack_RedPellets"));
-            AddBlueprintItems(Words("chili"), "Position0070_MealPack_Chili", Consumable("MealPack_Chili"));
-            AddBlueprintItems(Words("flatbread"), "Position0080_MealPack_Flatbread", Consumable("MealPack_Flatbread"));
-            AddBlueprintItems(Words("ramen"), "Position0090_MealPack_Ramen", Consumable("MealPack_Ramen"));
-            AddBlueprintItems(Words("fruit pastry"), "Position0100_MealPack_FruitPastry", Consumable("MealPack_FruitPastry"));
-            AddBlueprintItems(Words("veggie burger"), "Position0110_MealPack_VeggieBurger", Consumable("MealPack_VeggieBurger"));
-            AddBlueprintItems(Words("curry"), "Position0120_MealPack_Curry", Consumable("MealPack_Curry"));
-            AddBlueprintItems(Words("green pellets"), "Position0130_MealPack_GreenPellets", Consumable("MealPack_GreenPellets"));
-            AddBlueprintItems(Words("dumplings"), "Position0140_MealPack_Dumplings", Consumable("MealPack_Dumplings"));
-            AddBlueprintItems(Words("spaghetti"), "Position0150_MealPack_Spaghetti", Consumable("MealPack_Spaghetti"));
-            AddBlueprintItems(Words("lasagna"), "Position0160_MealPack_Lasagna", Consumable("MealPack_Lasagna"));
-            AddBlueprintItems(Words("burrito"), "Position0170_MealPack_Burrito", Consumable("MealPack_Burrito"));
-            AddBlueprintItems(Words("frontier stew"), "Position0180_MealPack_FrontierStew", Consumable("MealPack_FrontierStew"));
-            AddBlueprintItems(Words("seared sabiroid"), "Position0190_MealPack_SearedSabiroid", Consumable("MealPack_SearedSabiroid"));
-            AddBlueprintItems(Words("steak dinner"), "Position0200_MealPack_SteakDinner", Consumable("MealPack_SteakDinner"));
+            AddMeal("kelp crisp", "KelpCrisp", 30);
+            AddMeal("fruit bar", "FruitBar", 40);
+            AddMeal("garden slaw", "GardenSlaw", 50);
+            AddMeal("red pellets", "RedPellets", 60);
+            AddMeal("chili", "Chili", 70);
+            AddMeal("flatbread", "Flatbread", 80);
+            AddMeal("ramen", "Ramen", 90);
+            AddMeal("fruit pastry", "FruitPastry", 100);
+            AddMeal("veggie burger", "VeggieBurger", 110);
+            AddMeal("curry", "Curry", 120);
+            AddMeal("green pellets", "GreenPellets", 130);
+            AddMeal("dumplings", "Dumplings", 140);
+            AddMeal("spaghetti", "Spaghetti", 150);
+            AddMeal("lasagna", "Lasagna", 160);
+            AddMeal("burrito", "Burrito", 170);
+            AddMeal("frontier stew", "FrontierStew", 180);
+            AddMeal("seared sabiroid", "SearedSabiroid", 190);
+            AddMeal("steak dinner", "SteakDinner", 200);
             // Loot-only meal aliases deliberately have no blueprint registration.
             AddItems(Words("unknown meal"), Consumable("MealPack_Unknown"));
             AddItems(Words("food paste"), Consumable("MealPack_FoodPaste"));
@@ -182,6 +182,9 @@ namespace IngameScript {
             AddItems(Words("datapad"), IsItemType("MyObjectBuilder_Datapad", "Datapad"));
             AddItems(Words("space credit"), IsItemType("MyObjectBuilder_PhysicalObject", "SpaceCredit"));
         }
+
+        void AddMeal(string name, string subtype, int position) =>
+            AddBlueprintItems(Words(name), "Position" + position.ToString("D4") + "_MealPack_" + subtype, Consumable("MealPack_" + subtype));
 
         void AddOre(String oreWord) => AddItems(Words(oreWord.ToLower() + " ore"), Ore(oreWord));
 

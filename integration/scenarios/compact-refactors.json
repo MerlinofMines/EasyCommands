@@ -1,0 +1,34 @@
+[
+  {
+    "Name": "signed-axis-controls",
+    "RequiredBlocks": [
+      "EC Test Gyro",
+      "EC Test Projector"
+    ],
+    "TimeoutTicks": 1800,
+    "Commands": "set \"EC Test Gyro\" gyro overrides to true\nset \"EC Test Gyro\" gyro override to 0:0:0\nset \"EC Test Gyro\" gyro up override to 10\nset \"EC Test Gyro\" gyro right override to 20\nset \"EC Test Gyro\" gyro clockwise override to 30\nassign ecGyroBefore to \"EC Test Gyro\" gyro override\nassign ecGyroBefore to round ecGyroBefore\nincrease \"EC Test Gyro\" gyro down override by 5\nincrease \"EC Test Gyro\" gyro left override by 5\nset \"EC Test Gyro\" gyro counterclockwise override to 4\nassign ecGyroAfter to \"EC Test Gyro\" gyro override\nassign ecGyroAfter to round ecGyroAfter\nset \"EC Test Projector\" projector offset to 1:2:3\nset \"EC Test Projector\" projector up offset to 7\nincrease \"EC Test Projector\" projector down offset by 2\nset \"EC Test Projector\" projector left offset to 4\nincrease \"EC Test Projector\" projector backward offset by 2\nassign ecOffset to \"EC Test Projector\" projector offset\nset \"EC Test Projector\" projector down rotation to 1\nset \"EC Test Projector\" projector right rotation to 2\nset \"EC Test Projector\" projector counterclockwise rotation to 2\nassign ecRotationBefore to \"EC Test Projector\" projector rotation\nincrease \"EC Test Projector\" projector down rotation by 1\nincrease \"EC Test Projector\" projector left rotation by 1\nset \"EC Test Projector\" projector clockwise rotation to -1\nassign ecRotationAfter to \"EC Test Projector\" projector rotation\nset \"EC Test Projector\" projector up rotation to 9\nassign ecClamped to \"EC Test Projector\" projector rotation\nprint ecGyroBefore\nprint ecGyroAfter\nprint ecOffset\nprint ecRotationBefore\nprint ecRotationAfter\nprint ecClamped\nif ecGyroBefore is 10:20:30 and ecGyroAfter is 5:15:-4 and ecOffset is -4:5:1 and ecRotationBefore is -1:2:-2 and ecRotationAfter is -2:1:-1 and ecClamped is 2:1:-1\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: signed axes or rotation clamp\"\n"
+  },
+  {
+    "Name": "lazy-expressions",
+    "RequiredBlocks": [],
+    "TimeoutTicks": 900,
+    "Commands": "assign ecSource to 2\nbind ecBound to ecSource * 3\nassign ecSource to 5\nassign ecFirst to ecBound\nassign ecSource to 7\nassign ecSecond to ecBound\nassign ecValues to [1, 2, 3]\nbind ecSum to sum of ecValues[]\nassign ecValues[1] to 5\nassign ecTotal to ecSum\nassign ecIndex to 0\nbind ecSelected to ecValues[ecIndex]\nassign ecIndex to 2\nassign ecChoice to ecSelected\nbind ecAll to all of ecValues[] > 0\nassign ecAllBefore to ecAll\nassign ecValues[0] to -1\nassign ecAllAfter to ecAll\nif ecFirst is 15 and ecSecond is 21 and ecTotal is 9 and ecChoice is 3 and ecAllBefore and not ecAllAfter\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: lazy binding, aggregation or index\"\n"
+  },
+  {
+    "Name": "meal-blueprint",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 600,
+    "Commands": "tell \"EC Test Kitchen\" foodprocessor to create \"kelp crisp\"\nassign ecRecipeQueued to \"EC Test Kitchen\" foodprocessor producing \"kelp crisp\"\nif ecRecipeQueued\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: kelp crisp blueprint was not queued\""
+  },
+  {
+    "Name": "meal-production",
+    "Setup": "food-ingredients",
+    "RequiredBlocks": [
+      "EC Test Kitchen"
+    ],
+    "TimeoutTicks": 2400,
+    "Commands": "tell \"EC Test Kitchen\" food processor to create 5 \"kelp crisp\"\nturn on \"EC Test Kitchen\" food processor\nwait 5\nassign ecCooking to \"EC Test Kitchen\" food processor is running\nassign ecProgress to \"EC Test Kitchen\" food processor progress\nprint ecCooking\nprint ecProgress\nif ecCooking and ecProgress >= 0 and ecProgress <= 1\n  turn off \"EC Test Kitchen\" food processor\n  wait 5\n  if \"EC Test Kitchen\" assembler is running\n    print \"EC_FAIL: disabled production\"\n  else\n    assign ecMealsBefore to \"EC Test Kitchen\" inventories[1] amount \"kelp crisp\"\n    turn on \"EC Test Kitchen\" assembler\n    wait 12\n    if \"EC Test Kitchen\" inventories[1] amount \"kelp crisp\" > ecMealsBefore\n      print \"EC_PASS\"\n    else\n      print \"EC_FAIL: no cooked item\"\nelse\n  print \"EC_FAIL: production status or progress\""
+  }
+]

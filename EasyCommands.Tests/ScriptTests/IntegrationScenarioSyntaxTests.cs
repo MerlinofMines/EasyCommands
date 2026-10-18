@@ -18,6 +18,7 @@ namespace EasyCommands.Tests.ScriptTests {
         [DataTestMethod]
         [DataRow("smoke")]
         [DataRow("apex")]
+        [DataRow("compact-refactors")]
 
         public void ScenarioCommandsParse(string suite) {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scenarios", suite + ".json");
