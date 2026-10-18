@@ -63,3 +63,38 @@ See [the build instructions](README.md) for normal Release packaging and the
 packed-script check. The generated measurement copies and test artifacts are
 under the ignored `.build/minification` directory. Validation does not include
 execution inside a running game.
+
+## Visibility redaction (2026-10-18)
+
+Measured against `master` at `478c291`, using the existing MDK2 full-minification
+configuration and local dedicated-server assemblies (Steam build 24675709):
+
+| Package | Characters | Remaining under 100,000 |
+| --- | ---: | ---: |
+| MDK output | 98,176 | 1,824 |
+| After visibility redaction | 95,985 | 4,015 |
+
+Removing 313 redundant `public` modifiers saves **2,191 characters**. Release
+builds now run `Redact-ScriptVisibility.ps1` automatically after MDK packaging.
+PowerShell 7 supplies the Roslyn parser. Only direct `Program` declarations are
+eligible; constructors, game entry points, editable configuration, overrides,
+virtual/extern methods, operators, and nested member accessibility are preserved.
+The script verifies that all other syntax tokens are identical before writing.
+Source assembly accessibility is unchanged, and Debug builds skip the pass.
+
+Validation:
+
+- Release and Debug builds passed with zero warnings/errors.
+- All 1,829 unit tests passed.
+- Visibility regressions passed for host APIs, nested members, literals/comments,
+  preprocessor trivia, idempotence, and rejection of invalid input.
+- The exact packed script passed standalone C# 6 compilation and MDK API analysis.
+- The exact package was compiled and executed by the real programmable block in
+  three E2E scenarios: farm selector, seed transfer, and recipe blueprint queueing.
+  All passed (10, 11, and 10 simulation ticks respectively).
+- `git diff --check` passed.
+
+The E2E run is retained locally under
+`.build/integration/54dfc20377f34d7ea372b914f7b4c60b/`. Its deployed source and
+metadata identify package SHA-256
+`6C74FFAF8F637559917477A0450D783068FC406D6A878932E54B889A65529AE8`.

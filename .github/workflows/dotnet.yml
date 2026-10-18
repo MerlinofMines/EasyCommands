@@ -56,6 +56,9 @@ jobs:
       - name: Build and package EasyCommands
         run: dotnet build EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release -p:Platform=x64
 
+      - name: Test packed-script visibility redaction
+        run: ./build/Test-ScriptVisibility.ps1
+
       - name: Compile and size-check minified script
         run: ./build/Test-PackedScript.ps1 -BinaryPath .build/game-references
       - name: Run tests
