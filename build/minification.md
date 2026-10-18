@@ -147,3 +147,24 @@ The deployed source and hash were verified against the packaged artifact. Result
 metadata, and server logs are retained under
 `.build/integration/7aa49868fdce4ffeb9787f5f8316bc97/`. The dedicated server was
 stopped by the runner after completion. `git diff --check` passed.
+
+### Independent behavior comparison
+
+An additional 177 script-level cases pass unchanged against both the pre-refactor
+code (`b8d9b23`, built in an isolated source snapshot) and this change. They use
+script commands and observable game API values; they do not inspect expression
+types, captured fields, or the signed-axis helper.
+
+- 108 ship-controller cases cover all 18 velocity, movement-input, and rotation-input
+  directions with positive, negative, and zero inputs, both at identity orientation
+  and rotated 90 degrees. Directional writes and increments remain no-ops.
+- 54 gyro/projector cases cover all 18 writable directions, signed initial reads,
+  absolute writes, explicit increments/decrements, default increments, gyro RPM
+  conversion, and preservation of other axes.
+- Six cases verify projector rotation clamping at both ends for every direction.
+- Nine lazy-expression cases cover all eight refactored expression kinds through
+  script syntax, changing operands, list indices, list contents, and game properties.
+
+The complete suite now passes **2,037 tests**. No production source changed for
+this additional validation; the packed artifact hash and four live E2E results
+above still apply.
