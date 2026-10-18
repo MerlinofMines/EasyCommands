@@ -150,6 +150,8 @@ namespace EasyCommands.Integration {
             Add(grid, "OxygenFarm", "LargeBlockOxygenFarm", "EC Test Oxygen", 48);
             Add(grid, "OxygenFarm", "LargeBlockOxygenFarmReskin", "EC Test Half Oxygen", 54);
             Add(grid, "FunctionalBlock", "LargeBlockAlgaeFarmReskin", "EC Test Half Algae", 60);
+            Add(grid, "Gyro", "LargeBlockGyro", "EC Test Gyro", 66);
+            Add(grid, "Projector", "LargeProjector", "EC Test Projector", 70);
             MyAPIGateway.Entities.RemapObjectBuilder(grid);
             MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(grid);
             var reactor = Blocks().Single(b => b.CustomName == "EC Test Reactor");

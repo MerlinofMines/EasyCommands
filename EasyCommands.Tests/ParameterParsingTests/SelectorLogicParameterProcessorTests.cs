@@ -130,8 +130,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             BlockCommand bc = (BlockCommand)command;
             Assert.IsTrue(bc.entityProvider is BlockSelector);
             BlockSelector sep = (BlockSelector)bc.entityProvider;
-            Assert.IsTrue(sep.selector is BiOperandVariable);
-            BiOperandVariable variable = (BiOperandVariable)sep.selector;
+            Assert.IsTrue(IsExpression(sep.selector, VariableKind.Binary));
+            ComputedVariable variable = (ComputedVariable)sep.selector;
             Assert.AreEqual("a test", CastString(variable.GetValue()));
             Assert.AreEqual(Block.SOUND, sep.selectorType.blockType.Value);
         }
@@ -189,8 +189,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(variable.expectedList is AmbiguousStringVariable);
             AmbiguousStringVariable list = (AmbiguousStringVariable)variable.expectedList;
             Assert.AreEqual("a", list.value);
-            Assert.IsTrue(variable.index is IndexVariable);
-            IndexVariable index = (IndexVariable)variable.index;
+            Assert.IsTrue(IsExpression(variable.index, VariableKind.Index));
+            ComputedVariable index = (ComputedVariable)variable.index;
             Assert.AreEqual(0, CastNumber(CastList(index.GetValue()).GetValues()[0].GetValue()));
         }
 
@@ -205,8 +205,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.AreEqual(Block.SOUND, sep.selectorType.blockType.Value);
             Assert.IsTrue(sep.selector is ListIndexVariable);
             ListIndexVariable second = (ListIndexVariable)sep.selector;
-            Assert.IsTrue(second.index is IndexVariable);
-            IndexVariable secondIndex = (IndexVariable)second.index;
+            Assert.IsTrue(IsExpression(second.index, VariableKind.Index));
+            ComputedVariable secondIndex = (ComputedVariable)second.index;
             Assert.AreEqual(1, CastNumber(CastList(secondIndex.GetValue()).GetValues()[0].GetValue()));
 
             Assert.IsTrue(second.expectedList is ListIndexVariable);
@@ -214,8 +214,8 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(first.expectedList is AmbiguousStringVariable);
             AmbiguousStringVariable firstList = (AmbiguousStringVariable)first.expectedList;
             Assert.AreEqual("a", firstList.value);
-            Assert.IsTrue(first.index is IndexVariable);
-            IndexVariable firstIndex = (IndexVariable)first.index;
+            Assert.IsTrue(IsExpression(first.index, VariableKind.Index));
+            ComputedVariable firstIndex = (ComputedVariable)first.index;
             Assert.AreEqual(0, CastNumber(CastList(firstIndex.GetValue()).GetValues()[0].GetValue()));
         }
 
@@ -337,10 +337,10 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("assign a to my average location");
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
-            Assert.IsTrue(assignCommand.variable is AggregatePropertyVariable);
-            AggregatePropertyVariable variable = (AggregatePropertyVariable)assignCommand.variable;
-            Assert.IsTrue(variable.entityProvider is SelfSelector);
-            Assert.AreEqual(Block.PROGRAM, variable.entityProvider.GetBlockType());
+            Assert.IsTrue(IsExpression(assignCommand.variable, VariableKind.BlockProperty));
+            ComputedVariable variable = (ComputedVariable)assignCommand.variable;
+            Assert.IsTrue(GetVariableProperty<ISelector>("entityProvider", variable) is SelfSelector);
+            Assert.AreEqual(Block.PROGRAM, GetVariableProperty<ISelector>("entityProvider", variable).GetBlockType());
         }
 
         [TestMethod]

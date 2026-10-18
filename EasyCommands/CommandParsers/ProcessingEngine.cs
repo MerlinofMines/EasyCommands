@@ -107,7 +107,7 @@ namespace IngameScript {
 
             //ListProcessors
             OneValueRule(Type<ListCommandParameter>, requiredLeft<SelectorCommandParameter>(),
-                (list, selector) => new SelectorCommandParameter(new IndexSelector(selector.value, new IndexVariable(list.value)))),
+                (list, selector) => new SelectorCommandParameter(new IndexSelector(selector.value, IndexVariable(list.value)))),
             TwoValueRule(Type<ListCommandParameter>, optionalRight<ListCommandParameter>(), requiredLeft<ListCommandParameter>(),
                 (p, right, left) => !left.Satisfied(),
                 (p, right, left) => new ListIndexCommandParameter(new ListIndexVariable(p.value, right?.value ?? EmptyList()))),
@@ -149,11 +149,11 @@ namespace IngameScript {
 
             //ListPropertyAggregationProcessor
             OneValueRule(Type<ListIndexCommandParameter>, requiredLeft<PropertyAggregationCommandParameter>(),
-                (list, aggregation) => new VariableCommandParameter(new ListAggregateVariable(list.value, aggregation.value))),
+                (list, aggregation) => new VariableCommandParameter(ListAggregateVariable(list.value, aggregation.value))),
 
             //ListComparisonProcessor
             ThreeValueRule(Type<ListIndexCommandParameter>, requiredRight<ComparisonCommandParameter>(), requiredRight<VariableCommandParameter>(), optionalLeft<AggregateConditionCommandParameter>(),
-                (list, comparison, value, aggregation) => new VariableCommandParameter(new ListAggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, list.value, comparison.value, value.value))),
+                (list, comparison, value, aggregation) => new VariableCommandParameter(ListAggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, list.value, comparison.value, value.value))),
 
             //ListIndexAsVariableProcessor
             NoValueRule(Type<ListIndexCommandParameter>, list => new VariableCommandParameter(list.value)),
@@ -180,11 +180,11 @@ namespace IngameScript {
 
             //AfterUniOperationProcessor
             OneValueRule(Type<LeftUniOperationCommandParameter>, requiredLeft<VariableCommandParameter>(),
-                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),
+                (p, df) => new VariableCommandParameter(UniOperandVariable(p.value, df.value))),
 
             //UniOperationProcessor
             OneValueRule(Type<UniOperationCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, df) => new VariableCommandParameter(new UniOperandVariable(p.value, df.value))),
+                (p, df) => new VariableCommandParameter(UniOperandVariable(p.value, df.value))),
 
             //VectorProcessor
             FourValueRule(Type<ColonSeparatorParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(), requiredRight<ColonSeparatorParameter>(), requiredRight<VariableCommandParameter>(),
@@ -205,23 +205,23 @@ namespace IngameScript {
 
             //VariableComparisonProcessor
             TwoValueRule(Type<ComparisonCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, left, right) => new VariableCommandParameter(new ComparisonVariable(left.value, right.value, p.value))),
+                (p, left, right) => new VariableCommandParameter(ComparisonVariable(left.value, right.value, p.value))),
 
             //NotProcessor
             OneValueRule(Type<NotCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.REVERSE, right.value))),
+                (p, right) => new VariableCommandParameter(UniOperandVariable(UniOperand.REVERSE, right.value))),
 
             //ReverseProcessor
             OneValueRule(Type<ReverseCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, right) => new VariableCommandParameter(new UniOperandVariable(UniOperand.REVERSE, right.value))),
+                (p, right) => new VariableCommandParameter(UniOperandVariable(UniOperand.REVERSE, right.value))),
 
             //AndProcessor
             TwoValueRule(Type<AndCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.AND, left.value, right.value))),
+                (p, left, right) => new VariableCommandParameter(BiOperandVariable(BiOperand.AND, left.value, right.value))),
 
             //OrProcessor
             TwoValueRule(Type<OrCommandParameter>, requiredLeft<VariableCommandParameter>(), requiredRight<VariableCommandParameter>(),
-                (p, left, right) => new VariableCommandParameter(new BiOperandVariable(BiOperand.OR, left.value, right.value))),
+                (p, left, right) => new VariableCommandParameter(BiOperandVariable(BiOperand.OR, left.value, right.value))),
 
             //Tier4OperationProcessor
             BiOperandProcessor(4),
@@ -252,7 +252,7 @@ namespace IngameScript {
 
             //PropertyAggregationProcessor
             ThreeValueRule(Type<PropertyAggregationCommandParameter>, requiredEither<SelectorCommandParameter>(), eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),
-                (p, selector, prop, dir) => new VariableCommandParameter(new AggregatePropertyVariable(p.value, selector.value, new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value)))),
+                (p, selector, prop, dir) => new VariableCommandParameter(AggregatePropertyVariable(p.value, selector.value, new PropertySupplier(prop.Select(v => v.value).ToList()).WithDirection(dir?.value)))),
 
             //BlockComparisonProcessor
             ThreeValueRule(Type<ComparisonCommandParameter>, eitherList<PropertyValueCommandParameter>(true), optionalEither<DirectionCommandParameter>(), optionalRight<VariableCommandParameter>(),
@@ -261,7 +261,7 @@ namespace IngameScript {
 
             //AggregateConditionProcessor
             TwoValueRule(Type<BlockConditionCommandParameter>, optionalLeft<AggregateConditionCommandParameter>(), requiredLeft<SelectorCommandParameter>(),
-                (p, aggregation, selector) => new VariableCommandParameter(new AggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, p.value, selector.value))),
+                (p, aggregation, selector) => new VariableCommandParameter(AggregateConditionVariable(aggregation?.value ?? PROGRAM.AllCondition, p.value, selector.value))),
 
             //AggregateSelectorProcessor
             OneValueRule(Type<AggregateConditionCommandParameter>, requiredRight<SelectorCommandParameter>(),
@@ -291,7 +291,7 @@ namespace IngameScript {
 
             //IfProcessor
             OneValueRule(Type<IfCommandParameter>, requiredRight<VariableCommandParameter>(),
-                (p, var) => new ConditionCommandParameter(p.inverseCondition ? new UniOperandVariable(UniOperand.REVERSE, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
+                (p, var) => new ConditionCommandParameter(p.inverseCondition ? UniOperandVariable(UniOperand.REVERSE, var.value) : var.value, p.alwaysEvaluate, p.swapCommands)),
 
             //PropertySupplierProcessor
             TwoValueRule(Type<PropertyValueCommandParameter>, eitherList<PropertyValueCommandParameter>(false), optionalEither<DirectionCommandParameter>(),
@@ -322,7 +322,7 @@ namespace IngameScript {
             new BranchingProcessor<SelectorPropertyCommandParameter>(
                 BlockCommandProcessor(),
                 NoValueRule(Type<SelectorPropertyCommandParameter>,
-                    s => new VariableCommandParameter(new AggregatePropertyVariable(PROGRAM.DefaultAggregator, s.selector, s.propertySupplier))),
+                    s => new VariableCommandParameter(AggregatePropertyVariable(PROGRAM.DefaultAggregator, s.selector, s.propertySupplier))),
                 NoValueRule(Type<SelectorPropertyCommandParameter>,
                     s => {
                         var property = s.propertySupplier;

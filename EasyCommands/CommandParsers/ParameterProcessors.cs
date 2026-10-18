@@ -127,7 +127,7 @@ namespace IngameScript {
         static RuleProcessor<BiOperandCommandParameter> BiOperandProcessor(int tier) =>
             ThreeValueRule(Type<BiOperandCommandParameter>, requiredLeft<VariableCommandParameter>(), optionalRight<CommandSeparatorCommandParameter>(), requiredRight<VariableCommandParameter>(),
                 (operand, left, separator, right) => operand.tier == tier && AllSatisfied(left, right),
-                (operand, left, separator, right) => new VariableCommandParameter(new BiOperandVariable(operand.value, left.value, right.value)));
+                (operand, left, separator, right) => new VariableCommandParameter(BiOperandVariable(operand.value, left.value, right.value)));
 
         static RuleProcessor<SelectorPropertyCommandParameter> BlockCommandProcessor() {
             var assignmentProcessor = eitherList<AssignmentCommandParameter>(true);
@@ -156,7 +156,7 @@ namespace IngameScript {
 
                 IVariable variableValue = variableProcessor.GetValue()?.value ?? GetStaticVariable(true);
                 if (notProcessor.Satisfied())
-                    variableValue = new UniOperandVariable(UniOperand.REVERSE, variableValue);
+                    variableValue = UniOperandVariable(UniOperand.REVERSE, variableValue);
 
                 if (AnySatisfied(notProcessor, variableProcessor))
                     propertySupplier = propertySupplier.WithPropertyValue(variableValue);

@@ -76,11 +76,11 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if any battery ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)conditionalCommand.condition;
-            Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
-            Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
-            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.BlockCondition));
+            ComputedVariable condition = (ComputedVariable)conditionalCommand.condition;
+            Assert.IsTrue(GetVariableProperty<ISelector>("entityProvider", condition) is BlockTypeSelector);
+            Assert.AreEqual(Block.BATTERY, GetVariableProperty<ISelector>("entityProvider", condition).GetBlockType());
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", GetVariableProperty<BlockCondition>("blockCondition", condition));
             Assert.AreEqual(Property.RATIO + "", property.propertyValues[0].propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);
@@ -95,15 +95,15 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             var command = program.ParseCommand("if not all of the batteries ratio < 0.75 turn on the generators");
             Assert.IsTrue(command is ConditionalCommand);
             ConditionalCommand conditionalCommand = (ConditionalCommand)command;
-            Assert.IsTrue(conditionalCommand.condition is UniOperandVariable);
-            UniOperandVariable variable = (UniOperandVariable)conditionalCommand.condition;
-            Assert.AreEqual(UniOperand.REVERSE, variable.operand);
-            Assert.IsTrue(variable.a is AggregateConditionVariable);
-            AggregateConditionVariable condition = (AggregateConditionVariable)variable.a;
-            Assert.IsTrue(condition.entityProvider is BlockTypeSelector);
-            Assert.AreEqual(Block.BATTERY, condition.entityProvider.GetBlockType());
-            Assert.AreEqual(program.AllCondition, condition.aggregateCondition);
-            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", condition.blockCondition);
+            Assert.IsTrue(IsExpression(conditionalCommand.condition, VariableKind.Unary));
+            ComputedVariable variable = (ComputedVariable)conditionalCommand.condition;
+            Assert.AreEqual(UniOperand.REVERSE, GetVariableProperty<UniOperand>("operand", variable));
+            Assert.IsTrue(IsExpression(GetVariableProperty<IVariable>("a", variable), VariableKind.BlockCondition));
+            ComputedVariable condition = (ComputedVariable)GetVariableProperty<IVariable>("a", variable);
+            Assert.IsTrue(GetVariableProperty<ISelector>("entityProvider", condition) is BlockTypeSelector);
+            Assert.AreEqual(Block.BATTERY, GetVariableProperty<ISelector>("entityProvider", condition).GetBlockType());
+            Assert.AreEqual(program.AllCondition, GetVariableProperty<AggregateCondition>("aggregateCondition", condition));
+            PropertySupplier property = GetDelegateProperty<PropertySupplier>("property", GetVariableProperty<BlockCondition>("blockCondition", condition));
             Assert.AreEqual(Property.RATIO + "", property.propertyValues[0].propertyType);
 
             Assert.IsTrue(conditionalCommand.conditionMetCommand is BlockCommand);

@@ -16,6 +16,11 @@ To rerun one scenario with existing builds:
 Feature-specific scenario suites live with their feature branches and PRs.
 See [Apex Survival E2E tests](APEX.md) for this branch's Apex suite.
 
+Run `-Suite compact-refactors` for signed gyro/projector axes, lazy expression
+bindings and list indices, meal blueprint queueing, and actual meal production.
+The fixture includes a gyro and projector; axis checks compare the directional
+controls with the existing whole-vector getters.
+
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need
 the .NET SDK and .NET Framework 4.8 targeting pack described in build/README.md.

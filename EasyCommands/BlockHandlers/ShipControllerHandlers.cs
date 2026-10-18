@@ -74,28 +74,19 @@ namespace IngameScript {
                     TypeHandler(ReturnTypedHandler(Return.VECTOR, 
                         TypeHandler(VectorHandler(b => VelocityVector(b)), Return.VECTOR),
                         TypeHandler(NumericHandler(b => (float)VelocityVector(b).Length(), (b, v) => (b as IMyRemoteControl).SpeedLimit = v), Return.NUMERIC)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).Y), Direction.UP),
-                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).Y), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).X), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).X), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => (float)-VelocityVector(b).Z), Direction.FORWARD),
-                    TypeHandler(NumericHandler(b => (float)VelocityVector(b).Z), Direction.BACKWARD));
+                    SignedAxis(b => (float)VelocityVector(b).Y, null, Direction.UP, Direction.DOWN),
+                    SignedAxis(b => (float)-VelocityVector(b).X, null, Direction.LEFT, Direction.RIGHT),
+                    SignedAxis(b => (float)-VelocityVector(b).Z, null, Direction.FORWARD, Direction.BACKWARD));
                 AddDirectionHandlers(Property.INPUT, Direction.NONE,
                     TypeHandler(VectorHandler(b => b.MoveIndicator*new Vector3(1,1,-1)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => b.MoveIndicator.Y), Direction.UP),
-                    TypeHandler(NumericHandler(b => -b.MoveIndicator.Y), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => -b.MoveIndicator.X), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => b.MoveIndicator.X), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -b.MoveIndicator.Z), Direction.FORWARD),
-                    TypeHandler(NumericHandler(b => b.MoveIndicator.Z), Direction.BACKWARD));
+                    SignedAxis(b => b.MoveIndicator.Y, null, Direction.UP, Direction.DOWN),
+                    SignedAxis(b => -b.MoveIndicator.X, null, Direction.LEFT, Direction.RIGHT),
+                    SignedAxis(b => -b.MoveIndicator.Z, null, Direction.FORWARD, Direction.BACKWARD));
                 AddDirectionHandlers(Property.ROLL_INPUT, Direction.NONE,
                     TypeHandler(VectorHandler(b => new Vector3D(b.RotationIndicator/new Vector2(-9,9), b.RollIndicator)), Direction.NONE),
-                    TypeHandler(NumericHandler(b => -b.RotationIndicator.X/9), Direction.UP),
-                    TypeHandler(NumericHandler(b => b.RotationIndicator.X/9), Direction.DOWN),
-                    TypeHandler(NumericHandler(b => -b.RotationIndicator.Y/9), Direction.LEFT),
-                    TypeHandler(NumericHandler(b => b.RotationIndicator.Y/9), Direction.RIGHT),
-                    TypeHandler(NumericHandler(b => -b.RollIndicator), Direction.COUNTERCLOCKWISE),
-                    TypeHandler(NumericHandler(b => b.RollIndicator), Direction.CLOCKWISE));
+                    SignedAxis(b => -b.RotationIndicator.X/9, null, Direction.UP, Direction.DOWN),
+                    SignedAxis(b => -b.RotationIndicator.Y/9, null, Direction.LEFT, Direction.RIGHT),
+                    SignedAxis(b => -b.RollIndicator, null, Direction.COUNTERCLOCKWISE, Direction.CLOCKWISE));
 
                 SetDefaultProperty(Property.VELOCITY, Return.NUMERIC, Direction.UP);
             }

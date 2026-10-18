@@ -232,12 +232,12 @@ namespace EasyCommands.Tests.ParameterParsingTests {
             Assert.IsTrue(command is VariableAssignmentCommand);
             VariableAssignmentCommand assignCommand = (VariableAssignmentCommand)command;
             Assert.AreEqual("a", assignCommand.variableName);
-            Assert.IsTrue(assignCommand.variable is ComparisonVariable);
+            Assert.IsTrue(IsExpression(assignCommand.variable, VariableKind.Comparison));
             Assert.IsTrue(assignCommand.useReference);
 
-            ComparisonVariable comparison = (ComparisonVariable)assignCommand.variable;
-            Assert.IsTrue(comparison.a is AmbiguousStringVariable);
-            AmbiguousStringVariable variable = (AmbiguousStringVariable)comparison.a;
+            ComputedVariable comparison = (ComputedVariable)assignCommand.variable;
+            Assert.IsTrue(GetVariableProperty<IVariable>("a", comparison) is AmbiguousStringVariable);
+            AmbiguousStringVariable variable = (AmbiguousStringVariable)GetVariableProperty<IVariable>("a", comparison);
             Assert.AreEqual("b", variable.value);
         }
 

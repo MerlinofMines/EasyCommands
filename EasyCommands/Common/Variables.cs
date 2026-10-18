@@ -19,6 +19,13 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
+        public class ComputedVariable : IVariable {
+            Func<Primitive> evaluate;
+
+            public ComputedVariable(Func<Primitive> value) { evaluate = value; }
+            public Primitive GetValue() => evaluate();
+        }
+
         public interface IVariable {
             Primitive GetValue();
         }
@@ -33,18 +40,7 @@ namespace IngameScript {
             public Primitive GetValue() => primitive;
         }
 
-        public class ComparisonVariable : IVariable {
-            public IVariable a, b;
-            public PrimitiveComparator comparator;
-
-            public ComparisonVariable(IVariable left, IVariable right, PrimitiveComparator comp) {
-                a = left;
-                b = right;
-                comparator = comp;
-            }
-
-            public Primitive GetValue() => ResolvePrimitive(comparator(a.GetValue(), b.GetValue()));
-        }
+        public static IVariable ComparisonVariable(IVariable a, IVariable b, PrimitiveComparator comparator) => new ComputedVariable(() => ResolvePrimitive(comparator(a.GetValue(), b.GetValue())));
 
         public class TernaryConditionVariable : IVariable {
             public IVariable condition, positiveValue, negativeValue;
@@ -61,85 +57,26 @@ namespace IngameScript {
             }
         }
 
-        public class UniOperandVariable : IVariable {
-            public IVariable a;
-            public UniOperand operand;
+        public static IVariable UniOperandVariable(UniOperand operand, IVariable a) => new ComputedVariable(() => PerformOperation(operand, a.GetValue()));
 
-            public UniOperandVariable(UniOperand op, IVariable v) {
-                operand = op;
-                a = v;
-            }
+        public static IVariable BiOperandVariable(BiOperand operand, IVariable a, IVariable b) => new ComputedVariable(() => PerformOperation(operand, a.GetValue(), b.GetValue()));
 
-            public Primitive GetValue() => PerformOperation(operand, a.GetValue());
-        }
-
-        public class BiOperandVariable : IVariable {
-            public IVariable a, b;
-            public BiOperand operand;
-
-            public BiOperandVariable(BiOperand op, IVariable left, IVariable right) {
-                operand = op;
-                a = left;
-                b = right;
-            }
-
-            public Primitive GetValue() => PerformOperation(operand, a.GetValue(), b.GetValue());
-        }
-
-        public class ListAggregateConditionVariable : IVariable {
-            public AggregateCondition aggregateCondition;
-            public IVariable expectedList;
-            public PrimitiveComparator comparator;
-            public IVariable comparisonValue;
-
-            public ListAggregateConditionVariable(AggregateCondition aggregation, IVariable list, PrimitiveComparator comp, IVariable value) {
-                aggregateCondition = aggregation;
-                expectedList = list;
-                comparator = comp;
-                comparisonValue = value;
-            }
-
-            public Primitive GetValue() {
+        public static IVariable ListAggregateConditionVariable(AggregateCondition aggregateCondition, IVariable expectedList, PrimitiveComparator comparator, IVariable comparisonValue) => new ComputedVariable(() => {
                 var list = CastList(expectedList.GetValue());
                 return ResolvePrimitive(aggregateCondition(list.keyedValues.Count, list.keyedValues.Count(v => comparator(v.GetValue(), comparisonValue.GetValue()))));
-            }
-        }
+            });
 
-        public class AggregateConditionVariable : IVariable {
-            public AggregateCondition aggregateCondition;
-            public BlockCondition blockCondition;
-            public ISelector entityProvider;
-
-            public AggregateConditionVariable(AggregateCondition aggregation, BlockCondition condition, ISelector provider) {
-                aggregateCondition = aggregation;
-                blockCondition = condition;
-                entityProvider = provider;
-            }
-
-            public Primitive GetValue() {
+        public static IVariable AggregateConditionVariable(AggregateCondition aggregateCondition, BlockCondition blockCondition, ISelector entityProvider) => new ComputedVariable(() => {
                 var blocks = entityProvider.GetEntities();
                 return ResolvePrimitive(aggregateCondition(blocks.Count, blocks.Count(block => blockCondition(block, entityProvider.GetBlockType()))));
-            }
-        }
+            });
 
-        public class AggregatePropertyVariable : IVariable {
-            public Aggregator aggregator;
-            public ISelector entityProvider;
-            public PropertySupplier property;
-
-            public AggregatePropertyVariable(Aggregator agg, ISelector provider, PropertySupplier p) {
-                aggregator = agg;
-                entityProvider = provider;
-                property = p;
-            }
-
-            public Primitive GetValue() {
+        public static IVariable AggregatePropertyVariable(Aggregator aggregator, ISelector entityProvider, PropertySupplier property) => new ComputedVariable(() => {
                 IBlockHandler handler = BlockHandlerRegistry.GetBlockHandler(entityProvider.GetBlockType());
                 if (property.propertyValues.Count == 0) property = property.WithProperties(NewList(new PropertyValue(Property.NAME + "")));
                 PropertySupplier p = property.Resolve(handler, Return.STRING);
                 return aggregator(entityProvider.GetEntities(), b => handler.GetPropertyValue(b, p));
-            }
-        }
+            });
 
         public class AmbiguousStringVariable : IVariable {
             public String value;
@@ -157,41 +94,23 @@ namespace IngameScript {
             }
         }
 
-        public class ListAggregateVariable : IVariable {
-            public IVariable expectedList;
-            public Aggregator aggregator;
+        public static IVariable ListAggregateVariable(IVariable expectedList, Aggregator aggregator) => new ComputedVariable(() => aggregator(CastList(expectedList.GetValue()).keyedValues, v => ((IVariable)v).GetValue()));
 
-            public ListAggregateVariable(IVariable list, Aggregator agg) {
-                expectedList = list;
-                aggregator = agg;
-            }
-
-            public Primitive GetValue() => aggregator(CastList(expectedList.GetValue()).keyedValues, v => ((IVariable)v).GetValue());
-        }
-
-        public class IndexVariable : IVariable {
-            public IVariable expectedIndex;
-
-            public IndexVariable(IVariable index) {
-                expectedIndex = index;
-            }
-
-            public Primitive GetValue() {
+        public static IVariable IndexVariable(IVariable expectedIndex) => new ComputedVariable(() => {
                 KeyedList list = CastList(expectedIndex.GetValue());
                 if (list.keyedValues.Count == 1) {
                     Primitive onlyValue = list.GetValue(ResolvePrimitive(0)).GetValue();
                     if (onlyValue.returnType == Return.LIST) list = CastList(onlyValue);
                 }
                 return ResolvePrimitive(list);
-            }
-        }
+            });
 
         public class ListIndexVariable : IVariable {
             public IVariable expectedList, index;
 
             public ListIndexVariable(IVariable list, IVariable i) {
                 expectedList = list;
-                index = new IndexVariable(i);
+                index = IndexVariable(i);
             }
 
             public Primitive GetValue() {

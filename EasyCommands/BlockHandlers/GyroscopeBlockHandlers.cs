@@ -35,12 +35,9 @@ namespace IngameScript {
                             }), Return.VECTOR),
                             TypeHandler(BooleanHandler(b => b.GyroOverride, (b, v) => b.GyroOverride = v), Return.BOOLEAN))
                         , Direction.NONE),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * -v, 5), Direction.UP),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * v, 5), Direction.DOWN),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * -v, 5), Direction.LEFT),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * v, 5), Direction.RIGHT),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * v, 5), Direction.CLOCKWISE),
-                        TypeHandler(NumericHandler(b => RadiansPerSecToRPM * -b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * -v, 5), Direction.COUNTERCLOCKWISE));
+                        SignedAxis(b => RadiansPerSecToRPM * -b.Pitch, (b, v) => b.Pitch = RPMToRadiansPerSec * -v, Direction.UP, Direction.DOWN, 5),
+                        SignedAxis(b => RadiansPerSecToRPM * -b.Yaw, (b, v) => b.Yaw = RPMToRadiansPerSec * -v, Direction.LEFT, Direction.RIGHT, 5),
+                        SignedAxis(b => RadiansPerSecToRPM * b.Roll, (b, v) => b.Roll = RPMToRadiansPerSec * v, Direction.CLOCKWISE, Direction.COUNTERCLOCKWISE, 5));
 
                 AddPropertyAliases(overrideHandler, Property.OVERRIDE, Property.ROLL_INPUT, Property.INPUT);
 
