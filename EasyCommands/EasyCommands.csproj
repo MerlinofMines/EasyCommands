@@ -21,4 +21,8 @@
     <AdditionalFiles Include="Instructions.readme" />
     <AdditionalFiles Include="thumb.png" />
   </ItemGroup>
+  <Target Name="RedactPackedScriptVisibility" AfterTargets="MdkPack"
+          Condition="'$(Configuration)' == '$(MdkBuildConfiguration)' Or '$(MdkBuildConfiguration)' == 'all'">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildProjectDirectory)\..\build\Redact-ScriptVisibility.ps1&quot; -ScriptPath &quot;$(MSBuildProjectDirectory)\bin\$(Configuration)\MDK\$(MSBuildProjectName)\script.cs&quot;" />
+  </Target>
 </Project>

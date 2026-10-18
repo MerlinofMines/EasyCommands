@@ -1,7 +1,8 @@
 # Building EasyCommands
 
 EasyCommands targets .NET Framework 4.8 and uses MDK2 for programmable-block
-analysis and Release script packaging. Install a .NET 8+ SDK and the .NET Framework
+analysis and Release script packaging. Install PowerShell 7 (`pwsh` on PATH),
+a .NET 8+ SDK and the .NET Framework
 4.8 targeting pack on Windows (Visual Studio 2022 includes the targeting pack).
 NuGet still supplies MDK2, MSTest, and Moq. Game DLLs
 are read from a local game/server installation; no game-binary NuGet package is used.
@@ -21,6 +22,13 @@ The setup script writes ignored, project-specific `*.mdk.local.ini` files for
 both projects. Use the same binary directory for production and test code.
 The Release build packages the script under `EasyCommands/bin/Release/MDK`.
 Debug builds skip packaging for faster test iteration.
+
+After MDK packaging, `Redact-ScriptVisibility.ps1` uses PowerShell's bundled Roslyn
+parser to remove redundant `public` modifiers from direct members of the generated
+`Program`. It preserves the constructor, `Main`/`Save`, configuration fields,
+overrides, and public members inside nested types. Other syntax tokens must remain
+identical or the build fails. The source assembly retains its API for unit tests.
+Run `./build/Test-ScriptVisibility.ps1` to check these preservation rules.
 
 Without the game installed, run `./build/Get-GameReferences.ps1` once. This uses
 SteamCMD's anonymous login to install dedicated server app 298740 and configures
