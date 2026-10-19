@@ -24,6 +24,7 @@ namespace IngameScript {
         #endregion
 
         public enum Block {
+            AI_FLIGHT, AI_BASIC, AI_RECORDER, AI_DEFENSIVE, AI_OFFENSIVE,
             AIRVENT,
             ANTENNA,
             ASSEMBLER,
@@ -88,6 +89,7 @@ namespace IngameScript {
         }
 
         public enum Property {
+            PRECISION, AVOID, FLEE, REPEAT,
             //Simple Properties
             ABLE,
             ACTIONS,

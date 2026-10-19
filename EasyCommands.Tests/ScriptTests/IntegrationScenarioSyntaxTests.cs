@@ -20,6 +20,10 @@ namespace EasyCommands.Tests.ScriptTests {
         [DataRow("apex")]
         [DataRow("compact-refactors")]
         [DataRow("connector-production")]
+        [DataRow("ai")]
+        [DataRow("ai-motion")]
+        [DataRow("ai-planet")]
+        [DataRow("ai-obstacle")]
 
         public void ScenarioCommandsParse(string suite) {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scenarios", suite + ".json");

@@ -1,0 +1,46 @@
+[
+  {
+    "Name": "ai-behavior",
+    "Commands": "set \"EC AI Flight\" ai flight behavior to true\nif not \"EC AI Flight\" ai flight behavior\n  print \"EC_FAIL: flight behavior did not activate\"\nset \"EC AI Flight\" ai flight behavior to false\nif \"EC AI Flight\" ai flight behavior\n  print \"EC_FAIL: flight behavior did not deactivate\"\nif not \"EC AI Flight\" ai flight power\n  print \"EC_FAIL: flight behavior changed power\"\nset \"EC AI Basic\" ai basic behavior to true\nif not \"EC AI Basic\" ai basic behavior\n  print \"EC_FAIL: basic behavior did not activate\"\nset \"EC AI Basic\" ai basic behavior to false\nif \"EC AI Basic\" ai basic behavior\n  print \"EC_FAIL: basic behavior did not deactivate\"\nif not \"EC AI Basic\" ai basic power\n  print \"EC_FAIL: basic behavior changed power\"\nset \"EC AI Recorder\" ai recorder behavior to true\nif not \"EC AI Recorder\" ai recorder behavior\n  print \"EC_FAIL: recorder behavior did not activate\"\nset \"EC AI Recorder\" ai recorder behavior to false\nif \"EC AI Recorder\" ai recorder behavior\n  print \"EC_FAIL: recorder behavior did not deactivate\"\nif not \"EC AI Recorder\" ai recorder power\n  print \"EC_FAIL: recorder behavior changed power\"\nset \"EC AI Defensive\" ai defensive behavior to true\nif not \"EC AI Defensive\" ai defensive behavior\n  print \"EC_FAIL: defensive behavior did not activate\"\nset \"EC AI Defensive\" ai defensive behavior to false\nif \"EC AI Defensive\" ai defensive behavior\n  print \"EC_FAIL: defensive behavior did not deactivate\"\nif not \"EC AI Defensive\" ai defensive power\n  print \"EC_FAIL: defensive behavior changed power\"\nset \"EC AI Offensive\" ai offensive behavior to true\nif not \"EC AI Offensive\" ai offensive behavior\n  print \"EC_FAIL: offensive behavior did not activate\"\nset \"EC AI Offensive\" ai offensive behavior to false\nif \"EC AI Offensive\" ai offensive behavior\n  print \"EC_FAIL: offensive behavior did not deactivate\"\nif not \"EC AI Offensive\" ai offensive power\n  print \"EC_FAIL: offensive behavior changed power\"\nprint \"EC_PASS\"",
+    "TimeoutTicks": 900,
+    "RequiredBlocks": [
+      "EC AI Flight",
+      "EC AI Basic",
+      "EC AI Recorder",
+      "EC AI Defensive",
+      "EC AI Offensive"
+    ],
+    "Setup": "ai-reset"
+  },
+  {
+    "Name": "ai-flight-settings",
+    "Commands": "set \"EC AI Flight\" ai flight speed to 23\nset \"EC AI Flight\" ai flight precision to true\nset \"EC AI Flight\" ai flight avoidance to false\nwait 1\nif \"EC AI Flight\" ai flight speed != 23\n  print \"EC_FAIL: flight speed\"\nif not \"EC AI Flight\" ai flight precision\n  print \"EC_FAIL: flight precision\"\nif \"EC AI Flight\" ai flight avoidance\n  print \"EC_FAIL: flight avoidance\"\nset \"EC AI Flight\" ai flight precision to false\nset \"EC AI Flight\" ai flight avoidance to true\nif \"EC AI Flight\" ai flight precision\n  print \"EC_FAIL: flight precision reverse\"\nif not \"EC AI Flight\" ai flight avoidance\n  print \"EC_FAIL: flight avoidance reverse\"\nprint \"EC_PASS\"",
+    "TimeoutTicks": 900,
+    "RequiredBlocks": [
+      "EC AI Flight"
+    ],
+    "Setup": "ai-reset"
+  },
+  {
+    "Name": "ai-playback-and-flee-preconditions",
+    "Commands": "set \"EC AI Recorder\" ai recorder play to true\nif not \"EC AI Recorder\" ai recorder playing\n  print \"EC_FAIL: recorder did not start\"\nelse\n  set \"EC AI Recorder\" ai recorder play to false\n  if \"EC AI Recorder\" ai recorder playing\n    print \"EC_FAIL: recorder did not stop\"\n  else\n    set \"EC AI Defensive\" ai defensive flee to true\n    set \"EC AI Defensive\" ai defensive flee to false\n    if \"EC AI Defensive\" ai defensive fleeing\n      print \"EC_FAIL: fleeing without movement AI or a threat\"\n    else\n      print \"EC_PASS\"",
+    "TimeoutTicks": 900,
+    "RequiredBlocks": [
+      "EC AI Recorder",
+      "EC AI Defensive"
+    ],
+    "Setup": "ai-reset"
+  },
+  {
+    "RequiredBlocks": [
+      "EC AI Flight",
+      "EC AI Recorder",
+      "EC AI Defensive",
+      "EC AI Offensive"
+    ],
+    "Commands": "set \"EC AI Flight\" ai flight altitude to 150\nset \"EC AI Flight\" ai flight gravity alignment to true\nif \"EC AI Flight\" ai flight altitude != 150\n  print \"EC_FAIL: altitude\"\nif not \"EC AI Flight\" ai flight gravity alignment\n  print \"EC_FAIL: gravity alignment\"\nset \"EC AI Flight\" ai flight gravity alignment to false\nif \"EC AI Flight\" ai flight gravity alignment\n  print \"EC_FAIL: gravity alignment off\"\nset \"EC AI Recorder\" ai recorder repeat path to true\nif not \"EC AI Recorder\" ai recorder loop path\n  print \"EC_FAIL: repeat on\"\nset \"EC AI Recorder\" ai recorder loop path to false\nif \"EC AI Recorder\" ai recorder repeat path\n  print \"EC_FAIL: repeat off\"\nset \"EC AI Defensive\" ai defensive target position to 10:20:30\nif \"EC AI Defensive\" ai defensive target position != 10:20:30\n  print \"EC_FAIL: destination\"\nif not \"EC AI Defensive\" ai defensive target override\n  print \"EC_FAIL: override absent\"\nset \"EC AI Defensive\" ai defensive target override to false\nif \"EC AI Defensive\" ai defensive target override\n  print \"EC_FAIL: override not cleared\"\nif \"EC AI Defensive\" ai defensive target\n  print \"EC_FAIL: false defensive detection\"\nif \"EC AI Offensive\" ai offensive target\n  print \"EC_FAIL: false offensive detection\"\nprint \"EC_PASS\"",
+    "Setup": "ai-reset",
+    "TimeoutTicks": 900,
+    "Name": "ai-extended-settings"
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "Setup": "ai-motion-arrival",
+    "Name": "ai-route-arrival",
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Recorder"
+    ],
+    "Commands": "set \"EC Drone Flight\" ai flight power to true\nset \"EC Drone Flight\" ai flight speed to 10\nset \"EC Drone Flight\" ai flight precision to true\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Recorder\" ai recorder play to true\nwait 60\nprint \"EC_PASS\"",
+    "TimeoutTicks": 6000
+  },
+  {
+    "Setup": "ai-motion-stop",
+    "Name": "ai-route-stop-resume",
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Recorder"
+    ],
+    "Commands": "set \"EC Drone Flight\" ai flight power to true\nset \"EC Drone Flight\" ai flight speed to 10\nset \"EC Drone Flight\" ai flight precision to true\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Recorder\" ai recorder play to true\nwait 6\nset \"EC Drone Recorder\" ai recorder play to false\nwait 12\nset \"EC Drone Recorder\" ai recorder play to true\nwait 60\nprint \"EC_PASS\"",
+    "TimeoutTicks": 7200
+  },
+  {
+    "Setup": "ai-motion-flee",
+    "Name": "ai-threat-retreat",
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Defensive",
+      "EC Threat Battery"
+    ],
+    "Commands": "set \"EC Drone Flight\" ai flight power to true\nset \"EC Drone Flight\" ai flight speed to 10\nset \"EC Drone Flight\" ai flight precision to true\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Defensive\" ai defensive behavior to true\nwait 12\nif \"EC Drone Defensive\" ai defensive fleeing\n  print \"EC_FAIL: defensive fled before the request\"\nset \"EC Drone Defensive\" ai defensive flee to true\nwait 60\nprint \"EC_PASS\"",
+    "TimeoutTicks": 7200
+  },
+  {
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Defensive",
+      "EC Drone Offensive",
+      "EC Threat Battery"
+    ],
+    "Commands": "assign retreatPoint to \"EC Test PB\" terminal position + 0:0:-150\nset \"EC Drone Offensive\" ai offensive behavior to true\nwait 12\nif not \"EC Drone Offensive\" ai offensive target\n  print \"EC_FAIL: offensive did not detect target\"\nset \"EC Drone Offensive\" ai offensive behavior to false\nset \"EC Drone Flight\" ai flight speed to 10\nset \"EC Drone Flight\" ai flight precision to true\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Defensive\" ai defensive behavior to true\nwait 12\nif not \"EC Drone Defensive\" ai defensive target\n  print \"EC_FAIL: defensive did not detect target\"\nset \"EC Drone Defensive\" ai defensive target position to retreatPoint\nif \"EC Drone Defensive\" ai defensive target position != retreatPoint\n  print \"EC_FAIL: retreat override readback\"\nset \"EC Drone Defensive\" ai defensive flee to true\nwait 60\nprint \"EC_PASS\"",
+    "Setup": "ai-motion-extended",
+    "TimeoutTicks": 7800,
+    "Name": "ai-detection-and-retarget"
+  },
+  {
+    "Name": "ai-repeat-route-lifecycle",
+    "Setup": "ai-motion-repeat",
+    "TimeoutTicks": 15000,
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Recorder"
+    ],
+    "Commands": "set \"EC Drone Flight\" ai flight speed to 10\nset \"EC Drone Flight\" ai flight precision to false\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Recorder\" ai recorder repeat path to true\nset \"EC Drone Recorder\" ai recorder play to true\nwait 140\nif not \"EC Drone Recorder\" ai recorder playing\n  print \"EC_FAIL: looping route stopped\"\nset \"EC Drone Recorder\" ai recorder repeat path to false\nwait 90\nif \"EC Drone Recorder\" ai recorder playing\n  print \"EC_FAIL: route did not finish after repeat disabled\"\nprint \"EC_PASS\""
+  },
+  {
+    "Name": "ai-target-loss",
+    "TimeoutTicks": 6000,
+    "Commands": "set \"EC Drone Offensive\" ai offensive behavior to true\nwait 12\nif not \"EC Drone Offensive\" ai offensive target\n  print \"EC_FAIL: offensive acquisition\"\nset \"EC Drone Offensive\" ai offensive behavior to false\nset \"EC Drone Defensive\" ai defensive behavior to true\nwait 12\nif not \"EC Drone Defensive\" ai defensive target\n  print \"EC_FAIL: defensive acquisition\"\nwait 20\nif \"EC Drone Defensive\" ai defensive target\n  print \"EC_FAIL: defensive stale target\"\nset \"EC Drone Defensive\" ai defensive behavior to false\nset \"EC Drone Offensive\" ai offensive behavior to true\nwait 12\nif \"EC Drone Offensive\" ai offensive target\n  print \"EC_FAIL: offensive stale target\"\nprint \"EC_PASS\"",
+    "RequiredBlocks": [
+      "EC Drone Defensive",
+      "EC Drone Offensive"
+    ],
+    "Setup": "ai-motion-target-loss"
+  }
+]
