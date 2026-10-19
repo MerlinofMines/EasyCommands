@@ -21,6 +21,7 @@ namespace IngameScript {
     partial class Program {
         public class ConnectorBlockHandler : EjectorBlockHandler {
             public ConnectorBlockHandler() {
+                AddStringHandler(Property.TARGET, b => b.OtherConnector?.CustomName ?? "");
                 var connectedHandler = BooleanHandler(b => b.Status == MyShipConnectorStatus.Connected, (b, v) => { if (v) b.Connect(); else b.Disconnect(); });
 
                 AddPropertyAliases(connectedHandler, Property.LOCKED, Property.CONNECTED);

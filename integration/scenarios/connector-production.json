@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "connector-target-cycle",
+    "Setup": "connector-production",
+    "RequiredBlocks": [
+      "EC Test Dock",
+      "EC Partner Dock",
+      "EC Spare Dock"
+    ],
+    "TimeoutTicks": 3000,
+    "Commands": "assign ecPassed to true\nwait 2\nif \"EC Spare Dock\" connector target != \"\"\n  print \"EC_FAIL: isolated connector target\"\n  assign ecPassed to false\nif \"EC Spare Dock\" connector is ready\n  print \"EC_FAIL: isolated connector has a nearby partner\"\n  assign ecPassed to false\nif not \"EC Test Dock\" connector is ready\n  print \"EC_FAIL: dock fixture was not connectable\"\n  assign ecPassed to false\nif \"EC Test Dock\" connector is connected\n  print \"EC_FAIL: fixture unexpectedly connected\"\n  assign ecPassed to false\nif \"EC Test Dock\" connector target != \"EC Partner Dock\"\n  print \"EC_FAIL: connectable target name\"\n  assign ecPassed to false\nconnect \"EC Test Dock\" connector\nwait 5\nif not \"EC Test Dock\" connector is connected\n  print \"EC_FAIL: failed to dock\"\n  assign ecPassed to false\nif \"EC Test Dock\" connector target != \"EC Partner Dock\"\n  print \"EC_FAIL: connected partner name\"\n  assign ecPassed to false\ndisconnect \"EC Test Dock\" connector\nwait 5\nif \"EC Test Dock\" connector is connected\n  print \"EC_FAIL: failed to disconnect\"\n  assign ecPassed to false\nif \"EC Test Dock\" connector target != \"EC Partner Dock\"\n  print \"EC_FAIL: target name after unlocking\"\n  assign ecPassed to false\nconnect \"EC Test Dock\" connector\nwait 5\nif not \"EC Test Dock\" connector is connected\n  print \"EC_FAIL: failed to reconnect\"\n  assign ecPassed to false\nif \"EC Test Dock\" connector target != \"EC Partner Dock\"\n  print \"EC_FAIL: reconnected partner name\"\n  assign ecPassed to false\nif ecPassed\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: scenario assertions\""
+  },
+  {
+    "Name": "refinery-running",
+    "Setup": "connector-production",
+    "RequiredBlocks": [
+      "EC Test Refinery"
+    ],
+    "TimeoutTicks": 2400,
+    "Commands": "assign ecPassed to true\nwait 2\nif \"EC Test Refinery\" refinery is running\n  print \"EC_FAIL: disabled refinery reported running\"\n  assign ecPassed to false\nturn on \"EC Test Refinery\" refinery\nwait 5\nif not \"EC Test Refinery\" refinery is running\n  print \"EC_FAIL: fueled refinery not running\"\n  assign ecPassed to false\nassign ecIronBefore to \"EC Test Refinery\" inventories[1] amount \"iron ingot\"\nwait 5\nif \"EC Test Refinery\" inventories[1] amount \"iron ingot\" <= ecIronBefore\n  print \"EC_FAIL: refinery produced no iron\"\n  assign ecPassed to false\nturn off \"EC Test Refinery\" refinery\nwait 2\nif \"EC Test Refinery\" refinery is running\n  print \"EC_FAIL: disabled refinery still running\"\n  assign ecPassed to false\nif ecPassed\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: scenario assertions\""
+  }
+]

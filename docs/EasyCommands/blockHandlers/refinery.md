@@ -7,6 +7,19 @@ This Block Handler handles Refineries, which are used to process ores quickly an
 Default Primitive Properties:
 * Bool - Enabled
 
+## "Running" Property
+* Primitive Type: Bool (read-only)
+* Keywords: ```run, running```
+
+Returns true only when the refinery is working and actively producing. Disabled
+or unpowered refineries report false even if the game retains its previous
+production flag. This matches the [assembler](assembler) `running` property.
+Assembler queue commands are not available on refineries.
+
+```
+print "My Refinery" refinery is running
+```
+
 ## "Enabled" Property
 * Primitive Type: Bool
 * Keywords: ```enable, enabled```

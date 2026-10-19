@@ -6,6 +6,48 @@ using Sandbox.ModAPI.Ingame;
 namespace EasyCommands.Tests.ScriptTests {
     [TestClass]
     public class ConnectorBlockTests {
+        [DataTestMethod]
+        [DataRow(MyShipConnectorStatus.Unconnected, false, "")]
+        [DataRow(MyShipConnectorStatus.Connectable, true, "Station Dock")]
+        [DataRow(MyShipConnectorStatus.Connected, true, "Station Dock")]
+        [DataRow(MyShipConnectorStatus.Connected, false, "")]
+        public void TargetReportsAvailablePartner(MyShipConnectorStatus status, bool hasPartner, string expected) {
+            using (var test = new ScriptTest(@"print ""Dock"" connector target")) {
+                var connector = new Mock<IMyShipConnector>();
+                var partner = new Mock<IMyShipConnector>();
+                partner.Setup(b => b.CustomName).Returns("Station Dock");
+                connector.Setup(b => b.Status).Returns(status);
+                connector.Setup(b => b.OtherConnector).Returns(hasPartner ? partner.Object : null);
+                test.MockBlocksOfType("Dock", connector);
+                test.RunUntilDone();
+                CollectionAssert.AreEqual(new[] { expected }, test.Logger);
+            }
+        }
+
+        [TestMethod]
+        public void TargetTracksDockingPartnerNameAndDisconnection() {
+            using (var test = new ScriptTest(@"print ""Dock"" connector target
+disconnect ""Dock"" connector
+print ""Dock"" connector target
+connect ""Dock"" connector
+print ""Dock"" connector target
+disconnect ""Dock"" connector
+print ""Dock"" connector target")) {
+                var connector = new Mock<IMyShipConnector>();
+                var first = new Mock<IMyShipConnector>();
+                var second = new Mock<IMyShipConnector>();
+                first.Setup(b => b.CustomName).Returns("Station Dock");
+                second.Setup(b => b.CustomName).Returns("Carrier Dock");
+                IMyShipConnector partner = first.Object;
+                connector.Setup(b => b.OtherConnector).Returns(() => partner);
+                connector.Setup(b => b.Disconnect()).Callback(() => partner = null);
+                connector.Setup(b => b.Connect()).Callback(() => partner = second.Object);
+                test.MockBlocksOfType("Dock", connector);
+                test.RunUntilDone();
+                CollectionAssert.AreEqual(new[] { "Station Dock", "", "Carrier Dock", "" }, test.Logger, string.Join(" | ", test.Logger));
+            }
+        }
+
         [TestMethod]
         public void TellTheConnectorToDrain() {
             using (ScriptTest test = new ScriptTest(@"tell the ""test connector"" to drain")) {

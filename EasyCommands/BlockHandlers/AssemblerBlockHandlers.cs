@@ -19,9 +19,14 @@ using VRageMath;
 
 namespace IngameScript {
     partial class Program {
-        public class AssemblerBlockHandler : FunctionalBlockHandler<IMyAssembler> {
-            public AssemblerBlockHandler() {
+        public class ProductionBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyProductionBlock {
+            public ProductionBlockHandler() {
                 AddBooleanHandler(Property.RUN, b => b.IsWorking && b.IsProducing);
+            }
+        }
+
+        public class AssemblerBlockHandler : ProductionBlockHandler<IMyAssembler> {
+            public AssemblerBlockHandler() {
                 AddNumericHandler(Property.RATIO, b => b.CurrentProgress);
                 AddBooleanHandler(Property.SUPPLY, b => b.Mode == MyAssemblerMode.Assembly, (b, v) => b.Mode = v ? MyAssemblerMode.Assembly : MyAssemblerMode.Disassembly);
                 AddBooleanHandler(Property.COMPLETE, b => b.IsQueueEmpty, (b, v) => { if (!v) b.ClearQueue(); });

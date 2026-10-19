@@ -21,6 +21,10 @@ bindings and list indices, meal blueprint queueing, and actual meal production.
 The fixture includes a gyro and projector; axis checks compare the directional
 controls with the existing whole-vector getters.
 
+Run `-Suite connector-production` for connector target names and shared refinery
+production status. See [connector and production E2E tests](CONNECTOR-PRODUCTION.md)
+for the fixture, assertions, and validation results.
+
 The first run downloads the full dedicated server using the existing SteamCMD helper
 (app 298740). Allow disk space for the full installation and network access. You need
 the .NET SDK and .NET Framework 4.8 targeting pack described in build/README.md.
