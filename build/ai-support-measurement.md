@@ -9,7 +9,7 @@
 | Increment for additional controls | **529** | |
 
 The total AI increment over latest master is 1,554 characters. Release build,
-all **2,058 unit tests**, and the exact packed-script C# 6/API check passed.
+all **2,060 unit tests**, and the exact packed-script C# 6/API check passed.
 Current package SHA-256:
 `1904883B9550C6BD4EA693D236514AD1C401BEBAF3CCC4539D2CB369403823AC`.
 
@@ -34,8 +34,65 @@ Live verification of this exact package:
   point at 0 m/s with six healthy thrust directions. Artifacts:
   `.build/integration/6c0482c4ead24d6fbe6b2f40fab884ea/`.
 
-Planetary alignment/terrain clearance and sustained repeat-route navigation have
-not been exercised; their configuration roundtrips were verified in game.
+Additional physical verification (2026-10-19), with the same packed script:
+
+- `ai-repeat-route-lifecycle`: pass, 13,817 ticks. Eight outbound visits and eight
+  returns over a sustained 60 m route; disabling repeat let playback finish and
+  stop within 20 m of the return point at 0 m/s, with healthy thrust directions.
+  Artifacts: `.build/integration/684e5b0e50694aa7b826e398bd8bb3d4/`.
+- `ai-planet-altitude-alignment`: pass, 6,314 ticks, on a generated 6 km Moon.
+  EC enabled gravity alignment and set the minimum altitude to 200 m, then 100 m.
+  Initial bank 36.12 degrees reduced to 0.51 degrees. Across 80 observations in
+  the protected 20–60 second window, minimum clearance was 206.21 m. After EC
+  lowered the floor, the drone reached the lower waypoint with 10.14 m error,
+  112.64 m terrain clearance and 0 m/s final speed. All thrust directions remained
+  healthy. Artifacts: `.build/integration/f032174332d64652b1b7ee7f3d128568/`.
+
+- `ai-obstacle-avoidance`: pass, 6,614 ticks. With collision avoidance enabled,
+  the drone stopped before a solid armor obstacle, with playback off, no AABB
+  overlap and 37.68 m minimum PB-to-obstacle clearance. The fixture then removed
+  the obstacle and EC restarted playback: 304.19 m maximum travel, 10.00 m final
+  waypoint error, 0 m/s final speed and healthy thrust directions. The AI stopped
+  instead of finding a detour; the original detour/arrival expectation failed and
+  was replaced with explicit safe-stop/recovery assertions, not treated as proof
+  of pathfinding. Artifacts: `.build/integration/e4f4eac3021740899f2766a25d33bd35/`.
+
+- `ai-target-loss`: pass, 3,383 ticks. Offensive and Defensive both acquired
+  the powered grid; after the harness removed it, EC read false on both blocks
+  and the independent game-component checks confirmed no remaining target IDs.
+  Artifacts: `.build/integration/5898fa2dafdb4562aced96ac415a0171/`.
+
+The final harness also passed all four stationary AI scenarios: behavior/power
+separation (58 ticks), flight settings (83), playback/flee prerequisites (24), and
+extended property settings (40). Artifacts:
+`.build/integration/fd33463dae99453aae70e886afee821d/`.
+
+The final-harness motion regression run passed all four established scenarios:
+
+| Scenario | Maximum travel | Final destination error | Final speed |
+| --- | ---: | ---: | ---: |
+| Recorder route arrival | 152.26 m | 9.97 m | 0 m/s |
+| Stop, wait, resume, arrive | 152.58 m | 10.00 m | 0 m/s |
+| Detected-threat retreat | 144.91 m | 7.08 m | 0 m/s |
+| Detect and replace retreat destination | 144.74 m | 7.15 m | 0 m/s |
+
+All four retained healthy thrust in six directions; stop/resume independently
+observed stopping during the pause, and both retreats observed natural target
+acquisition and positive flee state after the EC request. Artifacts:
+`.build/integration/892faddac7274b55a3faa1172ce29f15/`.
+Across the four stationary, six motion, planetary and obstacle scenarios, all
+**12 AI E2E scenarios** have now passed with the exact current packed script.
+These verification-only changes leave its hash and 96,043-character count unchanged.
+
+These are independent physical assertions beyond the script's pass message.
+Minimum altitude is a safety floor, not a requested hover height. Gravity alignment
+respects terminal maximum pitch/roll limits; the fixture sets both to zero and
+starts banked. Its valid GPS-style waypoint poses have forced rotation disabled,
+so recorded orientation cannot substitute for EC's gravity-alignment control.
+The fixture uses real gyros, reactors and sufficient vertical ion thrust; it does
+not force motion or orientation during execution. Earlier fixture attempts exposed
+zero-axis waypoint matrices and insufficient lift, both corrected before the
+passing runs.
 
 ## Rebase checkpoint (2026-10-19)
 

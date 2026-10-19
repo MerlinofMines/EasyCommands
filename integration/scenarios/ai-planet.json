@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "ai-planet-altitude-alignment",
+    "Setup": "ai-motion-planet",
+    "TimeoutTicks": 12000,
+    "RequiredBlocks": [
+      "EC Drone Flight",
+      "EC Drone Recorder"
+    ],
+    "Commands": "set \"EC Drone Flight\" ai flight speed to 8\nset \"EC Drone Flight\" ai flight precision to false\nset \"EC Drone Flight\" ai flight avoidance to false\nset \"EC Drone Flight\" ai flight altitude to 200\nset \"EC Drone Flight\" ai flight gravity alignment to true\nset \"EC Drone Flight\" ai flight behavior to true\nset \"EC Drone Recorder\" ai recorder repeat path to false\nset \"EC Drone Recorder\" ai recorder play to true\nwait 60\nset \"EC Drone Flight\" ai flight altitude to 100\nset \"EC Drone Recorder\" ai recorder play to true\nwait 45\nprint \"EC_PASS\""
+  }
+]

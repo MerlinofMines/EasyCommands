@@ -19,10 +19,14 @@ mission completion.
 
 Flight `speed` reads/writes the configured speed limit in metres per second, not
 the grid's current speed. `precision` and `avoidance` read/write the precision-mode
-and collision-avoidance switches. Speed increments default to 1 m/s.
+and collision-avoidance switches. A blocked route may stop playback instead of
+finding a detour; check position as well as playback state. Speed increments
+default to 1 m/s.
 `altitude` is the configured minimum altitude in metres, not measured altitude;
 its default increment is 1 m. `gravity alignment` is a boolean for alignment to
 planetary gravity. These reuse existing altitude, gravity and alignment words.
+The terminal's maximum pitch and roll settings determine how far the ship may tilt
+while gravity alignment is enabled.
 Altitude uses the terminal setting so its readback excludes the grid-size
 adjustment applied by the game's typed `MinimalAltitude` getter.
 
