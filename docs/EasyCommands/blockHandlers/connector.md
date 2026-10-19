@@ -7,6 +7,19 @@ This Block Handler handles Connectors, which allow you to automatically connect 
 Default Primitive Properties:
 * Numeric - Strength
 
+## "Target" Property
+* Primitive Type: String (read-only)
+* Keyword: ```target```
+
+Returns the target connector's custom name, including a nearby connector that is
+ready to connect before the connection is locked. Returns an empty string when
+the game reports no target connector. The result is a name, not a block reference;
+names need not be unique. Each read reflects the current target.
+
+```
+print "My Connector" connector target
+```
+
 ## "Enabled" Property
 * Primitive Type: Bool
 * Keywords: ```enable, enabled```

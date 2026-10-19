@@ -101,6 +101,7 @@ namespace EasyCommands.Integration {
                     return;
                 }
                 ticks++;
+                if (test.Setup == "connector-production" && ticks % 60 == 0) CaptureMeasurements(test.Name + "-tick-" + ticks);
                 var output = pb.DetailedInfo ?? "";
                 if (ticks % 60 == 0) File.WriteAllText(Path.Combine(root, "progress.json"), json.Serialize(new { Scenario = test.Name, Ticks = ticks, Output = output, Working = pb.IsWorking }));
                 if (pb.HasCompileErrors || output.Contains("Exception Occurred:") || output.Contains("Caught exception") || output.Contains("Script execution terminated") || output.Contains(failToken))
@@ -152,6 +153,22 @@ namespace EasyCommands.Integration {
             Add(grid, "FunctionalBlock", "LargeBlockAlgaeFarmReskin", "EC Test Half Algae", 60);
             Add(grid, "Gyro", "LargeBlockGyro", "EC Test Gyro", 66);
             Add(grid, "Projector", "LargeProjector", "EC Test Projector", 70);
+            if (request.Scenarios.Any(s => s.Setup == "connector-production")) {
+                Add(grid, "Refinery", "LargeRefinery", "EC Test Refinery", 74);
+                var connector = Add(grid, "ShipConnector", "Connector", "EC Test Dock", 78);
+                connector.Min = new Vector3I(78, 1, -1);
+                Add(grid, "ShipConnector", "Connector", "EC Spare Dock", 70).Min = new Vector3I(70, 1, -1);
+                var partnerGrid = new MyObjectBuilder_CubeGrid {
+                    GridSizeEnum = MyCubeSize.Large, IsStatic = false, CreatePhysics = true,
+                    PersistentFlags = MyPersistentEntityFlags2.InScene | MyPersistentEntityFlags2.Enabled,
+                    DisplayName = "EC Dock Partner Rig",
+                    PositionAndOrientation = new MyPositionAndOrientation(new Vector3D(195, 2.5, -5.1), Vector3.Backward, Vector3.Up)
+                };
+                Add(partnerGrid, "ShipConnector", "Connector", "EC Partner Dock", 0).Min = Vector3I.Zero;
+                Add(partnerGrid, "BatteryBlock", "LargeBlockBatteryBlock", "EC Partner Battery", 0).Min = new Vector3I(0, 0, 1);
+                MyAPIGateway.Entities.RemapObjectBuilder(partnerGrid);
+                MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(partnerGrid);
+            }
             MyAPIGateway.Entities.RemapObjectBuilder(grid);
             MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(grid);
             var reactor = Blocks().Single(b => b.CustomName == "EC Test Reactor");
@@ -200,7 +217,15 @@ namespace EasyCommands.Integration {
             if (String.IsNullOrEmpty(scenario.Setup)) return;
             IMyResourceStorageComponent water;
             IMyFarmPlotLogic crop;
-            if (scenario.Setup == "water-quarter") {
+            if (scenario.Setup == "connector-production") {
+                var refinery = (IMyRefinery)blocks.Single(b => b.CustomName == "EC Test Refinery");
+                refinery.Enabled = false;
+                refinery.UseConveyorSystem = false;
+                refinery.GetInventory(0).Clear();
+                refinery.GetInventory(1).Clear();
+                var ore = MyObjectBuilderSerializer.CreateNewObject(MyObjectBuilderType.Parse("MyObjectBuilder_Ore"), "Iron") as MyObjectBuilder_PhysicalObject;
+                refinery.GetInventory(0).AddItems((MyFixedPoint)1000, ore);
+            } else if (scenario.Setup == "water-quarter") {
                 var farm = blocks.Single(b => b.CustomName == "EC Test Farm");
                 if (!farm.Components.TryGet(out water)) throw new Exception("Missing water component");
                 water.ChangeFilledRatio(.25, true);
@@ -250,6 +275,18 @@ namespace EasyCommands.Integration {
                     values["CountdownSeconds"] = float.IsNaN(algae.TimeRemainingUntilNextBatch) || float.IsInfinity(algae.TimeRemainingUntilNextBatch) ? (object)algae.TimeRemainingUntilNextBatch.ToString(System.Globalization.CultureInfo.InvariantCulture) : algae.TimeRemainingUntilNextBatch;
                 }
                 var assembler = block as IMyAssembler;
+                var production = block as IMyProductionBlock;
+                if (production != null) {
+                    values["Producing"] = production.IsProducing;
+                    values["Working"] = production.IsWorking;
+                    values["Enabled"] = production.Enabled;
+                }
+                var connector = block as IMyShipConnector;
+                if (connector != null) {
+                    values["Status"] = connector.Status.ToString();
+                    values["OtherConnector"] = connector.OtherConnector?.CustomName;
+                    values["Working"] = connector.IsWorking;
+                }
                 if (assembler != null) {
                     values["Producing"] = assembler.IsProducing;
                     values["Progress"] = assembler.CurrentProgress;
