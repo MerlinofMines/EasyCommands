@@ -37,3 +37,17 @@ beacons, docking and actual weapons engagements require additional fixtures.
 The 2026-10-17 final run passed all three scenarios. See
 [measurement and results](../build/ai-support-measurement.md) for distances,
 package identity and retained artifacts.
+
+## Additional controls
+
+`-Suite ai -Scenario ai-extended-settings` checks minimum altitude, planetary
+gravity alignment, route-repeat toggle/readback, retreat override/clear and
+false target detection on the stationary rig. Planetary alignment is a setting
+roundtrip here; atmospheric flight and terrain clearance are not simulated.
+
+`-Suite ai-motion -Scenario ai-detection-and-retarget` checks natural target
+acquisition on Offensive, switches to Defensive and checks its target flag, then
+sets the retreat destination through EC before requesting flee. The harness
+initially supplies a deliberately wrong destination in the opposite direction;
+the independent arrival checks require the EC-selected point. The powered target
+is separately owned, with neutral/enemy targeting enabled in both combat blocks.

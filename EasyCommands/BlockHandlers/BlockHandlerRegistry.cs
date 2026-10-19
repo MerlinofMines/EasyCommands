@@ -31,7 +31,7 @@ namespace IngameScript {
                 { Block.AI_BASIC, new AiBlockHandler<IMyBasicMissionBlock>() },
                 { Block.AI_RECORDER, new PathRecorderBlockHandler() },
                 { Block.AI_DEFENSIVE, new DefensiveCombatBlockHandler() },
-                { Block.AI_OFFENSIVE, new AiBlockHandler<IMyOffensiveCombatBlock>() },
+                { Block.AI_OFFENSIVE, new OffensiveCombatBlockHandler() },
                 { Block.FARM_PLOT, new FarmPlotBlockHandler() },
                 { Block.ALGAE_FARM, new AlgaeFarmBlockHandler() },
                 { Block.OXYGEN_FARM, new OxygenFarmBlockHandler() },

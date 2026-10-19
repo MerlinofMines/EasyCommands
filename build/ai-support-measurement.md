@@ -1,6 +1,43 @@
 # Initial AI support measurement
 
-## Current measurement after rebase (2026-10-19)
+## Current measurement with additional controls (2026-10-19)
+
+| Release package | Characters | Remaining |
+| --- | ---: | ---: |
+| Rebased initial AI support | 95,514 | 4,486 |
+| With target/destination, altitude/alignment and repeat controls | **96,043** | **3,957** |
+| Increment for additional controls | **529** | |
+
+The total AI increment over latest master is 1,554 characters. Release build,
+all **2,058 unit tests**, and the exact packed-script C# 6/API check passed.
+Current package SHA-256:
+`1904883B9550C6BD4EA693D236514AD1C401BEBAF3CCC4539D2CB369403823AC`.
+
+Added read-only target-presence flags on both combat blocks; Defensive retreat
+position override and clear; Flight minimum altitude and gravity alignment;
+Recorder repeat-path toggle. Only repeat needs a new property type. `repeat path`
+and `loop path` preserve the existing standalone repeat/loop control commands.
+
+Live testing caught a distinction between the typed `MinimalAltitude` getter and
+the terminal slider: the typed getter adjusts for grid size. EC deliberately uses
+the `MinHeightAboveTerrain` terminal property for configured-value readback.
+
+Live verification of this exact package:
+
+- `ai-extended-settings`: pass, 40 ticks. Altitude configured/read as 150 m while
+  the typed API reports 153.75 m on this rig; alignment and repeat toggle/readback,
+  destination override/clear and absent target flags passed. Artifacts:
+  `.build/integration/6567239844df40158135d496e9ba0316/`.
+- `ai-detection-and-retarget`: pass, 5,064 ticks. Offensive and Defensive naturally
+  acquired the separately owned target. EC replaced a deliberately wrong retreat
+  point, requested flee and travelled 144.65 m, stopping 7.19 m from the intended
+  point at 0 m/s with six healthy thrust directions. Artifacts:
+  `.build/integration/6c0482c4ead24d6fbe6b2f40fab884ea/`.
+
+Planetary alignment/terrain clearance and sustained repeat-route navigation have
+not been exercised; their configuration roundtrips were verified in game.
+
+## Rebase checkpoint (2026-10-19)
 
 Rebased onto `origin/master` at `41a9eca`, retaining visibility redaction,
 compact registrations/lazy expressions, and connector/shared-production updates.

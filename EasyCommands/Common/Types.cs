@@ -89,7 +89,7 @@ namespace IngameScript {
         }
 
         public enum Property {
-            PRECISION, AVOID, FLEE,
+            PRECISION, AVOID, FLEE, REPEAT,
             //Simple Properties
             ABLE,
             ACTIONS,

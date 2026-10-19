@@ -215,6 +215,7 @@ namespace EasyCommands.Integration {
             AddDroneBlock(grid, "FlightMovementBlock", "LargeFlightMovement", "EC Drone Flight", new Vector3I(6, 1, 0));
             AddDroneBlock(grid, "PathRecorderBlock", "LargePathRecorderBlock", "EC Drone Recorder", new Vector3I(8, 1, 0));
             AddDroneBlock(grid, "DefensiveCombatBlock", "LargeDefensiveCombat", "EC Drone Defensive", new Vector3I(10, 1, 0));
+            AddDroneBlock(grid, "OffensiveCombatBlock", "LargeOffensiveCombat", "EC Drone Offensive", new Vector3I(14, 1, 0));
             AddDroneBlock(grid, "Gyro", "LargeBlockGyro", "EC Drone Gyro", new Vector3I(12, 1, 0));
             var directions = new[] { Base6Directions.Direction.Forward, Base6Directions.Direction.Backward, Base6Directions.Direction.Left, Base6Directions.Direction.Right, Base6Directions.Direction.Up, Base6Directions.Direction.Down };
             for (int i = 0; i < directions.Length; i++) {
@@ -299,7 +300,7 @@ namespace EasyCommands.Integration {
             if (scenario.Setup.StartsWith("ai-motion")) {
                 maxTravel = maxSpeed = 0;
                 sawPlaying = sawFleeing = sawEnemy = sawStopped = false;
-                foreach (var block in blocks.Where(b => b.CustomName.StartsWith("EC Drone ") && (b is IMyFlightMovementBlock || b is IMyPathRecorderBlock || b is IMyDefensiveCombatBlock)))
+                foreach (var block in blocks.Where(b => b.CustomName.StartsWith("EC Drone ") && (b is IMyFlightMovementBlock || b is IMyPathRecorderBlock || b is IMyDefensiveCombatBlock || b is IMyOffensiveCombatBlock)))
                     Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.SetValueBool(block, "ActivateBehavior", false);
                 pb.CubeGrid.Physics.ClearSpeed();
                 motionStart = pb.GetPosition();
@@ -312,10 +313,14 @@ namespace EasyCommands.Integration {
                 recorder.AddWaypoint(new Sandbox.Game.Entities.MyAutopilotWaypoint(motionDestination, "EC arrival"));
                 var defensive = (IMyDefensiveCombatBlock)blocks.Single(b => b.CustomName == "EC Drone Defensive");
                 defensive.FleeTrigger = VRage.Game.ModAPI.Ingame.FleeTrigger.Never;
-                defensive.CustomFleeCoordinates = motionDestination;
+                // Extended test must replace this deliberately wrong destination through EC.
+                defensive.CustomFleeCoordinates = scenario.Setup == "ai-motion-extended" ? motionStart + new Vector3D(0, 0, 150) : motionDestination;
                 defensive.WaypointZoneSize = 5;
                 defensive.SearchEnemyComponent.TargetingLockOptions = VRage.Game.ModAPI.Ingame.MyGridTargetingRelationFiltering.Enemy | VRage.Game.ModAPI.Ingame.MyGridTargetingRelationFiltering.Neutral;
                 defensive.SearchEnemyComponent.SubsystemsToDestroy = VRage.Utils.MyStringHash.GetOrCompute("PowerSystems");
+                var offensive = (IMyOffensiveCombatBlock)blocks.Single(b => b.CustomName == "EC Drone Offensive");
+                offensive.SearchEnemyComponent.TargetingLockOptions = defensive.SearchEnemyComponent.TargetingLockOptions;
+                offensive.SearchEnemyComponent.SubsystemsToDestroy = defensive.SearchEnemyComponent.SubsystemsToDestroy;
                 Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.SetValue<long>(defensive, "FleeMode", 1);
                 CaptureMeasurements("setup-" + scenario.Setup);
                 return;
@@ -389,6 +394,9 @@ namespace EasyCommands.Integration {
                         values["SpeedLimit"] = flight.SpeedLimit;
                         values["Precision"] = flight.PrecisionMode;
                         values["Avoidance"] = flight.CollisionAvoidance;
+                        values["MinimumAltitudeApi"] = flight.MinimalAltitude;
+                        values["MinimumAltitudeSetting"] = Sandbox.ModAPI.Interfaces.TerminalPropertyExtensions.GetValueFloat(block, "MinHeightAboveTerrain");
+                        values["GravityAlignment"] = flight.AlignToPGravity;
                     }
                     Sandbox.ModAPI.Ingame.IMyPathRecorderComponent recorder;
                     if (block.Components.TryGet(out recorder)) values["Playing"] = recorder.IsPlaying;
@@ -460,7 +468,7 @@ namespace EasyCommands.Integration {
                 var thrusters = Blocks().OfType<Sandbox.ModAPI.Ingame.IMyThrust>().Where(b => b.CubeGrid.EntityId == pb.CubeGrid.EntityId).ToList();
                 bool healthyThrust = thrusters.Count == 6 && thrusters.Select(b => b.Orientation.Forward).Distinct().Count() == 6 && thrusters.All(b => b.IsFunctional && b.MaxEffectiveThrust > 0);
                 bool valid = maxTravel > 100 && distance < 12 && speed < 1 && healthyThrust;
-                if (setup == "ai-motion-flee") valid &= sawEnemy && sawFleeing;
+                if (setup == "ai-motion-flee" || setup == "ai-motion-extended") valid &= sawEnemy && sawFleeing;
                 else valid &= sawPlaying;
                 if (setup == "ai-motion-stop") valid &= sawStopped;
                 passed = valid;

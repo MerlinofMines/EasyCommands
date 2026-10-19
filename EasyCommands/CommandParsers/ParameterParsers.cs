@@ -129,6 +129,7 @@ namespace IngameScript {
             AddPropertyWords(Synonyms("dead"), Property.ALIVE, false);
 
             //Property Words
+            AddPropertyWords(Words("repeat path", "loop path"), Property.REPEAT);
             AddPropertyWords(Synonyms("behavior behaviour"), Property.AUTO);
             AddPropertyWords(Synonyms("precision"), Property.PRECISION);
             AddPropertyWords(Synonyms("avoid avoidance"), Property.AVOID);
