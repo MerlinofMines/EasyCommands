@@ -14,6 +14,16 @@ namespace EasyCommands.Integration {
     // compiler, with its whitelist and instrumentation, into another assembly.
     // This does not verify normal local/Workshop package discovery or loading.
     internal static class ModPocSourceLoader {
+        // Read-only test inspection of the actual compiled mod instance. No
+        // diagnostics endpoints or reflection are added to the shipped mod.
+        internal static MySessionComponentBase Component;
+        internal static System.Collections.IDictionary RuntimeMap(string field) {
+            if (field != "states" && field != "subscriptions") throw new ArgumentException("Unknown runtime map");
+            return (System.Collections.IDictionary)Component.GetType().GetField(field,
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(Component);
+        }
+        internal static int Calls(object state) { return (int)state.GetType().GetField("Calls").GetValue(state); }
+
         internal static void Load(string sourceDirectory, string outputDirectory) {
             var sources = Directory.GetFiles(sourceDirectory, "*.cs", SearchOption.AllDirectories);
             var timer = Stopwatch.StartNew();
@@ -35,6 +45,7 @@ namespace EasyCommands.Integration {
             var type = assembly.GetType("EasyCommands.Mod.ModSession", true);
             var component = (MySessionComponentBase)Activator.CreateInstance(type);
             MyAPIGateway.Session.RegisterComponent(component, MyUpdateOrder.AfterSimulation, 1000);
+            Component = component;
         }
     }
 }

@@ -92,3 +92,7 @@ The permanent shared-source proposal is in `build/mod-shared-core-plan.md`; broa
 handler-suite results and the corrected crop assertion are in `build/mod-broad-results.md`.
 
 This is a private-fixture proof of concept. Release work still includes explicit execution budgets, complete authorization of mod operations, comprehensive handler/client/lifecycle coverage, normal mod-package validation, and replacing the temporary static active-context adaptation with an explicit per-instance execution context. Runtime execution state is not persisted across restarts.
+
+Power interruption/recovery and actual warhead-destruction cleanup are now verified:
+see [lifecycle results](../../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
+The complete compatibility run includes these checks after its earlier scenarios.

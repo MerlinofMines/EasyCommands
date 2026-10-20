@@ -25,6 +25,7 @@ namespace EasyCommands.Integration {
         public bool PocMissingMod { get; set; }
         public bool PocSkipSamples { get; set; }
         public bool PocSkipFullBatch { get; set; }
+        public bool PocLifecycleOnly { get; set; }
         public string FullScript { get; set; }
         public int StressBlocks { get; set; }
         public int StressTicks { get; set; }

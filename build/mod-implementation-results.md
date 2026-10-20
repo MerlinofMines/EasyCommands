@@ -70,3 +70,7 @@ complete validation. All retained game compiles use the explicitly identified te
 `PackageLoadingVerified: false`. Normal mod discovery/loading, client lifecycle/access
 validation and explicit mod execution budgets remain gates before public release. No
 Workshop publication or player-world installation was performed by this implementation.
+
+Power interruption/recovery and actual warhead-destruction cleanup are now verified:
+see [lifecycle results](mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
+The complete compatibility run includes these checks after its earlier scenarios.

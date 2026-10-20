@@ -9,6 +9,7 @@
     <Compile Include="../ModPoc/ModPocSourceLoader.cs" />
     <Compile Include="../ModPoc/PocBenchmark.cs" />
     <Compile Include="../ModPoc/PocStress.cs" />
+    <Compile Include="../ModPoc/PocLifecycle.cs" />
     <Reference Include="Sandbox.Common"><HintPath>$(GameBin)\Sandbox.Common.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Sandbox.Game"><HintPath>$(GameBin)\Sandbox.Game.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="VRage"><HintPath>$(GameBin)\VRage.dll</HintPath><Private>false</Private></Reference>

@@ -27,3 +27,7 @@ Current validation: [shared-host implementation results](../build/mod-implementa
 For a focused lifecycle run, use `-CompatibilityOnly -SkipFullBatch`; the latter omits
 only the expensive full-PB compilation batch. Standard unit and build checks run in CI;
 actual Mod-target execution is explicitly verified in the disposable-server harness.
+
+Power interruption/recovery and actual warhead-destruction cleanup are now verified:
+see [lifecycle results](../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
+The complete compatibility run includes these checks after its earlier scenarios.

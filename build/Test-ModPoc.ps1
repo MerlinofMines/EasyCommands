@@ -1,4 +1,4 @@
-param([string] $ServerRoot, [string] $StagedMod, [string] $PythonPath, [switch] $Benchmark, [switch] $CompatibilityOnly, [switch] $SkipFullBatch,
+param([string] $ServerRoot, [string] $StagedMod, [string] $PythonPath, [switch] $Benchmark, [switch] $CompatibilityOnly, [switch] $SkipFullBatch, [switch] $LifecycleOnly,
     [ValidatePattern('^[a-zA-Z0-9_-]+$')][string] $Suite = 'smoke', [string[]] $ScenarioName)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
@@ -18,4 +18,4 @@ dotnet build (Join-Path $repo 'integration/Harness/Harness.csproj') -c Release "
 if ($LASTEXITCODE) { throw 'Harness build failed.' }
 & (Join-Path $repo 'build/Test-InGame.ps1') -Suite $Suite -ServerRoot $ServerRoot `
     -StagedMod $StagedMod -ScriptPath (Join-Path $repo 'EasyCommands.Bridge/script.cs.txt') `
-    -RunRoot (Join-Path $repo '.build/mod-poc/runs') -PocBenchmark:($Benchmark -or $CompatibilityOnly) -PocSkipSamples:$CompatibilityOnly -PocSkipFullBatch:$SkipFullBatch -ScenarioName $ScenarioName -SkipBuild
+    -RunRoot (Join-Path $repo '.build/mod-poc/runs') -PocBenchmark:($Benchmark -or $CompatibilityOnly -or $LifecycleOnly) -PocSkipSamples:($CompatibilityOnly -or $LifecycleOnly) -PocLifecycleOnly:$LifecycleOnly -PocSkipFullBatch:$SkipFullBatch -ScenarioName $ScenarioName -SkipBuild

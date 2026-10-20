@@ -25,7 +25,7 @@ namespace EasyCommands.Integration {
 
         void CreatePocFixtures() {
             long owner = Sandbox.Game.World.MySession.Static.Players.CreateNewIdentity("EC POC Radio Owner", addToNpcs: true).IdentityId;
-            for (int rig = 0; rig < 2; rig++) {
+            for (int rig = 0; rig < 3; rig++) {
                 var grid = new MyObjectBuilder_CubeGrid {
                     GridSizeEnum = MyCubeSize.Large, IsStatic = true, CreatePhysics = true,
                     PersistentFlags = MyPersistentEntityFlags2.InScene | MyPersistentEntityFlags2.Enabled,
@@ -37,8 +37,9 @@ namespace EasyCommands.Integration {
                         grid.CubeBlocks.Add(new MyObjectBuilder_CubeBlock { SubtypeName = "LargeBlockArmorBlock", Min = new Vector3I(x, 0, z) });
                 Add(grid, "BatteryBlock", "LargeBlockBatteryBlock", "POC Battery " + rig, 0).Min = new Vector3I(0, 1, 1);
                 for (int i = 0; i < (rig == 0 ? 10 : 1); i++)
-                    Add(grid, "MyProgrammableBlock", "LargeProgrammableBlock", rig == 0 ? "POC " + i : "POC Radio Peer", 2 + i).Min = new Vector3I(2 + i, 1, 1);
+                    Add(grid, "MyProgrammableBlock", "LargeProgrammableBlock", rig == 0 ? "POC " + i : rig == 1 ? "POC Radio Peer" : "POC Lifecycle Victim", 2 + i).Min = new Vector3I(2 + i, 1, 1);
                 Add(grid, "RadioAntenna", "LargeBlockRadioAntenna", "POC Antenna " + rig, 16).Min = new Vector3I(16, 1, 1);
+                if (rig == 2) Add(grid, "Warhead", "LargeWarhead", "POC Lifecycle Warhead", 4).Min = new Vector3I(4, 1, 1);
                 foreach (var block in grid.CubeBlocks.OfType<MyObjectBuilder_TerminalBlock>()) block.Owner = owner;
                 MyAPIGateway.Entities.RemapObjectBuilder(grid);
                 MyAPIGateway.Entities.CreateFromObjectBuilderAndAdd(grid);
@@ -75,9 +76,11 @@ namespace EasyCommands.Integration {
                     foreach (var variant in variants) pocJobs.Add(variant);
                 }
                 File.WriteAllText(Path.Combine(root, "poc-progress.json"), "{\"phase\":\"benchmark-start\"}");
-                if (request.PocSkipSamples) PocPhase(1);
+                if (request.PocLifecycleOnly) PocPhase(19);
+                else if (request.PocSkipSamples) PocPhase(1);
             }
             if (pocPhase == 0) { TickPocSamples(); return; }
+            if (pocPhase >= 19) { TickPocLifecycle(); return; }
             if (++pocWait > 900) throw new Exception("POC phase " + pocPhase + " timeout: A=" + PocOutput(0) + " B=" + PocOutput(1) + " peer=" + pocPeer.DetailedInfo);
             switch (pocPhase) {
                 case 1:
@@ -166,7 +169,7 @@ namespace EasyCommands.Integration {
                         throw new Exception("Re-enabled target did not execute: " + PocOutput(0) + " / " + PocOutput(1));
                     PocPass("enabled-run-target", "Re-enabled target executed normally through the mod Run adapter.");
                     pocBlocks[0].Enabled = pocBlocks[1].Enabled = false;
-                    Finish(); break;
+                    PocPhase(19); break;
             }
             File.WriteAllText(Path.Combine(root, "poc-progress.json"), json.Serialize(new { Phase = pocPhase, WaitTicks = pocWait, A = PocOutput(0), B = PocOutput(1), Peer = pocPeer.DetailedInfo }));
         }
