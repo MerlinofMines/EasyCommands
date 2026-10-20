@@ -20,6 +20,14 @@ namespace EasyCommands.Integration {
         public string Script { get; set; }
         public string ProgrammableBlock { get; set; }
         public Scenario[] Scenarios { get; set; }
+        public string ModPocSourceDirectory { get; set; }
+        public bool PocBenchmark { get; set; }
+        public bool PocMissingMod { get; set; }
+        public bool PocSkipSamples { get; set; }
+        public bool PocSkipFullBatch { get; set; }
+        public string FullScript { get; set; }
+        public int StressBlocks { get; set; }
+        public int StressTicks { get; set; }
     }
     public sealed class Scenario {
         public string Name { get; set; }
@@ -35,7 +43,7 @@ namespace EasyCommands.Integration {
         public int Ticks { get; set; }
     }
     // Loaded only by the disposable integration server. All game access is on Update.
-    public sealed class Harness : IPlugin {
+    public sealed partial class Harness : IPlugin {
         readonly JavaScriptSerializer json = new JavaScriptSerializer();
         readonly List<Result> results = new List<Result>();
         string root;
@@ -44,6 +52,7 @@ namespace EasyCommands.Integration {
         int index, ticks, settle;
         bool finished;
         int startup;
+        bool modPocLoaded;
         string passToken, failToken;
         Vector3D motionStart, motionDestination;
         double maxTravel, maxSpeed;
@@ -71,8 +80,15 @@ namespace EasyCommands.Integration {
                     if (request.Scenarios == null || request.Scenarios.Length == 0)
                         throw new Exception("No scenarios supplied.");
                 }
+                if (!modPocLoaded && !String.IsNullOrEmpty(request.ModPocSourceDirectory)) {
+                    ModPocSourceLoader.Load(request.ModPocSourceDirectory, root);
+                    modPocLoaded = true;
+                    return;
+                }
                 if (startup == 0) {
-                    if (request.CreateFixture) CreateFixture();
+                    if (request.StressBlocks > 0) CreateStressFixtures();
+                    else if (request.CreateFixture) CreateFixture();
+                    if (request.PocBenchmark) CreatePocFixtures();
                     startup++;
                     return;
                 }
@@ -81,6 +97,21 @@ namespace EasyCommands.Integration {
                 if (startup == 181) File.WriteAllText(Path.Combine(root, "fixture.json"),
                     json.Serialize(Blocks().Select(b => new { Name = b.CustomName, Definition = b.BlockDefinition.ToString(),
                         Working = b.IsWorking, Functional = b.IsFunctional, Enabled = (b as IMyFunctionalBlock)?.Enabled })));
+                if (request.PocBenchmark) { TickPoc(); return; }
+                if (request.StressBlocks > 0) { TickStress(); return; }
+                if (request.PocMissingMod) {
+                    var missingModBlock = Blocks().OfType<IMyProgrammableBlock>().Single(b => b.CustomName == request.ProgrammableBlock);
+                    missingModBlock.CustomData = "print \"POC_SHOULD_NOT_RUN\"";
+                    missingModBlock.Enabled = true;
+                    missingModBlock.ProgramData = request.Script;
+                    if (missingModBlock.HasCompileErrors) throw new Exception("Missing-mod bridge failed compilation: " + missingModBlock.DetailedInfo);
+                    missingModBlock.Run("print 'POC_ARGUMENT'");
+                    var missingOutput = missingModBlock.DetailedInfo ?? "";
+                    bool missingPassed = missingOutput.Contains("mod unavailable or incompatible") && missingOutput.Contains("argument was not accepted") && !missingOutput.Contains("POC_SHOULD_NOT_RUN");
+                    results.Add(new Result { Name = "missing-mod", Passed = missingPassed, Detail = missingOutput, Ticks = 1 });
+                    missingModBlock.Enabled = false;
+                    Finish(); return;
+                }
                 if (index >= request.Scenarios.Length) { Finish(); return; }
                 var test = request.Scenarios[index];
                 if (pb == null) {
@@ -131,7 +162,7 @@ namespace EasyCommands.Integration {
                 else if (output.Contains(passToken)) Record(true, output);
                 else if (ticks >= test.TimeoutTicks) Record(false, "Timed out. Last output: " + output);
             } catch (Exception ex) {
-                results.Add(new Result { Name = request != null && index < request.Scenarios.Length
+                results.Add(new Result { Name = request != null && request.StressBlocks > 0 ? "stress-phase-" + stressPhase : request != null && request.PocBenchmark ? "poc-phase-" + pocPhase : request != null && index < request.Scenarios.Length
                     ? request.Scenarios[index].Name : "harness", Passed = false, Detail = ex.ToString(), Ticks = ticks });
                 Finish();
             }
@@ -466,6 +497,8 @@ namespace EasyCommands.Integration {
                 if (!farm.Components.TryGet(out water)) throw new Exception("Missing water component");
                 water.ChangeFilledRatio(.25, true);
             } else if (scenario.Setup == "crop-planted") {
+                // A healthy new crop can report zero output until yield is established.
+                // Positive known yield is checked separately by the mature-crop fixture.
                 var farm = blocks.Single(b => b.CustomName == "EC Test Farm");
                 if (!farm.Components.TryGet(out crop)) throw new Exception("Missing crop component");
                 if (!crop.PlantSeed(new MyDefinitionId(MyObjectBuilderType.Parse("MyObjectBuilder_SeedItem"), "Fruit"))) throw new Exception("Fixture planting failed");

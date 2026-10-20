@@ -1,0 +1,50 @@
+// EasyCommands mod bridge v1. Paste this body into the programmable block.
+// Requires the EasyCommands source mod; put your EC program in Custom Data.
+const string ApiId = "EasyCommands.Bridge.v1";
+Func<bool, string, UpdateType, IMyGridTerminalSystem,
+    IMyIntergridCommunicationSystem, double,
+    MyTuple<UpdateFrequency, string>> step;
+bool attach = true;
+
+public Program()
+{
+    Runtime.UpdateFrequency = UpdateFrequency.Update1;
+}
+
+public void Main(string argument, UpdateType source)
+{
+    try
+    {
+        if (step == null)
+        {
+            var property = Me.GetProperty(ApiId);
+            if (property != null)
+                step = property.As<Func<bool, string, UpdateType,
+                    IMyGridTerminalSystem, IMyIntergridCommunicationSystem,
+                    double, MyTuple<UpdateFrequency, string>>>().GetValue(Me);
+
+            if (step == null)
+            {
+                Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                Echo("EasyCommands mod unavailable or incompatible; retrying.");
+                if (!string.IsNullOrEmpty(argument))
+                    Echo("Run argument was not accepted. Run it again when connected.");
+                return;
+            }
+        }
+
+        var result = step(attach, argument, source, GridTerminalSystem,
+            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds);
+        attach = false;
+        Runtime.UpdateFrequency = result.Item1;
+        Echo(result.Item2 ?? "");
+    }
+    catch (Exception error)
+    {
+        Runtime.UpdateFrequency = UpdateFrequency.None;
+        step = null;
+        attach = true;
+        Echo("EasyCommands bridge stopped: " + error.Message);
+        Echo("Run again to reconnect and reset this runtime.");
+    }
+}

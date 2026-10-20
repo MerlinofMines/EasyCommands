@@ -1,4 +1,4 @@
-﻿using Sandbox.Game.EntityComponents;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -24,8 +24,8 @@ namespace IngameScript {
                 AddBooleanHandler(Property.COMPLETE, block => !block.IsRunning);
                 AddStringHandler(Property.TEXT, block => block.TerminalRunArgument);
                 AddReturnHandlers(Property.RUN, Return.STRING,
-                    TypeHandler(StringHandler(b => b.IsRunning.ToString(), (b, v) => b.TryRun(v)), Return.STRING),
-                    TypeHandler(BooleanHandler(b => b.IsRunning, (b, v) => { if (v) b.TryRun(b.TerminalRunArgument); else b.Enabled = false; }), Return.BOOLEAN));
+                    TypeHandler(StringHandler(b => b.IsRunning.ToString(), (b, v) => RunProgram(b, v)), Return.STRING),
+                    TypeHandler(BooleanHandler(b => b.IsRunning, (b, v) => { if (v) RunProgram(b, b.TerminalRunArgument); else b.Enabled = false; }), Return.BOOLEAN));
 
                 SetDefaultProperty(Property.RUN, Return.STRING);
             }

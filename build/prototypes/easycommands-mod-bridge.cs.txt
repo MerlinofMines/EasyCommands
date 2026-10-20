@@ -1,0 +1,50 @@
+// Draft PB bridge. Requires the proposed EasyCommands.Poc.v1 mod API.
+// Paste this body into the PB editor; the mod implementation is still pending.
+const string ApiId = "EasyCommands.Poc.v1";
+Func<bool, string, UpdateType, IMyGridTerminalSystem,
+    IMyIntergridCommunicationSystem, double,
+    MyTuple<UpdateFrequency, string>> step;
+bool attach = true;
+
+public Program()
+{
+    Runtime.UpdateFrequency = UpdateFrequency.Update1;
+}
+
+public void Main(string argument, UpdateType source)
+{
+    try
+    {
+        if (step == null)
+        {
+            var property = Me.GetProperty(ApiId);
+            if (property != null)
+                step = property.As<Func<bool, string, UpdateType,
+                    IMyGridTerminalSystem, IMyIntergridCommunicationSystem,
+                    double, MyTuple<UpdateFrequency, string>>>().GetValue(Me);
+
+            if (step == null)
+            {
+                Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                Echo("EasyCommands mod unavailable or incompatible; retrying.");
+                if (!string.IsNullOrEmpty(argument))
+                    Echo("Run argument was not accepted. Run it again when connected.");
+                return;
+            }
+        }
+
+        var result = step(attach, argument, source, GridTerminalSystem,
+            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds);
+        attach = false;
+        Runtime.UpdateFrequency = result.Item1;
+        Echo(result.Item2 ?? "");
+    }
+    catch (Exception error)
+    {
+        Runtime.UpdateFrequency = UpdateFrequency.None;
+        step = null;
+        attach = true;
+        Echo("EasyCommands bridge stopped: " + error.Message);
+        Echo("Run again to reconnect and reset this runtime.");
+    }
+}

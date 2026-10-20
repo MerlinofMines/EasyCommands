@@ -1,4 +1,4 @@
-﻿using Sandbox.Game.EntityComponents;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -18,7 +18,7 @@ using VRage;
 using VRageMath;
 
 namespace IngameScript {
-    partial class Program : MyGridProgram {
+    partial class Program {
 
         public interface IParameterProcessor : IComparable<IParameterProcessor> {
             int Rank { get; set; }

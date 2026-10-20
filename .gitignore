@@ -350,3 +350,6 @@ lib/
 *.mdk.local.ini
 mdk.local.ini
 .build/
+
+# Per-worktree mod reference configuration
+EasyCommands.Mod/EasyCommands.Mod.local.props
