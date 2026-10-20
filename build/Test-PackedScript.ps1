@@ -16,7 +16,7 @@ $checkRoot = Join-Path $repoRoot '.build/packed-script-check'
 New-Item -ItemType Directory -Force -Path $checkRoot | Out-Null
 # Compile the exact artifact body in a programmable-block-style wrapper,
 # using the same imports as the source project. This does not run the game.
-$usings = Get-Content (Join-Path $repoRoot 'EasyCommands/Program.cs') | Where-Object { $_ -match '^using .*;$' }
+$usings = Get-Content (Join-Path $repoRoot 'EasyCommands/Program.cs') | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^using .*;$' } | Select-Object -Unique
 $source = ($usings -join "`n") + "`nnamespace IngameScript { public class Program : MyGridProgram {`n" + $script + "`n} }`n"
 Set-Content -LiteralPath (Join-Path $checkRoot 'Program.cs') -Value $source -Encoding utf8
 @"

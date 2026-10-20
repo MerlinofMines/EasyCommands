@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-using Sandbox.ModAPI.Ingame;
-
 namespace IngameScript {
+    using System;
+    using System.Collections.Generic;
+    using Sandbox.ModAPI.Ingame;
+
     // Invocation services are borrowed from the PB and cleared before the delegate returns.
     public sealed class ModHostContext {
         public IMyProgrammableBlock Me;

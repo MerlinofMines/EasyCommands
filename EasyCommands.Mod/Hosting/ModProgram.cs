@@ -1,6 +1,6 @@
-using Sandbox.ModAPI.Ingame;
-
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+
     public partial class Program : ModHostBase {
         public Program(ModHostContext host) : base(host) { InitializeEngine(); }
 

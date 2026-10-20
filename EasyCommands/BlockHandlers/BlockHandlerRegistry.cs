@@ -1,4 +1,4 @@
-﻿using Sandbox.Game.EntityComponents;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -18,6 +18,10 @@ using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame.Utilities;
     partial class Program {
         public List<IMyTerminalBlock> blockCache = NewList<IMyTerminalBlock>();
         public Cache<Block, List<Object>> selectorCache = new Cache<Block, List<Object>>();

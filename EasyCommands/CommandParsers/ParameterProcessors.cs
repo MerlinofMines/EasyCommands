@@ -18,6 +18,10 @@ using VRage;
 using VRageMath;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame.Utilities;
+    using VRage.Game.ModAPI.Ingame;
     partial class Program {
 
         public interface IParameterProcessor : IComparable<IParameterProcessor> {

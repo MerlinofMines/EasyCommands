@@ -200,6 +200,10 @@ contains the engine and mod host under `Data/Scripts/EasyCommands`, plus the sha
 thumbnail/license. The bridge archive contains `script.cs`, thumbnail and license.
 Neither archive contains harness code, DLLs, run evidence or publishing identity.
 Both are validated against the exact source inputs and the same bridge API identifier.
+The build also compiles staged sources with the normal loader compatibility imports
+through `Test-ModCompatibility.ps1`; imports inside the engine/host namespaces avoid
+collisions between PB and Mod API interfaces. The live test runner additionally applies
+the installed game's actual compatibility preprocessing.
 CI retains both ZIPs and manifests in the `EasyCommands-mod` artifact. It never uploads
 to Steam. `WorkingTreeModified` in the release manifest records builds with local edits;
 for a release, build a clean tagged checkout and retain its manifests with the artifacts.

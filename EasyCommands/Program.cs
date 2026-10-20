@@ -18,6 +18,11 @@ using VRage;
 using VRageMath;
 
 namespace IngameScript {
+    // Override the mod loader's injected API imports. Keep root imports for MDK packing.
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame.Utilities;
+    using VRage.Game.ModAPI.Ingame;
     public partial class Program {
         #region mdk preserve
         public UpdateFrequency updateFrequency = UpdateFrequency.Update1;

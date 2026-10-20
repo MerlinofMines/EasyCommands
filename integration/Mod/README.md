@@ -32,9 +32,10 @@ SCRIPT_ONLY. The missing-mod runner uses `Test-InGame.ps1 -MissingMod` without a
 
 ## Test loading and limits
 
-`ModSourceLoader.cs` is test-only. It compiles the staged sources with the game's actual
-MyApiTarget.Mod compiler into a separate sandboxed assembly, then registers the session
-component. This works around dedicated-server rejection of unpublished local packages.
+`ModSourceLoader.cs` is test-only. It first applies the installed game's actual
+MyScriptManager.UpdateCompatibility preprocessing, including injected Mod API imports
+and legacy substitutions, then compiles with MyApiTarget.Mod into a separate sandboxed
+assembly and registers the session component. This works around dedicated-server rejection of unpublished local packages.
 It validates mod-whitelisted compilation and execution, including native PB bridge calls;
 it does not establish normal Workshop download/package discovery or multiplayer joining.
 `mod-compile.json` records `PackageLoadingVerified: false`. Normal local/Workshop loading

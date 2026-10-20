@@ -1,20 +1,20 @@
-using System;
-using System.Collections.Generic;
-using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces;
-using Sandbox.ModAPI.Interfaces.Terminal;
-using VRage;
-using VRage.Game.Components;
-using VRage.ModAPI;
-using PbBlock = Sandbox.ModAPI.IMyProgrammableBlock;
-using PbView = Sandbox.ModAPI.Ingame.IMyProgrammableBlock;
-using Frequency = Sandbox.ModAPI.Ingame.UpdateFrequency;
-using Update = Sandbox.ModAPI.Ingame.UpdateType;
-using Terminal = Sandbox.ModAPI.Ingame.IMyGridTerminalSystem;
-using Igc = Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem;
-using Step = System.Func<bool, string, Sandbox.ModAPI.Ingame.UpdateType, Sandbox.ModAPI.Ingame.IMyGridTerminalSystem, Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem, double, Sandbox.ModAPI.Ingame.UpdateFrequency, int, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string[]>>;
-
 namespace EasyCommands.Mod {
+    using System;
+    using System.Collections.Generic;
+    using Sandbox.ModAPI;
+    using Sandbox.ModAPI.Interfaces;
+    using Sandbox.ModAPI.Interfaces.Terminal;
+    using VRage;
+    using VRage.Game.Components;
+    using VRage.ModAPI;
+    using PbBlock = Sandbox.ModAPI.IMyProgrammableBlock;
+    using PbView = Sandbox.ModAPI.Ingame.IMyProgrammableBlock;
+    using Frequency = Sandbox.ModAPI.Ingame.UpdateFrequency;
+    using Update = Sandbox.ModAPI.Ingame.UpdateType;
+    using Terminal = Sandbox.ModAPI.Ingame.IMyGridTerminalSystem;
+    using Igc = Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem;
+    using Step = System.Func<bool, string, Sandbox.ModAPI.Ingame.UpdateType, Sandbox.ModAPI.Ingame.IMyGridTerminalSystem, Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem, double, Sandbox.ModAPI.Ingame.UpdateFrequency, int, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string[]>>;
+
     [MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)]
     public sealed class ModSession : MySessionComponentBase {
         const string ApiId = "EasyCommands.Bridge.v3";

@@ -24,18 +24,27 @@ namespace EasyCommands.Integration {
         }
         internal static int Calls(object state) { return (int)state.GetType().GetField("Calls").GetValue(state); }
 
+        // Use the installed game's actual source preprocessing, including injected
+        // compatibility usings, before applying its Mod-target whitelist/compiler.
+        internal static string PrepareSource(string path) {
+            var method = typeof(Sandbox.Game.World.MyScriptManager).GetMethod("UpdateCompatibility",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            if (method == null) throw new Exception("Game mod source preprocessor not found.");
+            return (string)method.Invoke(null, new object[] { path });
+        }
+
         internal static void Load(string sourceDirectory, string outputDirectory) {
             var sources = Directory.GetFiles(sourceDirectory, "*.cs", SearchOption.AllDirectories);
             var timer = Stopwatch.StartNew();
             List<Message> diagnostics;
             var assembly = MyVRage.Platform.Scripting.CompileAsync(MyApiTarget.Mod,
                 Path.Combine(outputDirectory, "EasyCommandsModSandbox"),
-                sources.Select(path => new Script(path, File.ReadAllText(path))),
+                sources.Select(path => new Script(path, PrepareSource(path))),
                 out diagnostics, "EasyCommandsMod test bootstrap").Result;
             timer.Stop();
             File.WriteAllText(Path.Combine(outputDirectory, "mod-compile.json"),
                 new JavaScriptSerializer().Serialize(new {
-                    CompilerTarget = "Mod", SourceFiles = sources.Length,
+                    CompilerTarget = "Mod", SourceFiles = sources.Length, CompatibilityPreprocessing = true,
                     ElapsedMs = timer.Elapsed.TotalMilliseconds,
                     Succeeded = assembly != null,
                     Diagnostics = diagnostics.Select(d => new { d.IsError, d.Text }).ToArray(),

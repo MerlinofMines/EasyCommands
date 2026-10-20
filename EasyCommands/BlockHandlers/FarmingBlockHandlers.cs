@@ -6,6 +6,8 @@ using System.Linq;
 using VRage.Game;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
     partial class Program {
         // Keep the block as the selected object: crop/storage interfaces are components.
         static T RequireComponent<T>(IMyTerminalBlock block) {

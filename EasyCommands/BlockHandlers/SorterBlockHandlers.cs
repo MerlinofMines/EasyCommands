@@ -1,4 +1,4 @@
-﻿using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI.Ingame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace IngameScript
 {
+    using Sandbox.ModAPI.Ingame;
     partial class Program
     {
         public class SorterBlockerHandler : FunctionalBlockHandler<IMyConveyorSorter>

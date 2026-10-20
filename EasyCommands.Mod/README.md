@@ -45,7 +45,12 @@ persist across world restarts. Runtime execution is server-side.
 ## Build, test and publish
 
 The source package uses the mod project's evaluated Compile items and copies them without
-rewriting the engine. `Build-Mod.ps1` compiles the target and validates the deployable
-archives and release hashes. CI builds both editions and checks the bridge's PB API use.
+rewriting the engine. `Build-Mod.ps1` compiles the target both normally and with the compatibility imports
+injected by the game loader, then validates the deployable archives and release hashes. CI builds both editions and checks the bridge's PB API use.
 See [build instructions and Steam publishing](../build/README.md#mod-and-bridge-packaging-and-steam-publishing)
 and [mod integration tests](../integration/Mod/README.md).
+
+PB API imports are repeated inside engine namespaces so the normal mod loader's
+outer imports cannot introduce ambiguous PB/Mod API types. Root imports remain for
+standalone MDK packaging; mod-only host imports stay inside their namespaces. The live tests
+apply the installed game's actual preprocessing before sandbox compilation.

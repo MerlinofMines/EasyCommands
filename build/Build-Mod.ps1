@@ -32,6 +32,7 @@ if ($LASTEXITCODE) { throw 'Mod staging failed.' }
 $source = Join-Path $run 'Mods/EasyCommands/Data/Scripts/EasyCommands'
 dotnet build (Join-Path $repo 'EasyCommands.Mod/EasyCommands.Mod.csproj') -c Release "-p:GameBin=$gameBin" --nologo
 if ($LASTEXITCODE) { throw 'Mod source compile check failed.' }
+& (Join-Path $PSScriptRoot 'Test-ModCompatibility.ps1') -GameBin $GameBin -SourceDirectory (Join-Path $run 'Mods/EasyCommands/Data/Scripts/EasyCommands')
 Compress-Archive -Path (Join-Path $run 'Mods/EasyCommands/*') -DestinationPath (Join-Path $run 'EasyCommands.zip')
 Compress-Archive -Path (Join-Path $run 'IngameScripts/local/EasyCommands Bridge/*') -DestinationPath (Join-Path $run 'EasyCommands-Bridge.zip')
 $protocol = [regex]::Match([IO.File]::ReadAllText((Join-Path $run 'bridge.cs.txt')), 'const string ApiId = "([^"]+)";').Groups[1].Value
