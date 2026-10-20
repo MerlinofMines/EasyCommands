@@ -20,6 +20,16 @@ namespace EasyCommands.Integration {
         public string Script { get; set; }
         public string ProgrammableBlock { get; set; }
         public Scenario[] Scenarios { get; set; }
+        public string ModSourceDirectory { get; set; }
+        public bool ModBenchmark { get; set; }
+        public bool MissingMod { get; set; }
+        public bool SkipBenchmarkSamples { get; set; }
+        public bool SkipStandaloneBatch { get; set; }
+        public bool LifecycleOnly { get; set; }
+        public bool SchedulingOnly { get; set; }
+        public string FullScript { get; set; }
+        public int StressBlocks { get; set; }
+        public int StressTicks { get; set; }
     }
     public sealed class Scenario {
         public string Name { get; set; }
@@ -35,7 +45,7 @@ namespace EasyCommands.Integration {
         public int Ticks { get; set; }
     }
     // Loaded only by the disposable integration server. All game access is on Update.
-    public sealed class Harness : IPlugin {
+    public sealed partial class Harness : IPlugin {
         readonly JavaScriptSerializer json = new JavaScriptSerializer();
         readonly List<Result> results = new List<Result>();
         string root;
@@ -44,6 +54,7 @@ namespace EasyCommands.Integration {
         int index, ticks, settle;
         bool finished;
         int startup;
+        bool modLoaded;
         string passToken, failToken;
         Vector3D motionStart, motionDestination;
         double maxTravel, maxSpeed;
@@ -71,8 +82,15 @@ namespace EasyCommands.Integration {
                     if (request.Scenarios == null || request.Scenarios.Length == 0)
                         throw new Exception("No scenarios supplied.");
                 }
+                if (!modLoaded && !String.IsNullOrEmpty(request.ModSourceDirectory)) {
+                    ModSourceLoader.Load(request.ModSourceDirectory, root);
+                    modLoaded = true;
+                    return;
+                }
                 if (startup == 0) {
-                    if (request.CreateFixture) CreateFixture();
+                    if (request.StressBlocks > 0) CreateStressFixtures();
+                    else if (request.CreateFixture) CreateFixture();
+                    if (request.ModBenchmark) CreateModFixtures();
                     startup++;
                     return;
                 }
@@ -81,6 +99,9 @@ namespace EasyCommands.Integration {
                 if (startup == 181) File.WriteAllText(Path.Combine(root, "fixture.json"),
                     json.Serialize(Blocks().Select(b => new { Name = b.CustomName, Definition = b.BlockDefinition.ToString(),
                         Working = b.IsWorking, Functional = b.IsFunctional, Enabled = (b as IMyFunctionalBlock)?.Enabled })));
+                if (request.ModBenchmark) { TickMod(); return; }
+                if (request.StressBlocks > 0) { TickStress(); return; }
+                if (request.MissingMod) { TickMissingModBridge(); return; }
                 if (index >= request.Scenarios.Length) { Finish(); return; }
                 var test = request.Scenarios[index];
                 if (pb == null) {
@@ -131,7 +152,7 @@ namespace EasyCommands.Integration {
                 else if (output.Contains(passToken)) Record(true, output);
                 else if (ticks >= test.TimeoutTicks) Record(false, "Timed out. Last output: " + output);
             } catch (Exception ex) {
-                results.Add(new Result { Name = request != null && index < request.Scenarios.Length
+                results.Add(new Result { Name = request != null && request.StressBlocks > 0 ? "stress-phase-" + stressPhase : request != null && request.ModBenchmark ? "mod-phase-" + modPhase : request != null && index < request.Scenarios.Length
                     ? request.Scenarios[index].Name : "harness", Passed = false, Detail = ex.ToString(), Ticks = ticks });
                 Finish();
             }
@@ -466,6 +487,8 @@ namespace EasyCommands.Integration {
                 if (!farm.Components.TryGet(out water)) throw new Exception("Missing water component");
                 water.ChangeFilledRatio(.25, true);
             } else if (scenario.Setup == "crop-planted") {
+                // A healthy new crop can report zero output until yield is established.
+                // Positive known yield is checked separately by the mature-crop fixture.
                 var farm = blocks.Single(b => b.CustomName == "EC Test Farm");
                 if (!farm.Components.TryGet(out crop)) throw new Exception("Missing crop component");
                 if (!crop.PlantSeed(new MyDefinitionId(MyObjectBuilderType.Parse("MyObjectBuilder_SeedItem"), "Fruit"))) throw new Exception("Fixture planting failed");

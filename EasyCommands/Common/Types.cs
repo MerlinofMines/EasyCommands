@@ -1,4 +1,4 @@
-﻿using Sandbox.Game.EntityComponents;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -18,6 +18,10 @@ using VRage;
 using VRageMath;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame.Utilities;
+    using VRage.Game.ModAPI.Ingame;
     partial class Program {
         #region mdk preserve
         public enum LogLevel { INFO, SCRIPT_ONLY }

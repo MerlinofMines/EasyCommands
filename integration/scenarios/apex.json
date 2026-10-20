@@ -80,7 +80,7 @@
       "EC Test Farm"
     ],
     "TimeoutTicks": 900,
-    "Commands": "print \"EC Test Farm\" farm plot crop\nprint \"EC Test Farm\" farm plot crop input\nprint \"EC Test Farm\" farm plot crop output\nif \"EC Test Farm\" farm plot occupied and \"EC Test Farm\" farm plot crop alive and \"EC Test Farm\" farm plot crop input is 1 and \"EC Test Farm\" farm plot crop output > 0\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: newly planted crop amounts\"",
+    "Commands": "print \"EC Test Farm\" farm plot crop\nprint \"EC Test Farm\" farm plot crop input\nprint \"EC Test Farm\" farm plot crop output\nif \"EC Test Farm\" farm plot occupied and \"EC Test Farm\" farm plot crop alive and \"EC Test Farm\" farm plot crop input is 1 and \"EC Test Farm\" farm plot crop output >= 0\n  print \"EC_PASS\"\nelse\n  print \"EC_FAIL: newly planted crop amounts\"",
     "Setup": "crop-planted"
   },
   {

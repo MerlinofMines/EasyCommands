@@ -61,6 +61,14 @@ jobs:
 
       - name: Compile and size-check minified script
         run: ./build/Test-PackedScript.ps1 -BinaryPath .build/game-references
+      - name: Build shared mod target and package source
+        run: ./build/Build-Mod.ps1 -GameBin .build/game-references -PythonPath python
+
+      - name: Check packaged PB bridge
+        run: |
+          $bridge = Get-ChildItem .build/mod/staged -Filter bridge.cs.txt -Recurse | Select-Object -First 1
+          ./build/Test-PackedScript.ps1 -BinaryPath .build/game-references -ScriptPath $bridge.FullName
+
       - name: Run tests
         run: dotnet test EasyCommands.Tests/EasyCommands.Tests.csproj --configuration Release -p:Platform=x64 --no-build --no-restore --logger "trx;LogFileName=tests.trx" --results-directory .build/test-results
 
@@ -77,6 +85,18 @@ jobs:
         with:
           name: EasyCommands-script
           path: EasyCommands/bin/Release/MDK/**/script.cs
+          if-no-files-found: error
+
+      - name: Upload mod and bridge release packages
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: EasyCommands-mod
+          path: |
+            .build/mod/staged/**/EasyCommands.zip
+            .build/mod/staged/**/EasyCommands-Bridge.zip
+            .build/mod/staged/**/release-manifest.json
+            .build/mod/staged/**/bridge.cs.txt
+            .build/mod/staged/**/source-manifest.json
           if-no-files-found: error
 
   docs:

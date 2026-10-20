@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="EasyCommands.Mod.local.props" Condition="Exists('EasyCommands.Mod.local.props')" />
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <GameBin Condition="'$(GameBin)' == ''">$(MSBuildProjectDirectory)/../.build/game-references</GameBin>
+    <LangVersion>6</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../EasyCommands/**/*.cs"
+             Exclude="../EasyCommands/bin/**;../EasyCommands/obj/**;../EasyCommands/MDK/**;../EasyCommands/Properties/**;../EasyCommands/Hosting/**;../EasyCommands/**/*.debug.cs" />
+    <Compile Include="Hosting/**/*.cs;ModSession.cs" />
+    <Reference Include="Sandbox.Common"><HintPath>$(GameBin)/Sandbox.Common.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Sandbox.Game"><HintPath>$(GameBin)/Sandbox.Game.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="VRage"><HintPath>$(GameBin)/VRage.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="VRage.Game"><HintPath>$(GameBin)/VRage.Game.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="VRage.Library"><HintPath>$(GameBin)/VRage.Library.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="VRage.Math"><HintPath>$(GameBin)/VRage.Math.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SpaceEngineers.Game"><HintPath>$(GameBin)/SpaceEngineers.Game.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SpaceEngineers.ObjectBuilders"><HintPath>$(GameBin)/SpaceEngineers.ObjectBuilders.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

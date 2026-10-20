@@ -1,4 +1,4 @@
-﻿using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
 using System;
@@ -9,6 +9,9 @@ using VRage.Game.ModAPI.Ingame;
 using VRageMath;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame;
     partial class Program {
         //Property Getters
         public delegate Primitive GetProperty<T>(T block, PropertySupplier property);

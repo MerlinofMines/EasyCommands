@@ -2,6 +2,7 @@ using Sandbox.ModAPI.Ingame;
 using VRageMath;
 
 namespace IngameScript {
+    using Sandbox.ModAPI.Ingame;
     partial class Program {
         public class AiBlockHandler<T> : FunctionalBlockHandler<T> where T : class, IMyFunctionalBlock {
             public AiBlockHandler() {

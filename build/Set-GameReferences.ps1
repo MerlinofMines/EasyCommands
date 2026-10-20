@@ -15,4 +15,6 @@ foreach ($project in @('EasyCommands', 'EasyCommands.Tests')) {
     $settings = "[mdk]`nbinarypath=$BinaryPath`noutput=auto`ninteractive=DoNothing`n"
     Set-Content -LiteralPath (Join-Path $repoRoot "$project/$project.mdk.local.ini") -Value $settings -Encoding utf8
 }
-Write-Host "Both projects will use game assemblies from $BinaryPath"
+$modLocalSettings = '<Project><PropertyGroup><GameBin>{0}</GameBin></PropertyGroup></Project>' -f [Security.SecurityElement]::Escape($BinaryPath)
+[IO.File]::WriteAllText((Join-Path $repoRoot 'EasyCommands.Mod/EasyCommands.Mod.local.props'), $modLocalSettings)
+Write-Host "PB, tests and mod projects will use game assemblies from $BinaryPath"

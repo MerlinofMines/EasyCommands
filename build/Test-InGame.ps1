@@ -6,9 +6,20 @@ param(
     [ValidateRange(10,3600)][int] $TimeoutSeconds = 600,
     [switch] $SkipBuild,
     [string] $ScriptPath,
+    [string] $StagedMod,
+    [string] $RunRoot,
+    [switch] $ModBenchmark,
+    [switch] $MissingMod,
+    [switch] $SkipBenchmarkSamples,
+    [switch] $SkipStandaloneBatch,
+    [switch] $LifecycleOnly,
+    [switch] $SchedulingOnly,
+    [ValidateRange(0,100)][int] $StressBlocks = 0,
+    [ValidateRange(120,3600)][int] $StressTicks = 1200,
     [Alias('Scenario')][string[]] $ScenarioName
 )
 $ErrorActionPreference = 'Stop'
+if ($StressBlocks -and ($ModBenchmark -or $MissingMod)) { throw 'Stress mode cannot be combined with the other mod test modes.' }
 $repo = Split-Path -Parent $PSScriptRoot
 $defaultServer = [IO.Path]::GetFullPath((Join-Path $repo '.build/dedicated-server'))
 if (-not $ServerRoot) { $ServerRoot = $defaultServer }
@@ -45,16 +56,33 @@ if (-not $ScriptPath) { $ScriptPath = Join-Path $repo 'EasyCommands/bin/Release/
 if (-not (Test-Path -LiteralPath $scriptPath)) { throw "Packaged script missing: $scriptPath" }
 $ScriptPath = (Resolve-Path -LiteralPath $ScriptPath).Path
 $scriptText = Get-Content -LiteralPath $ScriptPath -Raw
-if ([string]::IsNullOrWhiteSpace($scriptText) -or $scriptText.Length -gt 100000) { throw 'Script must contain 1–100,000 characters.' }
-$run = Join-Path $repo ('.build/integration/' + [guid]::NewGuid().ToString('N'))
+if ([string]::IsNullOrWhiteSpace($scriptText) -or $scriptText.Length -gt 100000) { throw 'Script must contain 1-100,000 characters.' }
+if (-not $RunRoot) { $RunRoot = Join-Path $repo '.build/integration' }
+$RunRoot = [IO.Path]::GetFullPath($RunRoot)
+$run = Join-Path $RunRoot ([guid]::NewGuid().ToString('N'))
 $world = Join-Path $run 'Saves/TestWorld'
 New-Item -ItemType Directory -Force -Path $world | Out-Null
 Copy-Item -Path (Join-Path $TemplateWorld '*') -Destination $world -Recurse
+if ($StagedMod) {
+    $StagedMod = (Resolve-Path -LiteralPath $StagedMod).Path
+    $stagedRoot = Split-Path -Parent (Split-Path -Parent $StagedMod)
+    foreach ($evidence in @('source-manifest.json', 'release-manifest.json')) {
+        $evidencePath = Join-Path $stagedRoot $evidence
+        if (Test-Path -LiteralPath $evidencePath) { Copy-Item -LiteralPath $evidencePath -Destination $run }
+    }
+    # Dedicated servers reject unpublished local packages. The opt-in test
+    # bootstrap compiles these files with the real game's Mod target instead.
+    $modDirectory = Join-Path $run 'SourceMod/EasyCommandsMod'
+    New-Item -ItemType Directory -Force -Path $modDirectory | Out-Null
+    Copy-Item -LiteralPath (Join-Path $StagedMod 'Data') -Destination $modDirectory -Recurse
+}
 # Generate private disposable-server settings; never reuse a production config.
+$onlineMode = 'PRIVATE'
+$benchmarkWatcherSettings = if ($ModBenchmark -or $StressBlocks) { '<AutoRestartEnabled>false</AutoRestartEnabled><WatcherInterval>300</WatcherInterval><WatcherSimulationSpeedMinimum>0</WatcherSimulationSpeedMinimum>' } else { '' }
 [xml]$config = @"
 <MyConfigDedicated>
   <SessionSettings>
-    <GameMode>Creative</GameMode><OnlineMode>PRIVATE</OnlineMode>
+    <GameMode>Creative</GameMode><OnlineMode>$onlineMode</OnlineMode>
     <EnableIngameScripts>true</EnableIngameScripts><PauseGameWhenEmpty>false</PauseGameWhenEmpty>
     <EnableCopyPaste>true</EnableCopyPaste><EnableSpectator>true</EnableSpectator>
     <TrashRemovalEnabled>false</TrashRemovalEnabled><AutoSaveInMinutes>0</AutoSaveInMinutes>
@@ -63,6 +91,7 @@ Copy-Item -Path (Join-Path $TemplateWorld '*') -Destination $world -Recurse
   <IP>127.0.0.1</IP><ServerPort>27026</ServerPort><SteamPort>8767</SteamPort>
   <ServerName>EasyCommands Integration</ServerName><WorldName>EC Test World</WorldName>
   <ExperimentalMode>true</ExperimentalMode><PauseGameWhenEmpty>false</PauseGameWhenEmpty>
+  $benchmarkWatcherSettings
 </MyConfigDedicated>
 "@
 $config.Save((Join-Path $run 'SpaceEngineers-Dedicated.cfg'))
@@ -72,21 +101,33 @@ foreach ($settingsFile in @('Sandbox.sbc', 'Sandbox_config.sbc')) {
     if (-not (Test-Path -LiteralPath $settingsPath)) { continue }
     [xml]$saved = Get-Content -LiteralPath $settingsPath -Raw
     $settings = $saved.DocumentElement.SelectSingleNode('Settings')
-    foreach ($pair in @{ EnableIngameScripts='true'; PauseGameWhenEmpty='false'; GameMode='Creative'; OnlineMode='PRIVATE'; TrashRemovalEnabled='false'; AutoSaveInMinutes='0' }.GetEnumerator()) {
+    foreach ($pair in @{ EnableIngameScripts='true'; PauseGameWhenEmpty='false'; GameMode='Creative'; OnlineMode=$onlineMode; TrashRemovalEnabled='false'; AutoSaveInMinutes='0' }.GetEnumerator()) {
         $node = $settings.SelectSingleNode($pair.Key)
         if (-not $node) { $node = $saved.CreateElement($pair.Key); $settings.AppendChild($node) | Out-Null }
         $node.InnerText = $pair.Value
     }
     $saved.Save($settingsPath)
 }
-@{ CreateFixture = (-not $PSBoundParameters.ContainsKey('TemplateWorld')); Script = $scriptText; ProgrammableBlock = 'EC Test PB'; Scenarios = $scenarios } |
+$requestData = @{ CreateFixture = (-not $PSBoundParameters.ContainsKey('TemplateWorld')); Script = $scriptText; ProgrammableBlock = 'EC Test PB'; Scenarios = $scenarios }
+if ($StagedMod) { $requestData.ModSourceDirectory = Join-Path $modDirectory 'Data/Scripts/EasyCommands' }
+if ($ModBenchmark) {
+    $requestData.ModBenchmark = $true
+    $requestData.SkipBenchmarkSamples = [bool]$SkipBenchmarkSamples
+    $requestData.SkipStandaloneBatch = [bool]$SkipStandaloneBatch
+    $requestData.LifecycleOnly = [bool]$LifecycleOnly
+    $requestData.SchedulingOnly = [bool]$SchedulingOnly
+    $requestData.FullScript = [IO.File]::ReadAllText((Join-Path $repo 'EasyCommands/bin/Release/MDK/EasyCommands/script.cs'))
+}
+if ($MissingMod) { $requestData.MissingMod = $true }
+if ($StressBlocks) { $requestData.StressBlocks = $StressBlocks; $requestData.StressTicks = $StressTicks }
+$requestData |
     ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $run 'request.json') -Encoding UTF8
 $steamBuildId = $null
 $manifestPath = Join-Path $ServerRoot 'steamapps/appmanifest_298740.acf'
 if (Test-Path -LiteralPath $manifestPath) {
     $steamBuildId = [regex]::Match((Get-Content -LiteralPath $manifestPath -Raw), '"buildid"\s+"(\d+)"').Groups[1].Value
 }
-@{ SteamBuildId = $steamBuildId; ScriptSha256 = (Get-FileHash -LiteralPath $scriptPath).Hash; Suite = $Suite; Scenarios = @($scenarios.Name); StartedUtc = [DateTime]::UtcNow.ToString('o')
+@{ SteamBuildId = $steamBuildId; ScriptSha256 = (Get-FileHash -LiteralPath $scriptPath).Hash; ScriptCharacters = $scriptText.Length; Suite = $Suite; Scenarios = @($scenarios.Name); StartedUtc = [DateTime]::UtcNow.ToString('o'); SourceMode = $(if ($StagedMod) { 'ModCompilerTestBootstrap' } else { 'None' }); ModBenchmark = [bool]$ModBenchmark
    ServerVersion = (Get-Item -LiteralPath $serverExe).VersionInfo.FileVersion } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $run 'metadata.json')
 $plugin = Join-Path $repo 'integration/Harness/bin/Release/net48/Harness.dll'
@@ -106,7 +147,8 @@ try {
     $results = @(Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json)
     $results | Format-Table Name, Passed, Ticks
     Write-Host "Artifacts: $run"
-    if ($results.Count -ne $scenarios.Count -or @($results | Where-Object { -not $_.Passed }).Count) { throw "Integration suite failed. Results: $resultPath" }
+    if ((-not $ModBenchmark -and -not $StressBlocks -and $results.Count -ne $scenarios.Count) -or @($results | Where-Object { -not $_.Passed }).Count) { throw "Integration suite failed. Results: $resultPath" }
+    if ($ModBenchmark -and -not $SkipBenchmarkSamples) { & (Join-Path $repo 'build/Summarize-ModBenchmark.ps1') -RunPath $run }
 } finally {
     $env:EC_TEST_ROOT = $previousRoot
     # This process owns only the disposable world; preserve its directory for diagnostics.

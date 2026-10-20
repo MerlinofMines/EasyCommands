@@ -1,0 +1,30 @@
+[h1]EasyCommands Bridge[/h1]
+The small programmable-block script for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3823650249]EasyCommands Mod[/url]. Write readable automation commands in your PB's Custom Data while the mod runs the EasyCommands interpreter.
+
+[h2]Requires EasyCommands Mod[/h2]
+Subscribe to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3823650249]EasyCommands Mod[/url] and add it to your world's Mods list. The bridge cannot run on its own, and subscribing to a required mod does not enable it in your world.
+
+[h2]Get started[/h2]
+[list]
+[*]Enable EasyCommands Mod in your world, along with Experimental mode and in-game scripts.
+[*]Open a powered programmable block's editor and load EasyCommands Bridge from Workshop.
+[*]Put your EasyCommands program in the block's Custom Data, then click Run.
+[/list]
+Moving from standalone EasyCommands? Keep your existing Custom Data program; this bridge replaces the larger script in the PB editor.
+
+[h2]Write your first program[/h2]
+EasyCommands lets you control blocks, work with variables, run functions and threads, respond to triggers, and communicate between grids using IGC. Each PB keeps its own program and runtime.
+
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/]Documentation and getting started[/url]
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/examples]Example programs[/url]
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/cheatsheet]Command cheat sheet[/url]
+
+[h2]Settings and output[/h2]
+Set updateFrequency and logLevel near the top of the bridge. The update interval controls both incremental parsing and program execution. INFO includes parsing and execution status; SCRIPT_ONLY shows your program's output and errors. Output appears in the PB's output panel, and LCD commands work as usual.
+
+The PB must remain powered and enabled for scheduled execution. Recompiling the bridge or restarting the world resets variables and running threads.
+
+If the PB reports a missing or incompatible mod, enable the matching mod, reload the world and click Run again. When a release requires a new bridge, reload it from Workshop into your PB; subscribing alone does not update code already loaded into a block.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3823650249]Required mod[/url] | [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2698315573]Standalone edition (no mod required)[/url] | [url=https://github.com/MerlinofMines/EasyCommands]Source code and issue tracker[/url]
+Licensed under GPL-3.0.

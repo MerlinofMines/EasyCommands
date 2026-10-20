@@ -18,7 +18,12 @@ using VRage;
 using VRageMath;
 
 namespace IngameScript {
-    public partial class Program : MyGridProgram {
+    // Override the mod loader's injected API imports. Keep root imports for MDK packing.
+    using Sandbox.ModAPI.Ingame;
+    using SpaceEngineers.Game.ModAPI.Ingame;
+    using VRage.Game.ModAPI.Ingame.Utilities;
+    using VRage.Game.ModAPI.Ingame;
+    public partial class Program {
         #region mdk preserve
         public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
         public LogLevel logLevel = LogLevel.INFO;
@@ -112,7 +117,8 @@ namespace IngameScript {
             }
         }
 
-        public Program() {
+        void InitializeEngine() {
+            var previous = PROGRAM;
             try {
                 PROGRAM = this;
                 InitializeParsers();
@@ -121,11 +127,12 @@ namespace IngameScript {
                 InitializeItems();
                 Runtime.UpdateFrequency = updateFrequency;
             } finally {
-                PROGRAM = null;
+                PROGRAM = previous;
             }
         }
 
         public void Main(string argument) {
+            var previous = PROGRAM;
             try {
                 PROGRAM = this;
 
@@ -150,7 +157,7 @@ namespace IngameScript {
                 state = ProgramState.STOPPED;
             } finally {
                 Runtime.UpdateFrequency = programStateMap[state].Value ? updateFrequency : UpdateFrequency.None;
-                PROGRAM = null;
+                PROGRAM = previous;
             }
         }
 

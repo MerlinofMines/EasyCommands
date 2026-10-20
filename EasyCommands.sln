@@ -15,12 +15,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands.Tests", "EasyC
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "docs", "docs\docs.shproj", "{CE8C102D-3998-414C-990D-92D4A2EDF4CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCommands.Mod", "EasyCommands.Mod\EasyCommands.Mod.csproj", "{7211EA17-2A1B-4BB5-8D37-A1E2455C595C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7211EA17-2A1B-4BB5-8D37-A1E2455C595C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7211EA17-2A1B-4BB5-8D37-A1E2455C595C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7211EA17-2A1B-4BB5-8D37-A1E2455C595C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7211EA17-2A1B-4BB5-8D37-A1E2455C595C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Debug|Any CPU.Build.0 = Debug|x64
 		{D2E492FE-1BBF-4B9E-8C49-6303FBDE589D}.Release|Any CPU.ActiveCfg = Release|x64

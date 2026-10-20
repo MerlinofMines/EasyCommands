@@ -1,0 +1,56 @@
+// EasyCommands mod bridge v3. Paste this body into the programmable block.
+// Requires the EasyCommands source mod; put your EC program in Custom Data.
+// Choose the same update interval as the standalone script. None is manual-only.
+public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
+// INFO includes engine status; SCRIPT_ONLY keeps script output and errors.
+public LogLevel logLevel = LogLevel.INFO;
+public enum LogLevel { INFO, SCRIPT_ONLY }
+const string ApiId = "EasyCommands.Bridge.v3";
+Func<bool, string, UpdateType, IMyGridTerminalSystem,
+    IMyIntergridCommunicationSystem, double, UpdateFrequency, int,
+    MyTuple<UpdateFrequency, string[]>> step;
+bool attach = true;
+
+public Program()
+{
+    Runtime.UpdateFrequency = updateFrequency;
+}
+
+public void Main(string argument, UpdateType source)
+{
+    try
+    {
+        if (step == null)
+        {
+            var property = Me.GetProperty(ApiId);
+            if (property != null)
+                step = property.As<Func<bool, string, UpdateType,
+                    IMyGridTerminalSystem, IMyIntergridCommunicationSystem,
+                    double, UpdateFrequency, int, MyTuple<UpdateFrequency, string[]>>>().GetValue(Me);
+
+            if (step == null)
+            {
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                Echo("EasyCommands mod unavailable or incompatible. Run again after enabling the mod.");
+                if (!string.IsNullOrEmpty(argument))
+                    Echo("Run argument was not accepted. Run it again after the mod is available.");
+                return;
+            }
+        }
+
+        var result = step(attach, argument, source, GridTerminalSystem,
+            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds, updateFrequency, (int)logLevel);
+        attach = false;
+        Runtime.UpdateFrequency = result.Item1;
+        if (result.Item2 != null)
+            foreach (var line in result.Item2) Echo(line);
+    }
+    catch (Exception error)
+    {
+        Runtime.UpdateFrequency = UpdateFrequency.None;
+        step = null;
+        attach = true;
+        Echo("EasyCommands bridge stopped: " + error.Message);
+        Echo("Run again to reconnect and reset this runtime.");
+    }
+}
