@@ -36,3 +36,7 @@ Current bridge: v2. Set `public UpdateFrequency updateFrequency` at its top (Upd
 Update10, Update100 or None). The requested value is forwarded to the engine. Missing mod
 stops scheduling instead of polling; Run again after enabling the matching mod. Replace
 both mod and bridge when upgrading from v1. Cadence-only checks use `-SchedulingOnly`.
+
+Bridge contract tests compile the exact shipped bridge body into a generated test host.
+All 22 cases and the full 2,085-test suite passed; see
+[bridge unit results](../build/mod-bridge-unit-results.md) for coverage and the focused command.

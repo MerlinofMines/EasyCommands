@@ -25,4 +25,15 @@
     <Reference Include="System.Web.Extensions" />
     <Content Include="../integration/scenarios/*.json" Link="scenarios/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <PropertyGroup>
+    <BridgeTestGeneratedSource>$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)$(Configuration)/$(Platform)/BridgeProgram.g.cs</BridgeTestGeneratedSource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(BridgeTestGeneratedSource)" />
+  </ItemGroup>
+  <Target Name="GenerateBridgeTestHost" BeforeTargets="CoreCompile"
+          Inputs="$(MSBuildProjectDirectory)/../EasyCommands.Bridge/script.cs.txt;$(MSBuildProjectDirectory)/../build/Wrap-BridgeForTests.ps1"
+          Outputs="$(BridgeTestGeneratedSource)">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildProjectDirectory)/../build/Wrap-BridgeForTests.ps1&quot; -SourcePath &quot;$(MSBuildProjectDirectory)/../EasyCommands.Bridge/script.cs.txt&quot; -OutputPath &quot;$(BridgeTestGeneratedSource)&quot;" />
+  </Target>
 </Project>
