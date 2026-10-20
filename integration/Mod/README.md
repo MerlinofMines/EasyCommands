@@ -26,7 +26,7 @@ server's slow-simulation watchdog; the wall-clock timeout still applies.
 
 The tests cover independent engines and nested PB calls, Custom Data edits, recompilation,
 async functions and waits, disable/resume, cross-grid IGC, removal, battery power recovery,
-warhead destruction and fresh replacement state. Scheduling checks include None and
+warhead destruction and fresh replacement state. The recompile check alternates ten manual\nand automatic starts from completed runtimes, verifies fresh state and nonblank INFO output,\nand records first-output latency in `recompile.json`. Scheduling checks include None and
 Update1/10/100, plus exact terminal-output comparisons against standalone PBs at INFO and
 SCRIPT_ONLY. The missing-mod runner uses `Test-InGame.ps1 -MissingMod` without a staged mod.
 

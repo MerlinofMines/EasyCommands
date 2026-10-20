@@ -22,6 +22,25 @@ namespace EasyCommands.Integration {
         bool modSawA, modSawB;
         string modDisabledOutput;
         readonly List<string> modJobs = new List<string>();
+        int recompileCycle, recompileFirstOutput;
+        object recompilePrevious;
+        bool recompileBlank;
+        readonly List<object> recompileEvidence = new List<object>();
+
+        void StartRecompileCycle() {
+            recompilePrevious = ModSourceLoader.RuntimeMap("states")[modBlocks[0].EntityId];
+            recompileFirstOutput = -1;
+            ModInstall(0, request.Script, "print 'EC_MOD_RECOMPILE_" + recompileCycle + "'");
+            recompileBlank = ModOutput(0).Length == 0;
+            if (recompileCycle % 2 == 0) {
+                modBlocks[0].Run("");
+                if (Object.ReferenceEquals(recompilePrevious, ModSourceLoader.RuntimeMap("states")[modBlocks[0].EntityId]))
+                    throw new Exception("Manual Run reused the previous runtime after recompile.");
+                if (ModOutput(0).Length == 0) throw new Exception("Manual Run emitted no INFO output after recompile.");
+                recompileFirstOutput = 0;
+            }
+            ModPhase(4);
+        }
 
         void CreateModFixtures() {
             long owner = Sandbox.Game.World.MySession.Static.Players.CreateNewIdentity("EC EC_MOD Radio Owner", addToNpcs: true).IdentityId;
@@ -101,10 +120,22 @@ namespace EasyCommands.Integration {
                 case 3:
                     if (!ModOutput(0).Contains("EC_MOD_SOURCE_EDIT")) break;
                     ModPass("custom-data-edit", "New source reparsed and executed without changing PB source.");
-                    ModBridge(0, "print \"EC_MOD_SOURCE_EDIT\""); ModPhase(4); break;
+                    StartRecompileCycle(); break;
                 case 4:
-                    if (!ModOutput(0).Contains("EC_MOD_SOURCE_EDIT")) break;
-                    ModPass("bridge-recompile", "Fresh bridge registration rebuilt its runtime and executed source again.");
+                    var currentState = ModSourceLoader.RuntimeMap("states")[modBlocks[0].EntityId];
+                    if (Object.ReferenceEquals(currentState, recompilePrevious)) {
+                        if (modWait > 120) throw new Exception("Recompiled bridge did not restart automatically.");
+                        break;
+                    }
+                    if (ModOutput(0).Length == 0) throw new Exception("Attached INFO bridge has blank output after a Main invocation.");
+                    if (recompileFirstOutput < 0) recompileFirstOutput = modWait;
+                    if (!ModOutput(0).Contains("EC_MOD_RECOMPILE_" + recompileCycle)) break;
+                    recompileEvidence.Add(new { Cycle = recompileCycle, ManualRun = recompileCycle % 2 == 0,
+                        BlankImmediatelyAfterCompile = recompileBlank, FirstOutputTicks = recompileFirstOutput,
+                        ReadyTicks = modWait, Calls = ModSourceLoader.Calls(currentState), Output = ModOutput(0) });
+                    if (++recompileCycle < 10) { StartRecompileCycle(); break; }
+                    File.WriteAllText(Path.Combine(root, "recompile.json"), json.Serialize(recompileEvidence));
+                    ModPass("bridge-recompile", "Ten recompiles from completed/stopped scheduling rebuilt fresh runtimes; alternating manual/automatic starts emitted INFO output after every observed Main call.");
                     ModBridge(0, "await\n  async work\nwait 0.1 seconds\nprint \"EC_MOD_FLOW_OK\"\n:work\nwait 0.1 seconds\nprint \"EC_MOD_ASYNC_OK\"");
                     ModPhase(5); break;
                 case 5:
