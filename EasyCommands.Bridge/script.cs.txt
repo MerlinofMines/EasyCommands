@@ -1,11 +1,14 @@
-// EasyCommands mod bridge v2. Paste this body into the programmable block.
+// EasyCommands mod bridge v3. Paste this body into the programmable block.
 // Requires the EasyCommands source mod; put your EC program in Custom Data.
 // Choose the same update interval as the standalone script. None is manual-only.
 public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
-const string ApiId = "EasyCommands.Bridge.v2";
+// INFO includes engine status; SCRIPT_ONLY keeps script output and errors.
+public LogLevel logLevel = LogLevel.INFO;
+public enum LogLevel { INFO, SCRIPT_ONLY }
+const string ApiId = "EasyCommands.Bridge.v3";
 Func<bool, string, UpdateType, IMyGridTerminalSystem,
-    IMyIntergridCommunicationSystem, double, UpdateFrequency,
-    MyTuple<UpdateFrequency, string>> step;
+    IMyIntergridCommunicationSystem, double, UpdateFrequency, int,
+    MyTuple<UpdateFrequency, string[]>> step;
 bool attach = true;
 
 public Program()
@@ -23,7 +26,7 @@ public void Main(string argument, UpdateType source)
             if (property != null)
                 step = property.As<Func<bool, string, UpdateType,
                     IMyGridTerminalSystem, IMyIntergridCommunicationSystem,
-                    double, UpdateFrequency, MyTuple<UpdateFrequency, string>>>().GetValue(Me);
+                    double, UpdateFrequency, int, MyTuple<UpdateFrequency, string[]>>>().GetValue(Me);
 
             if (step == null)
             {
@@ -36,10 +39,11 @@ public void Main(string argument, UpdateType source)
         }
 
         var result = step(attach, argument, source, GridTerminalSystem,
-            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds, updateFrequency);
+            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds, updateFrequency, (int)logLevel);
         attach = false;
         Runtime.UpdateFrequency = result.Item1;
-        Echo(result.Item2 ?? "");
+        if (result.Item2 != null)
+            foreach (var line in result.Item2) Echo(line);
     }
     catch (Exception error)
     {

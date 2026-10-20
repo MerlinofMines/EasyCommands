@@ -10,7 +10,7 @@ Reference-only builds can pass `-GameBin <assembly-directory>` instead. Output u
 `.build/mod-poc/staged/<id>/` contains a `Mods/EasyCommands` source package, `bridge.cs.txt`,
 and a byte-hash manifest. The game loads the source package, not the ordinary build DLL.
 Paste `EasyCommands.Bridge/script.cs.txt` into a powered PB and put EC code in Custom Data.
-The versioned terminal-property protocol is `EasyCommands.Bridge.v2`.
+The versioned terminal-property protocol is `EasyCommands.Bridge.v3`.
 
 Use `build/Test-ModPoc.ps1` for actual Mod-target sandbox compilation and execution in an
 isolated dedicated server. Its bootstrap bypasses normal package discovery only; it does
@@ -32,11 +32,18 @@ Power interruption/recovery and actual warhead-destruction cleanup are now verif
 see [lifecycle results](../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
 The complete compatibility run includes these checks after its earlier scenarios.
 
-Current bridge: v2. Set `public UpdateFrequency updateFrequency` at its top (Update1,
+Current bridge: v3. Set `public UpdateFrequency updateFrequency` at its top (Update1,
 Update10, Update100 or None). The requested value is forwarded to the engine. Missing mod
 stops scheduling instead of polling; Run again after enabling the matching mod. Replace
-both mod and bridge when upgrading from v1. Cadence-only checks use `-SchedulingOnly`.
+both mod and bridge when upgrading from v1 or v2. Cadence-only checks use `-SchedulingOnly`.
 
 Bridge contract tests compile the exact shipped bridge body into a generated test host.
-All 22 cases and the full 2,085-test suite passed; see
+All 26 bridge/output cases and the full 2,089-test suite passed; see
 [bridge unit results](../build/mod-bridge-unit-results.md) for coverage and the focused command.
+
+Set `public LogLevel logLevel = LogLevel.SCRIPT_ONLY;` in the bridge to suppress
+engine status while keeping script prints and errors; INFO is the standalone default.
+The engine returns individual Echo arguments, which the bridge replays through the PB's
+native Echo. The mod adds no output truncation, newline or empty placeholder. Output
+therefore appears in the PB terminal as before, subject to the game's normal limits.
+See [logging/output results](../build/mod-output-results.md).

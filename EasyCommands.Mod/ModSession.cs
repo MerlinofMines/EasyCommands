@@ -12,12 +12,12 @@ using Frequency = Sandbox.ModAPI.Ingame.UpdateFrequency;
 using Update = Sandbox.ModAPI.Ingame.UpdateType;
 using Terminal = Sandbox.ModAPI.Ingame.IMyGridTerminalSystem;
 using Igc = Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem;
-using Step = System.Func<bool, string, Sandbox.ModAPI.Ingame.UpdateType, Sandbox.ModAPI.Ingame.IMyGridTerminalSystem, Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem, double, Sandbox.ModAPI.Ingame.UpdateFrequency, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string>>;
+using Step = System.Func<bool, string, Sandbox.ModAPI.Ingame.UpdateType, Sandbox.ModAPI.Ingame.IMyGridTerminalSystem, Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem, double, Sandbox.ModAPI.Ingame.UpdateFrequency, int, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string[]>>;
 
 namespace EasyCommands.Mod {
     [MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)]
     public sealed class ModSession : MySessionComponentBase {
-        const string ApiId = "EasyCommands.Bridge.v2";
+        const string ApiId = "EasyCommands.Bridge.v3";
         readonly Dictionary<long, RuntimeState> states = new Dictionary<long, RuntimeState>();
         readonly Dictionary<long, PbBlock> subscriptions = new Dictionary<long, PbBlock>();
         IMyTerminalControlProperty<Step> property;
@@ -44,10 +44,10 @@ namespace EasyCommands.Mod {
 
         Step Bind(PbBlock block) {
             if (block == null) return null;
-            return (reset, argument, source, terminal, igc, elapsed, frequency) => Invoke(block, reset, argument, source, terminal, igc, elapsed, frequency);
+            return (reset, argument, source, terminal, igc, elapsed, frequency, logging) => Invoke(block, reset, argument, source, terminal, igc, elapsed, frequency, logging);
         }
 
-        MyTuple<Frequency, string> Invoke(PbBlock block, bool reset, string argument, Update source, Terminal terminal, Igc igc, double elapsed, Frequency frequency) {
+        MyTuple<Frequency, string[]> Invoke(PbBlock block, bool reset, string argument, Update source, Terminal terminal, Igc igc, double elapsed, Frequency frequency, int logging) {
             if (!MyAPIGateway.Multiplayer.IsServer) return Reply(Frequency.None, "EasyCommands is server only.");
             if (block == null || block.Closed || !block.IsFunctional || !block.Enabled || !block.IsWorking)
                 return Reply(Frequency.None, "EasyCommands PB is unavailable.");
@@ -71,9 +71,10 @@ namespace EasyCommands.Mod {
                 state.Host.Begin(terminal, igc, elapsed);
                 if (state.Engine == null) state.Engine = new IngameScript.Program(state.Host);
                 state.Engine.updateFrequency = frequency;
+                state.Engine.logLevel = (IngameScript.Program.LogLevel)logging;
                 state.Calls++;
                 state.Engine.Main(argument ?? "");
-                return Reply(state.Host.Runtime.UpdateFrequency, state.Host.Output);
+                return new MyTuple<Frequency, string[]>(state.Host.Runtime.UpdateFrequency, state.Host.Output);
             } catch (Exception ex) {
                 return Reply(Frequency.None, "EasyCommands mod error: " + ex.Message);
             } finally {
@@ -82,8 +83,8 @@ namespace EasyCommands.Mod {
             }
         }
 
-        static MyTuple<Frequency, string> Reply(Frequency frequency, string message) {
-            return new MyTuple<Frequency, string>(frequency, message);
+        static MyTuple<Frequency, string[]> Reply(Frequency frequency, string message) {
+            return new MyTuple<Frequency, string[]>(frequency, new[] { message });
         }
 
         void OnBlockClose(IMyEntity entity) {

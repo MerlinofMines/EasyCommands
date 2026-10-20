@@ -1,5 +1,5 @@
 using System;
-using System.Text;
+using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript {
@@ -9,9 +9,9 @@ namespace IngameScript {
         public IMyGridTerminalSystem GridTerminalSystem;
         public IMyIntergridCommunicationSystem IGC;
         public readonly ModRuntime Runtime = new ModRuntime();
-        readonly StringBuilder output = new StringBuilder();
+        readonly List<string> output = new List<string>();
 
-        public string Output { get { return output.ToString(); } }
+        public string[] Output { get { return output.ToArray(); } }
         public void Begin(IMyGridTerminalSystem terminal, IMyIntergridCommunicationSystem igc, double elapsed) {
             GridTerminalSystem = terminal;
             IGC = igc;
@@ -19,12 +19,10 @@ namespace IngameScript {
             output.Clear();
         }
         public void Echo(string value) {
-            if (output.Length >= 4096) return;
-            var remaining = 4096 - output.Length;
-            output.Append((value ?? "").Substring(0, Math.Min((value ?? "").Length, remaining)));
-            if (output.Length < 4096) output.Append('\n');
+            output.Add(value);
         }
         public void End() {
+            output.Clear();
             GridTerminalSystem = null;
             IGC = null;
             Runtime.TimeSinceLastRun = TimeSpan.Zero;

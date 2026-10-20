@@ -10,7 +10,8 @@ namespace EasyCommands.Integration {
         readonly string[] scheduleNames = { "Update1", "Update10", "Update100", "None" };
         int[] scheduleStartCalls, scheduleLastCalls, scheduleLastTicks;
         readonly List<int>[] scheduleIntervals = { new List<int>(), new List<int>(), new List<int>() };
-        int missingTicks, scheduleManualBaseline;
+        int missingTicks, scheduleManualBaseline, outputCalls;
+        readonly List<object> outputEvidence = new List<object>();
         string missingOutput;
 
         string ScheduleBridge(string frequency) {
@@ -68,6 +69,41 @@ namespace EasyCommands.Integration {
                     PocPass("requested-interval-None", "No automatic calls before or after manual execution; explicit Run still worked.");
                     pocBlocks[3].Enabled = false;
                     File.WriteAllText(Path.Combine(root, "scheduling.json"), json.Serialize(new { Periods = schedulePeriods, Intervals = scheduleIntervals }));
+                    PocPhase(33); break;
+                case 33:
+                    for (int i = 0; i < 4; i++) {
+                        string source = i < 2 ? ScheduleBridge("None") : request.FullScript.Replace("public UpdateFrequency updateFrequency = UpdateFrequency.Update1;", "public UpdateFrequency updateFrequency = UpdateFrequency.None;");
+                        if (i % 2 == 1) source = source.Replace("public LogLevel logLevel = LogLevel.INFO;", "public LogLevel logLevel = LogLevel.SCRIPT_ONLY;");
+                        LifeRequire(source.Contains("public UpdateFrequency updateFrequency = UpdateFrequency.None;"), "Output comparison requires manual scheduling.");
+                        PocInstall(i, source, "print 'EC_OUTPUT_ONE'\nprint 'EC_OUTPUT_TWO'");
+                    }
+                    PocPhase(34); break;
+                case 34:
+                    for (int i = 0; i < 4; i++) pocBlocks[i].Run("");
+                    for (int i = 0; i < 2; i++) {
+                        LifeRequire(PocOutput(i) == PocOutput(i + 2), "Bridge/standalone output differs for " + (i == 0 ? "INFO" : "SCRIPT_ONLY") + " at call " + outputCalls + ": " + PocOutput(i) + " / " + PocOutput(i + 2));
+                        outputEvidence.Add(new { Mode = i == 0 ? "INFO" : "SCRIPT_ONLY", Call = outputCalls, Bridge = PocOutput(i), Standalone = PocOutput(i + 2) });
+                    }
+                    if (++outputCalls < 30) break;
+                    for (int i = 0; i < 2; i++) {
+                        var state = ModPocSourceLoader.RuntimeMap("states")[pocBlocks[i].EntityId];
+                        var engine = state.GetType().GetField("Engine").GetValue(state);
+                        LifeRequire(engine.GetType().GetField("logLevel").GetValue(engine).ToString() == (i == 0 ? "INFO" : "SCRIPT_ONLY"), "Bridge did not forward logLevel.");
+                    }
+                    LifeRequire(PocOutput(0).Contains("Queued Threads:") && !PocOutput(1).Contains("Queued Threads:"), "Logging modes did not differ.");
+                    PocPass("logging-and-output-parity", "Thirty manual invocations matched standalone PB DetailedInfo exactly at INFO and SCRIPT_ONLY, including incremental parsing and script completion.");
+                    foreach (string argument in new[] { "print '" + new string('x', 12000) + "'", "break" }) {
+                        for (int i = 0; i < 4; i++) pocBlocks[i].Run(argument);
+                        for (int i = 0; i < 2; i++) {
+                            LifeRequire(PocOutput(i) == PocOutput(i + 2), "Long output/error parity failed for logging mode " + i);
+                            outputEvidence.Add(new { Mode = i == 0 ? "INFO" : "SCRIPT_ONLY", Kind = argument == "break" ? "error" : "long-output", Bridge = PocOutput(i), Standalone = PocOutput(i + 2) });
+                        }
+                    }
+                    File.WriteAllText(Path.Combine(root, "output-parity.json"), json.Serialize(outputEvidence));
+                    LifeRequire(PocOutput(1).Contains("Exception"), "SCRIPT_ONLY suppressed errors.");
+                    PocPass("long-output-and-error-parity", "Native PB output matched standalone for 12,000-character prints and runtime errors at both logging levels.");
+
+                    for (int i = 0; i < 4; i++) pocBlocks[i].Enabled = false;
                     Finish(); break;
             }
             File.WriteAllText(Path.Combine(root, "poc-progress.json"), json.Serialize(new { Phase = pocPhase, WaitTicks = pocWait, Calls = Enumerable.Range(0, 4).Select(ScheduleCalls).ToArray() }));

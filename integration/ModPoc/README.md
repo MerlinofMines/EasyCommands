@@ -7,7 +7,7 @@
 
 This experiment stages the existing interpreter as mod source and connects it to a small programmable-block bridge. The normal EasyCommands project remains the standalone edition. Generated adaptations and run evidence live under ignored `.build/mod-poc/`.
 
-The bridge is [easycommands-mod-bridge.cs.txt](../../build/prototypes/easycommands-mod-bridge.cs.txt). It discovers `EasyCommands.Bridge.v2`, supplies the current PB invocation context, and applies the returned update frequency/output. The mod owns the actual parser, commands, handlers, variables, and queues. This is a synchronous, PB-driven interpreter; it does not introduce a background scheduler.
+The bridge is [script.cs.txt](../../EasyCommands.Bridge/script.cs.txt). It discovers `EasyCommands.Bridge.v3`, supplies the current PB invocation context, and applies the returned update frequency/output. The mod owns the actual parser, commands, handlers, variables, and queues. This is a synchronous, PB-driven interpreter; it does not introduce a background scheduler.
 
 ## Build and run
 

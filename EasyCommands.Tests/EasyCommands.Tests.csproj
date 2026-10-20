@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(BridgeTestGeneratedSource)" />
+    <Compile Include="../EasyCommands.Mod/Hosting/ModHostContext.cs" Link="Bridge/ModHostContext.cs" />
   </ItemGroup>
   <Target Name="GenerateBridgeTestHost" BeforeTargets="CoreCompile"
           Inputs="$(MSBuildProjectDirectory)/../EasyCommands.Bridge/script.cs.txt;$(MSBuildProjectDirectory)/../build/Wrap-BridgeForTests.ps1"

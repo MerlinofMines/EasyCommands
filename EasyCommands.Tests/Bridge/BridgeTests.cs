@@ -10,12 +10,12 @@ using VRage;
 using BridgeProgram = EasyCommands.Bridge.UnitTests.Program;
 using Step = System.Func<bool, string, Sandbox.ModAPI.Ingame.UpdateType,
     Sandbox.ModAPI.Ingame.IMyGridTerminalSystem, Sandbox.ModAPI.Ingame.IMyIntergridCommunicationSystem,
-    double, Sandbox.ModAPI.Ingame.UpdateFrequency, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string>>;
+    double, Sandbox.ModAPI.Ingame.UpdateFrequency, int, VRage.MyTuple<Sandbox.ModAPI.Ingame.UpdateFrequency, string[]>>;
 
 namespace EasyCommands.Tests.Bridge {
     [TestClass]
     public class BridgeTests {
-        const string ApiId = "EasyCommands.Bridge.v2";
+        const string ApiId = "EasyCommands.Bridge.v3";
 
         sealed class Invocation {
             public bool Reset;
@@ -25,6 +25,7 @@ namespace EasyCommands.Tests.Bridge {
             public IMyIntergridCommunicationSystem Igc;
             public double Elapsed;
             public UpdateFrequency Requested;
+            public int Logging;
         }
         sealed class Fixture {
             public readonly Mock<IMyProgrammableBlock> Block = new Mock<IMyProgrammableBlock>();
@@ -34,16 +35,16 @@ namespace EasyCommands.Tests.Bridge {
             public readonly Mock<ITerminalProperty<Step>> Property = new Mock<ITerminalProperty<Step>>();
             public readonly List<string> Output = new List<string>();
             public readonly List<Invocation> Calls = new List<Invocation>();
-            public Func<MyTuple<UpdateFrequency, string>> Reply = () => MyTuple.Create(UpdateFrequency.Update1, "ok");
+            public Func<MyTuple<UpdateFrequency, string[]>> Reply = () => MyTuple.Create(UpdateFrequency.Update1, new[] { "ok" });
             public Step Api;
             public readonly BridgeProgram Program;
 
             public Fixture() {
                 Runtime.SetupAllProperties();
                 Runtime.SetupGet(r => r.TimeSinceLastRun).Returns(TimeSpan.FromMilliseconds(1250));
-                Api = (reset, argument, source, terminal, igc, elapsed, requested) => {
+                Api = (reset, argument, source, terminal, igc, elapsed, requested, logging) => {
                     Calls.Add(new Invocation { Reset = reset, Argument = argument, Source = source,
-                        Terminal = terminal, Igc = igc, Elapsed = elapsed, Requested = requested });
+                        Terminal = terminal, Igc = igc, Elapsed = elapsed, Requested = requested, Logging = logging });
                     return Reply();
                 };
                 Property.SetupGet(p => p.Id).Returns(ApiId);
@@ -117,24 +118,49 @@ namespace EasyCommands.Tests.Bridge {
         public void AppliesReturnedScheduleAndOutputInsteadOfForcingRequestedInterval(UpdateFrequency returned) {
             var f = new Fixture();
             f.Program.updateFrequency = UpdateFrequency.Update10;
-            f.Reply = () => MyTuple.Create(returned, "engine output");
+            f.Reply = () => MyTuple.Create(returned, new[] { "engine output" });
             f.Run();
             Assert.AreEqual(returned, f.Runtime.Object.UpdateFrequency);
             CollectionAssert.AreEqual(new[] { "engine output" }, f.Output);
         }
 
         [TestMethod]
-        public void NullEngineOutputIsDisplayedAsEmptyString() {
+        public void NullEngineOutputDoesNotInventAnEchoCall() {
             var f = new Fixture();
-            f.Reply = () => MyTuple.Create(UpdateFrequency.None, (string)null);
+            f.Reply = () => MyTuple.Create(UpdateFrequency.None, (string[])null);
             f.Run();
-            CollectionAssert.AreEqual(new[] { "" }, f.Output);
+            Assert.AreEqual(0, f.Output.Count);
+        }
+
+        [DataTestMethod]
+        [DataRow(BridgeProgram.LogLevel.INFO)]
+        [DataRow(BridgeProgram.LogLevel.SCRIPT_ONLY)]
+        public void ForwardsLoggingSettingOnEveryCall(BridgeProgram.LogLevel logging) {
+            var f = new Fixture();
+            Assert.AreEqual(BridgeProgram.LogLevel.INFO, f.Program.logLevel);
+            f.Run();
+            f.Program.logLevel = logging;
+            f.Run();
+            CollectionAssert.AreEqual(new[] { 0, (int)logging }, f.Calls.Select(c => c.Logging).ToArray());
+            CollectionAssert.AreEqual(new[] { true, false }, f.Calls.Select(c => c.Reset).ToArray());
+        }
+
+        [TestMethod]
+        public void ReplaysExactEchoCallsWithoutJoiningTruncatingOrAddingLines() {
+            var f = new Fixture();
+            var lines = new[] { "first\nsecond", "", null, new string('x', 12000), "last" };
+            f.Reply = () => MyTuple.Create(UpdateFrequency.None, lines);
+            f.Run();
+            CollectionAssert.AreEqual(lines, f.Output);
+            f.Reply = () => MyTuple.Create(UpdateFrequency.None, new string[0]);
+            f.Run();
+            Assert.AreEqual(0, f.Output.Count);
         }
 
         [TestMethod]
         public void SuccessfulCallsCacheBoundDelegateAndResetOnlyOnFirstCall() {
             var f = new Fixture();
-            f.Reply = () => MyTuple.Create(UpdateFrequency.None, "done");
+            f.Reply = () => MyTuple.Create(UpdateFrequency.None, new[] { "done" });
             f.Run("first");
             f.Missing();
             f.Run("second");
@@ -218,9 +244,9 @@ namespace EasyCommands.Tests.Bridge {
             f.StoppedWithRetryHint();
             Assert.IsTrue(f.Output.Any(s => s.Contains("engine failed")));
             var replacementResets = new List<bool>();
-            f.Api = (reset, argument, source, terminal, igc, elapsed, requested) => {
+            f.Api = (reset, argument, source, terminal, igc, elapsed, requested, logging) => {
                 replacementResets.Add(reset);
-                return MyTuple.Create(UpdateFrequency.Update100, "reconnected");
+                return MyTuple.Create(UpdateFrequency.Update100, new[] { "reconnected" });
             };
             f.Run("reconnect"); f.Run("continue");
             CollectionAssert.AreEqual(new[] { true, false }, f.Calls.Select(c => c.Reset).ToArray());
