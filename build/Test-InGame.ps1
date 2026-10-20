@@ -13,6 +13,7 @@ param(
     [switch] $PocSkipSamples,
     [switch] $PocSkipFullBatch,
     [switch] $PocLifecycleOnly,
+    [switch] $PocSchedulingOnly,
     [ValidateRange(0,100)][int] $StressBlocks = 0,
     [ValidateRange(120,3600)][int] $StressTicks = 1200,
     [Alias('Scenario')][string[]] $ScenarioName
@@ -114,6 +115,7 @@ if ($PocBenchmark) {
     $requestData.PocSkipSamples = [bool]$PocSkipSamples
     $requestData.PocSkipFullBatch = [bool]$PocSkipFullBatch
     $requestData.PocLifecycleOnly = [bool]$PocLifecycleOnly
+    $requestData.PocSchedulingOnly = [bool]$PocSchedulingOnly
     $requestData.FullScript = [IO.File]::ReadAllText((Join-Path $repo 'EasyCommands/bin/Release/MDK/EasyCommands/script.cs'))
 }
 if ($PocMissingMod) { $requestData.PocMissingMod = $true }

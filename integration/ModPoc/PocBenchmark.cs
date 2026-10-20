@@ -76,10 +76,12 @@ namespace EasyCommands.Integration {
                     foreach (var variant in variants) pocJobs.Add(variant);
                 }
                 File.WriteAllText(Path.Combine(root, "poc-progress.json"), "{\"phase\":\"benchmark-start\"}");
-                if (request.PocLifecycleOnly) PocPhase(19);
+                if (request.PocSchedulingOnly) PocPhase(29);
+                else if (request.PocLifecycleOnly) PocPhase(19);
                 else if (request.PocSkipSamples) PocPhase(1);
             }
             if (pocPhase == 0) { TickPocSamples(); return; }
+            if (pocPhase >= 29) { TickPocScheduling(); return; }
             if (pocPhase >= 19) { TickPocLifecycle(); return; }
             if (++pocWait > 900) throw new Exception("POC phase " + pocPhase + " timeout: A=" + PocOutput(0) + " B=" + PocOutput(1) + " peer=" + pocPeer.DetailedInfo);
             switch (pocPhase) {

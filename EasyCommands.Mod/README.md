@@ -10,7 +10,7 @@ Reference-only builds can pass `-GameBin <assembly-directory>` instead. Output u
 `.build/mod-poc/staged/<id>/` contains a `Mods/EasyCommands` source package, `bridge.cs.txt`,
 and a byte-hash manifest. The game loads the source package, not the ordinary build DLL.
 Paste `EasyCommands.Bridge/script.cs.txt` into a powered PB and put EC code in Custom Data.
-The versioned terminal-property protocol is `EasyCommands.Bridge.v1`.
+The versioned terminal-property protocol is `EasyCommands.Bridge.v2`.
 
 Use `build/Test-ModPoc.ps1` for actual Mod-target sandbox compilation and execution in an
 isolated dedicated server. Its bootstrap bypasses normal package discovery only; it does
@@ -31,3 +31,8 @@ actual Mod-target execution is explicitly verified in the disposable-server harn
 Power interruption/recovery and actual warhead-destruction cleanup are now verified:
 see [lifecycle results](../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
 The complete compatibility run includes these checks after its earlier scenarios.
+
+Current bridge: v2. Set `public UpdateFrequency updateFrequency` at its top (Update1,
+Update10, Update100 or None). The requested value is forwarded to the engine. Missing mod
+stops scheduling instead of polling; Run again after enabling the matching mod. Replace
+both mod and bridge when upgrading from v1. Cadence-only checks use `-SchedulingOnly`.

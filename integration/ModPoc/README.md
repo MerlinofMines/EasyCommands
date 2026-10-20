@@ -7,7 +7,7 @@
 
 This experiment stages the existing interpreter as mod source and connects it to a small programmable-block bridge. The normal EasyCommands project remains the standalone edition. Generated adaptations and run evidence live under ignored `.build/mod-poc/`.
 
-The bridge is [easycommands-mod-bridge.cs.txt](../../build/prototypes/easycommands-mod-bridge.cs.txt). It discovers `EasyCommands.Bridge.v1`, supplies the current PB invocation context, and applies the returned update frequency/output. The mod owns the actual parser, commands, handlers, variables, and queues. This is a synchronous, PB-driven interpreter; it does not introduce a background scheduler.
+The bridge is [easycommands-mod-bridge.cs.txt](../../build/prototypes/easycommands-mod-bridge.cs.txt). It discovers `EasyCommands.Bridge.v2`, supplies the current PB invocation context, and applies the returned update frequency/output. The mod owns the actual parser, commands, handlers, variables, and queues. This is a synchronous, PB-driven interpreter; it does not introduce a background scheduler.
 
 ## Build and run
 
@@ -96,3 +96,8 @@ This is a private-fixture proof of concept. Release work still includes explicit
 Power interruption/recovery and actual warhead-destruction cleanup are now verified:
 see [lifecycle results](../../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
 The complete compatibility run includes these checks after its earlier scenarios.
+
+Current bridge: v2. Set `public UpdateFrequency updateFrequency` at its top (Update1,
+Update10, Update100 or None). The requested value is forwarded to the engine. Missing mod
+stops scheduling instead of polling; Run again after enabling the matching mod. Replace
+both mod and bridge when upgrading from v1. Cadence-only checks use `-SchedulingOnly`.

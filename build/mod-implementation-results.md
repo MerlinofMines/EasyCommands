@@ -1,3 +1,5 @@
+> Follow-up: [bridge v2 interval and missing-mod validation](mod-frequency-results.md).
+
 # Shared PB/mod host implementation validation
 
 Implemented 2026-10-19 on `codex/easycommands-shared-mod` in its own managed worktree,

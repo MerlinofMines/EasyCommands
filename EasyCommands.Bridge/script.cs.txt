@@ -1,14 +1,16 @@
-// EasyCommands mod bridge v1. Paste this body into the programmable block.
+// EasyCommands mod bridge v2. Paste this body into the programmable block.
 // Requires the EasyCommands source mod; put your EC program in Custom Data.
-const string ApiId = "EasyCommands.Bridge.v1";
+// Choose the same update interval as the standalone script. None is manual-only.
+public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
+const string ApiId = "EasyCommands.Bridge.v2";
 Func<bool, string, UpdateType, IMyGridTerminalSystem,
-    IMyIntergridCommunicationSystem, double,
+    IMyIntergridCommunicationSystem, double, UpdateFrequency,
     MyTuple<UpdateFrequency, string>> step;
 bool attach = true;
 
 public Program()
 {
-    Runtime.UpdateFrequency = UpdateFrequency.Update1;
+    Runtime.UpdateFrequency = updateFrequency;
 }
 
 public void Main(string argument, UpdateType source)
@@ -21,20 +23,20 @@ public void Main(string argument, UpdateType source)
             if (property != null)
                 step = property.As<Func<bool, string, UpdateType,
                     IMyGridTerminalSystem, IMyIntergridCommunicationSystem,
-                    double, MyTuple<UpdateFrequency, string>>>().GetValue(Me);
+                    double, UpdateFrequency, MyTuple<UpdateFrequency, string>>>().GetValue(Me);
 
             if (step == null)
             {
-                Runtime.UpdateFrequency = UpdateFrequency.Update100;
-                Echo("EasyCommands mod unavailable or incompatible; retrying.");
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                Echo("EasyCommands mod unavailable or incompatible. Run again after enabling the mod.");
                 if (!string.IsNullOrEmpty(argument))
-                    Echo("Run argument was not accepted. Run it again when connected.");
+                    Echo("Run argument was not accepted. Run it again after the mod is available.");
                 return;
             }
         }
 
         var result = step(attach, argument, source, GridTerminalSystem,
-            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds);
+            IGC, Runtime.TimeSinceLastRun.TotalMilliseconds, updateFrequency);
         attach = false;
         Runtime.UpdateFrequency = result.Item1;
         Echo(result.Item2 ?? "");

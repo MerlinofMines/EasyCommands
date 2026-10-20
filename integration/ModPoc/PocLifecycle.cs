@@ -127,7 +127,9 @@ namespace EasyCommands.Integration {
                     if (pocWait < 30) break;
                     LifeRequire(!ModPocSourceLoader.RuntimeMap("states").Contains(lifeVictim.EntityId) && !ModPocSourceLoader.RuntimeMap("subscriptions").Contains(lifeVictim.EntityId), "Replacement removal did not clean maps.");
                     PocPass("explicit-removal-cleanup", "Explicit replacement block removal also cleared runtime/subscription maps.");
-                    LifeTrace("final-cleanup"); lifeSurvivor.Enabled = false; Finish(); break;
+                    LifeTrace("final-cleanup"); lifeSurvivor.Enabled = false;
+                    if (request.PocLifecycleOnly) Finish(); else PocPhase(29);
+                    break;
             }
             File.WriteAllText(Path.Combine(root, "poc-progress.json"), json.Serialize(new { Phase = pocPhase, WaitTicks = pocWait }));
         }
