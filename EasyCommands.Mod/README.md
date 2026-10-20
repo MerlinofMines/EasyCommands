@@ -5,7 +5,23 @@ programmable-block bridge supplies the PB context, update callbacks and IGC, and
 output through native PB Echo. Keep your EasyCommands program in the PB's Custom Data.
 The standalone script and mod compile the same parser, handlers, variables and threads.
 
-## Install
+[EasyCommands documentation](https://spaceengineers.merlinofmines.com/EasyCommands/),
+[example programs](https://spaceengineers.merlinofmines.com/EasyCommands/examples) and
+[command cheat sheet](https://spaceengineers.merlinofmines.com/EasyCommands/cheatsheet).
+
+## Install from Workshop
+
+Subscribe to [EasyCommands Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=3823650249)
+and [EasyCommands Bridge](https://steamcommunity.com/sharedfiles/filedetails/?id=3823650344).
+Enable the mod in your world's Mods settings, plus Experimental mode and in-game scripts.
+Load the bridge from Workshop into a powered PB, put your EasyCommands program in Custom Data
+and click Run. Existing standalone users can keep their Custom Data and replace the PB script
+with the bridge.
+
+Workshop descriptions are maintained in [Workshop/Mod.txt](Workshop/Mod.txt) and
+[Workshop/Bridge.txt](Workshop/Bridge.txt).
+
+## Build and install locally
 
 Build with `build/Build-Mod.ps1 -GameBin <game-assembly-directory> -PythonPath <python>`.
 The command prints a fresh output directory under ignored `.build/mod/staged/` containing:

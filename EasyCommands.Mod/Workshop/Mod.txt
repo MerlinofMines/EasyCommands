@@ -1,0 +1,31 @@
+[h1]EasyCommands Mod[/h1]
+Automate your ships, stations and rovers with readable commands. Write your program in a programmable block's Custom Data, then let EasyCommands control your blocks. No C# knowledge or external editor required.
+
+[h2]EasyCommands, powered by a world mod[/h2]
+This edition moves the EasyCommands interpreter into a mod. Your programmable blocks load a tiny companion script, making them much quicker to compile and keeping the interpreter out of the PB's 100,000-character source limit.
+
+Use the same EasyCommands language: block controls, variables, functions, threads, triggers, PB arguments and inter-grid communication (IGC). Each PB runs its own program. Parsing is spread across updates, and the bridge's updateFrequency setting controls the parsing and execution cadence.
+
+[h2]Get started[/h2]
+[list]
+[*]Subscribe to this mod and the [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3823650344]EasyCommands Bridge[/url].
+[*]Add EasyCommands Mod to your world's Mods list. Enable Experimental mode and in-game scripts.
+[*]Load EasyCommands Bridge from Workshop into a powered programmable block.
+[*]Write your EasyCommands program in that block's Custom Data, then click Run.
+[/list]
+Already using EasyCommands? Keep your Custom Data program and replace the standalone PB script with the bridge after enabling the mod.
+
+[h2]Learn EasyCommands[/h2]
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/]Documentation and getting started[/url]
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/examples]Example programs[/url]
+[url=https://spaceengineers.merlinofmines.com/EasyCommands/cheatsheet]Command cheat sheet[/url]
+
+[h2]Settings and behavior[/h2]
+Edit updateFrequency and logLevel near the top of the bridge, just as in the standalone script. Parsing status, errors and program output appear in the PB's output panel. LCD commands work as usual.
+
+Losing power or switching the PB off pauses scheduled execution. Removing or destroying the PB cleans up its runtime. Variables and running threads reset when the bridge is recompiled or the world restarts.
+
+After a mod update, reload your world. If an update requires a new bridge, load that version into your PBs too; Workshop subscriptions do not replace code already loaded into a block.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3823650344]Companion bridge[/url] | [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2698315573]Standalone edition (no mod required)[/url] | [url=https://github.com/MerlinofMines/EasyCommands]Source code and issue tracker[/url]
+Licensed under GPL-3.0.
