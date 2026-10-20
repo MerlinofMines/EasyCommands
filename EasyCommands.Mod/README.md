@@ -1,49 +1,51 @@
-# EasyCommands source mod and shared engine
+# EasyCommands Mod
 
-This target links the interpreter from `../EasyCommands`. The standalone PB keeps its
-`MyGridProgram` host in `EasyCommands/Hosting/PbProgram.cs`; this target selects its own
-constructor, host facade and PB Run adapter. There is no duplicated interpreter and no
-source rewriting. Parser budgets and PB-driven scheduling are unchanged.
+EasyCommands Mod runs the shared EasyCommands interpreter on the world/server. A small
+programmable-block bridge supplies the PB context, update callbacks and IGC, and emits
+output through native PB Echo. Keep your EasyCommands program in the PB's Custom Data.
+The standalone script and mod compile the same parser, handlers, variables and threads.
 
-Build with `build/Build-Mod.ps1 -ServerRoot <server-root> -PythonPath <python-executable>`.
-Reference-only builds can pass `-GameBin <assembly-directory>` instead. Output under
-`.build/mod-poc/staged/<id>/` contains a `Mods/EasyCommands` source package, `bridge.cs.txt`,
-and a byte-hash manifest. The game loads the source package, not the ordinary build DLL.
-Paste `EasyCommands.Bridge/script.cs.txt` into a powered PB and put EC code in Custom Data.
-The versioned terminal-property protocol is `EasyCommands.Bridge.v3`.
+## Install
 
-Use `build/Test-ModPoc.ps1` for actual Mod-target sandbox compilation and execution in an
-isolated dedicated server. Its bootstrap bypasses normal package discovery only; it does
-not bypass the Mod whitelist. Use `-CompatibilityOnly`, `-Suite`, or `-ScenarioName` for
-specific checks. `build/Test-ModStress.ps1` runs concurrent PB workloads.
+Build with `build/Build-Mod.ps1 -GameBin <game-assembly-directory> -PythonPath <python>`.
+The command prints a fresh output directory under ignored `.build/mod/staged/` containing:
 
-This is an implementation for validation, not a published Workshop release. Normal package
-loading, multiplayer/client lifecycle, access validation and explicit execution budgets
-remain release gates. Runtime state does not persist across restarts. Test results and
-the design are under `build/mod-*.md`; earlier PoC timings describe the earlier source
-adaptation and API, not a guarantee about this revision.
+- `EasyCommands.zip`: mod content, with `Data` at the archive root.
+- `EasyCommands-Bridge.zip`: PB script content, with `script.cs` at the archive root.
+- `Mods/EasyCommands` and `IngameScripts/local/EasyCommands Bridge`: unpacked local items.
+- `bridge.cs.txt`: the exact PB body for pasting directly into a block.
+- `release-manifest.json` and `source-manifest.json`: protocol, revision and file hashes.
 
-Current validation: [shared-host implementation results](../build/mod-implementation-results.md).
-For a focused lifecycle run, use `-CompatibilityOnly -SkipFullBatch`; the latter omits
-only the expensive full-PB compilation batch. Standard unit and build checks run in CI;
-actual Mod-target execution is explicitly verified in the disposable-server harness.
+For a local world, copy `Mods/EasyCommands` into `%APPDATA%/SpaceEngineers/Mods` and enable
+it in the world's Mods settings. Enable in-game scripts and Experimental mode. Paste the
+bridge into a powered PB, put your commands in Custom Data and Run it. The unpacked bridge
+folder can also be copied into `%APPDATA%/SpaceEngineers/IngameScripts/local` for browsing
+from the PB script editor. Restart the world when replacing mod source.
 
-Power interruption/recovery and actual warhead-destruction cleanup are now verified:
-see [lifecycle results](../build/mod-lifecycle-results.md). Use `-LifecycleOnly` for the focused battery/warhead test.
-The complete compatibility run includes these checks after its earlier scenarios.
+## Settings and behavior
 
-Current bridge: v3. Set `public UpdateFrequency updateFrequency` at its top (Update1,
-Update10, Update100 or None). The requested value is forwarded to the engine. Missing mod
-stops scheduling instead of polling; Run again after enabling the matching mod. Replace
-both mod and bridge when upgrading from v1 or v2. Cadence-only checks use `-SchedulingOnly`.
+The bridge exposes the same defaults for these settings as the standalone script:
 
-Bridge contract tests compile the exact shipped bridge body into a generated test host.
-All 26 bridge/output cases and the full 2,089-test suite passed; see
-[bridge unit results](../build/mod-bridge-unit-results.md) for coverage and the focused command.
+```csharp
+public UpdateFrequency updateFrequency = UpdateFrequency.Update1;
+public LogLevel logLevel = LogLevel.INFO;
+```
 
-Set `public LogLevel logLevel = LogLevel.SCRIPT_ONLY;` in the bridge to suppress
-engine status while keeping script prints and errors; INFO is the standalone default.
-The engine returns individual Echo arguments, which the bridge replays through the PB's
-native Echo. The mod adds no output truncation, newline or empty placeholder. Output
-therefore appears in the PB terminal as before, subject to the game's normal limits.
-See [logging/output results](../build/mod-output-results.md).
+Update1/10/100 control both incremental parsing and execution cadence. None is manual
+execution. INFO includes parsing and execution status; SCRIPT_ONLY retains script output
+and errors. Output is replayed through individual native PB Echo calls with the game's
+usual display limits. LCD and other block handlers run in the shared engine.
+
+The API is `EasyCommands.Bridge.v3`. Upgrade the mod and bridge together when that API
+changes. A missing or incompatible mod stops automatic scheduling and reports an error;
+Run again after enabling the matching mod. PB power loss pauses its normal update schedule.
+Closing a PB removes its mod runtime. Interpreter state is held in memory and does not
+persist across world restarts. Runtime execution is server-side.
+
+## Build, test and publish
+
+The source package uses the mod project's evaluated Compile items and copies them without
+rewriting the engine. `Build-Mod.ps1` compiles the target and validates the deployable
+archives and release hashes. CI builds both editions and checks the bridge's PB API use.
+See [build instructions and Steam publishing](../build/README.md#mod-and-bridge-packaging-and-steam-publishing)
+and [mod integration tests](../integration/Mod/README.md).

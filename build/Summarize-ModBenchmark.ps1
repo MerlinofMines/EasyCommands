@@ -30,8 +30,8 @@ $timingComplete = (@($rows | Where-Object Kind -eq sample).Count -eq 18 -and @($
 $summary = [ordered]@{
     RunPath = $RunPath
     PackageLoadingVerified = $false
-    Completed = ($results.Count -gt 0 -and @($results | Where-Object { -not $_.Passed }).Count -eq 0 -and ($request.PocSkipSamples -or $timingComplete))
-    CompatibilityOnly = [bool]$request.PocSkipSamples
+    Completed = ($results.Count -gt 0 -and @($results | Where-Object { -not $_.Passed }).Count -eq 0 -and ($request.SkipBenchmarkSamples -or $timingComplete))
+    CompatibilityOnly = [bool]$request.SkipBenchmarkSamples
     TimingSamplesComplete = $timingComplete
     PassedChecks = @($results | Where-Object Passed).Count
     FailedChecks = @($results | Where-Object { -not $_.Passed })
@@ -45,8 +45,8 @@ $summary = [ordered]@{
 $summary | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $RunPath 'metrics-summary.json') -Encoding utf8
 # Hash the exact retained inputs, independently of any earlier staging manifest.
 $inputHashes = @()
-if ($request.ModPocSourceDirectory -and (Test-Path -LiteralPath $request.ModPocSourceDirectory)) {
-    $sourceRoot = [IO.Path]::GetFullPath($request.ModPocSourceDirectory)
+if ($request.ModSourceDirectory -and (Test-Path -LiteralPath $request.ModSourceDirectory)) {
+    $sourceRoot = [IO.Path]::GetFullPath($request.ModSourceDirectory)
     $inputHashes = @(Get-ChildItem -LiteralPath $sourceRoot -Filter '*.cs' -File -Recurse | Sort-Object FullName | ForEach-Object {
         [ordered]@{ Source = $_.FullName.Substring($sourceRoot.Length).TrimStart('\', '/'); Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
     })

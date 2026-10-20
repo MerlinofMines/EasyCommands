@@ -20,13 +20,13 @@ namespace EasyCommands.Integration {
         public string Script { get; set; }
         public string ProgrammableBlock { get; set; }
         public Scenario[] Scenarios { get; set; }
-        public string ModPocSourceDirectory { get; set; }
-        public bool PocBenchmark { get; set; }
-        public bool PocMissingMod { get; set; }
-        public bool PocSkipSamples { get; set; }
-        public bool PocSkipFullBatch { get; set; }
-        public bool PocLifecycleOnly { get; set; }
-        public bool PocSchedulingOnly { get; set; }
+        public string ModSourceDirectory { get; set; }
+        public bool ModBenchmark { get; set; }
+        public bool MissingMod { get; set; }
+        public bool SkipBenchmarkSamples { get; set; }
+        public bool SkipStandaloneBatch { get; set; }
+        public bool LifecycleOnly { get; set; }
+        public bool SchedulingOnly { get; set; }
         public string FullScript { get; set; }
         public int StressBlocks { get; set; }
         public int StressTicks { get; set; }
@@ -54,7 +54,7 @@ namespace EasyCommands.Integration {
         int index, ticks, settle;
         bool finished;
         int startup;
-        bool modPocLoaded;
+        bool modLoaded;
         string passToken, failToken;
         Vector3D motionStart, motionDestination;
         double maxTravel, maxSpeed;
@@ -82,15 +82,15 @@ namespace EasyCommands.Integration {
                     if (request.Scenarios == null || request.Scenarios.Length == 0)
                         throw new Exception("No scenarios supplied.");
                 }
-                if (!modPocLoaded && !String.IsNullOrEmpty(request.ModPocSourceDirectory)) {
-                    ModPocSourceLoader.Load(request.ModPocSourceDirectory, root);
-                    modPocLoaded = true;
+                if (!modLoaded && !String.IsNullOrEmpty(request.ModSourceDirectory)) {
+                    ModSourceLoader.Load(request.ModSourceDirectory, root);
+                    modLoaded = true;
                     return;
                 }
                 if (startup == 0) {
                     if (request.StressBlocks > 0) CreateStressFixtures();
                     else if (request.CreateFixture) CreateFixture();
-                    if (request.PocBenchmark) CreatePocFixtures();
+                    if (request.ModBenchmark) CreateModFixtures();
                     startup++;
                     return;
                 }
@@ -99,9 +99,9 @@ namespace EasyCommands.Integration {
                 if (startup == 181) File.WriteAllText(Path.Combine(root, "fixture.json"),
                     json.Serialize(Blocks().Select(b => new { Name = b.CustomName, Definition = b.BlockDefinition.ToString(),
                         Working = b.IsWorking, Functional = b.IsFunctional, Enabled = (b as IMyFunctionalBlock)?.Enabled })));
-                if (request.PocBenchmark) { TickPoc(); return; }
+                if (request.ModBenchmark) { TickMod(); return; }
                 if (request.StressBlocks > 0) { TickStress(); return; }
-                if (request.PocMissingMod) { TickMissingModBridge(); return; }
+                if (request.MissingMod) { TickMissingModBridge(); return; }
                 if (index >= request.Scenarios.Length) { Finish(); return; }
                 var test = request.Scenarios[index];
                 if (pb == null) {
@@ -152,7 +152,7 @@ namespace EasyCommands.Integration {
                 else if (output.Contains(passToken)) Record(true, output);
                 else if (ticks >= test.TimeoutTicks) Record(false, "Timed out. Last output: " + output);
             } catch (Exception ex) {
-                results.Add(new Result { Name = request != null && request.StressBlocks > 0 ? "stress-phase-" + stressPhase : request != null && request.PocBenchmark ? "poc-phase-" + pocPhase : request != null && index < request.Scenarios.Length
+                results.Add(new Result { Name = request != null && request.StressBlocks > 0 ? "stress-phase-" + stressPhase : request != null && request.ModBenchmark ? "mod-phase-" + modPhase : request != null && index < request.Scenarios.Length
                     ? request.Scenarios[index].Name : "harness", Passed = false, Detail = ex.ToString(), Ticks = ticks });
                 Finish();
             }

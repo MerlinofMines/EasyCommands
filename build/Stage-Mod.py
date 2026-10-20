@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 
@@ -37,9 +38,18 @@ def main():
         if hashlib.sha256(destination.read_bytes()).hexdigest() != digest:
             raise RuntimeError("Source copy mismatch: " + str(relative))
         manifest.append({"source": source.relative_to(repo).as_posix(), "destination": relative.as_posix(), "originalSha256": digest, "stagedSha256": digest})
-    shutil.copyfile(repo / "EasyCommands.Bridge/script.cs.txt", output / "bridge.cs.txt")
+    bridge_source = repo / "EasyCommands.Bridge/script.cs.txt"
+    protocol = re.search(r'const string ApiId = "([^"]+)";', bridge_source.read_text()).group(1)
+    if ('const string ApiId = "' + protocol + '";') not in (repo / "EasyCommands.Mod/ModSession.cs").read_text():
+        raise RuntimeError("Mod and bridge protocols do not match")
+    bridge = output / "IngameScripts/local/EasyCommands Bridge"
+    bridge.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(bridge_source, bridge / "script.cs")
+    shutil.copyfile(bridge_source, output / "bridge.cs.txt")
+    for folder in (target.parents[2], bridge):
+        shutil.copyfile(repo / "EasyCommands/thumb.png", folder / "thumb.png")
+        shutil.copyfile(repo / "LICENSE", folder / "LICENSE")
     (output / "source-manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    (output / "staged.diff").write_text("", encoding="utf-8")
     print(target)
 
 if __name__ == "__main__":

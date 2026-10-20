@@ -6,11 +6,11 @@
     <GameBin Condition="'$(GameBin)' == ''">C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64</GameBin>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../ModPoc/ModPocSourceLoader.cs" />
-    <Compile Include="../ModPoc/PocBenchmark.cs" />
-    <Compile Include="../ModPoc/PocStress.cs" />
-    <Compile Include="../ModPoc/PocLifecycle.cs" />
-    <Compile Include="../ModPoc/PocScheduling.cs" />
+    <Compile Include="../Mod/ModSourceLoader.cs" />
+    <Compile Include="../Mod/ModBenchmark.cs" />
+    <Compile Include="../Mod/ModStress.cs" />
+    <Compile Include="../Mod/ModLifecycle.cs" />
+    <Compile Include="../Mod/ModScheduling.cs" />
     <Reference Include="Sandbox.Common"><HintPath>$(GameBin)\Sandbox.Common.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Sandbox.Game"><HintPath>$(GameBin)\Sandbox.Game.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="VRage"><HintPath>$(GameBin)\VRage.dll</HintPath><Private>false</Private></Reference>

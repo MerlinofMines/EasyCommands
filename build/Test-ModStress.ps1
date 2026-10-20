@@ -24,4 +24,4 @@ if ($Variant -eq 'bridge') {
 dotnet build (Join-Path $repo 'integration/Harness/Harness.csproj') -c Release "-p:GameBin=$(Join-Path $ServerRoot 'DedicatedServer64')" --nologo
 if ($LASTEXITCODE) { throw 'Harness build failed.' }
 & (Join-Path $repo 'build/Test-InGame.ps1') -Suite smoke -ServerRoot $ServerRoot @options `
-    -RunRoot (Join-Path $repo '.build/mod-poc/stress') -StressBlocks $Blocks -StressTicks $Ticks -TimeoutSeconds 1200 -SkipBuild
+    -RunRoot (Join-Path $repo '.build/mod/stress') -StressBlocks $Blocks -StressTicks $Ticks -TimeoutSeconds 1200 -SkipBuild

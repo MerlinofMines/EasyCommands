@@ -94,3 +94,5 @@ after results because that world is not reused.
 If results never arrive, inspect server logs for Harness plugin loading. The runner
 uses the vanilla dedicated server -plugin argument. Game updates can change plugin
 support/API behavior; successful compilation alone does not prove a live test passed.
+
+For the mod bridge, concurrent PB workloads and power/destruction checks, see [mod integration tests](Mod/README.md).

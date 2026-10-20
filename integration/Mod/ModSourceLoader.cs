@@ -13,7 +13,7 @@ namespace EasyCommands.Integration {
     // Test bootstrap only. Engine source is compiled by the real Mod-target
     // compiler, with its whitelist and instrumentation, into another assembly.
     // This does not verify normal local/Workshop package discovery or loading.
-    internal static class ModPocSourceLoader {
+    internal static class ModSourceLoader {
         // Read-only test inspection of the actual compiled mod instance. No
         // diagnostics endpoints or reflection are added to the shipped mod.
         internal static MySessionComponentBase Component;
@@ -29,9 +29,9 @@ namespace EasyCommands.Integration {
             var timer = Stopwatch.StartNew();
             List<Message> diagnostics;
             var assembly = MyVRage.Platform.Scripting.CompileAsync(MyApiTarget.Mod,
-                Path.Combine(outputDirectory, "EasyCommandsPocSandbox"),
+                Path.Combine(outputDirectory, "EasyCommandsModSandbox"),
                 sources.Select(path => new Script(path, File.ReadAllText(path))),
-                out diagnostics, "EasyCommandsPoc test bootstrap").Result;
+                out diagnostics, "EasyCommandsMod test bootstrap").Result;
             timer.Stop();
             File.WriteAllText(Path.Combine(outputDirectory, "mod-compile.json"),
                 new JavaScriptSerializer().Serialize(new {
